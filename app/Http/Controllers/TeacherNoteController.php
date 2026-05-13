@@ -7,6 +7,8 @@ use App\Models\Classroom;
 use App\Models\TeacherNote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\Image;
 
 class TeacherNoteController extends Controller
 {
@@ -64,12 +66,8 @@ class TeacherNoteController extends Controller
             'jenis_catatan' => 'required|string',
             'catatan' => 'required|string',
             'student_ids' => 'required|array|min:1',
-            // Update: Validasi foto sebagai array
             'foto' => 'nullable|array',
-            'foto.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
-        ], [
-            'student_ids.required' => 'Pilih minimal satu siswa yang terlibat.',
-            'foto.*.max' => 'Ukuran tiap foto maksimal adalah 2MB.',
+            'foto.*' => 'image|mimes:jpeg,png,jpg,webp,avif|max:5120', // Limit naikkan dikit tak apa karena nanti dikompres
         ]);
 
         $schoolId = auth()->user()->school_id;
@@ -80,11 +78,26 @@ class TeacherNoteController extends Controller
             return back()->with('error', 'Tahun ajaran aktif tidak ditemukan.');
         }
 
-        // 1. PROSES UPLOAD BANYAK FOTO
+        // 1. PROSES KONVERSI & UPLOAD
         $fotoPaths = [];
         if ($request->hasFile('foto')) {
             foreach ($request->file('foto') as $file) {
-                $fotoPaths[] = $file->store('jurnal_foto', 'public');
+                // Buat nama file unik dengan ekstensi .webp
+                $fileName = Str::random(40).'.webp';
+                $destinationPath = storage_path('app/public/jurnal_foto/'.$fileName);
+
+                // Pastikan folder tujuan ada
+                if (! file_exists(storage_path('app/public/jurnal_foto'))) {
+                    mkdir(storage_path('app/public/jurnal_foto'), 0755, true);
+                }
+
+                // PROSES GAMBAR: Baca -> Resize (Max lebar 1000px agar ringan) -> Encode ke WebP (Kualitas 70-80)
+                Image::read($file)
+                    ->scale(width: 1000) // Skala proposional, lebar max 1000px
+                    ->toWebp(quality: 75) // Konversi ke WebP kualitas 75%
+                    ->save($destinationPath);
+
+                $fotoPaths[] = 'jurnal_foto/'.$fileName;
             }
         }
 
@@ -99,11 +112,11 @@ class TeacherNoteController extends Controller
                 'jenis_catatan' => $request->jenis_catatan,
                 'catatan' => $request->catatan,
                 'is_for_report' => $request->has('is_for_report') ? 1 : 0,
-                'foto' => $fotoPaths, // Simpan array path (pastikan model sudah di-cast ke array)
+                'foto' => $fotoPaths,
             ]);
         }
 
-        return back()->with('success', 'Jurnal kejadian berhasil disimpan.');
+        return back()->with('success', 'Catatan berhasil dikompres ke WebP dan disimpan.');
     }
 
     // 3. MENGHAPUS CATATAN (INDIVIDU ATAU KELOMPOK)
