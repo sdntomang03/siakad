@@ -19,19 +19,15 @@
         @endif
 
         // Deteksi jika ada session 'error'
-        @if(session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: '{{ session("error") }}',
-                background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
-                color: document.documentElement.classList.contains('dark') ? '#f8fafc' : '#0f172a',
-                customClass: {
-                    popup: 'rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700',
-                    confirmButton: 'bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg px-4 py-2 font-semibold'
-                }
-            });
-        @endif
+@if($errors->any())
+    Swal.fire({
+        icon: 'error',
+        title: 'Kesalahan Input',
+        html: '{!! implode("<br>", $errors->all()) !!}', // Menampilkan semua error validasi
+        background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
+        color: document.documentElement.classList.contains('dark') ? '#f8fafc' : '#0f172a',
+    });
+@endif
     });
 
       function confirmAction(formId, title, text) {

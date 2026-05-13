@@ -115,9 +115,7 @@
                                         class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/50 dark:file:text-indigo-400 cursor-pointer">
                                     <p class="text-[10px] text-slate-400 mt-2">*Maksimal 2MB. Format: JPG, PNG, WEBP.
                                     </p>
-                                    @error('foto')
-                                    <p class="text-sm text-rose-500 font-bold mt-1">{{ $message }}</p>
-                                    @enderror
+
                                 </div>
                             </div>
                             @error('student_ids')

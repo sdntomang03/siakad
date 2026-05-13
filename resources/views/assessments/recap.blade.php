@@ -103,7 +103,7 @@
                                 title="{{ $ujian->keterangan }}">
 
                                 <span class="block font-black text-indigo-600 dark:text-indigo-400">{{
-                                    $ujian->assessmentType->nama ?? 'Tidak Diketahui' }}</span>
+                                    $ujian->assessmentType->singkatan ?? 'Tidak Diketahui' }}</span>
 
                                 <span
                                     class="block text-[10px] text-slate-500 mt-1 font-normal truncate max-w-[120px]">{{

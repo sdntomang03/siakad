@@ -7,6 +7,9 @@ use App\Models\Classroom;
 use App\Models\TeacherNote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class TeacherNoteController extends Controller
 {
@@ -69,8 +72,9 @@ class TeacherNoteController extends Controller
             'foto.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ], [
             'student_ids.required' => 'Pilih minimal satu siswa yang terlibat.',
-            'foto.*.max' => 'Ukuran tiap foto maksimal adalah 2MB.',
-        ]);
+            'foto.*.max' => 'Ukuran setiap foto tidak boleh lebih dari 2MB.',
+            'foto.*.image' => 'File harus berupa gambar.',
+            'foto.*.mimes' => 'Format foto harus jpeg, png, jpg, atau webp.', ]);
 
         $schoolId = auth()->user()->school_id;
         $employeeId = auth()->user()->employee->id ?? 0;
@@ -83,8 +87,27 @@ class TeacherNoteController extends Controller
         // 1. PROSES UPLOAD BANYAK FOTO
         $fotoPaths = [];
         if ($request->hasFile('foto')) {
+            // 1. Inisialisasi ImageManager (v4)
+            $manager = ImageManager::usingDriver(Driver::class);
+
+            // Pastikan folder tujuan tersedia
+            if (! Storage::disk('public')->exists('jurnal_foto')) {
+                Storage::disk('public')->makeDirectory('jurnal_foto');
+            }
+
             foreach ($request->file('foto') as $file) {
-                $fotoPaths[] = $file->store('jurnal_foto', 'public');
+                // 2. Buat nama unik dengan ekstensi .webp
+                // Ekstensi ini yang memberitahu Intervention v4 untuk mengonversi ke WebP
+                $fileName = Str::random(40).'.webp';
+                $destinationPath = storage_path('app/public/jurnal_foto/'.$fileName);
+
+                // 3. Baca, Perkecil (opsional), dan Simpan
+                $manager->decode($file)
+                    ->scaleDown(width: 1000) // Batasi lebar max 1000px agar ringan
+                    ->save($destinationPath, quality: 80); // Simpan sebagai WebP kualitas 80%
+
+                // 4. Masukkan ke array path
+                $fotoPaths[] = 'jurnal_foto/'.$fileName;
             }
         }
 
