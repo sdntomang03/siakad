@@ -216,15 +216,47 @@
 
                                     {{-- Tampilkan tautan foto jika ada --}}
                                     @if($riwayat->foto)
-                                    <a href="{{ asset('storage/' . $riwayat->foto) }}" target="_blank"
-                                        class="inline-flex items-center gap-1 mt-2 px-2 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-indigo-600 dark:text-indigo-400 rounded text-xs font-bold hover:bg-indigo-50 transition">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                            </path>
-                                        </svg>
-                                        Lihat Lampiran
-                                    </a>
+                                    {{-- Container Alpine.js untuk Modal Foto --}}
+                                    <div x-data="{ imgModal: false }">
+                                        {{-- Tombol Pemicu --}}
+                                        <button type="button" @click="imgModal = true"
+                                            class="inline-flex items-center gap-1 mt-2 px-2 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-indigo-600 dark:text-indigo-400 rounded text-xs font-bold hover:bg-indigo-50 transition">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                </path>
+                                            </svg>
+                                            Lihat Lampiran
+                                        </button>
+
+                                        {{-- Struktur Modal --}}
+                                        <template x-teleport="body">
+                                            <div x-show="imgModal" x-transition:enter="transition ease-out duration-300"
+                                                x-transition:enter-start="opacity-0"
+                                                x-transition:enter-end="opacity-100"
+                                                x-transition:leave="transition ease-in duration-200"
+                                                x-transition:leave-start="opacity-100"
+                                                x-transition:leave-end="opacity-0"
+                                                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
+                                                style="display: none;">
+
+                                                {{-- Tombol Tutup di Area Gelap --}}
+                                                <div class="absolute inset-0 cursor-zoom-out" @click="imgModal = false">
+                                                </div>
+
+                                                {{-- Konten Gambar --}}
+                                                <div class="relative max-w-4xl w-full flex flex-col items-center">
+                                                    <img :src="'{{ asset('storage/' . $riwayat->foto) }}'"
+                                                        class="max-h-[85vh] rounded-lg shadow-2xl border-4 border-white dark:border-slate-700 object-contain">
+
+                                                    <button @click="imgModal = false"
+                                                        class="mt-4 px-6 py-2 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-full font-bold shadow-lg hover:bg-rose-500 hover:text-white transition">
+                                                        Tutup Gambar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-center">
