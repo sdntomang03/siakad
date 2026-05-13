@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
             $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete(); // Guru pembuat nilai
 
-            $table->foreignId('assessment_type_id')->after('employee_id')->constrained('assessment_types')->cascadeOnDelete();
+            $table->foreignId('assessment_type_id')->constrained('assessment_types')->cascadeOnDelete();
             $table->string('keterangan'); // Cth: 'Bab 1: Tumbuhan'
             $table->date('tanggal');
 
