@@ -90,18 +90,60 @@
                                     <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{{
                                         $note->catatan }}</p>
 
+                                    @if($note->foto && is_array($note->foto))
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        @foreach($note->foto as $path)
+                                        {{-- Container Alpine.js untuk Modal Foto Satuan --}}
+                                        <div x-data="{ imgModal: false }">
+                                            {{-- Preview Foto Kecil --}}
+                                            <div @click="imgModal = true"
+                                                class="w-16 h-16 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 cursor-zoom-in hover:ring-2 hover:ring-indigo-500 transition group relative">
+                                                <img src="{{ asset('storage/' . $path) }}"
+                                                    class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                                                <div
+                                                    class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition">
+                                                </div>
+                                            </div>
+
+                                            {{-- Modal Preview Besar --}}
+                                            <template x-teleport="body">
+                                                <div x-show="imgModal"
+                                                    x-transition:enter="transition ease-out duration-300"
+                                                    x-transition:enter-start="opacity-0"
+                                                    x-transition:enter-end="opacity-100"
+                                                    x-transition:leave="transition ease-in duration-200"
+                                                    x-transition:leave-start="opacity-100"
+                                                    x-transition:leave-end="opacity-0"
+                                                    class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
+                                                    style="display: none;" @keydown.window.escape="imgModal = false">
+
+                                                    {{-- Klik area luar untuk tutup --}}
+                                                    <div class="absolute inset-0" @click="imgModal = false"></div>
+
+                                                    {{-- Gambar --}}
+                                                    <div class="relative max-w-5xl w-full flex flex-col items-center">
+                                                        <img :src="'{{ asset('storage/' . $path) }}'"
+                                                            class="max-h-[85vh] rounded-2xl shadow-2xl border-4 border-white dark:border-slate-800 object-contain">
+
+                                                        <button @click="imgModal = false"
+                                                            class="mt-4 px-8 py-2.5 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-full font-black shadow-xl hover:bg-rose-500 hover:text-white transition-all uppercase text-xs tracking-widest">
+                                                            Tutup
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                    @else
+                                    {{-- fallback jika data foto lama masih berupa string tunggal (opsional) --}}
                                     @if($note->foto)
                                     <div class="mt-3">
                                         <a href="{{ asset('storage/'.$note->foto) }}" target="_blank"
-                                            class="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-1">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                </path>
-                                            </svg>
-                                            Lihat Foto Lampiran
-                                        </a>
+                                            class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">Lihat
+                                            Lampiran (Format Lama)</a>
                                     </div>
+                                    @endif
                                     @endif
                                 </div>
                                 @empty
