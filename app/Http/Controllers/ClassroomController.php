@@ -42,7 +42,7 @@ class ClassroomController extends Controller
         $classrooms = $query->orderBy('tingkat')->orderBy('nama_kelas')->get();
 
         // Data pendukung untuk Dropdown Modal
-        $academicYears = AcademicYear::orderBy('tahun_awal', 'desc')->get();
+        $academicYears = AcademicYear::latest('tahun_ajaran')->get();
 
         $teachersQuery = Employee::whereIn('kategori_pegawai', ['guru', 'kepsek']);
         // Pastikan dropdown guru hanya berisi guru dari sekolah yang sedang dipilih
