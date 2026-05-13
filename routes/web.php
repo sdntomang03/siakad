@@ -9,7 +9,7 @@ use App\Http\Controllers\Operator\UserController as OperatorUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
-use App\Http\Controllers\Superadmin\RolePermissionController;
+use App\Http\Controllers\SuperAdmin\RolePermissionController;
 use App\Http\Controllers\SuperAdmin\SchoolController;
 use App\Http\Controllers\SuperAdmin\SuperAdminController;
 use App\Http\Controllers\SuperAdmin\UserController;
