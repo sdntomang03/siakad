@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('jenis_catatan'); // Contoh: 'Prestasi', 'Perilaku', 'Saran'
             $table->text('catatan');
             $table->boolean('is_for_report')->default(true); // Muncul di raport atau tidak
-            $table->string('foto')->nullable();
+            $table->text('foto')->nullable();
             $table->timestamps();
         });
     }

@@ -8,6 +8,10 @@ class TeacherNote extends Model
 {
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'foto' => 'array', // Otomatis handle JSON ke Array
+    ];
+
     public function student()
     {
         return $this->belongsTo(Student::class);

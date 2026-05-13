@@ -64,11 +64,12 @@ class TeacherNoteController extends Controller
             'jenis_catatan' => 'required|string',
             'catatan' => 'required|string',
             'student_ids' => 'required|array|min:1',
-            // Validasi foto: harus berupa gambar, maksimal 2MB (2048 KB)
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            // Update: Validasi foto sebagai array
+            'foto' => 'nullable|array',
+            'foto.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ], [
             'student_ids.required' => 'Pilih minimal satu siswa yang terlibat.',
-            'foto.max' => 'Ukuran foto maksimal adalah 2MB agar server tetap ringan.',
+            'foto.*.max' => 'Ukuran tiap foto maksimal adalah 2MB.',
         ]);
 
         $schoolId = auth()->user()->school_id;
@@ -79,11 +80,12 @@ class TeacherNoteController extends Controller
             return back()->with('error', 'Tahun ajaran aktif tidak ditemukan.');
         }
 
-        // 1. PROSES UPLOAD FOTO (Hanya 1 kali per kejadian)
-        $fotoPath = null;
+        // 1. PROSES UPLOAD BANYAK FOTO
+        $fotoPaths = [];
         if ($request->hasFile('foto')) {
-            // Simpan ke folder: storage/app/public/jurnal_foto
-            $fotoPath = $request->file('foto')->store('jurnal_foto', 'public');
+            foreach ($request->file('foto') as $file) {
+                $fotoPaths[] = $file->store('jurnal_foto', 'public');
+            }
         }
 
         // 2. SIMPAN KE DATABASE
@@ -97,7 +99,7 @@ class TeacherNoteController extends Controller
                 'jenis_catatan' => $request->jenis_catatan,
                 'catatan' => $request->catatan,
                 'is_for_report' => $request->has('is_for_report') ? 1 : 0,
-                'foto' => $fotoPath, // <--- Simpan path foto
+                'foto' => $fotoPaths, // Simpan array path (pastikan model sudah di-cast ke array)
             ]);
         }
 
@@ -110,9 +112,12 @@ class TeacherNoteController extends Controller
         $note = TeacherNote::findOrFail($id);
 
         if ($request->query('mode') === 'kejadian') {
-            // Hapus file foto dari storage fisik server JIKA ADA
-            if ($note->foto) {
-                Storage::disk('public')->delete($note->foto);
+            // Ambil semua foto dari catatan ini
+            // Karena kita simpan array yang sama untuk kelompok, ambil satu contoh saja
+            if ($note->foto && is_array($note->foto)) {
+                foreach ($note->foto as $path) {
+                    Storage::disk('public')->delete($path);
+                }
             }
 
             TeacherNote::where('classroom_id', $note->classroom_id)
@@ -120,9 +125,10 @@ class TeacherNoteController extends Controller
                 ->where('created_at', $note->created_at)
                 ->delete();
 
-            $pesan = 'Seluruh riwayat kejadian beserta lampiran fotonya berhasil dihapus.';
+            $pesan = 'Seluruh riwayat kejadian beserta semua fotonya berhasil dihapus.';
         } else {
-            // Jika hanya menghapus 1 siswa, jangan hapus file fotonya (karena masih dipakai siswa lain)
+            // Jika hapus individu, data foto di storage jangan dihapus karena
+            // merujuk ke file yang sama dengan siswa lain dalam kelompok tersebut
             $note->delete();
             $pesan = 'Catatan kejadian untuk siswa tersebut berhasil dihapus.';
         }

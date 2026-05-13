@@ -111,7 +111,7 @@
                                 <div class="w-full md:w-1/3">
                                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Lampiran Foto
                                         (Opsional)</label>
-                                    <input type="file" name="foto" accept="image/jpeg, image/png, image/webp"
+                                    <input type="file" name="foto[]" multiple accept="image/jpeg, image/png, image/webp"
                                         class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/50 dark:file:text-indigo-400 cursor-pointer">
                                     <p class="text-[10px] text-slate-400 mt-2">*Maksimal 2MB. Format: JPG, PNG, WEBP.
                                     </p>
@@ -171,7 +171,7 @@
             @endhasanyrole
 
             {{-- 3. TABEL RIWAYAT KEJADIAN KELAS --}}
-            {{-- 3. TABEL RIWAYAT KEJADIAN KELAS --}}
+
             <div
                 class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div class="p-6 border-b border-slate-100 dark:border-slate-700">
@@ -215,47 +215,52 @@
                                     <p class="text-slate-600 dark:text-slate-400">{{ $riwayat->catatan }}</p>
 
                                     {{-- Tampilkan tautan foto jika ada --}}
-                                    @if($riwayat->foto)
-                                    {{-- Container Alpine.js untuk Modal Foto --}}
-                                    <div x-data="{ imgModal: false }">
-                                        {{-- Tombol Pemicu --}}
-                                        <button type="button" @click="imgModal = true"
-                                            class="inline-flex items-center gap-1 mt-2 px-2 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-indigo-600 dark:text-indigo-400 rounded text-xs font-bold hover:bg-indigo-50 transition">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                </path>
-                                            </svg>
-                                            Lihat Lampiran
-                                        </button>
-
-                                        {{-- Struktur Modal --}}
-                                        <template x-teleport="body">
-                                            <div x-show="imgModal" x-transition:enter="transition ease-out duration-300"
-                                                x-transition:enter-start="opacity-0"
-                                                x-transition:enter-end="opacity-100"
-                                                x-transition:leave="transition ease-in duration-200"
-                                                x-transition:leave-start="opacity-100"
-                                                x-transition:leave-end="opacity-0"
-                                                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
-                                                style="display: none;">
-
-                                                {{-- Tombol Tutup di Area Gelap --}}
-                                                <div class="absolute inset-0 cursor-zoom-out" @click="imgModal = false">
+                                    @if($riwayat->foto && is_array($riwayat->foto))
+                                    <div class="flex flex-wrap gap-2 mt-2">
+                                        @foreach($riwayat->foto as $path)
+                                        {{-- Container Alpine.js untuk setiap foto --}}
+                                        <div x-data="{ imgModal: false }">
+                                            {{-- Thumbnail Foto --}}
+                                            <button type="button" @click="imgModal = true"
+                                                class="group relative w-12 h-12 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 hover:ring-2 hover:ring-indigo-500 transition">
+                                                <img src="{{ asset('storage/' . $path) }}"
+                                                    class="w-full h-full object-cover">
+                                                <div
+                                                    class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition">
                                                 </div>
+                                            </button>
 
-                                                {{-- Konten Gambar --}}
-                                                <div class="relative max-w-4xl w-full flex flex-col items-center">
-                                                    <img :src="'{{ asset('storage/' . $riwayat->foto) }}'"
-                                                        class="max-h-[85vh] rounded-lg shadow-2xl border-4 border-white dark:border-slate-700 object-contain">
+                                            {{-- Struktur Modal (Teleport ke body agar tidak terpotong z-index tabel)
+                                            --}}
+                                            <template x-teleport="body">
+                                                <div x-show="imgModal"
+                                                    x-transition:enter="transition ease-out duration-300"
+                                                    x-transition:enter-start="opacity-0"
+                                                    x-transition:enter-end="opacity-100"
+                                                    x-transition:leave="transition ease-in duration-200"
+                                                    x-transition:leave-start="opacity-100"
+                                                    x-transition:leave-end="opacity-0"
+                                                    class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
+                                                    style="display: none;" @keydown.window.escape="imgModal = false">
 
-                                                    <button @click="imgModal = false"
-                                                        class="mt-4 px-6 py-2 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-full font-bold shadow-lg hover:bg-rose-500 hover:text-white transition">
-                                                        Tutup Gambar
-                                                    </button>
+                                                    {{-- Overlay Klik untuk Tutup --}}
+                                                    <div class="absolute inset-0 cursor-zoom-out"
+                                                        @click="imgModal = false"></div>
+
+                                                    {{-- Konten Gambar --}}
+                                                    <div class="relative max-w-4xl w-full flex flex-col items-center">
+                                                        <img :src="'{{ asset('storage/' . $path) }}'"
+                                                            class="max-h-[85vh] rounded-lg shadow-2xl border-4 border-white dark:border-slate-700 object-contain">
+
+                                                        <button @click="imgModal = false"
+                                                            class="mt-4 px-6 py-2 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-full font-bold shadow-lg hover:bg-rose-500 hover:text-white transition">
+                                                            Tutup Gambar
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </template>
+                                            </template>
+                                        </div>
+                                        @endforeach
                                     </div>
                                     @endif
                                 </td>
