@@ -237,21 +237,44 @@
                         </div>
                     </div>
 
-                    <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-700 grid grid-cols-2 gap-4">
+                    <div
+                        class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row gap-3 sm:gap-4">
+
+                        {{-- TOMBOL 1: Biodata Akun (Netral) --}}
                         <a href="{{ route('profile.edit') }}"
-                            class="py-3 px-4 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl text-center text-sm font-bold text-slate-700 dark:text-slate-300 transition">
-                            Lihat Biodata Lengkap
+                            class="flex-1 flex justify-center items-center gap-2 py-3 px-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 transition-all focus:ring-4 focus:ring-slate-100 dark:focus:ring-slate-800">
+                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            Biodata Akun
                         </a>
-                        {{-- Cek apakah yang login adalah siswa --}}
+
+                        {{-- TOMBOL 2: Lengkapi Profil Dapodik (Primary Action) - Khusus Siswa --}}
                         @if(auth()->user()->hasRole('siswa'))
-                        <a href="{{ route('students.edit', auth()->user()->id) }}" class="btn btn-primary">
-                            Lengkapi Profil Saya
+                        <a href="{{ route('students.edit', auth()->user()->id) }}"
+                            class="flex-1 flex justify-center items-center gap-2 py-3 px-4 bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 rounded-xl text-sm font-bold text-white transition-all focus:ring-4 focus:ring-indigo-500/20 transform hover:-translate-y-0.5">
+                            <svg class="w-5 h-5 text-indigo-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                </path>
+                            </svg>
+                            Lengkapi Profil
                         </a>
                         @endif
+
+                        {{-- TOMBOL 3: E-Rapor (Aksen Menarik) --}}
                         <a href="#"
-                            class="py-3 px-4 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 rounded-xl text-center text-sm font-bold text-indigo-700 dark:text-indigo-400 transition">
+                            class="flex-1 flex justify-center items-center gap-2 py-3 px-4 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 rounded-xl text-sm font-bold text-emerald-700 dark:text-emerald-400 transition-all focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900">
+                            <svg class="w-5 h-5 text-emerald-500 dark:text-emerald-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
                             Cek E-Rapor
                         </a>
+
                     </div>
                 </div>
             </div>

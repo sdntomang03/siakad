@@ -1,5 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ sidebarOpen: true }">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{
+        // Cek localStorage dulu. Jika kosong (kunjungan pertama), gunakan deteksi layar (Desktop=True, HP=False)
+        sidebarOpen: localStorage.getItem('sidebarOpen') !== null
+                     ? localStorage.getItem('sidebarOpen') === 'true'
+                     : window.innerWidth >= 768
+    }" x-init="$watch('sidebarOpen', value => localStorage.setItem('sidebarOpen', value))">
 
 <head>
     <meta charset="utf-8">
