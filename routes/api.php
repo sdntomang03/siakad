@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
@@ -43,4 +44,25 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 4. Laporan Absensi Per Siswa Khusus (Report)
     Route::get('/attendances/student/{studentId}', [AttendanceController::class, 'studentReport']);
+
+    // Mengambil daftar riwayat ujian
+    Route::get('/assessments', [AssessmentController::class, 'index']);
+
+    // Mengambil data untuk dropdown (Kelas & Mapel) saat membuat ujian baru
+    Route::get('/assessments/create', [AssessmentController::class, 'create']);
+
+    // Menyimpan wadah ujian baru
+    Route::post('/assessments', [AssessmentController::class, 'store']);
+
+    // Menghapus ujian
+    Route::delete('/assessments/{assessment}', [AssessmentController::class, 'destroy']);
+
+    // Menampilkan daftar siswa untuk input nilai maraton
+    Route::get('/assessments/{assessment}/input', [AssessmentController::class, 'input']);
+
+    // Menyimpan massal nilai siswa
+    Route::post('/assessments/{assessment}/scores', [AssessmentController::class, 'updateScores']);
+
+    // Mengambil matriks/rekapitulasi nilai
+    Route::get('/assessments/recap', [AssessmentController::class, 'recap']);
 });
