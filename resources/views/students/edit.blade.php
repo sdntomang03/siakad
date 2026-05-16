@@ -8,7 +8,7 @@
                 <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Lengkapi data pokok peserta didik sesuai
                     dengan dokumen resmi.</p>
             </div>
-            <a href="{{ route('operator.users.index') }}"
+            <a href="{{ route('dashboard') }}"
                 class="hidden md:inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
