@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -31,4 +32,15 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
     });
     Route::get('/users', [UserController::class, 'index']);
+    // 1. Ambil Data Rekap Absensi (Index)
+    Route::get('/attendances', [AttendanceController::class, 'index']);
+
+    // 2. Ambil Form/Daftar Siswa untuk Absen Harian (Show)
+    Route::get('/attendances/classroom/{classroom}', [AttendanceController::class, 'show']);
+
+    // 3. Simpan Data Absensi Massal (Store)
+    Route::post('/attendances/classroom/{classroom}', [AttendanceController::class, 'store']);
+
+    // 4. Laporan Absensi Per Siswa Khusus (Report)
+    Route::get('/attendances/student/{studentId}', [AttendanceController::class, 'studentReport']);
 });
