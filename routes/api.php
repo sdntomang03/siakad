@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\TeacherNoteController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -67,4 +68,16 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Mengambil matriks/rekapitulasi nilai
     Route::get('/assessments/recap', [AssessmentController::class, 'recap']);
+
+    // Mengambil data kelas, daftar siswa, dan riwayat catatan terbaru
+    Route::get('/teacher-notes', [TeacherNoteController::class, 'index']);
+
+    // Menyimpan catatan baru (mendukung Multipart/Form-Data untuk Foto)
+    Route::post('/teacher-notes', [TeacherNoteController::class, 'store']);
+
+    // Menghapus catatan (Gunakan parameter ?mode=kejadian untuk hapus massal)
+    Route::delete('/teacher-notes/{id}', [TeacherNoteController::class, 'destroy']);
+
+    // Mengambil rekapitulasi catatan seluruh siswa di satu kelas
+    Route::get('/teacher-notes/report', [TeacherNoteController::class, 'report']);
 });
