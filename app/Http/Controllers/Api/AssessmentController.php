@@ -16,50 +16,102 @@ use Illuminate\Http\Request;
 class AssessmentController extends Controller
 {
     // TAHAP 1: FORM MEMBUAT WADAH PENILAIAN (API Data Dropdown)
-    // MENAMPILKAN RIWAYAT PENILAIAN
-    public function index(Request $request)
+    public function create()
     {
         $user = auth()->user();
+        $schoolId = $user->school_id;
 
-        $query = Assessment::with(['classroom', 'subject', 'assessmentType'])
-            ->withCount('scores');
+        // Ambil ID Tahun Ajaran Aktif
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
 
-        if (! $user->hasRole('superadmin')) {
-            $query->where('employee_id', $user->employee->id ?? 0);
+        if (! $activeYear) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Tahun ajaran aktif belum ditentukan untuk sekolah ini.',
+            ], 400);
         }
+
+        $classesData = [];
 
         // ==========================================
-        // TAMBAHAN: LOGIKA FILTER PENCARIAN
+        // CEK ROLE: SUPERADMIN vs GURU
         // ==========================================
-        if ($request->filled('subject_id')) {
-            $query->where('subject_id', $request->subject_id);
+        if ($user->hasRole('superadmin')) {
+            // JIKA SUPERADMIN: Ambil SEMUA kelas beserta SEMUA mapel di sekolah tersebut
+            $allClasses = Classroom::where('school_id', $schoolId)
+                ->where('academic_year_id', $activeYear->id)
+                ->get();
+
+            foreach ($allClasses as $kelas) {
+                $subjects = Subject::where('school_id', $schoolId)
+                    ->where('tingkat', $kelas->tingkat)
+                    ->get(); // Ambil semua mapel tanpa peduli siapa gurunya
+
+                $classesData[$kelas->id] = [
+                    'id' => $kelas->id,
+                    'nama_kelas' => $kelas->tingkat.' - '.$kelas->nama_kelas,
+                    'subjects' => $subjects->map(fn ($s) => ['id' => $s->id, 'nama' => $s->nama_mapel])->toArray(),
+                ];
+            }
+        } else {
+            // JIKA GURU BIASA: Ambil HANYA kelas yang dia ajar
+            $employeeId = $user->employee->id ?? 0;
+
+            // 1. Kelas dimana dia jadi Wali Kelas
+            $waliKelas = Classroom::where('homeroom_teacher_id', $employeeId)
+                ->where('academic_year_id', $activeYear->id)
+                ->get();
+
+            foreach ($waliKelas as $kelas) {
+                $subjects = Subject::where('school_id', $schoolId)
+                    ->where('tingkat', $kelas->tingkat)
+                    ->where('pengampu', 'guru_kelas')
+                    ->get();
+
+                $classesData[$kelas->id] = [
+                    'id' => $kelas->id,
+                    'nama_kelas' => $kelas->tingkat.' - '.$kelas->nama_kelas,
+                    'subjects' => $subjects->map(fn ($s) => ['id' => $s->id, 'nama' => $s->nama_mapel])->toArray(),
+                ];
+            }
+
+            // 2. Kelas dimana dia jadi Guru Mapel Khusus (Agama/PJOK)
+            $mapelKhusus = ClassroomSubject::where('employee_id', $employeeId)
+                ->with(['classroom', 'subject'])
+                ->whereHas('classroom', function ($q) use ($activeYear) {
+                    $q->where('academic_year_id', $activeYear->id);
+                })
+                ->get();
+
+            foreach ($mapelKhusus as $mk) {
+                $kelasId = $mk->classroom->id;
+
+                if (! isset($classesData[$kelasId])) {
+                    $classesData[$kelasId] = [
+                        'id' => $kelasId,
+                        'nama_kelas' => $mk->classroom->tingkat.' - '.$mk->classroom->nama_kelas,
+                        'subjects' => [],
+                    ];
+                }
+                $classesData[$kelasId]['subjects'][] = [
+                    'id' => $mk->subject->id,
+                    'nama' => $mk->subject->nama_mapel,
+                ];
+            }
         }
 
-        if ($request->filled('assessment_type_id')) {
-            $query->where('assessment_type_id', $request->assessment_type_id);
-        }
-
-        $assessments = $query->orderBy('created_at', 'desc')->paginate(15);
-
-        $formattedAssessments = collect($assessments->items())->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'keterangan' => $item->keterangan,
-                'tanggal' => $item->tanggal,
-                'kelas' => $item->classroom->tingkat.' - '.$item->classroom->nama_kelas,
-                'mapel' => $item->subject->nama_mapel,
-                'tipe_penilaian' => $item->assessmentType->nama,
-                'jumlah_dinilai' => $item->scores_count,
-            ];
-        });
+        // Susun format akhir
+        $classesList = array_values($classesData);
+        $assessmentTypes = AssessmentType::where('school_id', $schoolId)->get(['id', 'nama', 'bobot']);
 
         return response()->json([
             'status' => 'success',
-            'data' => $formattedAssessments,
-            'meta' => [
-                'current_page' => $assessments->currentPage(),
-                'last_page' => $assessments->lastPage(),
-                'total' => $assessments->total(),
+            'data' => [
+                'active_year' => $activeYear->tahun_ajaran,
+                'classes' => $classesList,
+                'assessment_types' => $assessmentTypes,
             ],
         ], 200);
     }
@@ -181,7 +233,8 @@ class AssessmentController extends Controller
     }
 
     // MENAMPILKAN RIWAYAT PENILAIAN
-    public function index()
+    // MENAMPILKAN RIWAYAT PENILAIAN
+    public function index(Request $request)
     {
         $user = auth()->user();
 
@@ -192,9 +245,19 @@ class AssessmentController extends Controller
             $query->where('employee_id', $user->employee->id ?? 0);
         }
 
+        // ==========================================
+        // TAMBAHAN: LOGIKA FILTER PENCARIAN
+        // ==========================================
+        if ($request->filled('subject_id')) {
+            $query->where('subject_id', $request->subject_id);
+        }
+
+        if ($request->filled('assessment_type_id')) {
+            $query->where('assessment_type_id', $request->assessment_type_id);
+        }
+
         $assessments = $query->orderBy('created_at', 'desc')->paginate(15);
 
-        // Format data agar lebih bersih untuk Flutter
         $formattedAssessments = collect($assessments->items())->map(function ($item) {
             return [
                 'id' => $item->id,
