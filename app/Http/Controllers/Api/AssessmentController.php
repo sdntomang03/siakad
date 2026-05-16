@@ -16,68 +16,94 @@ use Illuminate\Http\Request;
 class AssessmentController extends Controller
 {
     // TAHAP 1: FORM MEMBUAT WADAH PENILAIAN (API Data Dropdown)
+    // TAHAP 1: FORM MEMBUAT WADAH PENILAIAN (API Data Dropdown)
     public function create()
     {
-        $employeeId = auth()->user()->employee->id ?? 0;
-        $schoolId = auth()->user()->school_id;
+        $user = auth()->user();
+        $schoolId = $user->school_id;
 
-        // Ambil ID Tahun Ajaran Aktif secara dinamis
+        // Ambil ID Tahun Ajaran Aktif
         $activeYear = AcademicYear::where('school_id', $schoolId)
             ->where('is_active', true)
             ->first();
 
-        if (! $activeYear) {
+        if (!$activeYear) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Tahun ajaran aktif belum ditentukan untuk sekolah ini.',
+                'message' => 'Tahun ajaran aktif belum ditentukan untuk sekolah ini.'
             ], 400);
         }
 
         $classesData = [];
 
-        // 1. Ambil Kelas di mana dia adalah WALI KELAS
-        $waliKelas = Classroom::where('homeroom_teacher_id', $employeeId)
-            ->where('academic_year_id', $activeYear->id)
-            ->get();
-
-        foreach ($waliKelas as $kelas) {
-            $subjects = Subject::where('school_id', $schoolId)
-                ->where('tingkat', $kelas->tingkat)
-                ->where('pengampu', 'guru_kelas')
+        // ==========================================
+        // CEK ROLE: SUPERADMIN vs GURU
+        // ==========================================
+        if ($user->hasRole('superadmin')) {
+            // JIKA SUPERADMIN: Ambil SEMUA kelas beserta SEMUA mapel di sekolah tersebut
+            $allClasses = Classroom::where('school_id', $schoolId)
+                ->where('academic_year_id', $activeYear->id)
                 ->get();
 
-            $classesData[$kelas->id] = [
-                'id' => $kelas->id,
-                'nama_kelas' => $kelas->tingkat.' - '.$kelas->nama_kelas,
-                'subjects' => $subjects->map(fn ($s) => ['id' => $s->id, 'nama' => $s->nama_mapel])->toArray(),
-            ];
-        }
+            foreach ($allClasses as $kelas) {
+                $subjects = Subject::where('school_id', $schoolId)
+                    ->where('tingkat', $kelas->tingkat)
+                    ->get(); // Ambil semua mapel tanpa peduli siapa gurunya
 
-        // 2. Ambil Kelas di mana dia adalah GURU MAPEL (Cth: Agama / PJOK)
-        $mapelKhusus = ClassroomSubject::where('employee_id', $employeeId)
-            ->with(['classroom', 'subject'])
-            ->whereHas('classroom', function ($q) use ($activeYear) {
-                $q->where('academic_year_id', $activeYear->id);
-            })
-            ->get();
-
-        foreach ($mapelKhusus as $mk) {
-            $kelasId = $mk->classroom->id;
-
-            if (! isset($classesData[$kelasId])) {
-                $classesData[$kelasId] = [
-                    'id' => $kelasId,
-                    'nama_kelas' => $mk->classroom->tingkat.' - '.$mk->classroom->nama_kelas,
-                    'subjects' => [],
+                $classesData[$kelas->id] = [
+                    'id' => $kelas->id,
+                    'nama_kelas' => $kelas->tingkat . ' - ' . $kelas->nama_kelas,
+                    'subjects' => $subjects->map(fn ($s) => ['id' => $s->id, 'nama' => $s->nama_mapel])->toArray(),
                 ];
             }
-            $classesData[$kelasId]['subjects'][] = [
-                'id' => $mk->subject->id,
-                'nama' => $mk->subject->nama_mapel,
-            ];
+        } else {
+            // JIKA GURU BIASA: Ambil HANYA kelas yang dia ajar
+            $employeeId = $user->employee->id ?? 0;
+
+            // 1. Kelas dimana dia jadi Wali Kelas
+            $waliKelas = Classroom::where('homeroom_teacher_id', $employeeId)
+                ->where('academic_year_id', $activeYear->id)
+                ->get();
+
+            foreach ($waliKelas as $kelas) {
+                $subjects = Subject::where('school_id', $schoolId)
+                    ->where('tingkat', $kelas->tingkat)
+                    ->where('pengampu', 'guru_kelas')
+                    ->get();
+
+                $classesData[$kelas->id] = [
+                    'id' => $kelas->id,
+                    'nama_kelas' => $kelas->tingkat . ' - ' . $kelas->nama_kelas,
+                    'subjects' => $subjects->map(fn ($s) => ['id' => $s->id, 'nama' => $s->nama_mapel])->toArray(),
+                ];
+            }
+
+            // 2. Kelas dimana dia jadi Guru Mapel Khusus (Agama/PJOK)
+            $mapelKhusus = ClassroomSubject::where('employee_id', $employeeId)
+                ->with(['classroom', 'subject'])
+                ->whereHas('classroom', function ($q) use ($activeYear) {
+                    $q->where('academic_year_id', $activeYear->id);
+                })
+                ->get();
+
+            foreach ($mapelKhusus as $mk) {
+                $kelasId = $mk->classroom->id;
+
+                if (!isset($classesData[$kelasId])) {
+                    $classesData[$kelasId] = [
+                        'id' => $kelasId,
+                        'nama_kelas' => $mk->classroom->tingkat . ' - ' . $mk->classroom->nama_kelas,
+                        'subjects' => [],
+                    ];
+                }
+                $classesData[$kelasId]['subjects'][] = [
+                    'id' => $mk->subject->id,
+                    'nama' => $mk->subject->nama_mapel,
+                ];
+            }
         }
 
-        // Mengubah array asosiatif menjadi list (array biasa) agar mudah di-parse di Flutter
+        // Susun format akhir
         $classesList = array_values($classesData);
         $assessmentTypes = AssessmentType::where('school_id', $schoolId)->get(['id', 'nama', 'bobot']);
 
@@ -86,8 +112,8 @@ class AssessmentController extends Controller
             'data' => [
                 'active_year' => $activeYear->tahun_ajaran,
                 'classes' => $classesList,
-                'assessment_types' => $assessmentTypes,
-            ],
+                'assessment_types' => $assessmentTypes
+            ]
         ], 200);
     }
 
