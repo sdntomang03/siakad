@@ -1126,7 +1126,7 @@
                     </div>
                 </div>
                 <p class="loading-title">Memverifikasi</p>
-                <p class="loading-sub">Menghubungkan ke pangkalan data dinas</p>
+                <p class="loading-sub">Menghubungkan ke database</p>
                 <div class="progress-track">
                     <div class="progress-fill"></div>
                 </div>
@@ -1205,7 +1205,7 @@
                         </div>
                         <p class="seal-text">
                             <strong>SDN Tomang 03 Pagi — Jakarta Barat</strong>
-                            Keputusan bersifat resmi dan terverifikasi sistem · TA 2025/2026
+                            Keputusan bersifat resmi dan terverifikasi sistem
                         </p>
                     </div>
 
