@@ -1696,9 +1696,13 @@
                                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                         </div>
-                        <p class="seal-text">
-                            <strong>SDN Tomang 03 Pagi — Jakarta Barat</strong>
-                            Keputusan bersifat resmi dan terverifikasi sistem.
+                        <p class="seal-text mt-4 text-sm text-slate-600">
+                            <strong>SDN Tomang 03 Pagi — Jakarta Barat</strong><br>
+                            Keputusan bersifat resmi dan terverifikasi sistem.<br>
+                            <span class="text-xs text-slate-400 mt-1 block">
+                                ID Verifikasi: <span class="font-mono font-bold text-indigo-600"
+                                    x-text="verificationCode"></span>
+                            </span>
                         </p>
                     </div>
 
@@ -1763,7 +1767,7 @@
                     nisn: '',
                     keterangan: ''
                 },
-
+verificationCode: '',
                 // Ripple effect on button click
                 createRipple(event) {
                     const button = event.currentTarget;
@@ -1806,6 +1810,10 @@
                         setTimeout(() => {
                             if (response.ok && result.status === 'success') {
                                 this.studentData = result.data;
+                                const randomStr = Math.random().toString(36).substring(2, 6).toUpperCase();
+                                const year = new Date().getFullYear();
+                                const lastNisn = this.studentData.nisn.toString().slice(-4);
+                                this.verificationCode = `SKL-${year}-${randomStr}-${lastNisn}`;
                                 this.modalState = 'result';
 
                                 // Launch confetti for passing students
