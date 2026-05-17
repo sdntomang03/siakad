@@ -170,7 +170,7 @@
                 </div>
 
                 <div class="col-span-1 md:col-span-1 lg:col-span-2 grid grid-cols-2 gap-4">
-                    <a href="#"
+                    <a href="{{ route('assessments.index') }}"
                         class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition flex flex-col items-center justify-center text-center">
                         <svg class="w-8 h-8 text-emerald-500 mb-2" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">

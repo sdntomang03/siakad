@@ -12,6 +12,7 @@ trait BelongsToSchool
      */
     protected static function bootBelongsToSchool()
     {
+        // --- 1. FITUR AUTO-FILTER (SAAT MEMBACA DATA) ---
         static::addGlobalScope('school', function (Builder $builder) {
             // Cek apakah ada user yang login
             if (auth()->check()) {
@@ -19,7 +20,22 @@ trait BelongsToSchool
 
                 // Jika user BUKAN superadmin, batasi data sesuai school_id miliknya
                 if (! $user->hasRole('superadmin')) {
-                    $builder->where('school_id', $user->school_id);
+                    // MENGHINDARI AMBIGU: Gunakan nama tabel secara dinamis
+                    $tableName = $builder->getModel()->getTable();
+                    $builder->where($tableName.'.school_id', $user->school_id);
+                }
+            }
+        });
+
+        // --- 2. FITUR AUTO-SET (SAAT MENYIMPAN DATA BARU) ---
+        static::creating(function ($model) {
+            if (auth()->check()) {
+                $user = auth()->user();
+
+                // Jika user BUKAN superadmin dan school_id masih kosong,
+                // maka isikan otomatis dengan school_id milik user yang login.
+                if (! $user->hasRole('superadmin') && empty($model->school_id)) {
+                    $model->school_id = $user->school_id;
                 }
             }
         });
