@@ -5,6 +5,7 @@ use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\Operator\UserController as OperatorUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
@@ -18,7 +19,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+
 });
+
+Route::get('/pengumuman', [KelulusanController::class, 'portalPengumuman'])->name('pengumuman.index');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -52,6 +56,7 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('admin')->name('superadmi
     Route::put('roles/{role}', [RolePermissionController::class, 'update'])->name('roles.update');
     Route::post('permissions', [RolePermissionController::class, 'storePermission'])->name('permissions.store');
     Route::delete('permissions/{permission}', [RolePermissionController::class, 'destroyPermission'])->name('permissions.destroy');
+
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -88,10 +93,13 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->name('operator
 
     // Rute CRUD User Guru
     Route::resource('users', OperatorUserController::class)->except(['create', 'edit', 'show']);
+
 });
 
 Route::middleware(['auth', 'role:superadmin|operator'])->group(function () {
     Route::resource('subjects', SubjectController::class)->except(['create', 'show', 'edit']);
+    Route::get('kelulusan/import', [KelulusanController::class, 'showImportForm'])->name('kelulusan.import');
+    Route::post('kelulusan/import', [KelulusanController::class, 'importExcel'])->name('kelulusan.import.process');
 });
 
 Route::middleware(['auth', 'role:guru'])->group(function () {
