@@ -85,4 +85,17 @@ class KelulusanController extends Controller
             'message' => 'Data tidak ditemukan. Pastikan NISN dan Tanggal Lahir (Sesuai ijazah) sudah benar.',
         ], 404);
     }
+
+    public function deleteAll()
+    {
+        try {
+            // Berkat Trait BelongsToSchool, query ini otomatis disaring
+            // Hanya menghapus data dengan school_id milik user yang sedang login
+            Kelulusan::query()->delete();
+
+            return redirect()->back()->with('success', 'Seluruh data kelulusan berhasil dikosongkan!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menghapus data: '.$e->getMessage());
+        }
+    }
 }

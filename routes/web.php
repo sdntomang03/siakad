@@ -100,6 +100,7 @@ Route::middleware(['auth', 'role:superadmin|operator'])->group(function () {
     Route::resource('subjects', SubjectController::class)->except(['create', 'show', 'edit']);
     Route::get('kelulusan/import', [KelulusanController::class, 'showImportForm'])->name('kelulusan.import');
     Route::post('kelulusan/import', [KelulusanController::class, 'importExcel'])->name('kelulusan.import.process');
+    Route::delete('/dashboard/kelulusan/kosongkan', [KelulusanController::class, 'deleteAll'])->name('kelulusan.delete-all');
 });
 
 Route::middleware(['auth', 'role:guru'])->group(function () {
