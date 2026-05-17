@@ -1,8 +1,25 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Import Data Kelulusan') }}
-        </h2>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-md font-bold text-gray-700">Data Kelulusan Tersimpan</h2>
+
+            @if($dataKelulusan->count() > 0)
+            <form action="{{ route('kelulusan.delete-all') }}" method="POST"
+                onsubmit="return confirm('PENTING: Apakah Anda yakin ingin MENGHAPUS SEMUA data kelulusan? Tindakan ini tidak dapat dibatalkan!');">
+                @csrf
+                @method('DELETE')
+                <button type="submit"
+                    class="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white rounded-lg text-xs font-bold transition-colors border border-rose-200 hover:border-rose-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                        </path>
+                    </svg>
+                    Kosongkan Data
+                </button>
+            </form>
+            @endif
+        </div>
     </x-slot>
 
     <div class="py-12">
