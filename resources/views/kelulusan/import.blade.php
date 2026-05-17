@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-md font-bold text-gray-700">Data Kelulusan Tersimpan</h2>
+            <h2 class="text-md font-bold text-gray-700">Data Kelulusan</h2>
 
             @if($dataKelulusan->count() > 0)
             <form action="{{ route('kelulusan.delete-all') }}" method="POST"
