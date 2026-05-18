@@ -114,4 +114,20 @@ class KelulusanController extends Controller
             return redirect()->back()->with('error', 'Gagal menghapus data: '.$e->getMessage());
         }
     }
+
+    public function updateStatusAjax(Request $request, $id)
+    {
+        $request->validate([
+            'keterangan' => 'required|in:LULUS,TIDAK LULUS,DITUNDA',
+        ]);
+
+        $siswa = Kelulusan::findOrFail($id); // Sesuaikan dengan model siswa Anda
+        $siswa->keterangan = $request->keterangan;
+        $siswa->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Status kelulusan berhasil diperbarui.',
+        ]);
+    }
 }

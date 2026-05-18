@@ -101,6 +101,7 @@ Route::middleware(['auth', 'role:superadmin|operator'])->group(function () {
     Route::get('kelulusan/import', [KelulusanController::class, 'showImportForm'])->name('kelulusan.import');
     Route::post('kelulusan/import', [KelulusanController::class, 'importExcel'])->name('kelulusan.import.process');
     Route::delete('/dashboard/kelulusan/kosongkan', [KelulusanController::class, 'deleteAll'])->name('kelulusan.delete-all');
+    Route::post('kelulusan/{id}/update-status', [KelulusanController::class, 'updateStatusAjax'])->name('kelulusan.update_status');
 });
 
 Route::middleware(['auth', 'role:guru'])->group(function () {

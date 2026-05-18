@@ -212,13 +212,30 @@
                                     <td class="p-4 text-gray-500">{{ $siswa->kelas ?? '-' }}</td>
                                     <td class="p-4 text-gray-500">{{
                                         \Carbon\Carbon::parse($siswa->tanggal_lahir)->translatedFormat('d F Y') }}</td>
-                                    <td class="p-4 text-center">
-                                        <span
-                                            class="px-3 py-1 rounded-full text-xs font-bold
-                                                {{ $siswa->keterangan === 'LULUS' ? 'bg-emerald-50 text-emerald-600' : ($siswa->keterangan === 'TIDAK LULUS' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600') }}">
-                                            {{ $siswa->keterangan }}
-                                        </span>
+
+                                    <td class="p-4"
+                                        x-data="statusUpdater({{ $siswa->id }}, '{{ $siswa->keterangan }}')">
+                                        <div class="relative flex items-center justify-center">
+
+                                            <select x-model="status" @change="updateStatus" :disabled="isLoading"
+                                                class="appearance-none px-4 py-1.5 rounded-full text-xs font-bold cursor-pointer border-2 focus:ring-0 outline-none transition-all text-center w-32"
+                                                :class="{
+                                'bg-emerald-50 text-emerald-600 border-emerald-100 focus:border-emerald-300': status === 'LULUS',
+                                'bg-rose-50 text-rose-600 border-rose-100 focus:border-rose-300': status === 'TIDAK LULUS',
+                                'bg-amber-50 text-amber-600 border-amber-100 focus:border-amber-300': status === 'DITUNDA'
+                            }">
+                                                <option value="LULUS" class="text-emerald-600 bg-white">LULUS</option>
+                                                <option value="TIDAK LULUS" class="text-rose-600 bg-white">TIDAK LULUS
+                                                </option>
+                                                <option value="DITUNDA" class="text-amber-600 bg-white">DITUNDA</option>
+                                            </select>
+
+                                            <div x-show="isLoading" class="absolute -right-6">
+                                                <i class="fas fa-circle-notch fa-spin text-indigo-500 text-sm"></i>
+                                            </div>
+                                        </div>
                                     </td>
+
                                 </tr>
                                 @empty
                                 <tr>
@@ -239,4 +256,50 @@
 
         </div>
     </div>
+    <script>
+        document.addEventListener('alpine:init', () => {
+        Alpine.data('statusUpdater', (siswaId, initialStatus) => ({
+            status: initialStatus,
+            isLoading: false,
+
+            async updateStatus() {
+                this.isLoading = true;
+
+                // Ambil CSRF Token
+                const metaToken = document.querySelector('meta[name="csrf-token"]');
+                const csrfToken = metaToken ? metaToken.getAttribute('content') : '{{ csrf_token() }}';
+
+                try {
+                    // Ganti URL ini sesuai dengan route backend Anda
+                    const response = await fetch(`/kelulusan/${siswaId}/update-status`, {
+                        method: 'POST', // atau PUT/PATCH
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify({
+                            keterangan: this.status
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok || result.status !== 'success') {
+                        throw new Error('Gagal mengupdate status');
+                    }
+
+                    // Optional: Bisa tambahkan toast notifikasi sukses di sini
+
+                } catch (error) {
+                    alert('Terjadi kesalahan jaringan saat mengubah status.');
+                    // Jika gagal, kembalikan dropdown ke status semula
+                    this.status = initialStatus;
+                } finally {
+                    this.isLoading = false;
+                }
+            }
+        }));
+    });
+    </script>
 </x-app-layout>
