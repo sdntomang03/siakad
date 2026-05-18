@@ -794,13 +794,32 @@
             z-index: 1;
             width: 100%;
             max-width: 520px;
+            max-height: 90vh;
             background: var(--cream);
             border-radius: 32px;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
             box-shadow:
                 0 0 0 1px rgba(255, 255, 255, 0.5),
                 0 24px 96px rgba(0, 0, 0, 0.6),
                 0 48px 128px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal-panel::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .modal-panel::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
         }
 
         /* ══════════════════════════════════════════════════════════════════
@@ -1044,6 +1063,20 @@
         .result-body {
             padding: 3rem 3rem 2.5rem;
             position: relative;
+            scroll-behavior: smooth;
+        }
+
+        .result-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .result-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .result-body::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
         }
 
         /* Decorative corner */
@@ -1631,7 +1664,7 @@
             </div>
 
             <!-- RESULT STATE -->
-            <div x-show="modalState === 'result'" style="display:none;" class="state-result">
+            <div x-show="modalState === 'result'" class="state-result">
 
                 <!-- Top color band -->
                 <div class="result-band" :class="{
@@ -1696,13 +1729,9 @@
                                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                         </div>
-                        <p class="seal-text mt-4 text-sm text-slate-600">
-                            <strong>SDN Tomang 03 Pagi — Jakarta Barat</strong><br>
-                            Keputusan bersifat resmi dan terverifikasi sistem.<br>
-                            <span class="text-xs text-slate-400 mt-1 block">
-                                ID Verifikasi: <span class="font-mono font-bold text-indigo-600"
-                                    x-text="verificationCode"></span>
-                            </span>
+                        <p class="seal-text">
+                            <strong>SDN Tomang 03 Pagi — Jakarta Barat</strong>
+                            Keputusan bersifat resmi dan terverifikasi sistem.
                         </p>
                     </div>
 
@@ -1712,7 +1741,7 @@
             </div>
 
             <!-- ERROR STATE -->
-            <div x-show="modalState === 'error'" style="display:none;" class="state-error">
+            <div x-show="modalState === 'error'" class="state-error">
                 <div class="error-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
@@ -1767,7 +1796,7 @@
                     nisn: '',
                     keterangan: ''
                 },
-verificationCode: '',
+
                 // Ripple effect on button click
                 createRipple(event) {
                     const button = event.currentTarget;
@@ -1810,10 +1839,6 @@ verificationCode: '',
                         setTimeout(() => {
                             if (response.ok && result.status === 'success') {
                                 this.studentData = result.data;
-                                const randomStr = Math.random().toString(36).substring(2, 6).toUpperCase();
-                                const year = new Date().getFullYear();
-                                const lastNisn = this.studentData.nisn.toString().slice(-4);
-                                this.verificationCode = `SKL-${year}-${randomStr}-${lastNisn}`;
                                 this.modalState = 'result';
 
                                 // Launch confetti for passing students
