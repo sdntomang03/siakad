@@ -2111,8 +2111,6 @@
                     <!-- Certificate box -->
                     <div class="cert-box" :class="{
                         'cert-box-lulus': studentData.keterangan === 'LULUS',
-                        'cert-box-tidak': studentData.keterangan === 'TIDAK LULUS',
-                        'cert-box-ditunda': studentData.keterangan === 'DITUNDA'
                     }">
                         <p class="cert-desc">
                             Berdasarkan Keputusan Rapat Pleno Dewan Guru SD Negeri Tomang 03 Tahun Ajaran 2025/2026,
@@ -2120,8 +2118,6 @@
                         </p>
                         <div class="cert-verdict" :class="{
                             'verdict-lulus': studentData.keterangan === 'LULUS',
-                            'verdict-tidak': studentData.keterangan === 'TIDAK LULUS',
-                            'verdict-ditunda': studentData.keterangan === 'DITUNDA'
                         }" x-text="studentData.keterangan">
                         </div>
                         <p class="cert-verdict-sub">
@@ -2153,6 +2149,62 @@
                 </div>
             </div>
 
+            <div x-show="modalState === 'ditunda'" class="state-error">
+                <div class="error-icon"
+                    style="background-color: #fee2e2; color: #ef4444; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="error-title" style="color: #ef4444;">STATUS DITUNDA</h3>
+                <p class="error-msg" x-text="errorMessage"></p>
+
+                <p
+                    style="font-size: 0.75rem; font-weight: bold; color: #64748b; text-transform: uppercase; margin-bottom: 0.5rem; margin-top: 1.5rem;">
+                    Tindakan yang diperlukan:
+                </p>
+                <button class="btn-retry" @click="hubungiWaliKelas()"
+                    style="background-color: #10b981; color: white; border: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    Hubungi Wali Kelas
+                </button>
+            </div>
+
+            <div x-show="modalState === 'loading_prank'" class="state-error" style="padding-top: 2rem;">
+                <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem auto; position: relative;">
+                    <div style="position: absolute; inset: 0; border: 4px solid #f1f5f9; border-radius: 50%;"></div>
+                    <div
+                        style="position: absolute; inset: 0; border: 4px solid #6366f1; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite;">
+                    </div>
+                    <div
+                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #6366f1;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            style="width: 32px; height: 32px; animation: pulse 2s infinite;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+                        </svg>
+                    </div>
+                </div>
+
+                <h3 class="error-title" style="color: #1e293b;">Menyambungkan...</h3>
+                <p class="error-msg" style="margin-bottom: 2rem;">Sedang mengirim log data ke sistem Wali Kelas dan
+                    memverifikasi berkas. Mohon tunggu...</p>
+
+                <div
+                    style="width: 100%; background-color: #f1f5f9; border-radius: 9999px; height: 12px; overflow: hidden;">
+                    <div style="height: 100%; background: linear-gradient(to right, #6366f1, #8b5cf6); border-radius: 9999px; width: 0%;"
+                        class="animate-progress-10s"></div>
+                </div>
+                <p
+                    style="font-size: 0.75rem; font-weight: bold; color: #94a3b8; text-transform: uppercase; margin-top: 1rem; animation: pulse 2s infinite;">
+                    Jangan Tutup Halaman Ini
+                </p>
+            </div>
+
             <!-- ERROR STATE -->
             <div x-show="modalState === 'error'" class="state-error">
                 <div class="error-icon">
@@ -2165,7 +2217,6 @@
                 <p class="error-msg" x-text="errorMessage"></p>
                 <button class="btn-retry" @click="resetModal">Ulangi Pengecekan</button>
             </div>
-
         </div>
     </div>
 
@@ -2233,46 +2284,87 @@
 
                 // Check graduation status
                 async cekData() {
-                    this.showModal = true;
-                    this.modalState = 'loading';
+        this.showModal = true;
+        this.modalState = 'loading';
 
-                    try {
-                        const response = await fetch('/api/kelulusan/cek', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify(this.formData)
-                        });
+        const metaToken = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = metaToken ? metaToken.getAttribute('content') : '';
 
-                        const result = await response.json();
-
-                        // Simulate loading delay for premium experience
-                        setTimeout(() => {
-                            if (response.ok && result.status === 'success') {
-                                this.studentData = result.data;
-                                this.modalState = 'result';
-
-                                // Launch confetti for passing students
-                                if (this.studentData.keterangan === 'LULUS') {
-                                    this.launchPremiumConfetti();
-                                }
-                            } else {
-                                this.errorMessage = result.message ||
-                                    'NISN atau tanggal lahir tidak terdaftar dalam sistem kami. Pastikan data yang dimasukkan sudah benar.';
-                                this.modalState = 'error';
-                            }
-                        }, 2600);
-
-                    } catch (error) {
-                        setTimeout(() => {
-                            this.errorMessage = 'Gagal terhubung ke server. Periksa koneksi internet Anda dan coba lagi.';
-                            this.modalState = 'error';
-                        }, 1200);
-                    }
+        try {
+            const response = await fetch('/api/kelulusan/cek', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
                 },
+                body: JSON.stringify(this.formData)
+            });
 
+            const result = await response.json();
+
+            // Simulasi loading pencarian awal
+            setTimeout(() => {
+                if (response.ok && result.status === 'success') {
+                    this.studentData = result.data;
+
+                    // ==========================================
+                    // LOGIKA PRANK BERDASARKAN DATABASE
+                    // ==========================================
+
+                    if (this.studentData.keterangan === 'DITUNDA') {
+                        // 1. KHUSUS YANG STATUSNYA "DITUNDA": Masuk ke mode prank
+                        this.modalState = 'ditunda';
+                        this.errorMessage = 'Mohon maaf, status kelulusan Anda DITUNDA sementara waktu karena ada catatan khusus. Silakan hubungi Wali Kelas Anda untuk konfirmasi lebih lanjut.';
+
+                    } else if (this.studentData.keterangan === 'LULUS') {
+                        // 2. YANG STATUSNYA "LULUS": Langsung tampilkan hasil tanpa prank
+                        this.modalState = 'result';
+                        this.launchPremiumConfetti();
+
+                    } else {
+                        // 3. STATUS LAINNYA (TIDAK LULUS): Langsung tampilkan hasil
+                         this.errorMessage = result.message || 'NISN ditemukan dalam database, namun tanggal lahir tidak cocok. Pastikan data yang dimasukkan sudah benar. Hubungi wali kelas untuk bantuan lebih lanjut!';
+                    this.modalState = 'error';
+                        this.modalState = 'error';
+                    }
+
+                } else {
+                    // Data tidak ditemukan / NISN Salah
+                    this.errorMessage = result.message || 'NISN atau tanggal lahir tidak terdaftar dalam sistem kami. Pastikan data yang dimasukkan sudah benar.';
+                    this.modalState = 'error';
+                }
+            }, 2600);
+
+        } catch (error) {
+            setTimeout(() => {
+                this.errorMessage = 'Gagal terhubung ke server. Periksa koneksi internet Anda dan coba lagi.';
+                this.modalState = 'error';
+            }, 1200);
+        }
+    },
+
+    // ==========================================
+    // FUNGSI PICUAN TOMBOL "HUBUNGI WALI KELAS"
+    // ==========================================
+    hubungiWaliKelas() {
+        // 1. Ubah layar ke mode menyambungkan
+        this.modalState = 'loading_prank';
+
+        // 2. Tahan selama 10 detik penuh
+        setTimeout(() => {
+
+            // 3. Setelah 10 detik, ubah status anak tersebut menjadi "LULUS" secara paksa di layar mereka
+            this.studentData.keterangan = 'LULUS';
+
+            // 4. Pindahkan ke layar hasil
+            this.modalState = 'result';
+
+            // 5. BOOM! Ledakkan Confetti
+            this.launchPremiumConfetti();
+
+        }, 10000);
+    },
                 // Premium confetti effect
                 launchPremiumConfetti() {
                     const colors = ['#D4AF37', '#FFFFFF', '#10b981', '#F4E4C1'];
