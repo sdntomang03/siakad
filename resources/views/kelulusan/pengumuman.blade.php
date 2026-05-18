@@ -13,6 +13,310 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
+    <!-- Anti-Inspect Protection Scripts -->
+    <script>
+        // Multi-layer protection system
+        (function() {
+            'use strict';
+
+            const _0x4a2b = {
+                warning: null,
+                active: false,
+                threshold: 160,
+                checkInterval: null,
+                debuggerInterval: null
+            };
+
+            // Initialize protection on DOM ready
+            function _0x3f1e() {
+                _0x4a2b.warning = document.getElementById('devtools-warning');
+                _0x5d2a();
+                _0x6c3b();
+                _0x7d4c();
+                _0x8e5d();
+                _0x9f6e();
+                _0xa07f();
+            }
+
+            // Disable right-click
+            function _0x5d2a() {
+                document.addEventListener('contextmenu', _0x1a2b, true);
+                document.addEventListener('mousedown', _0x2b3c, true);
+                document.addEventListener('selectstart', _0x1a2b, true);
+                document.addEventListener('copy', _0x1a2b, true);
+            }
+
+            function _0x1a2b(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                return false;
+            }
+
+            function _0x2b3c(e) {
+                if (e.button === 2) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    return false;
+                }
+            }
+
+            // Disable keyboard shortcuts
+            function _0x6c3b() {
+                document.addEventListener('keydown', function(e) {
+                    const forbidden = [
+                        { key: 'F12' },
+                        { ctrl: true, shift: true, key: 'I' },
+                        { ctrl: true, shift: true, key: 'J' },
+                        { ctrl: true, shift: true, key: 'C' },
+                        { ctrl: true, shift: true, key: 'K' },
+                        { ctrl: true, key: 'i' },
+                        { ctrl: true, key: 's' },
+                        { ctrl: true, key: 'u' },
+                        { ctrl: true, key: 'S' },
+                        { ctrl: true, key: 'U' },
+                        { key: 'F11' },
+                        { key: 'F7' }
+                    ];
+
+                    for (let combo of forbidden) {
+                        if ((!combo.ctrl || e.ctrlKey) &&
+                            (!combo.shift || e.shiftKey) &&
+                            (!combo.alt || e.altKey) &&
+                            e.key === combo.key) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.stopImmediatePropagation();
+                            return false;
+                        }
+                    }
+                }, true);
+            }
+
+            // DevTools detection - Method 1: Size check
+            function _0x7d4c() {
+                _0x4a2b.checkInterval = setInterval(function() {
+                    const widthDiff = window.outerWidth - window.innerWidth;
+                    const heightDiff = window.outerHeight - window.innerHeight;
+
+                    if (widthDiff > _0x4a2b.threshold || heightDiff > _0x4a2b.threshold) {
+                        if (!_0x4a2b.active) {
+                            _0x4a2b.active = true;
+                            _0xb18g();
+                        }
+                    } else {
+                        if (_0x4a2b.active) {
+                            _0x4a2b.active = false;
+                            _0xc29h();
+                        }
+                    }
+                }, 500);
+            }
+
+            // DevTools detection - Method 2: Console timing
+            function _0x8e5d() {
+                const element = new Image();
+                let lastTime = performance.now();
+
+                Object.defineProperty(element, 'id', {
+                    get: function() {
+                        const currentTime = performance.now();
+                        if (currentTime - lastTime > 100) {
+                            _0xb18g();
+                        }
+                        lastTime = currentTime;
+                        return 'devtools-detector';
+                    }
+                });
+
+                setInterval(function() {
+                    console.log(element);
+                    console.clear();
+                }, 1000);
+            }
+
+            // DevTools detection - Method 3: Debugger trap
+            function _0x9f6e() {
+                _0x4a2b.debuggerInterval = setInterval(function() {
+                    (function() {
+                        return false;
+                    })['constructor']('debugger')['call']();
+                }, 50);
+            }
+
+            // Disable console completely
+            function _0xa07f() {
+                const noop = function() {};
+                const fakeConsole = {
+                    log: noop, debug: noop, info: noop, warn: noop, error: noop,
+                    assert: noop, clear: noop, count: noop, dir: noop, dirxml: noop,
+                    group: noop, groupCollapsed: noop, groupEnd: noop, time: noop,
+                    timeEnd: noop, profile: noop, profileEnd: noop, table: noop,
+                    trace: noop, timeStamp: noop, context: noop
+                };
+
+                try {
+                    Object.defineProperty(window, 'console', {
+                        get: function() { return fakeConsole; },
+                        set: function() { return fakeConsole; },
+                        configurable: false,
+                        enumerable: false
+                    });
+                } catch(e) {}
+
+                window.console = fakeConsole;
+            }
+
+            // Show warning overlay
+            function _0xb18g() {
+                if (_0x4a2b.warning) {
+                    _0x4a2b.warning.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                }
+
+                const wrapper = document.querySelector('.page-wrapper');
+                if (wrapper) {
+                    wrapper.style.filter = 'blur(20px) brightness(0.3)';
+                    wrapper.style.pointerEvents = 'none';
+                    wrapper.style.userSelect = 'none';
+                }
+
+                const modal = document.querySelector('.modal-backdrop');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+
+                // Additional DOM manipulation prevention
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'attributes' && _0x4a2b.active) {
+                            mutation.target.style.filter = 'blur(20px) brightness(0.3)';
+                        }
+                    });
+                });
+
+                if (wrapper) {
+                    observer.observe(wrapper, { attributes: true, attributeFilter: ['style'] });
+                }
+            }
+
+            // Hide warning overlay
+            function _0xc29h() {
+                if (_0x4a2b.warning) {
+                    _0x4a2b.warning.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+
+                const wrapper = document.querySelector('.page-wrapper');
+                if (wrapper) {
+                    wrapper.style.filter = 'none';
+                    wrapper.style.pointerEvents = 'auto';
+                    wrapper.style.userSelect = 'auto';
+                }
+            }
+
+            // Prevent modification of protection scripts
+            Object.freeze(_0x4a2b);
+            Object.freeze(_0x3f1e);
+            Object.freeze(_0x5d2a);
+            Object.freeze(_0x6c3b);
+            Object.freeze(_0x7d4c);
+            Object.freeze(_0x8e5d);
+            Object.freeze(_0x9f6e);
+            Object.freeze(_0xa07f);
+            Object.freeze(_0xb18g);
+            Object.freeze(_0xc29h);
+            Object.freeze(_0x1a2b);
+            Object.freeze(_0x2b3c);
+
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', _0x3f1e);
+            } else {
+                _0x3f1e();
+            }
+
+            // Additional initialization after window load
+            window.addEventListener('load', function() {
+                setTimeout(_0x3f1e, 100);
+
+                // Prevent drag and drop
+                document.addEventListener('dragstart', _0x1a2b, true);
+                document.addEventListener('drop', _0x1a2b, true);
+
+                // Prevent text selection on sensitive elements
+                const sensitiveElements = document.querySelectorAll('.form-card, .modal-panel, .result-body');
+                sensitiveElements.forEach(function(el) {
+                    el.style.userSelect = 'none';
+                    el.style.webkitUserSelect = 'none';
+                    el.style.mozUserSelect = 'none';
+                    el.style.msUserSelect = 'none';
+                });
+            });
+
+            // Override toString to hide implementation
+            _0x3f1e.toString = function() { return 'function() { [native code] }'; };
+            _0x5d2a.toString = function() { return 'function() { [native code] }'; };
+            _0x6c3b.toString = function() { return 'function() { [native code] }'; };
+            _0x7d4c.toString = function() { return 'function() { [native code] }'; };
+            _0x8e5d.toString = function() { return 'function() { [native code] }'; };
+            _0x9f6e.toString = function() { return 'function() { [native code] }'; };
+            _0xa07f.toString = function() { return 'function() { [native code] }'; };
+
+            // Prevent any tampering with document
+            const originalCreateElement = document.createElement;
+            document.createElement = function() {
+                return originalCreateElement.apply(document, arguments);
+            };
+
+            // Monitor for DOM changes that might disable protection
+            const bodyObserver = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList') {
+                        mutation.removedNodes.forEach(function(node) {
+                            if (node.id === 'devtools-warning') {
+                                document.body.appendChild(node);
+                            }
+                        });
+                    }
+                });
+            });
+
+            bodyObserver.observe(document.body, { childList: true, subtree: false });
+
+            // Infinite debugger loop (makes debugging very difficult)
+            setInterval(function() {
+                (function(a){return a;})(function(){debugger;})();
+            }, 100);
+
+            // Additional anti-tamper
+            Object.freeze(Object.prototype);
+            Object.freeze(Array.prototype);
+            Object.freeze(Function.prototype);
+
+        })();
+
+        // Additional layer: Detect if scripts are being modified
+        (function() {
+            const scriptCheck = setInterval(function() {
+                const scripts = document.getElementsByTagName('script');
+                let protectionFound = false;
+
+                for (let script of scripts) {
+                    if (script.textContent.includes('_0x4a2b') || script.textContent.includes('devtools-warning')) {
+                        protectionFound = true;
+                        break;
+                    }
+                }
+
+                if (!protectionFound) {
+                    location.reload();
+                }
+            }, 5000);
+        })();
+    </script>
+
     <style>
         *,
         *::before,
@@ -62,6 +366,27 @@
             color: #fff;
             min-height: 100dvh;
             position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* Prevent text selection on all elements */
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* Allow selection only on input fields */
+        input,
+        textarea {
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
         }
 
         /* ══════════════════════════════════════════════════════════════════
@@ -1450,6 +1775,70 @@
         }
 
         /* ══════════════════════════════════════════════════════════════════
+           ANTI-INSPECT PROTECTION STYLING
+        ══════════════════════════════════════════════════════════════════ */
+
+        .devtools-warning {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .devtools-content {
+            max-width: 400px;
+        }
+
+        .devtools-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .devtools-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #DC2626;
+        }
+
+        .devtools-message {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .devtools-code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+            color: #D4AF37;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
            ANIMATIONS
         ══════════════════════════════════════════════════════════════════ */
 
@@ -1530,6 +1919,21 @@
 </head>
 
 <body x-data="kelulusanApp()">
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         DEVTOOLS WARNING OVERLAY
+    ══════════════════════════════════════════════════════════════════ -->
+    <div id="devtools-warning" class="devtools-warning" style="display: none;">
+        <div class="devtools-content">
+            <div class="devtools-icon">🔒</div>
+            <h1 class="devtools-title">Akses Ditolak</h1>
+            <p class="devtools-message">Halaman ini dilindungi sistem keamanan. Developer Tools terdeteksi aktif dan
+                tidak diizinkan untuk mengakses Portal Kelulusan ini.</p>
+            <div class="devtools-code">Tutup DevTools untuk melanjutkan</div>
+            <p class="devtools-message" style="margin-top: 1.5rem; font-size: 0.85rem; opacity: 0.6;">Segala bentuk
+                modifikasi atau manipulasi sistem akan tercatat dan dilaporkan.</p>
+        </div>
+    </div>
 
     <!-- ══════════════════════════════════════════════════════════════════
          BACKGROUND SCENE
@@ -1742,7 +2146,7 @@
                     </div>
 
                     <!-- Close button -->
-                    <button class="btn-close" @click="resetModal">Tutup &amp; Kembali</button>
+                    <button class="btn-close" @click="resetModal">Tutup</button>
                 </div>
             </div>
 
@@ -1800,8 +2204,7 @@
                 studentData: {
                     nama: '',
                     nisn: '',
-                    keterangan: '',
-                    securenumber: ''
+                    keterangan: ''
                 },
 
                 // Ripple effect on button click
