@@ -1544,7 +1544,7 @@
         }
 
         .cert-desc {
-            font-size: 1.05rem;
+            font-size: 0.9rem;
             /* Ukuran diperbesar (setara ~16.8px) */
             line-height: 1.7;
             /* Jarak antar baris yang ideal untuk teks resmi */
