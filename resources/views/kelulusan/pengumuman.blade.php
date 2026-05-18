@@ -2027,7 +2027,7 @@
 
         <!-- Footer -->
         <div class="page-footer">
-            <p>Sistem Informasi Akademik &copy; 2026 · SDN Tomang 03 Pagi</p>
+            <p>Sistem Informasi Akademik &copy; 2026 · SDN Tomang 03</p>
         </div>
 
     </div>
