@@ -2138,7 +2138,7 @@
                             Keputusan bersifat resmi dan terverifikasi sistem.<br>
 
                             <span class="verification-wrapper"
-                                style="font-size: 0.75rem; color: #64748b; margin-top: 4px; display: block;">
+                                style="font-size: 0.75rem; color: #64748b; display: block;">
                                 ID Verifikasi: <span style="font-family: monospace; font-weight: 800; color: #4f46e5;"
                                     x-text="studentData.securenumber"></span>
                             </span>
