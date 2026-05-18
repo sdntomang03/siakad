@@ -79,7 +79,7 @@ class KelulusanController extends Controller
             // Format Hasil: SKL-2026-XXXX-XXXX (Contoh: SKL-2026-A8F2-C9D4)
             $year = date('Y');
             $part1 = strtoupper(substr($hash, 0, 4));
-            $part2 = strtoupper(substr($hash, 4, 4));
+            $part2 = strtoupper(substr($hash, 4, 8));
             $secureNumber = "SKL-{$year}-{$part1}-{$part2}";
 
             return response()->json([
