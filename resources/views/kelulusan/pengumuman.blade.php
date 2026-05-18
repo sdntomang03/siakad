@@ -2110,7 +2110,7 @@
                         'cert-box-ditunda': studentData.keterangan === 'DITUNDA'
                     }">
                         <p class="cert-desc">
-                            Berdasarkan Keputusan Rapat Pleno Dewan Guru SDN Tomang 03 Pagi Tahun Ajaran 2025/2026,
+                            Berdasarkan Keputusan Rapat Pleno Dewan Guru SD Negeri Tomang 03 Tahun Ajaran 2025/2026,
                             siswa tersebut dinyatakan:
                         </p>
                         <div class="cert-verdict" :class="{
