@@ -1996,7 +1996,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0" />
                         </svg>
-                        <input type="number" class="field-input" placeholder="10 digit NISN" inputmode="numeric"
+                        <input type="number" class="field-input" placeholder="Masukkan NISN" inputmode="numeric"
                             x-model="formData.nisn" required maxlength="10">
                     </div>
                 </div>
@@ -2134,9 +2134,7 @@
                             </svg>
                         </div>
                         <p class="seal-text">
-                            <strong>SDN Tomang 03 Pagi — Jakarta Barat</strong><br>
-                            Keputusan bersifat resmi dan terverifikasi sistem.<br>
-
+                            <strong>SD Negeri Tomang 03 | Jakarta</strong>
                             <span class="verification-wrapper"
                                 style="font-size: 0.75rem; color: #64748b; display: block;">
                                 ID Verifikasi: <span style="font-family: monospace; font-weight: 800; color: #4f46e5;"
