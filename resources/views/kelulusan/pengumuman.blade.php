@@ -1544,11 +1544,16 @@
         }
 
         .cert-desc {
-            font-size: 0.8rem;
-            line-height: 1.8;
-            color: rgba(10, 22, 40, 0.5);
-            margin-bottom: 1.5rem;
-            font-weight: 400;
+            font-size: 1.05rem;
+            /* Ukuran diperbesar (setara ~16.8px) */
+            line-height: 1.7;
+            /* Jarak antar baris yang ideal untuk teks resmi */
+            color: rgba(15, 23, 42, 0.8);
+            /* Warna dibuat lebih pekat dan tegas (Slate 800) */
+            margin-bottom: 2rem;
+            /* Memberi jarak aman ke tulisan status di bawahnya */
+            font-weight: 600;
+            /* Diubah ke Semi-Bold agar karakter Jakarta Sans lebih kuat */
         }
 
         .cert-verdict {
