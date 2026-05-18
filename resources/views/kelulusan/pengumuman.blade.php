@@ -1730,8 +1730,14 @@
                             </svg>
                         </div>
                         <p class="seal-text">
-                            <strong>SDN Tomang 03 Pagi — Jakarta Barat</strong>
-                            Keputusan bersifat resmi dan terverifikasi sistem.
+                            <strong>SDN Tomang 03 Pagi — Jakarta Barat</strong><br>
+                            Keputusan bersifat resmi dan terverifikasi sistem.<br>
+
+                            <span class="verification-wrapper"
+                                style="font-size: 0.75rem; color: #64748b; margin-top: 4px; display: block;">
+                                ID Verifikasi: <span style="font-family: monospace; font-weight: 800; color: #4f46e5;"
+                                    x-text="studentData.securenumber"></span>
+                            </span>
                         </p>
                     </div>
 
@@ -1794,7 +1800,8 @@
                 studentData: {
                     nama: '',
                     nisn: '',
-                    keterangan: ''
+                    keterangan: '',
+                    securenumber: ''
                 },
 
                 // Ripple effect on button click

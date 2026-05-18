@@ -69,14 +69,30 @@ class KelulusanController extends Controller
 
         // 3. Jika data cocok, kirim JSON sukses ke halaman pengumuman
         if ($data) {
+            // 1. Buat Salt Key unik (bisa disesuaikan bebas)
+            $salt = 'TOMANG03PAGI_SECURE_KEY';
+
+            // 2. Generate hash unik berdasarkan data siswa + salt
+            $hash = hash('sha256', $data->nisn.$data->tanggal_lahir.$salt);
+
+            // 3. Ambil potongan hash untuk dijadikan nomor verifikasi yang estetik
+            // Format Hasil: SKL-2026-XXXX-XXXX (Contoh: SKL-2026-A8F2-C9D4)
+            $year = date('Y');
+            $part1 = strtoupper(substr($hash, 0, 4));
+            $part2 = strtoupper(substr($hash, 4, 4));
+            $secureNumber = "SKL-{$year}-{$part1}-{$part2}";
+
             return response()->json([
                 'status' => 'success',
                 'data' => [
                     'nama' => $data->nama,
                     'nisn' => $data->nisn,
                     'keterangan' => $data->keterangan, // LULUS / TIDAK LULUS / DITUNDA
+                    'securenumber' => $secureNumber, // Nomor verifikasi unik
+
                 ],
             ]);
+
         }
 
         // 4. Jika data tidak ditemukan / salah ketik
