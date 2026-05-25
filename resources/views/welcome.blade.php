@@ -98,7 +98,7 @@
         </div>
 
         <div class="relative z-10">
-            <a :href="isFinished ? '{{ route('pengumuman') }}' : '#'"
+            <a :href="isFinished ? '{{ route('pengumuman.index') }}' : '#'"
                 class="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 rounded-2xl font-black text-lg transition-all duration-300 transform"
                 :class="isFinished
                             ? 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white shadow-xl shadow-indigo-200 hover:-translate-y-1 active:scale-95 cursor-pointer'
