@@ -126,7 +126,7 @@
                     // Format: Tahun-Bulan-TanggalTJam:Menit:Detik
                     // Contoh: 2026-06-15T10:00:00
                     // ========================================================
-                    targetDate: new Date("2026-06-15T10:00:00").getTime(),
+                    targetDate: new Date("2026-06-02T10:00:00").getTime(),
 
                     days: '00',
                     hours: '00',
