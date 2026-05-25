@@ -30,8 +30,8 @@
 
         .bg-pattern {
             background-color: #f8fafc;
-            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-            background-size: 20px 20px;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
         }
     </style>
 </head>
@@ -39,52 +39,86 @@
 <body class="bg-pattern min-h-screen flex items-center justify-center p-4 sm:p-6" x-data="countdownTimer()">
 
     <div
-        class="max-w-3xl w-full bg-white rounded-[2rem] sm:rounded-[3rem] shadow-2xl shadow-indigo-100/50 border border-slate-100 p-8 sm:p-12 relative overflow-hidden text-center">
+        class="max-w-3xl w-full bg-white/95 backdrop-blur-sm rounded-[2rem] sm:rounded-[3rem] shadow-2xl shadow-indigo-200/40 border border-white/50 p-6 sm:p-12 relative overflow-hidden text-center">
 
         <div
-            class="absolute -top-20 -left-20 w-64 h-64 bg-indigo-50 rounded-full blur-3xl opacity-60 pointer-events-none">
+            class="absolute -top-20 -left-20 w-72 h-72 bg-indigo-100 rounded-full blur-3xl opacity-50 pointer-events-none">
         </div>
         <div
-            class="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-50 rounded-full blur-3xl opacity-60 pointer-events-none">
+            class="absolute -bottom-20 -right-20 w-72 h-72 bg-blue-50 rounded-full blur-3xl opacity-60 pointer-events-none">
         </div>
 
         <div class="relative z-10">
             <div
-                class="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-3xl flex items-center justify-center text-4xl sm:text-5xl mx-auto mb-6 shadow-lg shadow-indigo-200 rotate-3 transform hover:rotate-0 transition-transform">
-                <i class="fas fa-graduation-cap -rotate-3"></i>
+                class="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-3xl flex items-center justify-center text-4xl sm:text-5xl mx-auto mb-6 shadow-xl shadow-slate-200 transform hover:scale-105 transition-transform duration-300">
+                <i class="fas fa-graduation-cap"></i>
             </div>
 
-            <h2 class="text-sm font-bold text-indigo-600 uppercase tracking-widest mb-2">Sistem Informasi Akademik</h2>
+            <div
+                class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-4 border border-indigo-100">
+                <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                Tahun Ajaran 2025/2026
+            </div>
+
             <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-800 tracking-tight mb-2">
                 Pengumuman Kelulusan
             </h1>
-            <p class="text-slate-500 font-medium text-lg sm:text-xl mb-8">
-                SDN Tomang 03 Pagi - Tahun Ajaran 2025/2026
+            <p class="text-slate-500 font-bold text-base sm:text-lg mb-8 uppercase tracking-widest">
+                SDN Tomang 03 Pagi
             </p>
         </div>
 
-        <div class="grid grid-cols-4 gap-3 sm:gap-6 max-w-2xl mx-auto mb-10 relative z-10" x-show="!isFinished"
+        <div
+            class="max-w-2xl mx-auto mb-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/60 rounded-2xl p-4 sm:p-5 flex items-start sm:items-center gap-4 text-left shadow-sm relative overflow-hidden z-10 transition-all hover:shadow-md">
+            <div class="absolute -right-4 -top-4 w-20 h-20 bg-amber-100/50 rounded-full blur-xl pointer-events-none">
+            </div>
+
+            <div
+                class="w-12 h-12 rounded-xl bg-white text-amber-500 flex items-center justify-center shrink-0 shadow-sm border border-amber-100">
+                <i class="fas fa-calendar-alt text-xl"></i>
+            </div>
+
+            <div class="flex-1">
+                <h3 class="text-amber-800 font-black text-xs sm:text-sm uppercase tracking-wider mb-1">Informasi Jadwal
+                    Rilis</h3>
+                <p class="text-amber-700/90 text-xs sm:text-sm font-semibold leading-relaxed">
+                    Akses sistem pengumuman kelulusan akan resmi dibuka pada <br class="hidden sm:block">
+                    <strong class="font-black text-amber-900 bg-amber-200/30 px-1 rounded">Selasa, 2 Juni 2026 pukul
+                        10.00 WIB</strong>.
+                </p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-4 gap-3 sm:gap-5 max-w-2xl mx-auto mb-10 relative z-10" x-show="!isFinished"
             x-transition>
 
-            <div class="bg-slate-50 rounded-2xl border border-slate-100 p-3 sm:p-4 shadow-sm">
-                <div class="text-3xl sm:text-5xl font-black text-slate-800 mb-1" x-text="days">00</div>
-                <div class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Hari</div>
+            <div
+                class="bg-white rounded-2xl border-2 border-slate-100 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-center">
+                <div class="text-3xl sm:text-5xl font-black text-slate-800 mb-1 font-mono tracking-tighter"
+                    x-text="days">00</div>
+                <div class="text-[9px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">Hari</div>
             </div>
 
-            <div class="bg-slate-50 rounded-2xl border border-slate-100 p-3 sm:p-4 shadow-sm">
-                <div class="text-3xl sm:text-5xl font-black text-slate-800 mb-1" x-text="hours">00</div>
-                <div class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Jam</div>
+            <div
+                class="bg-white rounded-2xl border-2 border-slate-100 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-center">
+                <div class="text-3xl sm:text-5xl font-black text-slate-800 mb-1 font-mono tracking-tighter"
+                    x-text="hours">00</div>
+                <div class="text-[9px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">Jam</div>
             </div>
 
-            <div class="bg-slate-50 rounded-2xl border border-slate-100 p-3 sm:p-4 shadow-sm">
-                <div class="text-3xl sm:text-5xl font-black text-slate-800 mb-1" x-text="minutes">00</div>
-                <div class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Menit</div>
+            <div
+                class="bg-white rounded-2xl border-2 border-slate-100 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-center">
+                <div class="text-3xl sm:text-5xl font-black text-slate-800 mb-1 font-mono tracking-tighter"
+                    x-text="minutes">00</div>
+                <div class="text-[9px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">Menit</div>
             </div>
 
-            <div class="bg-slate-50 rounded-2xl border border-slate-100 p-3 sm:p-4 shadow-sm relative overflow-hidden">
-                <div class="absolute inset-0 bg-indigo-50 opacity-0 animate-ping"></div>
-                <div class="text-3xl sm:text-5xl font-black text-indigo-600 mb-1 relative" x-text="seconds">00</div>
-                <div class="text-[10px] sm:text-xs font-bold text-indigo-400 uppercase tracking-wider relative">Detik
+            <div
+                class="bg-gradient-to-b from-indigo-50 to-white rounded-2xl border-2 border-indigo-100 p-3 sm:p-5 shadow-sm relative overflow-hidden flex flex-col items-center justify-center">
+                <div class="absolute top-0 inset-x-0 h-1 bg-indigo-500"></div>
+                <div class="text-3xl sm:text-5xl font-black text-indigo-600 mb-1 font-mono tracking-tighter"
+                    x-text="seconds">00</div>
+                <div class="text-[9px] sm:text-xs font-bold text-indigo-400 uppercase tracking-widest relative">Detik
                 </div>
             </div>
 
@@ -92,27 +126,31 @@
 
         <div class="mb-10 relative z-10" x-show="isFinished" x-cloak x-transition.opacity.duration.1000ms>
             <div
-                class="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-6 py-3 rounded-full font-bold text-lg animate-bounce">
-                <i class="fas fa-unlock-alt"></i> Pengumuman Telah Dibuka!
+                class="inline-flex items-center gap-3 bg-emerald-50 border-2 border-emerald-200 text-emerald-700 px-6 py-4 rounded-2xl font-black text-lg shadow-sm">
+                <i class="fas fa-door-open text-2xl animate-bounce"></i>
+                <span>Gerbang Pengumuman Telah Dibuka!</span>
             </div>
         </div>
 
-        <div class="relative z-10">
+        <div class="relative z-10 max-w-md mx-auto">
             <a :href="isFinished ? '{{ route('pengumuman.index') }}' : '#'"
-                class="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 rounded-2xl font-black text-lg transition-all duration-300 transform"
+                class="w-full flex items-center justify-center gap-3 px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-black text-base sm:text-lg transition-all duration-300 transform group"
                 :class="isFinished
-                            ? 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white shadow-xl shadow-indigo-200 hover:-translate-y-1 active:scale-95 cursor-pointer'
-                            : 'bg-slate-100 text-slate-400 cursor-not-allowed'">
+                            ? 'bg-slate-900 hover:bg-black text-white shadow-xl shadow-slate-300 hover:-translate-y-1 active:scale-95 cursor-pointer'
+                            : 'bg-slate-50 text-slate-400 border-2 border-slate-100 cursor-not-allowed'">
 
-                <i class="fas" :class="isFinished ? 'fa-search' : 'fa-lock'"></i>
+                <i class="fas transition-transform duration-300"
+                    :class="isFinished ? 'fa-arrow-right group-hover:translate-x-1' : 'fa-lock'"></i>
                 <span x-text="isFinished ? 'Cek Hasil Kelulusan Sekarang' : 'Menunggu Waktu Rilis...'"></span>
             </a>
 
-            <p class="mt-6 text-sm font-medium text-slate-500" x-show="!isFinished">
-                Silakan kembali lagi saat waktu hitung mundur selesai.
+            <p class="mt-5 text-xs sm:text-sm font-bold text-slate-400" x-show="!isFinished">
+                <i class="fas fa-info-circle mr-1"></i> Silakan kembali lagi saat hitung mundur selesai.
             </p>
-            <p class="mt-6 text-sm font-medium text-slate-500" x-show="isFinished" x-cloak>
-                Siapkan NISN dan Tanggal Lahir Anda untuk melihat hasil.
+            <p class="mt-5 text-xs sm:text-sm font-bold text-slate-500 bg-slate-50 py-2 rounded-lg border border-slate-100"
+                x-show="isFinished" x-cloak>
+                <i class="fas fa-id-card text-slate-400 mr-1"></i> Siapkan <span class="text-slate-700">NISN</span> dan
+                <span class="text-slate-700">Tanggal Lahir</span> Anda.
             </p>
         </div>
 
@@ -121,11 +159,7 @@
     <script>
         function countdownTimer() {
                 return {
-                    // ========================================================
-                    // UBAH TANGGAL DAN WAKTU PENGUMUMAN DI SINI
-                    // Format: Tahun-Bulan-TanggalTJam:Menit:Detik
-                    // Contoh: 2026-06-15T10:00:00
-                    // ========================================================
+                    // Target disetel ke 2 Juni 2026 Pukul 10:00:00
                     targetDate: new Date("2026-06-02T10:00:00").getTime(),
 
                     days: '00',
