@@ -128,7 +128,7 @@
             <div
                 class="inline-flex items-center gap-3 bg-emerald-50 border-2 border-emerald-200 text-emerald-700 px-6 py-4 rounded-2xl font-black text-lg shadow-sm">
                 <i class="fas fa-door-open text-2xl animate-bounce"></i>
-                <span>Gerbang Pengumuman Telah Dibuka!</span>
+                <span>Pengumuman Telah Dibuka!</span>
             </div>
         </div>
 
@@ -160,7 +160,7 @@
         function countdownTimer() {
                 return {
                     // Target disetel ke 2 Juni 2026 Pukul 10:00:00
-                    targetDate: new Date("2026-05-25T15:50:00").getTime(),
+                    targetDate: new Date("2026-06-02T10:00:00").getTime(),
 
                     days: '00',
                     hours: '00',
