@@ -160,7 +160,7 @@
         function countdownTimer() {
                 return {
                     // Target disetel ke 2 Juni 2026 Pukul 10:00:00
-                    targetDate: new Date("2026-06-02T10:00:00").getTime(),
+                    targetDate: new Date("2026-05-25T15:50:00").getTime(),
 
                     days: '00',
                     hours: '00',
