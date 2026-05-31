@@ -22,7 +22,16 @@ Route::get('/', function () {
 
 });
 
-Route::get('/pengumuman', [KelulusanController::class, 'portalPengumuman'])->name('pengumuman.index');
+Route::get('/pengumuman', [KelulusanController::class, 'portalPengumuman'])
+    ->name('kelulusan.pengumuman');
+
+// 2. Memproses Data dari Form
+Route::post('/pengumuman/cek', [KelulusanController::class, 'cekKelulusan'])
+    ->name('kelulusan.cek');
+
+// 3. Menampilkan Halaman Hasil (Hanya terbuka jika data disubmit)
+Route::get('/pengumuman/hasil', [KelulusanController::class, 'halamanHasil'])
+    ->name('kelulusan.hasil');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
