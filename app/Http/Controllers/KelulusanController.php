@@ -49,57 +49,51 @@ class KelulusanController extends Controller
     }
 
     /**
-     * MENGECEK KELULUSAN VIA API / AJAX (UNTUK SISWA)
+     * MEMPROSES FORM PENCARIAN
      */
     public function cekKelulusan(Request $request)
     {
-        // 1. Validasi inputan dari form Alpine.js
         $request->validate([
             'nisn' => 'required',
             'tanggal_lahir' => 'required|date',
         ]);
 
-        // 2. Cari data berdasarkan NISN dan Tanggal Lahir
-        // Kita gunakan withoutGlobalScope('school') agar siswa dari luar
-        // tetap bisa membaca datanya meskipun mereka tidak login.
         $data = Kelulusan::withoutGlobalScope('school')
             ->where('nisn', $request->nisn)
             ->where('tanggal_lahir', $request->tanggal_lahir)
             ->first();
 
-        // 3. Jika data cocok, kirim JSON sukses ke halaman pengumuman
         if ($data) {
-            // 1. Buat Salt Key unik (bisa disesuaikan bebas)
+            // Buat nomor verifikasi
             $salt = 'TOMANG03PAGI_SECURE_KEY';
-
-            // 2. Generate hash unik berdasarkan data siswa + salt
             $hash = hash('sha256', $data->nisn.$data->tanggal_lahir.$salt);
-
-            // 3. Ambil potongan hash untuk dijadikan nomor verifikasi yang estetik
-            // Format Hasil: SKL-2026-XXXX-XXXX (Contoh: SKL-2026-A8F2-C9D4)
             $year = date('Y');
             $part1 = strtoupper(substr($hash, 0, 4));
             $part2 = strtoupper(substr($hash, 4, 8));
             $secureNumber = "SKL-{$year}-{$part1}-{$part2}";
 
-            return response()->json([
-                'status' => 'success',
-                'data' => [
-                    'nama' => $data->nama,
-                    'nisn' => $data->nisn,
-                    'keterangan' => $data->keterangan, // LULUS / TIDAK LULUS / DITUNDA
-                    'securenumber' => $secureNumber, // Nomor verifikasi unik
-
-                ],
+            // Simpan data di session (hanya berlaku 1x request) lalu arahkan ke halaman hasil
+            return redirect()->route('kelulusan.hasil')->with([
+                'studentData' => $data,
+                'secureNumber' => $secureNumber,
             ]);
-
         }
 
-        // 4. Jika data tidak ditemukan / salah ketik
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Data tidak ditemukan. Pastikan NISN dan Tanggal Lahir (Sesuai ijazah) sudah benar.',
-        ], 404);
+        // Jika salah, kembali ke halaman input dengan pesan error
+        return redirect()->back()->with('error', 'NISN atau Tanggal Lahir tidak terdaftar. Pastikan data sudah benar!');
+    }
+
+    /**
+     * MENAMPILKAN HALAMAN HASIL
+     */
+    public function halamanHasil()
+    {
+        // Cegah akses langsung URL jika belum mengisi form
+        if (! session('studentData')) {
+            return redirect()->route('kelulusan.pengumuman');
+        }
+
+        return view('kelulusan.hasil');
     }
 
     public function deleteAll()

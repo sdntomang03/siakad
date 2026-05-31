@@ -4,10 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Portal Kelulusan — SDN Tomang 03 Pagi</title>
+    <title>Hasil Kelulusan — SDN Tomang 03 Pagi</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         *,
         *::before,
@@ -1614,7 +1616,7 @@
     </style>
 </head>
 
-<body>
+<body x-data="hasilApp()">
     <div class="bg-scene">
         <div class="grid-overlay"></div>
         <div class="light-rays"></div>
@@ -1625,79 +1627,116 @@
     </div>
 
     <div class="page-wrapper">
-        <div class="school-badge">
-            <div class="badge-emblem">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                </svg>
-            </div>
-            <div class="badge-text">
-                <div class="badge-name">SDN Tomang 03 Pagi</div>
-                <div class="badge-sub">Jakarta Barat</div>
-            </div>
-        </div>
+        <div class="modal-panel"
+            :class="(state === 'error' || studentData.keterangan === 'TIDAK LULUS') ? 'shake-error' : ''">
 
-        <div class="divider-ornament">
-            <div class="line"></div>
-            <div class="diamond"></div>
-            <div class="line"></div>
-        </div>
-
-        <div class="headline-block">
-            <p class="headline-label">Pengumuman Resmi</p>
-            <h1 class="headline-title">Portal Kelulusan</h1>
-            <span class="headline-year">Tahun Ajaran 2025 / 2026</span>
-        </div>
-
-        <div class="form-card">
-            <div class="card-intro">
-                <p>Masukkan NISN dan tanggal lahir siswa untuk mengetahui status kelulusan secara resmi dan
-                    terverifikasi.</p>
-            </div>
-
-            @if(session('error'))
-            <div
-                style="background: rgba(220, 38, 38, 0.15); border: 1px solid rgba(220, 38, 38, 0.4); color: #fca5a5; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: center; font-size: 0.85rem; font-weight: 500;">
-                {{ session('error') }}
-            </div>
-            @endif
-
-            <form action="{{ route('kelulusan.cek') }}" method="POST">
-                @csrf
-                <div class="field-group">
-                    <label class="field-label">NISN Siswa</label>
-                    <div class="field-wrap">
-                        <svg class="field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0" />
-                        </svg>
-                        <input type="number" name="nisn" class="field-input" placeholder="Masukkan NISN" required
-                            maxlength="10">
+            <div x-show="state === 'loading'" class="state-loading">
+                <div class="scanner">
+                    <div class="scanner-ring"></div>
+                    <div class="scanner-ring-spin"></div>
+                    <div class="scanner-ring-slow"></div>
+                    <div class="scanner-dot">
+                        <div class="scanner-dot-inner"></div>
                     </div>
                 </div>
-
-                <div class="field-group">
-                    <label class="field-label">Tanggal Lahir</label>
-                    <div class="field-wrap">
-                        <svg class="field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <input type="date" name="tanggal_lahir" class="field-input" required>
-                    </div>
+                <p class="loading-title">Memverifikasi</p>
+                <p class="loading-sub">Menghubungkan ke database</p>
+                <div class="progress-track">
+                    <div class="progress-fill"></div>
                 </div>
+            </div>
 
-                <button type="submit" class="btn-submit">
-                    <div class="btn-inner">Verifikasi Status Kelulusan</div>
+            <div x-show="state === 'result'" class="state-result" style="display: none;">
+                <div class="result-band"
+                    :class="{ 'band-lulus': studentData.keterangan === 'LULUS', 'band-tidak': studentData.keterangan === 'TIDAK LULUS' }">
+                </div>
+                <div class="result-body">
+                    <div class="result-stamp-area">
+                        <div class="stamp" :class="studentData.keterangan === 'LULUS' ? 'stamp-lulus' : 'stamp-tidak'">
+                            <template x-if="studentData.keterangan === 'LULUS'">
+                                <svg style="width:48px;height:48px;color:#047857;" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                                </svg>
+                            </template>
+                            <template x-if="studentData.keterangan !== 'LULUS'">
+                                <svg style="width:48px;height:48px;color:#be123c;" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </template>
+                        </div>
+                    </div>
+
+                    <p class="result-label">Atas Nama</p>
+                    <h2 class="result-name" x-text="studentData.nama"></h2>
+                    <p class="result-nisn">NISN &nbsp;·&nbsp; <span x-text="studentData.nisn"></span></p>
+
+                    <div class="cert-box"
+                        :class="{ 'cert-box-lulus': studentData.keterangan === 'LULUS', 'cert-box-tidak': studentData.keterangan === 'TIDAK LULUS' }">
+                        <p class="cert-desc">Berdasarkan Keputusan Rapat Pleno Dewan Guru SD Negeri Tomang 03, siswa
+                            tersebut dinyatakan:</p>
+                        <div class="cert-verdict"
+                            :class="{'verdict-lulus': studentData.keterangan === 'LULUS', 'verdict-tidak': studentData.keterangan === 'TIDAK LULUS'}"
+                            x-text="studentData.keterangan"></div>
+                    </div>
+
+                    <div class="seal-line">
+                        <div class="seal-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                        </div>
+                        <p class="seal-text">
+                            <strong>SD Negeri Tomang 03 | Jakarta</strong>
+                            <span class="verification-wrapper"
+                                style="font-size: 0.75rem; color: #64748b; display: block;">
+                                ID Verifikasi: <span style="font-family: monospace; font-weight: 800; color: #4f46e5;"
+                                    x-text="studentData.securenumber"></span>
+                            </span>
+                        </p>
+                    </div>
+
+                    <a href="{{ route('kelulusan.pengumuman') }}" class="btn-close"
+                        style="display:block; text-align:center; text-decoration:none; box-sizing:border-box;">Kembali</a>
+                </div>
+            </div>
+
+            <div x-show="state === 'ditunda'" class="state-error" style="display: none;">
+                <div class="error-icon"
+                    style="background-color: #fee2e2; color: #ef4444; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="error-title" style="color: #ef4444;">STATUS DITUNDA</h3>
+                <p class="error-msg">Mohon maaf, status kelulusan Anda DITUNDA sementara waktu. Silakan hubungi Wali
+                    Kelas.</p>
+
+                <button class="btn-retry" @click="hubungiWaliKelas()"
+                    style="background-color: #10b981; margin-top: 1.5rem;">
+                    Hubungi Wali Kelas
                 </button>
-            </form>
-        </div>
+            </div>
 
-        <div class="page-footer">
-            <p>Sistem Informasi Akademik &copy; 2026 · SDN Tomang 03</p>
+            <div x-show="state === 'loading_prank'" class="state-error" style="padding-top: 2rem; display: none;">
+                <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem auto; position: relative;">
+                    <div style="position: absolute; inset: 0; border: 4px solid #f1f5f9; border-radius: 50%;"></div>
+                    <div
+                        style="position: absolute; inset: 0; border: 4px solid #6366f1; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite;">
+                    </div>
+                </div>
+                <h3 class="error-title">Menyambungkan...</h3>
+                <p class="error-msg">Sedang mengirim log data ke sistem Wali Kelas...</p>
+            </div>
+
         </div>
     </div>
+
     <script>
         // ══════════════════════════════════════════════════════════════════
         // FLOATING PARTICLES INITIALIZATION
