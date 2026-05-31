@@ -92,6 +92,24 @@
             border: 1px solid #ccc;
             padding: 2px;
         }
+
+        /* Gaya untuk Footer Token Legalitas */
+        .footer-dokumen {
+            margin-top: 80px;
+            border-top: 1px dashed #555;
+            padding-top: 10px;
+            text-align: center;
+            font-size: 9pt;
+            color: #444;
+            font-family: 'Courier New', Courier, monospace;
+            /* Font mesin ketik agar terkesan sistem */
+        }
+
+        .footer-dokumen strong {
+            color: #000;
+            font-size: 10pt;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 
@@ -111,7 +129,7 @@
         <tr>
             <td>Nama Siswa</td>
             <td>:</td>
-            <td><strong>{{ $data->nama }}</strong></td>
+            <td><strong>{{ strtoupper($data->nama) }}</strong></td>
         </tr>
         <tr>
             <td>NISN</td>
@@ -149,6 +167,17 @@
             <p style="margin: 0;">NIP. 196805051993032010</p>
         </div>
         <div class="clear"></div>
+    </div>
+
+    @php
+    $salt = 'TOMANG03PAGI_SECURE_KEY';
+    $hash = hash('sha256', $data->nisn.$data->tanggal_lahir.$salt);
+    $secureNumber = "SKL-2026-" . strtoupper(substr($hash, 0, 4)) . "-" . strtoupper(substr($hash, 4, 8));
+    @endphp
+
+    <div class="footer-dokumen">
+        Dokumen ini diterbitkan secara sah oleh Sistem Akademik SD Negeri Tomang 03 Pagi.<br>
+        Tanda Tangan Elektronik terenkripsi. ID Dokumen: <strong>{{ $secureNumber }}</strong>
     </div>
 
 </body>
