@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Imports\KelulusanImport;
 use App\Models\Kelulusan;
+use Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Maatwebsite\Excel\Facades\Excel;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class KelulusanController extends Controller
 {
@@ -64,23 +67,22 @@ class KelulusanController extends Controller
             ->first();
 
         if ($data) {
-            // Buat nomor verifikasi
             $salt = 'TOMANG03PAGI_SECURE_KEY';
             $hash = hash('sha256', $data->nisn.$data->tanggal_lahir.$salt);
             $year = date('Y');
-            $part1 = strtoupper(substr($hash, 0, 4));
-            $part2 = strtoupper(substr($hash, 4, 8));
-            $secureNumber = "SKL-{$year}-{$part1}-{$part2}";
+            $secureNumber = "SKL-{$year}-".strtoupper(substr($hash, 0, 4)).'-'.strtoupper(substr($hash, 4, 8));
 
-            // Simpan data di session (hanya berlaku 1x request) lalu arahkan ke halaman hasil
+            // BUAT TOKEN ENKRIPSI UNTUK URL DOWNLOAD DAN QR CODE
+            $token = Crypt::encryptString($data->nisn);
+
             return redirect()->route('kelulusan.hasil')->with([
                 'studentData' => $data,
                 'secureNumber' => $secureNumber,
+                'token' => $token, // Kirim token ke halaman hasil
             ]);
         }
 
-        // Jika salah, kembali ke halaman input dengan pesan error
-        return redirect()->back()->with('error', 'NISN atau Tanggal Lahir tidak terdaftar. Pastikan data sudah benar!');
+        return redirect()->back()->with('error', 'NISN atau Tanggal Lahir tidak terdaftar.');
     }
 
     /**
@@ -90,7 +92,7 @@ class KelulusanController extends Controller
     {
         // Cegah akses langsung URL jika belum mengisi form
         if (! session('studentData')) {
-            return redirect()->route('kelulusan.pengumuman');
+            return redirect()->route('pengumuman.index')->with('error', 'Silakan isi form pencarian terlebih dahulu untuk melihat hasilnya.');
         }
 
         return view('kelulusan.hasil');
@@ -123,5 +125,49 @@ class KelulusanController extends Controller
             'status' => 'success',
             'message' => 'Status kelulusan berhasil diperbarui.',
         ]);
+    }
+
+    /**
+     * FUNGSI UNTUK DOWNLOAD PDF
+     */
+    public function downloadSKL($token, PDF $pdf) // <-- Tambahkan parameter PDF $pdf di sini
+    {
+        try {
+            $nisn = Crypt::decryptString($token);
+            $data = Kelulusan::withoutGlobalScope('school')->where('nisn', $nisn)->firstOrFail();
+
+            if ($data->keterangan !== 'LULUS') {
+                abort(403, 'Akses Ditolak. Dokumen hanya untuk siswa yang lulus.');
+            }
+
+            $urlValidasi = route('kelulusan.validasi', $token);
+            $qrCode = base64_encode(QrCode::format('svg')->size(100)->generate($urlValidasi));
+
+            // Gunakan variabel $pdf langsung dari parameter (TIDAK ADA LAGI PANGGILAN STATIC :: )
+            $dokumen = $pdf->loadView('kelulusan.pdf', compact('data', 'qrCode', 'urlValidasi'));
+
+            $kertasF4 = [0, 0, 609.4488, 935.433];
+            $dokumen->setPaper($kertasF4, 'portrait');
+
+            return $dokumen->download('SKL_'.$data->nisn.'_'.$data->nama.'.pdf');
+
+        } catch (\Exception $e) {
+            abort(404, 'Dokumen tidak valid atau token kedaluwarsa.');
+        }
+    }
+
+    /**
+     * FUNGSI UNTUK HALAMAN VALIDASI QR CODE
+     */
+    public function validasiSKL($token)
+    {
+        try {
+            $nisn = Crypt::decryptString($token);
+            $data = Kelulusan::withoutGlobalScope('school')->where('nisn', $nisn)->firstOrFail();
+
+            return view('kelulusan.validasi', compact('data'));
+        } catch (\Exception $e) {
+            abort(404, 'Dokumen tidak valid atau tidak terdaftar di sistem kami.');
+        }
     }
 }

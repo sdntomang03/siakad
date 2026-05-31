@@ -823,7 +823,13 @@
 
                     <p class="result-label">Atas Nama</p>
                     <h2 class="result-name" x-text="studentData.nama"></h2>
-                    <p class="result-nisn">NISN &nbsp;·&nbsp; <span x-text="studentData.nisn"></span></p>
+
+                    <p class="result-nisn">
+                        NISN &nbsp;·&nbsp; <span x-text="studentData.nisn"></span> <br>
+                        <span style="font-size: 0.7rem; color: rgba(10, 22, 40, 0.45); text-transform: uppercase;">
+                            Lahir &nbsp;·&nbsp; <span x-text="studentData.tanggal_lahir"></span>
+                        </span>
+                    </p>
 
                     <div class="cert-box"
                         :class="{ 'cert-box-lulus': studentData.keterangan === 'LULUS', 'cert-box-tidak': studentData.keterangan !== 'LULUS' }">
@@ -833,6 +839,7 @@
                             :class="{'verdict-lulus': studentData.keterangan === 'LULUS', 'verdict-tidak': studentData.keterangan !== 'LULUS'}"
                             x-text="studentData.keterangan"></div>
                     </div>
+
 
                     <div class="seal-line">
                         <div class="seal-icon">
@@ -852,7 +859,19 @@
                         </p>
                     </div>
 
-                    <a href="{{ route('kelulusan.pengumuman') }}" class="btn-close">Kembali ke Halaman Awal</a>
+                    @if(session('studentData') && session('studentData')->keterangan === 'LULUS')
+                    <a href="{{ route('kelulusan.download', session('token')) }}"
+                        style="display:flex; align-items:center; justify-content:center; gap:0.5rem; width:100%; padding:1.125rem; background:#10b981; color:#fff; border-radius:12px; font-weight:600; text-decoration:none; margin-bottom:1rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+                        <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download Surat Kelulusan (PDF)
+                    </a>
+                    @endif
+
+
+                    <a href="{{ route('pengumuman.index') }}" class="btn-close">Kembali ke Halaman Awal</a>
                 </div>
             </div>
 
@@ -893,7 +912,6 @@
     </div>
 
     <script>
-        // Inisialisasi Floating Particles Background
         (function initParticles() {
             const container = document.getElementById('particles');
             if(!container) return;
@@ -914,28 +932,25 @@
             }
         })();
 
-        // Mendaftarkan Alpine Component Secara Global via Event Listener
-        // Sangat direkomendasikan agar tidak terjadi error "is not defined"
         document.addEventListener('alpine:init', () => {
             Alpine.data('hasilApp', () => ({
                 state: 'loading',
 
-                // Gunakan Helper @json bawaan Laravel agar output dari PHP otomatis aman untuk JS
                 studentData: {
                     nama: @json(session('studentData')->nama ?? ''),
                     nisn: @json(session('studentData')->nisn ?? ''),
+                    // MENGGUNAKAN CARBON UNTUK PARSING TANGGAL INDONESIA
+                    tanggal_lahir: @json(session('studentData') ? \Carbon\Carbon::parse(session('studentData')->tanggal_lahir)->locale('id')->translatedFormat('d F Y') : ''),
                     keterangan: @json(session('studentData')->keterangan ?? ''),
                     securenumber: @json(session('secureNumber') ?? '')
                 },
 
                 init() {
-                    // Redirect jika ada user masuk ke link ini langsung padahal tidak ada session
                     if(this.studentData.nisn === '') {
-                        window.location.href = "{{ route('kelulusan.pengumuman') }}";
+                        window.location.href = "{{ route('pengumuman.index') }}";
                         return;
                     }
 
-                    // Tahan efek Scanner selama 2.6 Detik
                     setTimeout(() => {
                         if (this.studentData.keterangan === 'DITUNDA') {
                             this.state = 'ditunda';
@@ -951,7 +966,6 @@
                 hubungiWaliKelas() {
                     this.state = 'loading_prank';
 
-                    // Delay prank "menyambungkan" 10 detik, lalu boom -> LULUS
                     setTimeout(() => {
                         this.studentData.keterangan = 'LULUS';
                         this.state = 'result';

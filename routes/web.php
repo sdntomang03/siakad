@@ -21,10 +21,14 @@ Route::get('/', function () {
     return view('welcome');
 
 });
+Route::get('/pengumuman', [KelulusanController::class, 'portalPengumuman'])->name('pengumuman.index');
+// Route untuk download PDF Surat Keterangan Lulus
+Route::get('/pengumuman/download-skl/{token}', [KelulusanController::class, 'downloadSKL'])
+    ->name('kelulusan.download');
 
-Route::get('/pengumuman', [KelulusanController::class, 'portalPengumuman'])
-    ->name('kelulusan.pengumuman');
-
+// Route untuk landing page ketika QR Code di-scan
+Route::get('/validasi-dokumen/{token}', [KelulusanController::class, 'validasiSKL'])
+    ->name('kelulusan.validasi');
 // 2. Memproses Data dari Form
 Route::post('/pengumuman/cek', [KelulusanController::class, 'cekKelulusan'])
     ->name('kelulusan.cek');
