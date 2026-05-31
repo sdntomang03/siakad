@@ -27,8 +27,10 @@ class KelulusanImport implements ToModel, WithHeadingRow
             'nama' => $row['nama'],
             'nisn' => $row['nisn'],
             'nipd' => $row['nipd'],
+            'tempat_lahir' => $row['tempat_lahir'] ?? null, // Tambahkan tempat_lahir
             'tanggal_lahir' => $tanggalLahir, // Gunakan variabel yang sudah diterjemahkan
             'kelas' => $row['kelas'],
+            'nomor_skl' => $row['nomor_skl'] ?? null,
             'keterangan' => strtoupper($row['keterangan']),
         ]);
     }

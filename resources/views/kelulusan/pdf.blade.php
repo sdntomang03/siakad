@@ -25,6 +25,12 @@
             font-size: 14pt;
         }
 
+        /* Styling untuk Nomor Surat */
+        .judul-surat p.nomor-surat {
+            margin: 5px 0 0 0;
+            font-size: 12pt;
+        }
+
         .tabel-biodata {
             width: 100%;
             margin-left: 20px;
@@ -95,6 +101,7 @@
 
     <div class="judul-surat">
         <h3>SURAT KETERANGAN LULUS</h3>
+        <p class="nomor-surat">Nomor: {{ $data->nomor_skl }}</p>
     </div>
 
     <p class="paragraf">Kepala SD Negeri Tomang 03 Pagi selaku Ketua Penyelenggara Ujian Sekolah Tahun Pelajaran
@@ -107,14 +114,15 @@
             <td><strong>{{ $data->nama }}</strong></td>
         </tr>
         <tr>
-            <td>Nomor Induk Siswa Nasional</td>
+            <td>NISN</td>
             <td>:</td>
             <td>{{ $data->nisn }}</td>
         </tr>
         <tr>
-            <td>Tanggal Lahir</td>
+            <td>Tempat, Tanggal Lahir</td>
             <td>:</td>
-            <td>{{ \Carbon\Carbon::parse($data->tanggal_lahir)->locale('id')->translatedFormat('d F Y') }}</td>
+            <td>{{ $data->tempat_lahir }}, {{
+                \Carbon\Carbon::parse($data->tanggal_lahir)->locale('id')->translatedFormat('d F Y') }}</td>
         </tr>
     </table>
 
@@ -128,7 +136,6 @@
 
     <div class="ttd-box">
         <div class="ttd-kiri">
-
         </div>
         <div class="ttd-kanan">
             <p>Jakarta, {{ \Carbon\Carbon::parse('2026-06-02')->locale('id')->translatedFormat('d F Y') }}<br>Kepala
@@ -138,11 +145,8 @@
                 <img class="qr-img" src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code">
             </div>
 
-            <p style="text-decoration: underline; font-weight: bold; margin-bottom: 0;">Limah Yuhana, S. Pd. MM
-            </p>
-            <p style="margin: 0;">NIP.
-                196805051993032010
-            </p>
+            <p style="text-decoration: underline; font-weight: bold; margin-bottom: 0;">Limah Yuhana, S. Pd. MM</p>
+            <p style="margin: 0;">NIP. 196805051993032010</p>
         </div>
         <div class="clear"></div>
     </div>

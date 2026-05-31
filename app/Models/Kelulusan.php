@@ -10,6 +10,6 @@ class Kelulusan extends Model
     use BelongsToSchool; // Pasang satpam otomatisnya di sini
 
     protected $fillable = [
-        'nama', 'nisn', 'nipd', 'tanggal_lahir', 'kelas', 'keterangan',
+        'nama', 'nisn', 'nipd', 'tanggal_lahir', 'kelas', 'keterangan', 'tempat_lahir', 'nomor_skl',
     ];
 }

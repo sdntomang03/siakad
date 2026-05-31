@@ -106,10 +106,14 @@
                             <li>Kolom harus berupa: <code
                                     class="bg-amber-100 px-1 py-0.5 rounded font-mono">nama</code>, <code
                                     class="bg-amber-100 px-1 py-0.5 rounded font-mono">nisn</code>, <code
-                                    class="bg-amber-100 px-1 py-0.5 rounded font-mono">nipd</code>, <code
+                                    class="bg-amber-100 px-1 py-0.5 rounded font-mono">nipd</code>,
+                                <code class="bg-amber-100 px-1 py-0.5 rounded font-mono">tempat_lahir</code>, <code
                                     class="bg-amber-100 px-1 py-0.5 rounded font-mono">tanggal_lahir</code>, <code
-                                    class="bg-amber-100 px-1 py-0.5 rounded font-mono">kelas</code>, dan <code
-                                    class="bg-amber-100 px-1 py-0.5 rounded font-mono">keterangan</code>.</li>
+                                    class="bg-amber-100 px-1 py-0.5 rounded font-mono">kelas</code>, <code
+                                    class="bg-amber-100 px-1 py-0.5 rounded font-mono">keterangan</code>, <code
+                                    class="bg-amber-100 px-1 py-0.5 rounded font-mono">tempat_lahir</code>, dan <code
+                                    class="bg-amber-100 px-1 py-0.5 rounded font-mono">nomor_skl</code>
+                                </. </li>
                             <li>Format <code class="bg-amber-100 px-1 py-0.5 rounded font-mono">tanggal_lahir</code>
                                 diubah ke tipe <b>Text</b> dengan format <code class="font-bold">YYYY-MM-DD</code>
                                 (Contoh: 2012-10-25).</li>
@@ -144,7 +148,8 @@
                                             <th class="p-2 border-r border-gray-200">C</th>
                                             <th class="p-2 border-r border-gray-200">D</th>
                                             <th class="p-2 border-r border-gray-200">E</th>
-                                            <th class="p-2">F</th>
+                                            <th class="p-2 border-r border-gray-200">F</th>
+                                            <th class="p-2 border-r border-gray-200">G</th>
                                         </tr>
                                         <tr class="bg-emerald-100 text-emerald-900 border-b border-emerald-200">
                                             <td
@@ -153,9 +158,11 @@
                                             <th class="p-2 border-r border-emerald-200 font-bold">nama</th>
                                             <th class="p-2 border-r border-emerald-200 font-bold">nisn</th>
                                             <th class="p-2 border-r border-emerald-200 font-bold">nipd</th>
+                                            <th class="p-2 border-r border-emerald-200 font-bold">tempat_lahir</th>
                                             <th class="p-2 border-r border-emerald-200 font-bold">tanggal_lahir</th>
                                             <th class="p-2 border-r border-emerald-200 font-bold">kelas</th>
-                                            <th class="p-2 font-bold">keterangan</th>
+                                            <th class="p-2 border-r border-emerald-200 font-bold">nomor_skl</th>
+                                            <th class="p-2 border-r border-emerald-200 font-bold">keterangan</th>
                                         </tr>
                                     </thead>
                                     <tbody class="text-gray-600 bg-white">
@@ -166,10 +173,16 @@
                                             <td class="p-2 border-r border-gray-100">Budi Santoso</td>
                                             <td class="p-2 border-r border-gray-100">0123456789</td>
                                             <td class="p-2 border-r border-gray-100">2021001</td>
+                                            <td class="p-2 border-r border-gray-100 font-mono text-blue-600">Jakarta
+                                            </td>
                                             <td class="p-2 border-r border-gray-100 font-mono text-blue-600">2014-05-24
                                             </td>
                                             <td class="p-2 border-r border-gray-100 text-center">6A</td>
-                                            <td class="p-2 font-bold text-emerald-600">LULUS</td>
+                                            <td class="p-2 border-r border-gray-100 font-mono text-blue-600">
+                                                SKL/001/2023</td>
+                                            <td class="p-2 border-r border-gray-100 font-mono text-blue-600">
+                                                LULUS
+                                            </td>
                                         </tr>
                                         <tr class="hover:bg-emerald-50 transition-colors">
                                             <td
@@ -178,10 +191,16 @@
                                             <td class="p-2 border-r border-gray-100">Siti Aminah</td>
                                             <td class="p-2 border-r border-gray-100">0123456788</td>
                                             <td class="p-2 border-r border-gray-100">2021002</td>
+                                            <td class="p-2 border-r border-gray-100 font-mono text-blue-600">Bandung
+                                            </td>
                                             <td class="p-2 border-r border-gray-100 font-mono text-blue-600">2014-08-17
                                             </td>
                                             <td class="p-2 border-r border-gray-100 text-center">6B</td>
-                                            <td class="p-2 font-bold text-amber-500">DITUNDA</td>
+                                            <td class="p-2 border-r border-gray-100 font-mono text-blue-600">
+                                                SKL/002/2023</td>
+                                            <td class="p-2 border-r border-gray-100 font-mono text-blue-600">
+                                                LULUS
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -200,8 +219,9 @@
                                     <th class="p-4">Nama Lengkap</th>
                                     <th class="p-4">NISN</th>
                                     <th class="p-4">Kelas</th>
+                                    <th class="p-4">Tempat Lahir</th>
                                     <th class="p-4">Tanggal Lahir</th>
-                                    <th class="p-4 text-center">Status</th>
+                                    <th class="p-4 text-center">Keterangan</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50 text-gray-600">
@@ -210,9 +230,10 @@
                                     <td class="p-4 font-medium text-gray-800">{{ $siswa->nama }}</td>
                                     <td class="p-4 font-mono text-xs">{{ $siswa->nisn }}</td>
                                     <td class="p-4 text-gray-500">{{ $siswa->kelas ?? '-' }}</td>
-                                    <td class="p-4 text-gray-500">{{
-                                        \Carbon\Carbon::parse($siswa->tanggal_lahir)->translatedFormat('d F Y') }}</td>
-
+                                    <td class="p-4 text-gray-500">{{ $siswa->tempat_lahir ?? '-' }}</td>
+                                    <td class="p-4">
+                                        {{ \Carbon\Carbon::parse($siswa->tanggal_lahir)->translatedFormat('d F Y') }}
+                                    </td>
                                     <td class="p-4"
                                         x-data="statusUpdater({{ $siswa->id }}, '{{ $siswa->keterangan }}')">
                                         <div class="relative flex items-center justify-center">

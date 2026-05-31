@@ -827,7 +827,7 @@
                     <p class="result-nisn">
                         NISN &nbsp;·&nbsp; <span x-text="studentData.nisn"></span> <br>
                         <span style="font-size: 0.7rem; color: rgba(10, 22, 40, 0.45); text-transform: uppercase;">
-                            Lahir &nbsp;·&nbsp; <span x-text="studentData.tanggal_lahir"></span>
+                            TTL &nbsp;·&nbsp; <span x-text="studentData.ttl"></span>
                         </span>
                     </p>
 
@@ -936,14 +936,17 @@
             Alpine.data('hasilApp', () => ({
                 state: 'loading',
 
-                studentData: {
-                    nama: @json(session('studentData')->nama ?? ''),
-                    nisn: @json(session('studentData')->nisn ?? ''),
-                    // MENGGUNAKAN CARBON UNTUK PARSING TANGGAL INDONESIA
-                    tanggal_lahir: @json(session('studentData') ? \Carbon\Carbon::parse(session('studentData')->tanggal_lahir)->locale('id')->translatedFormat('d F Y') : ''),
-                    keterangan: @json(session('studentData')->keterangan ?? ''),
-                    securenumber: @json(session('secureNumber') ?? '')
-                },
+         studentData: {
+    nama: @json(session('studentData')->nama ?? ''),
+    nisn: @json(session('studentData')->nisn ?? ''),
+
+    // GANTI BAGIAN INI MENJADI TTL (Menggabungkan tempat dan tanggal lahir)
+    ttl: @json(session('studentData') ? session('studentData')->tempat_lahir . ', ' . \Carbon\Carbon::parse(session('studentData')->tanggal_lahir)->locale('id')->translatedFormat('d F Y') : ''),
+
+    keterangan: @json(session('studentData')->keterangan ?? ''),
+    nomor_skl: @json(session('studentData')->nomor_skl ?? ''),
+    securenumber: @json(session('secureNumber') ?? '')
+},
 
                 init() {
                     if(this.studentData.nisn === '') {
