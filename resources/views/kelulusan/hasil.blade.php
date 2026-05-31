@@ -566,6 +566,7 @@
             line-height: 1.2;
             margin-bottom: 0.5rem;
             letter-spacing: 0.01em;
+            text-transform: uppercase;
         }
 
         .result-nisn {
@@ -713,20 +714,6 @@
             margin-bottom: 2.5rem;
         }
 
-        .btn-retry {
-            width: 100%;
-            padding: 1.125rem;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
         .shake-error {
             animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
         }
@@ -778,9 +765,11 @@
     </div>
 
     <div class="page-wrapper">
+        <!-- MODAL PANEL -->
         <div class="modal-panel"
             :class="(state === 'error' || studentData.keterangan === 'TIDAK LULUS') ? 'shake-error' : ''" x-cloak>
 
+            <!-- 1. LOADING MEMVERIFIKASI AWAL -->
             <div x-show="state === 'loading'" class="state-loading">
                 <div class="scanner">
                     <div class="scanner-ring"></div>
@@ -797,9 +786,10 @@
                 </div>
             </div>
 
+            <!-- 2. HASIL LULUS & TIDAK LULUS -->
             <div x-show="state === 'result'" class="state-result" style="display: none;">
                 <div class="result-band"
-                    :class="{ 'band-lulus': studentData.keterangan === 'LULUS', 'band-tidak': studentData.keterangan !== 'LULUS' }">
+                    :class="{ 'band-lulus': studentData.keterangan === 'LULUS', 'band-tidak': studentData.keterangan === 'TIDAK LULUS' }">
                 </div>
                 <div class="result-body">
                     <div class="result-stamp-area">
@@ -811,7 +801,7 @@
                                         d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                                 </svg>
                             </template>
-                            <template x-if="studentData.keterangan !== 'LULUS'">
+                            <template x-if="studentData.keterangan === 'TIDAK LULUS'">
                                 <svg style="width:48px;height:48px;color:#be123c;" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -832,14 +822,14 @@
                     </p>
 
                     <div class="cert-box"
-                        :class="{ 'cert-box-lulus': studentData.keterangan === 'LULUS', 'cert-box-tidak': studentData.keterangan !== 'LULUS' }">
+                        :class="{ 'cert-box-lulus': studentData.keterangan === 'LULUS', 'cert-box-tidak': studentData.keterangan === 'TIDAK LULUS' }">
                         <p class="cert-desc">Berdasarkan Keputusan Rapat Pleno Dewan Guru SD Negeri Tomang 03, siswa
                             tersebut dinyatakan:</p>
+                        <!-- PESAN WARNA MERAH UNTUK TIDAK LULUS -->
                         <div class="cert-verdict"
-                            :class="{'verdict-lulus': studentData.keterangan === 'LULUS', 'verdict-tidak': studentData.keterangan !== 'LULUS'}"
+                            :class="{'verdict-lulus': studentData.keterangan === 'LULUS', 'verdict-tidak': studentData.keterangan === 'TIDAK LULUS'}"
                             x-text="studentData.keterangan"></div>
                     </div>
-
 
                     <div class="seal-line">
                         <div class="seal-icon">
@@ -859,6 +849,7 @@
                         </p>
                     </div>
 
+                    <!-- TOMBOL DOWNLOAD HANYA MUNCUL JIKA LULUS -->
                     @if(session('studentData') && session('studentData')->keterangan === 'LULUS')
                     <a href="{{ route('kelulusan.download', session('token')) }}"
                         style="display:flex; align-items:center; justify-content:center; gap:0.5rem; width:100%; padding:1.125rem; background:#10b981; color:#fff; border-radius:12px; font-weight:600; text-decoration:none; margin-bottom:1rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
@@ -870,42 +861,24 @@
                     </a>
                     @endif
 
-
                     <a href="{{ route('pengumuman.index') }}" class="btn-close">Kembali ke Halaman Awal</a>
                 </div>
             </div>
 
+            <!-- 3. STATE DITUNDA (HANYA INFORMASI) -->
             <div x-show="state === 'ditunda'" class="state-error" style="display: none;">
-                <div class="error-icon"
-                    style="background-color: #fee2e2; color: #ef4444; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; border: 2px solid #ef4444;">
+                <div class="error-icon" style="background-color: #fee2e2; color: #ef4444; border: 2px solid #ef4444;">
                     <svg style="width:36px;height:36px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <h3 class="error-title" style="color: #ef4444;">STATUS DITUNDA</h3>
-                <p class="error-msg">Mohon maaf, status kelulusan Anda DITUNDA sementara waktu karena ada catatan
-                    khusus. Silakan hubungi Wali Kelas.</p>
+                <h3 class="error-title" style="color: #ef4444;">DATA TIDAK DITEMUKAN</h3>
+                <p class="error-msg">Mohon maaf, data tidak ditemukan. Silakan hubungi Wali Kelas Anda untuk informasi
+                    lebih lanjut.</p>
 
-                <button class="btn-retry" @click="hubungiWaliKelas()"
-                    style="background-color: #10b981; color:#fff; display:flex; align-items:center; justify-content:center; gap:0.5rem; margin-top: 1.5rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
-                    Hubungi Wali Kelas
-                </button>
-            </div>
-
-            <div x-show="state === 'loading_prank'" class="state-error" style="padding-top: 2rem; display: none;">
-                <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem auto; position: relative;">
-                    <div style="position: absolute; inset: 0; border: 4px solid #f1f5f9; border-radius: 50%;"></div>
-                    <div
-                        style="position: absolute; inset: 0; border: 4px solid #6366f1; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite;">
-                    </div>
-                </div>
-                <h3 class="error-title">Menyambungkan...</h3>
-                <p class="error-msg">Sedang mengirim log data ke sistem Wali Kelas dan memverifikasi berkas. Mohon
-                    tunggu...</p>
-                <p
-                    style="font-size: 0.75rem; font-weight: bold; color: #94a3b8; text-transform: uppercase; margin-top: 1rem;">
-                    Jangan Tutup Halaman Ini</p>
+                <a href="{{ route('pengumuman.index') }}" class="btn-close" style="margin-top: 1.5rem;">Kembali ke
+                    Halaman Awal</a>
             </div>
 
         </div>
@@ -936,17 +909,14 @@
             Alpine.data('hasilApp', () => ({
                 state: 'loading',
 
-         studentData: {
-    nama: @json(session('studentData')->nama ?? ''),
-    nisn: @json(session('studentData')->nisn ?? ''),
-
-    // GANTI BAGIAN INI MENJADI TTL (Menggabungkan tempat dan tanggal lahir)
-    ttl: @json(session('studentData') ? session('studentData')->tempat_lahir . ', ' . \Carbon\Carbon::parse(session('studentData')->tanggal_lahir)->locale('id')->translatedFormat('d F Y') : ''),
-
-    keterangan: @json(session('studentData')->keterangan ?? ''),
-    nomor_skl: @json(session('studentData')->nomor_skl ?? ''),
-    securenumber: @json(session('secureNumber') ?? '')
-},
+                studentData: {
+                    nama: @json(session('studentData')->nama ?? ''),
+                    nisn: @json(session('studentData')->nisn ?? ''),
+                    ttl: @json(session('studentData') ? session('studentData')->tempat_lahir . ', ' . \Carbon\Carbon::parse(session('studentData')->tanggal_lahir)->locale('id')->translatedFormat('d F Y') : ''),
+                    keterangan: @json(session('studentData')->keterangan ?? ''),
+                    nomor_skl: @json(session('studentData')->nomor_skl ?? ''),
+                    securenumber: @json(session('secureNumber') ?? '')
+                },
 
                 init() {
                     if(this.studentData.nisn === '') {
@@ -955,6 +925,7 @@
                     }
 
                     setTimeout(() => {
+                        // LOGIKA PENGECEKAN STATUS
                         if (this.studentData.keterangan === 'DITUNDA') {
                             this.state = 'ditunda';
                         } else {
@@ -964,16 +935,6 @@
                             }
                         }
                     }, 2600);
-                },
-
-                hubungiWaliKelas() {
-                    this.state = 'loading_prank';
-
-                    setTimeout(() => {
-                        this.studentData.keterangan = 'LULUS';
-                        this.state = 'result';
-                        this.launchPremiumConfetti();
-                    }, 10000);
                 },
 
                 launchPremiumConfetti() {

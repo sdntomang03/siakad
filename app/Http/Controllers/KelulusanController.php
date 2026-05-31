@@ -72,13 +72,12 @@ class KelulusanController extends Controller
             $year = date('Y');
             $secureNumber = "SKL-{$year}-".strtoupper(substr($hash, 0, 4)).'-'.strtoupper(substr($hash, 4, 8));
 
-            // BUAT TOKEN ENKRIPSI UNTUK URL DOWNLOAD DAN QR CODE
             $token = Crypt::encryptString($data->nisn);
 
             return redirect()->route('kelulusan.hasil')->with([
                 'studentData' => $data,
                 'secureNumber' => $secureNumber,
-                'token' => $token, // Kirim token ke halaman hasil
+                'token' => $token,
             ]);
         }
 
