@@ -165,7 +165,14 @@ class KelulusanController extends Controller
             $nisn = Crypt::decryptString($token);
             $data = Kelulusan::withoutGlobalScope('school')->where('nisn', $nisn)->firstOrFail();
 
-            return view('kelulusan.validasi', compact('data'));
+            // Generate ulang ID Validasi yang sama persis seperti di PDF & Halaman Hasil
+            $salt = 'TOMANG03PAGI_SECURE_KEY';
+            $hash = hash('sha256', $data->nisn.$data->tanggal_lahir.$salt);
+            $year = date('Y');
+            $secureNumber = "SKL-{$year}-".strtoupper(substr($hash, 0, 4)).'-'.strtoupper(substr($hash, 4, 8));
+
+            // Kirim variabel $secureNumber ke view
+            return view('kelulusan.validasi', compact('data', 'secureNumber'));
         } catch (\Exception $e) {
             abort(404, 'Dokumen tidak valid atau tidak terdaftar di sistem kami.');
         }

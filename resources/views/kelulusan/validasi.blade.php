@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifikasi Dokumen Kelulusan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=JetBrains+Mono:wght@700&display=swap"
+        rel="stylesheet">
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
@@ -89,6 +91,14 @@
             margin-bottom: 0;
         }
 
+        .nomor-validasi {
+            font-family: 'JetBrains Mono', monospace;
+            color: #4f46e5;
+            /* Warna indigo agar menonjol */
+            letter-spacing: 0.5px;
+            font-size: 1.05rem;
+        }
+
         .footer-note {
             font-size: 0.8rem;
             color: #94a3b8;
@@ -116,6 +126,9 @@
         </p>
 
         <div class="info-box">
+            <div class="info-label">ID Verifikasi</div>
+            <div class="info-value nomor-validasi">{{ $secureNumber }}</div>
+
             <div class="info-label">Nama Siswa</div>
             <div class="info-value">{{ $data->nama }}</div>
 
