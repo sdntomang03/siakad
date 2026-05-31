@@ -241,7 +241,8 @@
             <div class="info-label">Tempat, Tanggal Lahir</div>
             <div class="info-value">{{ $data->tempat_lahir }}, {{
                 \Carbon\Carbon::parse($data->tanggal_lahir)->locale('id')->translatedFormat('d F Y') }}</div>
-
+            <div class="info-label">Nomor SKL</div>
+            <div class="info-value">{{ $data->nomor_skl }}</div>
             <div class="info-label">Status Ketetapan</div>
             <div class="info-value status-lulus">
                 <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
