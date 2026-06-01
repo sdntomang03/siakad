@@ -234,7 +234,7 @@
             </div>
 
             <div class="info-label">Atas Nama</div>
-            <div class="info-value">{{ $data->nama }}</div>
+            <div class="info-value">{{ strtoupper($data->nama) }}</div>
 
             <div class="info-label">NISN Siswa</div>
             <div class="info-value">{{ $data->nisn }}</div>
