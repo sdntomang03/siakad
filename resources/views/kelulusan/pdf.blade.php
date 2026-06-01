@@ -122,7 +122,7 @@
         <p class="nomor-surat">Nomor: {{ $data->nomor_skl }}</p>
     </div>
 
-    <p class="paragraf">Kepala SD Negeri Tomang 03 Pagi selaku Ketua Penyelenggara Ujian Sekolah Tahun Pelajaran
+    <p class="paragraf">Kepala SD Negeri Tomang 03 selaku Ketua Penyelenggara Ujian Sekolah Tahun Pelajaran
         2025/2026 berdasarkan kriteria kelulusan dari Satuan Pendidikan, menerangkan bahwa:</p>
 
     <table class="tabel-biodata">
@@ -176,7 +176,7 @@
     @endphp
 
     <div class="footer-dokumen">
-        Dokumen ini diterbitkan secara sah oleh Sistem Akademik SD Negeri Tomang 03 Pagi.<br>
+        Dokumen ini diterbitkan secara sah oleh Sistem Akademik SD Negeri Tomang 03.<br>
         Tanda Tangan Elektronik terenkripsi. ID Dokumen: <strong>{{ $secureNumber }}</strong>
     </div>
 
