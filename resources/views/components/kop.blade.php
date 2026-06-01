@@ -52,7 +52,7 @@ $logoBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
 
     .kop-text-cell h3 {
         margin: 5px 0;
-        font-size: 16pt;
+        font-size: 18pt;
         font-weight: bold;
         text-transform: uppercase;
         line-height: 1.2;
