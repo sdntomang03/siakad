@@ -22,7 +22,7 @@
         .judul-surat h3 {
             text-decoration: underline;
             margin: 0;
-            font-size: 14pt;
+            font-size: 16pt;
         }
 
         /* Styling untuk Nomor Surat */
