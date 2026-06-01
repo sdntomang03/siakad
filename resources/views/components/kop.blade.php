@@ -79,9 +79,9 @@ $logoBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
             <td class="kop-text-cell">
                 <h2>PEMERINTAH PROVINSI DAERAH KHUSUS IBUKOTA JAKARTA</h2>
                 <h2>DINAS PENDIDIKAN</h2>
-                <h3>SD NEGERI TOMANG 03 PAGI</h3>
-                <p>Jl. Gelong Baru No.29A Rt. 001/003, Kel. Tomang, Kec. Grogol Petamburan</p>
-                <p>Kota Jakarta Barat, email: sdntomang03pagi@yahoo.co.id</p>
+                <h3>SD NEGERI TOMANG 03</h3>
+                <p>Jl. Gelong Baru No.29A, Kel. Tomang, Kec. Grogol Petamburan, Kota Jakarta Barat</p>
+                <p>NPSN: 20101172, email: sdntomang03pagi@yahoo.co.id</p>
                 <p style="text-align:right; font-size:10pt; margin-top:-15px; margin-right: -30px;">
                     Kode Pos: 11440
                 </p>
