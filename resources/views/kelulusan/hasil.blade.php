@@ -839,6 +839,19 @@
                                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                             </svg>
                         </div>
+                        <template x-if="studentData.keterangan === 'TIDAK LULUS'">
+                            <div
+                                style="margin-bottom: 1rem; padding: 1rem; background-color: #fff1f2; border: 1px solid #fda4af; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(190, 18, 60, 0.05);">
+                                <p style="font-weight: 700; color: #be123c; margin-bottom: 0.5rem; font-size: 1rem;">
+                                    Tetap Semangat & Jangan Menyerah!
+                                </p>
+                                <p style="color: #9f1239; font-size: 0.85rem; line-height: 1.5; margin: 0;">
+                                    Hasil ini bukanlah akhir dari segalanya. Jadikan momen ini sebagai batu loncatan
+                                    untuk belajar lebih giat dan bangkit menjadi lebih baik. Silakan hubungi wali kelas
+                                    untuk panduan dan informasi selanjutnya.
+                                </p>
+                            </div>
+                        </template>
                         <p class="seal-text">
                             <strong>SD Negeri Tomang 03 | Jakarta</strong>
                             <span class="verification-wrapper"
