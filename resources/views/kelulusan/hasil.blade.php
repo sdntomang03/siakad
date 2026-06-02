@@ -874,7 +874,9 @@
                     </svg>
                 </div>
                 <h3 class="error-title" style="color: #ef4444;">DATA TIDAK DITEMUKAN</h3>
-                <p class="error-msg">Mohon maaf, data tidak ditemukan. Silakan hubungi Wali Kelas Anda untuk informasi
+                <p class="error-msg">Mohon maaf, data yang Anda cari tidak ditemukan pada data kelulusan. Silakan
+                    hubungi Wali Kelas
+                    Anda untuk informasi
                     lebih lanjut.</p>
 
                 <a href="{{ route('pengumuman.index') }}" class="btn-close" style="margin-top: 1.5rem;">Kembali ke
