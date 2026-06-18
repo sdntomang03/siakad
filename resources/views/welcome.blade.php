@@ -27,7 +27,6 @@
 
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
 
-    <!-- Navigation -->
     <nav class="fixed w-full z-50 glass border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
@@ -55,7 +54,6 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <main class="flex-grow pt-32 pb-16 px-4">
         <div class="max-w-5xl mx-auto">
             <div class="text-center mb-16">
@@ -75,9 +73,7 @@
                 </p>
             </div>
 
-            <!-- Features Grid -->
             <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <!-- Kelulusan Card -->
                 <div
                     class="group bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-xl shadow-slate-200/50 hover:border-indigo-300 transition-all duration-300 hover:-translate-y-1">
                     <div
@@ -93,7 +89,6 @@
                     </a>
                 </div>
 
-                <!-- Form Login Card (Quick Access) -->
                 <div
                     class="bg-slate-900 p-8 rounded-[2.5rem] text-white shadow-xl shadow-slate-900/20 relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-8 opacity-10 text-8xl">
@@ -129,7 +124,6 @@
                 </div>
             </div>
 
-            <!-- Stats -->
             <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div class="p-6">
                     <div class="text-3xl font-black text-slate-800">100%</div>
@@ -151,7 +145,6 @@
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-12">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <div class="flex justify-center items-center gap-4 mb-6">
@@ -179,16 +172,3 @@
 </body>
 
 </html>
-</div>
-
-<div class="flex items-center justify-end mt-6">
-    <button type="submit"
-        class="inline-flex items-center w-full justify-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25">
-        Periksa Hasil Kelulusan
-    </button>
-</div>
-</form>
-</div>
-</div>
-</div>
-</x-guest-layout>
