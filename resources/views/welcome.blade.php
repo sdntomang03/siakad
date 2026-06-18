@@ -74,7 +74,20 @@
             </div>
 
             <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-
+                <div
+                    class="group bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-xl shadow-slate-200/50 hover:border-indigo-300 transition-all duration-300 hover:-translate-y-1">
+                    <div
+                        class="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-scroll"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-3">Pengumuman Kelulusan</h3>
+                    <p class="text-slate-500 mb-8 font-medium">Cek status kelulusan siswa kelas VI tahun ajaran
+                        2025/2026 secara online menggunakan NISN.</p>
+                    <a href="#"
+                        class="inline-flex items-center gap-2 text-indigo-600 font-bold hover:gap-4 transition-all">
+                        Cek Kelulusan <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
 
                 <div
                     class="bg-slate-900 p-8 rounded-[2.5rem] text-white shadow-xl shadow-slate-900/20 relative overflow-hidden">
