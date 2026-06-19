@@ -35,7 +35,7 @@
         </button>
     </div>
 
-    <nav class="flex-1 mt-6 px-4 space-y-2 overflow-y-auto">
+    <nav class="flex-1 mt-6 px-4 space-y-2 overflow-y-auto no-scrollbar">
 
         <x-sidebar-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
             icon="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
