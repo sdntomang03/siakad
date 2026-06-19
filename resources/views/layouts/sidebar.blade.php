@@ -3,7 +3,7 @@
 </div>
 
 <aside :class="sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0 md:w-20'"
-    class="fixed md:relative inset-y-0 left-0 z-50 flex flex-col h-screen bg-slate-800 dark:bg-slate-950 text-white transition-all duration-300 ease-in-out shadow-2xl md:shadow-xl">
+    class="fixed md:relative inset-y-0 left-0 z-50 flex flex-col h-screen min-h-0 bg-slate-800 dark:bg-slate-950 text-white transition-all duration-300 ease-in-out shadow-2xl md:shadow-xl">
 
     <div class="h-16 flex items-center px-4 bg-slate-900 transition-all duration-300"
         :class="sidebarOpen ? 'justify-between' : 'justify-center'">
