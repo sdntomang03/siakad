@@ -5,19 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\AcademicYear;
 use App\Models\School;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
-
-class AcademicYearController extends Controller implements HasMiddleware
+class AcademicYearController extends Controller
 {
-    public static function middleware(): array
+    public function __construct()
     {
-        return [
-            new Middleware('permission:view-academic-years', only: ['index']),
-            new Middleware('permission:create-academic-years', only: ['store']),
-            new Middleware('permission:edit-academic-years', only: ['aktifkan', 'update']),
-            new Middleware('permission:delete-academic-years', only: ['destroy']),
-        ];
+        $this->middleware('permission:view-academic-years')->only('index');
+        $this->middleware('permission:create-academic-years')->only('store');
+        $this->middleware('permission:edit-academic-years')->only(['aktifkan', 'update']);
+        $this->middleware('permission:delete-academic-years')->only('destroy');
     }
 
     public function index()

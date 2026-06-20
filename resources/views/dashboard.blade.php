@@ -264,7 +264,7 @@
                         @endif
 
                         {{-- TOMBOL 3: E-Rapor (Aksen Menarik) --}}
-                        <a href="#"
+                        <a href="{{ route('report-submissions.index') }}"
                             class="flex-1 flex justify-center items-center gap-2 py-3 px-4 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 rounded-xl text-sm font-bold text-emerald-700 dark:text-emerald-400 transition-all focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900">
                             <svg class="w-5 h-5 text-emerald-500 dark:text-emerald-400" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">

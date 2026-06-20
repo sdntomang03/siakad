@@ -5,21 +5,17 @@ namespace App\Http\Controllers\Operator;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
-class UserController extends Controller implements HasMiddleware
+class UserController extends Controller
 {
-    public static function middleware(): array
+    public function __construct()
     {
-        return [
-            new Middleware('permission:view-users', only: ['index']),
-            new Middleware('permission:create-users', only: ['store']),
-            new Middleware('permission:edit-users', only: ['update', 'resetPassword']),
-            new Middleware('permission:delete-users', only: ['destroy']),
-        ];
+        $this->middleware('permission:view-users')->only('index');
+        $this->middleware('permission:create-users')->only('store');
+        $this->middleware('permission:edit-users')->only(['update', 'resetPassword']);
+        $this->middleware('permission:delete-users')->only('destroy');
     }
 
     public function index(Request $request)

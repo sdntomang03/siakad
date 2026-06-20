@@ -3,11 +3,14 @@
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\BookLoanController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\Operator\UserController as OperatorUserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportSubmissionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SuperAdmin\RolePermissionController;
@@ -115,6 +118,33 @@ Route::middleware(['auth', 'role:superadmin|operator'])->group(function () {
     Route::post('kelulusan/import', [KelulusanController::class, 'importExcel'])->name('kelulusan.import.process');
     Route::delete('/dashboard/kelulusan/kosongkan', [KelulusanController::class, 'deleteAll'])->name('kelulusan.delete-all');
     Route::post('kelulusan/{id}/update-status', [KelulusanController::class, 'updateStatusAjax'])->name('kelulusan.update_status');
+    Route::resource('books', BookController::class)->except(['show']);
+});
+
+// Routes for book loans and report submissions
+Route::middleware(['auth'])->group(function () {
+    Route::get('book-loans', [BookLoanController::class, 'index'])->name('book-loans.index');
+    Route::post('book-loans', [BookLoanController::class, 'store'])->name('book-loans.store');
+    Route::post('book-loans/{bookLoan}/return', [BookLoanController::class, 'markReturned'])->name('book-loans.return');
+    Route::delete('book-loans/{bookLoan}', [BookLoanController::class, 'destroy'])->name('book-loans.destroy');
+    // Bulk actions
+    Route::post('book-loans/return-multiple', [BookLoanController::class, 'returnMultiple'])->name('book-loans.return-multiple');
+    Route::post('book-loans/delete-multiple', [BookLoanController::class, 'destroyMultiple'])->name('book-loans.delete-multiple');
+    // Friendly GET redirect to index for delete-multiple path
+    Route::get('book-loans/delete-multiple', function () {
+        return redirect()->route('book-loans.index')->with('warning', 'Gunakan tombol "Hapus Terpilih" di halaman Riwayat Peminjaman untuk menghapus.');
+    });
+
+    Route::get('report-submissions', [ReportSubmissionController::class, 'index'])->name('report-submissions.index');
+    Route::post('report-submissions', [ReportSubmissionController::class, 'store'])->name('report-submissions.store');
+    Route::post('report-submissions/{reportSubmission}/return', [ReportSubmissionController::class, 'markReturned'])->name('report-submissions.return');
+    Route::post('report-submissions/return-multiple', [ReportSubmissionController::class, 'returnMultiple'])->name('report-submissions.return-multiple');
+    Route::post('report-submissions/set-location-multiple', [ReportSubmissionController::class, 'setLocationMultiple'])->name('report-submissions.set-location-multiple');
+    Route::post('report-submissions/set-returned-multiple', [ReportSubmissionController::class, 'setReturnedMultiple'])->name('report-submissions.set-returned-multiple');
+    Route::post('report-submissions/update-location-multiple', [ReportSubmissionController::class, 'updateLocationMultiple'])->name('report-submissions.update-location-multiple');
+    Route::post('report-submissions/set-location', [ReportSubmissionController::class, 'setLocation'])->name('report-submissions.set-location');
+    Route::post('report-submissions/{reportSubmission}/toggle', [ReportSubmissionController::class, 'toggle'])->name('report-submissions.toggle');
+    Route::delete('report-submissions/{reportSubmission}', [ReportSubmissionController::class, 'destroy'])->name('report-submissions.destroy');
 });
 
 Route::middleware(['auth', 'role:guru'])->group(function () {
