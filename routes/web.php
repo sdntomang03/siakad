@@ -109,7 +109,8 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->name('operator
     Route::patch('users/{user}/reset-password', [OperatorUserController::class, 'resetPassword'])
         ->name('users.reset-password')
         ->middleware('permission:edit-users');
-
+    Route::post('users/import', [OperatorUserController::class, 'import'])->name('users.import');
+    Route::delete('users/bulk-destroy', [OperatorUserController::class, 'bulkDestroy'])->name('users.bulk-destroy');
     // Rute CRUD User Guru
     Route::resource('users', OperatorUserController::class)->except(['create', 'edit', 'show']);
 

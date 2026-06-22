@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Operator;
 
 use App\Http\Controllers\Controller;
+use App\Imports\EmployeesImport;
+use App\Imports\StudentsImport;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -16,6 +19,7 @@ class UserController extends Controller
         $this->middleware('permission:create-users')->only('store');
         $this->middleware('permission:edit-users')->only(['update', 'resetPassword']);
         $this->middleware('permission:delete-users')->only('destroy');
+        $this->middleware('permission:delete-users')->only(['destroy', 'bulkDestroy']);
     }
 
     public function index(Request $request)
@@ -150,5 +154,58 @@ class UserController extends Controller
         $user->delete();
 
         return back()->with('success', 'Akun berhasil dihapus.');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+            'tipe_import' => 'required|in:pegawai,siswa', // Validasi tipe import
+        ]);
+
+        $operator = auth()->user();
+
+        try {
+            if ($request->tipe_import === 'siswa') {
+                Excel::import(new StudentsImport($operator->school_id), $request->file('file'));
+                $pesan = 'Data Siswa berhasil diimpor.';
+            } else {
+                Excel::import(new EmployeesImport($operator->school_id), $request->file('file'));
+                $pesan = 'Data Pegawai berhasil diimpor.';
+            }
+
+            return back()->with('success', $pesan);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan saat impor: '.$e->getMessage());
+        }
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|string',
+        ]);
+
+        // Pecah string "1,2,3" menjadi array [1, 2, 3]
+        $idsArray = explode(',', $request->ids);
+
+        // Ambil data user yang dipilih
+        // Cegah penghapusan user yang bukan bagian dari sekolah operator, atau diri sendiri
+        $usersToDelete = User::whereIn('id', $idsArray)
+            ->where('school_id', auth()->user()->school_id)
+            ->where('id', '!=', auth()->id())
+            ->get();
+
+        $count = $usersToDelete->count();
+
+        if ($count > 0) {
+            foreach ($usersToDelete as $user) {
+                $user->delete();
+            }
+
+            return back()->with('success', "Berhasil menghapus {$count} pengguna terpilih.");
+        }
+
+        return back()->with('error', 'Tidak ada pengguna yang valid untuk dihapus.');
     }
 }
