@@ -52,13 +52,12 @@ class BookController extends Controller
 
     public function edit(Book $book)
     {
-        $this->authorize('update', $book);
+
         return view('books.edit', compact('book'));
     }
 
     public function update(Request $request, Book $book)
     {
-        $this->authorize('update', $book);
 
         $data = $request->validate([
             'title' => 'required|string|max:255',
@@ -80,8 +79,9 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
-        $this->authorize('delete', $book);
+
         $book->delete();
+
         return redirect()->route('books.index')->with('success', 'Buku berhasil dihapus.');
     }
 }
