@@ -145,6 +145,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('report-submissions/bulk-update', [ReportSubmissionController::class, 'bulkUpdate'])
         ->name('report-submissions.bulk-update');
+    Route::get('book-loans/export-unreturned', [ReportSubmissionController::class, 'exportUnreturned'])->name('book-loans.export-unreturned');
 
     Route::post('report-submissions/{reportSubmission}/toggle', [ReportSubmissionController::class, 'toggleStatus'])
         ->name('report-submissions.toggle');

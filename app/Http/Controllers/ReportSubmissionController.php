@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\UnreturnedBooksExport;
 use App\Models\Classroom;
 use App\Models\ReportSubmission;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportSubmissionController extends Controller
 {
@@ -192,5 +194,15 @@ class ReportSubmissionController extends Controller
         if (! $user->hasRole('superadmin') && $reportSubmission->school_id !== $schoolId) {
             abort(403);
         }
+    }
+
+    public function exportUnreturned()
+    {
+        $user = auth()->user();
+
+        return Excel::download(
+            new UnreturnedBooksExport($user->school_id),
+            'daftar_buku_belum_dikembalikan_'.date('d_M_Y').'.xlsx'
+        );
     }
 }
