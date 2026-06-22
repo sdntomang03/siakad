@@ -110,14 +110,22 @@ class UnreturnedBooksExport implements FromCollection, ShouldAutoSize, WithHeadi
     /**
      * Styling dan Merge Cell
      */
+    /**
+     * Styling dan Merge Cell
+     */
     public function styles(Worksheet $sheet)
     {
         $lastRow = $sheet->getHighestRow();
         $lastColumn = $sheet->getHighestColumn();
 
-        // MERGE CELLS UNTUK JUDUL BUKU (Mulai dari kolom D sampai kolom terakhir data)
-        if ($this->maxBooks > 1) {
-            $sheet->mergeCells('D1:'.$lastColumn.'1');
+        // PAKSA TULIS JUDUL DI KOLOM D1 AGAR TIDAK HILANG SAAT DI-MERGE
+        if ($this->maxBooks > 0) {
+            $sheet->setCellValue('D1', 'Judul Buku yang Dipinjam');
+
+            // Lakukan merge jika buku maksimal lebih dari 1
+            if ($this->maxBooks > 1) {
+                $sheet->mergeCells('D1:'.$lastColumn.'1');
+            }
         }
 
         // Style untuk Header (Baris 1)
