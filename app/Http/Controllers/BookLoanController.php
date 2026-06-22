@@ -231,4 +231,38 @@ class BookLoanController extends Controller
 
         return back()->with('success', trim($msg));
     }
+
+    public function monitor()
+    {
+        $user = auth()->user();
+
+        // Ambil data siswa beserta relasi buku yang SEDANG DIPINJAM (belum dikembalikan)
+        $query = Student::with(['classrooms', 'bookLoans' => function ($q) {
+            $q->whereNull('returned_at')->orderBy('borrowed_at', 'desc');
+        }]);
+
+        if (! $user->hasRole('superadmin')) {
+            $query->where('school_id', $user->school_id);
+        }
+
+        // Jika user adalah guru, batasi ke siswa di kelas yang diampu (homeroom)
+        if ($user->hasRole('guru')) {
+            $employee = $user->employee;
+            if ($employee) {
+                $query->whereHas('classrooms', function ($q) use ($employee) {
+                    $q->where('homeroom_teacher_id', $employee->id)
+                        ->whereHas('academicYear', function ($q2) {
+                            $q2->where('is_active', true);
+                        });
+                });
+            }
+        }
+
+        // Urutkan berdasarkan siswa yang memiliki pinjaman terbanyak
+        $students = $query->get()->sortByDesc(function ($student) {
+            return $student->bookLoans->count();
+        });
+
+        return view('book_loans.monitor', compact('students'));
+    }
 }

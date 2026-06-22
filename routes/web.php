@@ -131,6 +131,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('book-loans', [BookLoanController::class, 'store'])->name('book-loans.store');
     Route::post('book-loans/{bookLoan}/return', [BookLoanController::class, 'markReturned'])->name('book-loans.return');
     Route::delete('book-loans/{bookLoan}', [BookLoanController::class, 'destroy'])->name('book-loans.destroy');
+    Route::get('book-loans/monitor', [BookLoanController::class, 'monitor'])->name('book-loans.monitor');
     // Bulk actions
     Route::post('book-loans/return-multiple', [BookLoanController::class, 'returnMultiple'])->name('book-loans.return-multiple');
     Route::post('book-loans/delete-multiple', [BookLoanController::class, 'destroyMultiple'])->name('book-loans.delete-multiple');
