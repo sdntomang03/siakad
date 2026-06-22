@@ -70,4 +70,9 @@ class Student extends Model
         // Mengurutkan dari catatan terbaru
         return $this->hasMany(TeacherNote::class)->latest();
     }
+
+    public function bookLoans()
+    {
+        return $this->hasMany(BookLoan::class, 'student_id');
+    }
 }
