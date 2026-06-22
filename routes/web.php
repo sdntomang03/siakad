@@ -1,12 +1,15 @@
 <?php
 
 use App\Http\Controllers\AcademicYearController;
+use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\AssessmentController;
+use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookLoanController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\GradeCurveController;
 use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\Operator\UserController as OperatorUserController;
 use App\Http\Controllers\ProfileController;
@@ -135,20 +138,41 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('book-loans.index')->with('warning', 'Gunakan tombol "Hapus Terpilih" di halaman Riwayat Peminjaman untuk menghapus.');
     });
 
-    Route::get('report-submissions', [ReportSubmissionController::class, 'index'])->name('report-submissions.index');
-    Route::post('report-submissions', [ReportSubmissionController::class, 'store'])->name('report-submissions.store');
-    Route::post('report-submissions/{reportSubmission}/return', [ReportSubmissionController::class, 'markReturned'])->name('report-submissions.return');
-    Route::post('report-submissions/return-multiple', [ReportSubmissionController::class, 'returnMultiple'])->name('report-submissions.return-multiple');
-    Route::post('report-submissions/set-location-multiple', [ReportSubmissionController::class, 'setLocationMultiple'])->name('report-submissions.set-location-multiple');
-    Route::post('report-submissions/set-returned-multiple', [ReportSubmissionController::class, 'setReturnedMultiple'])->name('report-submissions.set-returned-multiple');
-    Route::post('report-submissions/update-location-multiple', [ReportSubmissionController::class, 'updateLocationMultiple'])->name('report-submissions.update-location-multiple');
-    Route::post('report-submissions/set-location', [ReportSubmissionController::class, 'setLocation'])->name('report-submissions.set-location');
-    Route::post('report-submissions/{reportSubmission}/toggle', [ReportSubmissionController::class, 'toggle'])->name('report-submissions.toggle');
-    Route::delete('report-submissions/{reportSubmission}', [ReportSubmissionController::class, 'destroy'])->name('report-submissions.destroy');
+    Route::get('report-submissions', [ReportSubmissionController::class, 'index'])
+        ->name('report-submissions.index');
+
+    Route::post('report-submissions/bulk-update', [ReportSubmissionController::class, 'bulkUpdate'])
+        ->name('report-submissions.bulk-update');
+
+    Route::post('report-submissions/{reportSubmission}/toggle', [ReportSubmissionController::class, 'toggleStatus'])
+        ->name('report-submissions.toggle');
+
+    Route::delete('report-submissions/{reportSubmission}', [ReportSubmissionController::class, 'destroy'])
+        ->name('report-submissions.destroy');
+    Route::post('report-submissions/bulk-update-history', [ReportSubmissionController::class, 'bulkUpdateHistory'])->name('report-submissions.bulk-update-history');
+    Route::post('report-submissions/bulk-destroy-history', [ReportSubmissionController::class, 'bulkDestroyHistory'])->name('report-submissions.bulk-destroy-history');
+
+    Route::post('admin/assets', [AssetController::class, 'store'])->name('admin.assets.store');
+    Route::get('admin/asset-tracking', [AssetController::class, 'index'])->name('admin.asset-tracking.index');
+    Route::get('admin/assets/list', [AssetController::class, 'listMasterAssets'])->name('admin.assets.list');
+    Route::patch('admin/assets/{asset}/approve', [AssetController::class, 'approve'])->name('admin.assets.approve');
+    Route::patch('admin/assets/{asset}/reject', [AssetController::class, 'reject'])->name('admin.assets.reject');
+    Route::get('admin/assets/{asset}/edit', [AssetController::class, 'edit'])->name('admin.assets.edit');
+    Route::put('admin/assets/{asset}', [AssetController::class, 'update'])->name('admin.assets.update');
+    Route::delete('admin/assets/{asset}', [AssetController::class, 'destroy'])->name('admin.assets.destroy');
+    Route::resource('admin/rooms', RoomController::class)->except(['create', 'show', 'edit']);
+    Route::get('admin/rooms/detail/{type}/{id}', [RoomController::class, 'showAssets'])->name('rooms.show-assets');
+    Route::put('admin/asset-placements/{placement}', [AssetController::class, 'updatePlacementCondition'])->name('assets.placement.update-condition');
+    Route::delete('admin/asset-placements/{placement}', [AssetController::class, 'destroyPlacement'])->name('assets.placement.destroy');
+    // Akses Tambah Placement (Bisa dipakai Guru di halaman Kelas atau Admin di halaman Ruangan)
+    Route::post('assets/placement', [AssetController::class, 'storePlacement'])->name('assets.placement.store');
+    Route::get('assets/placement', [AssetController::class, 'createPlacement'])->name('assets.placement.create');
 });
 
 Route::middleware(['auth', 'role:guru'])->group(function () {
 
+    Route::get('/katrol-nilai', [GradeCurveController::class, 'index'])->name('katrol.index');
+    Route::post('/katrol-nilai/process', [GradeCurveController::class, 'process'])->name('katrol.process');
     // 1. Halaman Riwayat Penilaian (Daftar penilaian yang pernah dibuat)
     Route::get('assessments', [AssessmentController::class, 'index'])->name('assessments.index');
 

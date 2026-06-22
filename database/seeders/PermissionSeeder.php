@@ -20,7 +20,6 @@ class PermissionSeeder extends Seeder
             'create-academic-years',
             'edit-academic-years',
             'delete-academic-years',
-            // Tambahkan ini:
             'view-users',
             'create-users',
             'edit-users',
@@ -52,6 +51,12 @@ class PermissionSeeder extends Seeder
             'edit-users',
             'view-classes',
             'edit-classes',
+        ]);
+
+        // 6. Berikan ke Guru
+        $guru = Role::firstOrCreate(['name' => 'guru', 'guard_name' => 'web']);
+        $guru->syncPermissions([
+            'view-classes',   // Memungkinkan guru melihat kelas
         ]);
     }
 }

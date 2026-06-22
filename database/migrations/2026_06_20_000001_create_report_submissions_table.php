@@ -13,9 +13,13 @@ return new class extends Migration
             $table->foreignId('school_id')->constrained('schools')->cascadeOnDelete();
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
             $table->foreignId('classroom_id')->nullable()->constrained('classrooms')->nullOnDelete();
-            $table->string('period')->nullable(); // e.g., Semester 1 2026
-            $table->boolean('is_submitted')->default(false);
-            $table->dateTime('submitted_at')->nullable();
+
+            // Mengganti period menjadi foreignId ke tabel academic_years
+            $table->foreignId('academic_year_id')->nullable()->constrained('academic_years')->cascadeOnDelete();
+
+            $table->enum('posisi', ['Di Sekolah', 'Dibawa Siswa'])->default('Di Sekolah');
+            $table->dateTime('waktu_dibagikan')->nullable();
+            $table->dateTime('waktu_dikembalikan')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
         });

@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('school_id')->constrained('schools')->cascadeOnDelete();
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
+            $table->foreignId('book_id')->nullable()->constrained('books')->nullOnDelete();
             $table->string('book_title');
             $table->text('notes')->nullable();
             $table->dateTime('borrowed_at')->nullable();

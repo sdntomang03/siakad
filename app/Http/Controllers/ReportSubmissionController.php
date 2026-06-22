@@ -6,7 +6,6 @@ use App\Models\Classroom;
 use App\Models\ReportSubmission;
 use App\Models\Student;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class ReportSubmissionController extends Controller
 {
@@ -15,299 +14,175 @@ class ReportSubmissionController extends Controller
         $this->middleware('auth');
     }
 
+    // Fungsi untuk mengubah status massal dari tabel riwayat bawah
+    public function bulkUpdateHistory(Request $request)
+    {
+        $request->validate([
+            'submission_ids' => 'required|array',
+            'submission_ids.*' => 'integer|exists:report_submissions,id',
+            'posisi' => 'required|in:Di Sekolah,Dibawa Siswa',
+        ]);
+
+        $user = auth()->user();
+        $schoolId = $user->school_id ?? optional($user->employee)->school_id;
+
+        $submissions = ReportSubmission::whereIn('id', $request->submission_ids)
+            ->when(! $user->hasRole('superadmin'), function ($query) use ($schoolId) {
+                return $query->where('school_id', $schoolId);
+            })->get();
+
+        foreach ($submissions as $submission) {
+            $submission->posisi = $request->posisi;
+            if ($request->posisi === 'Dibawa Siswa') {
+                $submission->waktu_dibagikan = now();
+            } else {
+                $submission->waktu_dikembalikan = now();
+            }
+            $submission->save();
+        }
+
+        return back()->with('success', 'Status rapor terpilih berhasil diperbarui.');
+    }
+
+    // Fungsi untuk menghapus massal dari tabel riwayat bawah
+    public function bulkDestroyHistory(Request $request)
+    {
+        $request->validate([
+            'submission_ids' => 'required|array',
+            'submission_ids.*' => 'integer|exists:report_submissions,id',
+        ]);
+
+        $user = auth()->user();
+        $schoolId = $user->school_id ?? optional($user->employee)->school_id;
+
+        ReportSubmission::whereIn('id', $request->submission_ids)
+            ->when(! $user->hasRole('superadmin'), function ($query) use ($schoolId) {
+                return $query->where('school_id', $schoolId);
+            })->delete();
+
+        return back()->with('success', 'Riwayat rapor terpilih berhasil dihapus permanen.');
+    }
+
     public function index()
     {
         $user = auth()->user();
-
-        // resolve school id: user may have school_id directly or via employee relation
         $schoolId = $user->school_id ?? optional($user->employee)->school_id;
 
-        $query = ReportSubmission::with('student', 'classroom');
+        // Memuat relasi academicYear ke dalam query list riwayat
+        $query = ReportSubmission::with('student', 'classroom', 'academicYear');
 
         if (! $user->hasRole('superadmin')) {
             if ($schoolId) {
                 $query->where('school_id', $schoolId);
             } else {
-                // no school id available for this non-superadmin user -> no results
                 $query->whereRaw('1 = 0');
             }
         }
 
-        $submissions = $query->orderBy('created_at', 'desc')->paginate(20);
+        $submissions = $query->orderBy('updated_at', 'desc')->paginate(20);
 
-        // Get active academic years for the school
-        $academicYears = \App\Models\AcademicYear::where('school_id', $schoolId)
-            ->orderBy('tahun_ajaran', 'desc')
-            ->get();
-
-        $activeYear = \App\Models\AcademicYear::where('school_id', $schoolId)
-            ->where('is_active', true)
-            ->first();
-
-        // determine classrooms the current user (teacher) is responsible for
+        // Ambil daftar rombel beserta data tahun ajaran aktifnya
         if ($user->hasRole('superadmin')) {
-            $myClassrooms = Classroom::when(true, fn($q) => $q->orderBy('tingkat')->orderBy('nama_kelas'))->get();
+            $myClassrooms = Classroom::with('academicYear')->orderBy('tingkat')->orderBy('nama_kelas')->get();
         } else {
             $employeeId = optional($user->employee)->id;
             $myClassrooms = collect();
             if ($schoolId && $employeeId) {
-                // Only homeroom classes
-                $myClassrooms = Classroom::where('school_id', $schoolId)
+                $myClassrooms = Classroom::with('academicYear')
+                    ->where('school_id', $schoolId)
                     ->where('homeroom_teacher_id', $employeeId)
                     ->orderBy('tingkat')->orderBy('nama_kelas')
                     ->get();
             }
         }
 
-        // students limited to classes the teacher handles
         if ($user->hasRole('superadmin')) {
             $students = Student::orderBy('nama_lengkap')->get();
         } else {
             $classIds = $myClassrooms->pluck('id')->all();
-            if ($classIds) {
-                $students = Student::whereHas('classrooms', fn($q) => $q->whereIn('classrooms.id', $classIds))
-                    ->with('classrooms')
-                    ->orderBy('nama_lengkap')
-                    ->get();
-            } else {
-                $students = collect();
-            }
+            $students = $classIds ? Student::whereHas('classrooms', fn ($q) => $q->whereIn('classrooms.id', $classIds))
+                ->with('classrooms')
+                ->orderBy('nama_lengkap')
+                ->get() : collect();
         }
 
-        $classrooms = $myClassrooms;
-
-        return view('report_submissions.index', compact('submissions', 'students', 'classrooms', 'academicYears', 'activeYear'));
+        return view('report_submissions.index', [
+            'submissions' => $submissions,
+            'students' => $students,
+            'classrooms' => $myClassrooms,
+        ]);
     }
 
-    public function store(Request $request)
+    public function bulkUpdate(Request $request)
     {
-        $user = auth()->user();
-        $schoolId = $user->school_id ?? optional($user->employee)->school_id;
-
-        $data = $request->validate([
-            'student_id' => [
-                'required',
-                Rule::exists('students', 'id')->where(fn ($query) => $query->where('school_id', $schoolId)),
-            ],
-            'classroom_id' => [
-                'nullable',
-                Rule::exists('classrooms', 'id')->where(fn ($query) => $query->where('school_id', $user->school_id)),
-            ],
-            'period' => 'nullable|string|max:50',
-            'is_submitted' => 'sometimes|boolean',
-            'location' => 'nullable|in:school,home',
-            'notes' => 'nullable|string',
+        $request->validate([
+            'student_ids' => 'required|array',
+            'student_ids.*' => 'integer|exists:students,id',
+            'posisi' => 'required|in:Di Sekolah,Dibawa Siswa',
+            'classroom_id' => 'required|integer|exists:classrooms,id',
         ]);
 
-        $data['school_id'] = $schoolId;
-        // default location to 'school' if not provided
-        $data['location'] = $data['location'] ?? 'school';
-        if (! empty($data['is_submitted'])) {
-            $data['submitted_at'] = now();
+        $user = auth()->user();
+        $schoolId = $user->school_id ?? optional($user->employee)->school_id;
+        $posisi = $request->input('posisi');
+
+        // Mengambil entitas rombel untuk mendapatkan id tahun ajaran yang melekat
+        $classroom = Classroom::find($request->classroom_id);
+        $academicYearId = $classroom ? $classroom->academic_year_id : null;
+
+        foreach ($request->student_ids as $studentId) {
+            $data = [
+                'student_id' => $studentId,
+                'school_id' => $schoolId,
+                'classroom_id' => $request->classroom_id,
+                'academic_year_id' => $academicYearId, // Menyimpan id referensi tahun ajaran
+                'posisi' => $posisi,
+            ];
+
+            if ($posisi === 'Dibawa Siswa') {
+                $data['waktu_dibagikan'] = now();
+            } else {
+                $data['waktu_dikembalikan'] = now();
+            }
+
+            ReportSubmission::updateOrCreate(
+                [
+                    'student_id' => $studentId,
+                    'academic_year_id' => $academicYearId, // Mengunci keunikan berdasarkan ID tahun ajaran
+                    'school_id' => $schoolId,
+                ],
+                $data
+            );
         }
 
-        ReportSubmission::updateOrCreate(
-            ['student_id' => $data['student_id'], 'period' => $data['period'], 'school_id' => $data['school_id']],
-            $data
-        );
+        $pesan = $posisi === 'Dibawa Siswa' ? 'Rapor ditandai sedang dibawa siswa.' : 'Rapor ditandai telah kembali di sekolah.';
 
-        return back()->with('success', 'Status pengumpulan rapor disimpan.');
+        return back()->with('success', $pesan);
     }
 
-    public function toggle(ReportSubmission $reportSubmission)
+    public function toggleStatus(ReportSubmission $reportSubmission)
     {
         $this->ensureSchoolAccess($reportSubmission);
 
-        $reportSubmission->is_submitted = ! $reportSubmission->is_submitted;
-        $reportSubmission->submitted_at = $reportSubmission->is_submitted ? now() : null;
-        // keep location consistent: if marked submitted but not returned, default to home; if returned, ensure school
-        if ($reportSubmission->is_returned) {
-            $reportSubmission->location = 'school';
+        if ($reportSubmission->posisi === 'Di Sekolah') {
+            $reportSubmission->posisi = 'Dibawa Siswa';
+            $reportSubmission->waktu_dibagikan = now();
         } else {
-            $reportSubmission->location = $reportSubmission->is_submitted ? 'home' : ($reportSubmission->location ?? 'home');
+            $reportSubmission->posisi = 'Di Sekolah';
+            $reportSubmission->waktu_dikembalikan = now();
         }
+
         $reportSubmission->save();
 
-        return back()->with('success', 'Status pengumpulan rapor diperbarui.');
+        return back()->with('success', 'Status posisi rapor berhasil diperbarui.');
     }
 
     public function destroy(ReportSubmission $reportSubmission)
     {
         $this->ensureSchoolAccess($reportSubmission);
-
         $reportSubmission->delete();
 
-        return back()->with('success', 'Catatan pengumpulan rapor dihapus.');
-    }
-
-    public function markReturned(ReportSubmission $reportSubmission)
-    {
-        $this->ensureSchoolAccess($reportSubmission);
-
-        if ($reportSubmission->is_returned) {
-            return back()->with('warning', 'Rapor sudah ditandai sebagai dikembalikan.');
-        }
-
-        $reportSubmission->is_returned = true;
-        $reportSubmission->returned_at = now();
-        $reportSubmission->location = 'school';
-        $reportSubmission->save();
-
-        return back()->with('success', 'Rapor ditandai sudah dikembalikan.');
-    }
-
-    public function returnMultiple(Request $request)
-    {
-        $ids = $request->input('submission_ids', []);
-        if (empty($ids)) {
-            return back()->with('warning', 'Tidak ada data yang dipilih.');
-        }
-
-        $user = auth()->user();
-        $schoolId = $user->school_id ?? optional($user->employee)->school_id;
-
-        $subs = ReportSubmission::whereIn('id', $ids)->get();
-        foreach ($subs as $s) {
-            if (! $user->hasRole('superadmin') && $s->school_id !== $schoolId) {
-                continue;
-            }
-            $s->is_returned = true;
-            $s->returned_at = now();
-            $s->location = 'school';
-            $s->save();
-        }
-
-        return back()->with('success', 'Rapor terpilih ditandai sudah dikembalikan.');
-    }
-
-    public function setLocationMultiple(Request $request)
-    {
-        $request->validate([
-            'student_ids' => 'required|array',
-            'student_ids.*' => 'integer|exists:students,id',
-            'location' => 'required|in:school,home',
-            'period' => 'nullable|string|max:50',
-            'is_submitted' => 'nullable|boolean',
-        ]);
-
-        $user = auth()->user();
-        $schoolId = $user->school_id ?? optional($user->employee)->school_id;
-
-        $studentIds = $request->input('student_ids', []);
-        foreach ($studentIds as $studentId) {
-            $data = [
-                'student_id' => $studentId,
-                'school_id' => $schoolId,
-                'period' => $request->input('period'),
-                'location' => $request->input('location'),
-                'notes' => null,
-            ];
-            if ($request->filled('is_submitted')) {
-                $data['is_submitted'] = (bool) $request->input('is_submitted');
-                $data['submitted_at'] = $data['is_submitted'] ? now() : null;
-            }
-            // if location is school, mark returned
-            if ($request->input('location') === 'school') {
-                $data['is_returned'] = true;
-                $data['returned_at'] = now();
-            } else {
-                $data['is_returned'] = $data['is_returned'] ?? false;
-                $data['returned_at'] = $data['is_returned'] ? ($data['returned_at'] ?? now()) : null;
-            }
-
-            ReportSubmission::updateOrCreate(
-                ['student_id' => $studentId, 'period' => $data['period'], 'school_id' => $schoolId],
-                $data
-            );
-        }
-
-        return back()->with('success', 'Lokasi rapor untuk siswa terpilih telah diperbarui.');
-    }
-
-    public function setReturnedMultiple(Request $request)
-    {
-        $request->validate([
-            'student_ids' => 'required|array',
-            'student_ids.*' => 'integer|exists:students,id',
-            'period' => 'nullable|string|max:50',
-        ]);
-
-        $user = auth()->user();
-        $schoolId = $user->school_id ?? optional($user->employee)->school_id;
-
-        $studentIds = $request->input('student_ids', []);
-        foreach ($studentIds as $studentId) {
-            $data = [
-                'student_id' => $studentId,
-                'school_id' => $schoolId,
-                'period' => $request->input('period'),
-                'location' => 'school',
-                'is_returned' => true,
-                'returned_at' => now(),
-                'is_submitted' => true,
-                'submitted_at' => now(),
-            ];
-
-            ReportSubmission::updateOrCreate(
-                ['student_id' => $studentId, 'period' => $data['period'], 'school_id' => $schoolId],
-                $data
-            );
-        }
-
-        return back()->with('success', 'Siswa terpilih ditandai sebagai dikembalikan.');
-    }
-
-    public function updateLocationMultiple(Request $request)
-    {
-        $request->validate([
-            'submission_ids' => 'required|array',
-            'submission_ids.*' => 'integer|exists:report_submissions,id',
-            'location' => 'required|in:school,home',
-        ]);
-
-        $user = auth()->user();
-        $schoolId = $user->school_id ?? optional($user->employee)->school_id;
-
-        $subs = ReportSubmission::whereIn('id', $request->input('submission_ids', []))->get();
-        foreach ($subs as $s) {
-            if (! $user->hasRole('superadmin') && $s->school_id !== $schoolId) {
-                continue;
-            }
-            $s->location = $request->input('location');
-            $s->save();
-        }
-
-        return back()->with('success', 'Lokasi rapor untuk siswa terpilih telah diperbarui.');
-    }
-
-    public function setLocation(Request $request)
-    {
-        $request->validate([
-            'student_ids' => 'required|array',
-            'student_ids.*' => 'integer|exists:students,id',
-            'location' => 'required|in:school,home',
-            'period' => 'nullable|string|max:50',
-        ]);
-
-        $user = auth()->user();
-        $schoolId = $user->school_id ?? optional($user->employee)->school_id;
-
-        $studentIds = $request->input('student_ids', []);
-        foreach ($studentIds as $studentId) {
-            $data = [
-                'student_id' => $studentId,
-                'school_id' => $schoolId,
-                'period' => $request->input('period'),
-                'location' => $request->input('location'),
-            ];
-
-            ReportSubmission::updateOrCreate(
-                ['student_id' => $studentId, 'period' => $data['period'], 'school_id' => $schoolId],
-                $data
-            );
-        }
-
-        return back()->with('success', 'Lokasi rapor siswa telah diperbarui.');
+        return back()->with('success', 'Catatan rapor dihapus.');
     }
 
     private function ensureSchoolAccess(ReportSubmission $reportSubmission)
