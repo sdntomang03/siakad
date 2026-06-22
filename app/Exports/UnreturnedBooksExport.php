@@ -68,7 +68,7 @@ class UnreturnedBooksExport implements FromCollection, ShouldAutoSize, WithHeadi
         $headings = [
             'Nama Siswa',
             'Kelas',
-            'Total Tanggungan',
+            'Total Buku Dipinjam',
         ];
 
         if ($this->maxBooks > 0) {
