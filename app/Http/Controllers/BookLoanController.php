@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\UnreturnedBooksExport;
 use App\Models\Book;
 use App\Models\BookLoan;
 use App\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BookLoanController extends Controller
 {
@@ -270,5 +272,15 @@ class BookLoanController extends Controller
         });
 
         return view('book_loans.monitor', compact('students'));
+    }
+
+    public function exportUnreturned()
+    {
+        $user = auth()->user();
+
+        return Excel::download(
+            new UnreturnedBooksExport($user->school_id),
+            'daftar_buku_belum_dikembalikan_'.date('d_M_Y').'.xlsx'
+        );
     }
 }

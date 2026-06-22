@@ -1,13 +1,31 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
-                Peminjaman Buku
-            </h2>
-            <a href="{{ route('book-loans.monitor') }}"
-                class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/20 text-center">
-                Monitoring Siswa
-            </a>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+                <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
+                    Monitoring Peminjaman Siswa
+                </h2>
+                <p class="text-sm text-slate-500 mt-1">Klik pada nama siswa untuk melihat dan mengembalikan buku yang
+                    dipinjam.</p>
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+
+                {{-- TOMBOL EXCEL BARU --}}
+                <a href="{{ route('book-loans.export-unreturned') }}"
+                    class="w-full sm:w-auto px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-emerald-700 transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    Export Excel
+                </a>
+
+                <a href="{{ route('book-loans.index') }}"
+                    class="w-full sm:w-auto px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold text-center hover:bg-slate-300 transition">
+                    &larr; Kembali
+                </a>
+            </div>
         </div>
     </x-slot>
 

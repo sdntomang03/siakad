@@ -129,6 +129,7 @@ Route::middleware(['auth', 'role:superadmin|operator'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('book-loans', [BookLoanController::class, 'index'])->name('book-loans.index');
     Route::post('book-loans', [BookLoanController::class, 'store'])->name('book-loans.store');
+    Route::get('book-loans/export-unreturned', [BookLoanController::class, 'exportUnreturned'])->name('book-loans.export-unreturned');
     Route::post('book-loans/{bookLoan}/return', [BookLoanController::class, 'markReturned'])->name('book-loans.return');
     Route::delete('book-loans/{bookLoan}', [BookLoanController::class, 'destroy'])->name('book-loans.destroy');
     Route::get('book-loans/monitor', [BookLoanController::class, 'monitor'])->name('book-loans.monitor');
@@ -145,7 +146,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('report-submissions/bulk-update', [ReportSubmissionController::class, 'bulkUpdate'])
         ->name('report-submissions.bulk-update');
-    Route::get('book-loans/export-unreturned', [ReportSubmissionController::class, 'exportUnreturned'])->name('book-loans.export-unreturned');
 
     Route::post('report-submissions/{reportSubmission}/toggle', [ReportSubmissionController::class, 'toggleStatus'])
         ->name('report-submissions.toggle');
