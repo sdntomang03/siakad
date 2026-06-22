@@ -4,6 +4,10 @@
             <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
                 Peminjaman Buku
             </h2>
+            <a href="{{ route('book-loans.monitor') }}"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/20 text-center">
+                Monitoring Siswa
+            </a>
         </div>
     </x-slot>
 
