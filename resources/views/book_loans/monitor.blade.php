@@ -109,16 +109,23 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                                         @foreach($student->bookLoans as $loan)
-                                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
-                                            <td class="px-4 py-3 font-semibold text-slate-800 dark:text-slate-200">{{
-                                                $loan->book_title }}</td>
+
+                                        {{-- Inisialisasi Alpine.js state: isReturned dan isLoading --}}
+                                        <tr x-data="{ isReturned: false, isLoading: false }"
+                                            class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+
+                                            <td class="px-4 py-3 font-semibold text-slate-800 dark:text-slate-200">
+                                                {{-- Coret nama buku jika sudah dikembalikan --}}
+                                                <span
+                                                    :class="isReturned ? 'line-through text-slate-400 dark:text-slate-500' : ''">
+                                                    {{ $loan->book_title }}
+                                                </span>
+                                            </td>
                                             <td class="px-4 py-3 text-xs">{{
                                                 \Carbon\Carbon::parse($loan->borrowed_at)->format('d M Y') }}</td>
                                             <td class="px-4 py-3 text-xs">
                                                 @if($loan->due_at)
-                                                @php
-                                                $isLate = \Carbon\Carbon::parse($loan->due_at)->isPast();
-                                                @endphp
+                                                @php $isLate = \Carbon\Carbon::parse($loan->due_at)->isPast(); @endphp
                                                 <span class="{{ $isLate ? 'text-rose-600 font-bold' : '' }}">
                                                     {{ \Carbon\Carbon::parse($loan->due_at)->format('d M Y') }}
                                                 </span>
@@ -127,14 +134,35 @@
                                                 @endif
                                             </td>
                                             <td class="px-4 py-3 text-right">
-                                                <form action="{{ route('book-loans.return', $loan->id) }}" method="POST"
-                                                    onsubmit="return confirm('Tandai buku ini sudah dikembalikan?');">
-                                                    @csrf
-                                                    <button type="submit"
-                                                        class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-emerald-700 shadow-sm transition">
-                                                        Terima Buku
-                                                    </button>
-                                                </form>
+
+                                                {{-- TOMBOL TERIMA BUKU (Hanya Muncul Jika Belum Dikembalikan) --}}
+                                                <button x-show="!isReturned" @click="if(confirm('Tandai buku ini sudah dikembalikan?')) {
+                        isLoading = true;
+                        fetch('{{ route('book-loans.return', $loan->id) }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if(data.success) { isReturned = true; }
+                            isLoading = false;
+                        })
+                        .catch(() => { isLoading = false; alert('Terjadi kesalahan jaringan.'); });
+                    }" :disabled="isLoading" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-emerald-700 shadow-sm transition disabled:opacity-50">
+                                                    <span x-show="!isLoading">Terima Buku</span>
+                                                    <span x-show="isLoading">Memproses...</span>
+                                                </button>
+
+                                                {{-- LABEL DIKEMBALIKAN (Hanya Muncul Jika Proses Berhasil) --}}
+                                                <span x-show="isReturned" style="display: none;"
+                                                    class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 rounded-lg text-[10px] font-bold uppercase tracking-wider">
+                                                    Dikembalikan
+                                                </span>
+
                                             </td>
                                         </tr>
                                         @endforeach

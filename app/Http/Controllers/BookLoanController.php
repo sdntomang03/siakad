@@ -133,11 +133,17 @@ class BookLoanController extends Controller
         return $redirect;
     }
 
-    public function markReturned(BookLoan $bookLoan)
+    public function markReturned(Request $request, BookLoan $bookLoan)
     {
         $this->ensureSchoolAccess($bookLoan);
         $bookLoan->update(['returned_at' => now()]);
 
+        // Jika request datang dari Javascript (AJAX / Fetch)
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
+
+        // Jika request datang dari form biasa (halaman index)
         return back()->with('success', 'Buku ditandai sebagai sudah dikembalikan.');
     }
 
