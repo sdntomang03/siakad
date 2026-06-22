@@ -24,9 +24,6 @@ class UnreturnedBooksExport implements FromCollection, ShouldAutoSize, WithHeadi
         $this->schoolId = $schoolId;
     }
 
-    /**
-     * Ambil data SISWA yang memiliki tanggungan peminjaman (belum dikembalikan)
-     */
     public function collection()
     {
         $user = auth()->user();
@@ -55,6 +52,7 @@ class UnreturnedBooksExport implements FromCollection, ShouldAutoSize, WithHeadi
 
         $students = $query->get();
 
+        // Cari jumlah buku terbanyak
         $this->maxBooks = $students->max(function ($student) {
             return $student->bookLoans->count();
         });
@@ -63,7 +61,7 @@ class UnreturnedBooksExport implements FromCollection, ShouldAutoSize, WithHeadi
     }
 
     /**
-     * Pembuatan Header Kolom secara Dinamis
+     * Pembuatan Header Kolom
      */
     public function headings(): array
     {
@@ -73,16 +71,18 @@ class UnreturnedBooksExport implements FromCollection, ShouldAutoSize, WithHeadi
             'Total Tanggungan',
         ];
 
-        for ($i = 1; $i <= $this->maxBooks; $i++) {
-            $headings[] = 'Judul Buku '.$i;
+        if ($this->maxBooks > 0) {
+            $headings[] = 'Judul Buku yang Dipinjam';
+
+            // Tambahkan string kosong untuk sisa kolom buku agar border tetap sejajar
+            for ($i = 1; $i < $this->maxBooks; $i++) {
+                $headings[] = '';
+            }
         }
 
         return $headings;
     }
 
-    /**
-     * Memasukkan data ke masing-masing baris & kolom
-     */
     public function map($student): array
     {
         $kelas = $student->kelasAktif();
@@ -108,23 +108,27 @@ class UnreturnedBooksExport implements FromCollection, ShouldAutoSize, WithHeadi
     }
 
     /**
-     * Styling tampilan Excel agar lebih rapi dan profesional
+     * Styling dan Merge Cell
      */
     public function styles(Worksheet $sheet)
     {
-        // Mendapatkan baris dan kolom terakhir yang berisi data
         $lastRow = $sheet->getHighestRow();
         $lastColumn = $sheet->getHighestColumn();
 
-        // 1. Style untuk Header (Baris 1)
+        // MERGE CELLS UNTUK JUDUL BUKU (Mulai dari kolom D sampai kolom terakhir data)
+        if ($this->maxBooks > 1) {
+            $sheet->mergeCells('D1:'.$lastColumn.'1');
+        }
+
+        // Style untuk Header (Baris 1)
         $sheet->getStyle('A1:'.$lastColumn.'1')->applyFromArray([
             'font' => [
                 'bold' => true,
-                'color' => ['argb' => 'FFFFFFFF'], // Teks putih
+                'color' => ['argb' => 'FFFFFFFF'],
             ],
             'fill' => [
                 'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['argb' => 'FF4F46E5'], // Background warna indigo-600
+                'startColor' => ['argb' => 'FF4F46E5'],
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -138,14 +142,13 @@ class UnreturnedBooksExport implements FromCollection, ShouldAutoSize, WithHeadi
             ],
         ]);
 
-        // 2. Jika ada datanya, berikan border dan perataan pada isi tabel (Baris 2 ke bawah)
+        // Style untuk isi data (Baris 2 ke bawah)
         if ($lastRow > 1) {
-            // Style garis pembatas (border) untuk seluruh cell data
             $sheet->getStyle('A2:'.$lastColumn.$lastRow)->applyFromArray([
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => Border::BORDER_THIN,
-                        'color' => ['argb' => 'FFB0BEC5'], // Warna border abu-abu
+                        'color' => ['argb' => 'FFB0BEC5'],
                     ],
                 ],
                 'alignment' => [
@@ -153,7 +156,7 @@ class UnreturnedBooksExport implements FromCollection, ShouldAutoSize, WithHeadi
                 ],
             ]);
 
-            // 3. Rata Tengah khusus untuk kolom "Kelas" (B) dan "Total Tanggungan" (C)
+            // Rata Tengah khusus kolom Kelas (B) dan Total Tanggungan (C)
             $sheet->getStyle('B2:C'.$lastRow)->applyFromArray([
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -161,7 +164,7 @@ class UnreturnedBooksExport implements FromCollection, ShouldAutoSize, WithHeadi
             ]);
         }
 
-        // 4. Ubah tinggi baris header agar lebih lega
+        // Tinggi baris header
         $sheet->getRowDimension(1)->setRowHeight(25);
 
         return [];
