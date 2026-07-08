@@ -263,10 +263,12 @@ class AttendanceController extends Controller
 
         $holidays = [];
         foreach ($holidaysData as $holiday) {
-            // Pastikan formatnya murni "YYYY-MM-DD" tanpa ada jam (00:00:00)
             $formattedDate = Carbon::parse($holiday->tanggal)->format('Y-m-d');
             $holidays[$formattedDate] = $holiday->keterangan;
         }
+
+        // === TAMBAHKAN BARIS INI SEMENTARA ===
+        dd($holidays);
 
         // 2. Siapkan array tanggal (Tetap Sama)
         $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
