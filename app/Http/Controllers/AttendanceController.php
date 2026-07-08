@@ -267,9 +267,6 @@ class AttendanceController extends Controller
             $holidays[$formattedDate] = $holiday->keterangan;
         }
 
-        // === TAMBAHKAN BARIS INI SEMENTARA ===
-        dd($holidays);
-
         // 2. Siapkan array tanggal (Tetap Sama)
         $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
         $dates = [];
