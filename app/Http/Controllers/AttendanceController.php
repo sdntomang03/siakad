@@ -256,25 +256,31 @@ class AttendanceController extends Controller
 
         $classrooms = Classroom::where('school_id', $schoolId)->orderBy('nama_kelas')->get();
 
-        // 1. Ambil data hari libur dari database pada bulan & tahun terpilih
-        // Format ke bentuk array: ['2026-08-17' => 'Hari Kemerdekaan RI']
-        $holidays = Holiday::whereYear('tanggal', $year)
+        // 1. CARA BARU: Mengambil data hari libur dan memformat ulang tanggalnya secara manual (Foolproof)
+        $holidaysData = Holiday::whereYear('tanggal', $year)
             ->whereMonth('tanggal', $month)
-            ->pluck('keterangan', 'tanggal')
-            ->toArray();
+            ->get();
 
-        // 2. Siapkan array tanggal
+        $holidays = [];
+        foreach ($holidaysData as $holiday) {
+            // Pastikan formatnya murni "YYYY-MM-DD" tanpa ada jam (00:00:00)
+            $formattedDate = Carbon::parse($holiday->tanggal)->format('Y-m-d');
+            $holidays[$formattedDate] = $holiday->keterangan;
+        }
+
+        // 2. Siapkan array tanggal (Tetap Sama)
         $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
         $dates = [];
         for ($i = 1; $i <= $daysInMonth; $i++) {
             $date = Carbon::createFromDate($year, $month, $i);
-            $dateString = $date->format('Y-m-d');
+            $dateString = $date->format('Y-m-d'); // Ini juga murni "YYYY-MM-DD"
 
             $dates[$i] = [
                 'date' => $dateString,
                 'is_weekend' => $date->isWeekend(),
-                'is_holiday' => isset($holidays[$dateString]), // Bernilai true jika tanggal ada di tabel holidays
-                'holiday_name' => $holidays[$dateString] ?? null, // Nama hari libur
+                // Pengecekan sekarang pasti cocok karena formatnya sudah persis sama
+                'is_holiday' => isset($holidays[$dateString]),
+                'holiday_name' => $holidays[$dateString] ?? null,
                 'day_name' => $date->locale('id')->isoFormat('dd'),
             ];
         }
