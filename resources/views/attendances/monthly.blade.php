@@ -47,7 +47,7 @@
                         <select name="year"
                             class="rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 text-sm focus:ring-indigo-500 w-28"
                             required>
-                            @for($y = date('Y'); $y >= date('Y') - 3; $y--)
+                            @for($y = date('Y') + 1; $y >= date('Y') - 3; $y--)
                             <option value="{{ $y }}" {{ $year==$y ? 'selected' : '' }}>{{ $y }}</option>
                             @endfor
                         </select>
@@ -69,7 +69,8 @@
                     <div>
                         <h3 class="text-base font-black text-slate-800 dark:text-white">Matriks Kehadiran Siswa</h3>
                         <p class="text-xs text-slate-500 font-bold mt-1">Kelas: {{ $selectedClassroom->nama_kelas }} |
-                            Periode: {{ date('F Y', mktime(0,0,0, $month, 1, $year)) }}</p>
+                            Periode: {{ \Carbon\Carbon::createFromDate($year, $month, 1)->locale('id')->isoFormat('MMMM
+                            YYYY') }}</p>
                     </div>
                 </div>
 
@@ -85,8 +86,13 @@
                                     Nama Siswa</th>
 
                                 @foreach($dates as $day => $info)
-                                <th
-                                    class="px-1 py-2 text-[10px] text-center border-b border-r border-slate-200 dark:border-slate-700 {{ $info['is_weekend'] ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400' : 'text-slate-500' }}">
+                                @php
+                                $isDayOff = $info['is_weekend'] || $info['is_holiday'];
+                                $dayOffTitle = $info['is_holiday'] ? $info['holiday_name'] : ($info['is_weekend'] ?
+                                'Libur Akhir Pekan' : '');
+                                @endphp
+                                <th title="{{ $dayOffTitle }}"
+                                    class="px-1 py-2 text-[10px] text-center border-b border-r border-slate-200 dark:border-slate-700 {{ $isDayOff ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400 cursor-help' : 'text-slate-500' }}">
                                     {{ $info['day_name'] }}
                                 </th>
                                 @endforeach
@@ -94,8 +100,13 @@
 
                             <tr>
                                 @foreach($dates as $day => $info)
-                                <th
-                                    class="px-1 py-1 text-xs text-center font-black border-r border-slate-200 dark:border-slate-700 {{ $info['is_weekend'] ? 'bg-rose-500 text-white dark:bg-rose-600' : 'text-slate-700 dark:text-slate-300' }}">
+                                @php
+                                $isDayOff = $info['is_weekend'] || $info['is_holiday'];
+                                $dayOffTitle = $info['is_holiday'] ? $info['holiday_name'] : ($info['is_weekend'] ?
+                                'Libur Akhir Pekan' : '');
+                                @endphp
+                                <th title="{{ $dayOffTitle }}"
+                                    class="px-1 py-1 text-xs text-center font-black border-r border-slate-200 dark:border-slate-700 {{ $isDayOff ? 'bg-rose-500 text-white dark:bg-rose-600 cursor-help' : 'text-slate-700 dark:text-slate-300' }}">
                                     {{ $day }}
                                 </th>
                                 @endforeach
@@ -116,11 +127,12 @@
 
                                 @foreach($dates as $day => $info)
                                 @php
-                                // Ambil status absensi di hari ini, jika kosong tampilkan strip atau titik
                                 $status = $attendanceData[$student->id][$day] ?? null;
+                                $isDayOff = $info['is_weekend'] || $info['is_holiday'];
+                                $dayOffTitle = $info['is_holiday'] ? $info['holiday_name'] : ($info['is_weekend'] ?
+                                'Libur Akhir Pekan' : '');
 
-                                // Styling text berdasarkan status
-                                $textClass = 'text-slate-300 dark:text-slate-600'; // Default jika kosong
+                                $textClass = 'text-slate-300 dark:text-slate-600';
                                 $label = '-';
 
                                 if($status == 'hadir') { $textClass = 'text-emerald-600 font-bold'; $label = 'H'; }
@@ -128,14 +140,14 @@
                                 elseif($status == 'izin') { $textClass = 'text-blue-500 font-bold'; $label = 'I'; }
                                 elseif($status == 'alfa') { $textClass = 'text-rose-600 font-bold'; $label = 'A'; }
 
-                                // Jika hari ini adalah weekend, berikan background merah pucat
-                                $bgClass = $info['is_weekend'] ? 'bg-rose-50 dark:bg-rose-900/10' : '';
+                                $bgClass = $isDayOff ? 'bg-rose-50 dark:bg-rose-900/10' : '';
                                 @endphp
 
-                                <td
+                                <td title="{{ $dayOffTitle }}"
                                     class="px-1 py-2 text-center border-r border-slate-100 dark:border-slate-700 {{ $bgClass }}">
-                                    @if($info['is_weekend'] && !$status)
-                                    <span class="text-rose-200 dark:text-rose-800/50 text-[10px]">L</span>
+                                    @if($isDayOff && !$status)
+                                    <span
+                                        class="text-rose-300 dark:text-rose-800/50 text-xs font-black cursor-help">.</span>
                                     @else
                                     <span class="{{ $textClass }}">{{ $label }}</span>
                                     @endif
@@ -154,7 +166,7 @@
                     <span class="text-amber-500 font-bold">S: Sakit</span>
                     <span class="text-blue-500 font-bold">I: Izin</span>
                     <span class="text-rose-600 font-bold">A: Alfa</span>
-                    <span class="text-rose-400 font-bold">L: Libur (Weekend)</span>
+                    <span class="text-rose-400 font-bold text-lg leading-[0px] relative top-1">. : Libur</span>
                 </div>
 
             </div>
