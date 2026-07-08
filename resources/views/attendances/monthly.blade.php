@@ -149,8 +149,8 @@
                                 $label = 'A';
                                 } elseif(!$isDayOff && !$status) {
                                 // LOGIKA BARU: Jika hari kerja & kosong, anggap Hadir dengan tanda titik
-                                $textClass = 'text-emerald-600 font-black text-xl leading-[0] relative top-1';
-                                $label = '.';
+                                $textClass = 'text-emerald-600 font-black text-lg';
+                                $label = '•';
                                 }
 
                                 $bgClass = $isDayOff ? 'bg-rose-50 dark:bg-rose-900/10' : '';
@@ -250,7 +250,8 @@
                 <div
                     class="p-4 bg-slate-50 dark:bg-slate-800/80 text-xs text-slate-500 border-t border-slate-200 dark:border-slate-700 flex gap-4">
                     <span><b>Keterangan:</b></span>
-                    <span class="text-emerald-600 font-bold">H: Hadir</span>
+                    <span class="text-emerald-600 font-bold">H / <span
+                            class="text-lg leading-[0] relative top-1">.</span> : Hadir</span>
                     <span class="text-amber-500 font-bold">S: Sakit</span>
                     <span class="text-blue-500 font-bold">I: Izin</span>
                     <span class="text-rose-600 font-bold">A: Alfa</span>
