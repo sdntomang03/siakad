@@ -107,7 +107,7 @@
                             class="text-[10px] text-slate-500 uppercase tracking-wider bg-slate-50/50 dark:bg-slate-900/30">
                             <tr>
                                 <th class="px-6 py-3">Nama Siswa</th>
-                                <th class="px-6 py-3 text-center bg-emerald-50/30 text-emerald-700">H</th>
+
                                 <th class="px-6 py-3 text-center bg-amber-50/30 text-amber-700">S</th>
                                 <th class="px-6 py-3 text-center bg-blue-50/30 text-blue-700">I</th>
                                 <th class="px-6 py-3 text-center bg-rose-50/30 text-rose-700">A</th>
@@ -122,7 +122,7 @@
                                         }}</span>
                                     <span class="text-[10px] text-slate-400">NISN: {{ $data['nisn'] ?? '-' }}</span>
                                 </td>
-                                <td class="px-6 py-4 text-center font-bold text-emerald-600">{{ $data['hadir'] }}</td>
+
                                 <td class="px-6 py-4 text-center font-bold text-amber-500">{{ $data['sakit'] }}</td>
                                 <td class="px-6 py-4 text-center font-bold text-blue-500">{{ $data['izin'] }}</td>
                                 <td class="px-6 py-4 text-center font-bold text-rose-500">{{ $data['alfa'] }}</td>
