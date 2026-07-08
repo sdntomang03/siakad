@@ -135,10 +135,23 @@
                                 $textClass = 'text-slate-300 dark:text-slate-600';
                                 $label = '-';
 
-                                if($status == 'hadir') { $textClass = 'text-emerald-600 font-bold'; $label = 'H'; }
-                                elseif($status == 'sakit') { $textClass = 'text-amber-500 font-bold'; $label = 'S'; }
-                                elseif($status == 'izin') { $textClass = 'text-blue-500 font-bold'; $label = 'I'; }
-                                elseif($status == 'alfa') { $textClass = 'text-rose-600 font-bold'; $label = 'A'; }
+                                if($status == 'hadir') {
+                                $textClass = 'text-emerald-600 font-bold';
+                                $label = 'H';
+                                } elseif($status == 'sakit') {
+                                $textClass = 'text-amber-500 font-bold';
+                                $label = 'S';
+                                } elseif($status == 'izin') {
+                                $textClass = 'text-blue-500 font-bold';
+                                $label = 'I';
+                                } elseif($status == 'alfa') {
+                                $textClass = 'text-rose-600 font-bold';
+                                $label = 'A';
+                                } elseif(!$isDayOff && !$status) {
+                                // LOGIKA BARU: Jika hari kerja & kosong, anggap Hadir dengan tanda titik
+                                $textClass = 'text-emerald-600 font-black text-xl leading-[0] relative top-1';
+                                $label = '.';
+                                }
 
                                 $bgClass = $isDayOff ? 'bg-rose-50 dark:bg-rose-900/10' : '';
                                 @endphp
