@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AcademicYear;
 use App\Models\Attendance;
 use App\Models\Classroom;
+use App\Models\Holiday;
 use App\Models\School;
 use App\Models\Student;
 use Carbon\Carbon;
@@ -249,23 +250,32 @@ class AttendanceController extends Controller
     {
         $schoolId = auth()->user()->school_id;
 
-        // Ambil filter (Default: Bulan dan Tahun saat ini)
         $month = $request->input('month', date('m'));
         $year = $request->input('year', date('Y'));
         $classroomId = $request->input('classroom_id');
 
-        // Ambil daftar kelas untuk dropdown
         $classrooms = Classroom::where('school_id', $schoolId)->orderBy('nama_kelas')->get();
 
-        // Menyiapkan array tanggal dalam 1 bulan penuh menggunakan Carbon
+        // 1. Ambil data hari libur dari database pada bulan & tahun terpilih
+        // Format ke bentuk array: ['2026-08-17' => 'Hari Kemerdekaan RI']
+        $holidays = Holiday::whereYear('tanggal', $year)
+            ->whereMonth('tanggal', $month)
+            ->pluck('keterangan', 'tanggal')
+            ->toArray();
+
+        // 2. Siapkan array tanggal
         $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
         $dates = [];
         for ($i = 1; $i <= $daysInMonth; $i++) {
             $date = Carbon::createFromDate($year, $month, $i);
+            $dateString = $date->format('Y-m-d');
+
             $dates[$i] = [
-                'date' => $date->format('Y-m-d'),
-                'is_weekend' => $date->isWeekend(), // Akan bernilai true jika Sabtu/Minggu
-                'day_name' => $date->locale('id')->isoFormat('dd'), // Singkatan hari (Sen, Sel, Rab...)
+                'date' => $dateString,
+                'is_weekend' => $date->isWeekend(),
+                'is_holiday' => isset($holidays[$dateString]), // Bernilai true jika tanggal ada di tabel holidays
+                'holiday_name' => $holidays[$dateString] ?? null, // Nama hari libur
+                'day_name' => $date->locale('id')->isoFormat('dd'),
             ];
         }
 
@@ -281,15 +291,13 @@ class AttendanceController extends Controller
             if ($selectedClassroom) {
                 $students = $selectedClassroom->students;
 
-                // Ambil semua data absensi di kelas ini pada bulan dan tahun yang dipilih
                 $attendances = Attendance::where('classroom_id', $classroomId)
                     ->whereYear('tanggal', $year)
                     ->whereMonth('tanggal', $month)
                     ->get();
 
-                // Susun data ke dalam matriks: $attendanceData[student_id][tanggal] = status
                 foreach ($attendances as $att) {
-                    $day = Carbon::parse($att->tanggal)->format('j'); // Mengambil angka harinya saja (1-31)
+                    $day = Carbon::parse($att->tanggal)->format('j');
                     $attendanceData[$att->student_id][$day] = $att->status;
                 }
             }

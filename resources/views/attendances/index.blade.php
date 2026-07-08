@@ -103,37 +103,84 @@
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left">
-                        <thead
-                            class="text-[10px] text-slate-500 uppercase tracking-wider bg-slate-50/50 dark:bg-slate-900/30">
+                        <thead class="bg-slate-100 dark:bg-slate-900/50">
                             <tr>
-                                <th class="px-6 py-3">Nama Siswa</th>
+                                <th rowspan="2"
+                                    class="px-4 py-3 sticky left-0 z-20 bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 text-xs text-center w-10">
+                                    No</th>
+                                <th rowspan="2"
+                                    class="px-4 py-3 sticky left-10 z-20 bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 text-xs text-left w-48">
+                                    Nama Siswa</th>
 
-                                <th class="px-6 py-3 text-center bg-amber-50/30 text-amber-700">S</th>
-                                <th class="px-6 py-3 text-center bg-blue-50/30 text-blue-700">I</th>
-                                <th class="px-6 py-3 text-center bg-rose-50/30 text-rose-700">A</th>
-                                <th class="px-6 py-3 text-right">Detail</th>
+                                @foreach($dates as $day => $info)
+                                @php
+                                // Cek apakah hari ini libur akhir pekan ATAU libur nasional
+                                $isDayOff = $info['is_weekend'] || $info['is_holiday'];
+                                $dayOffTitle = $info['is_holiday'] ? $info['holiday_name'] : ($info['is_weekend'] ?
+                                'Libur Akhir Pekan' : '');
+                                @endphp
+                                <th title="{{ $dayOffTitle }}"
+                                    class="px-1 py-2 text-[10px] text-center border-b border-r border-slate-200 dark:border-slate-700 {{ $isDayOff ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400 cursor-help' : 'text-slate-500' }}">
+                                    {{ $info['day_name'] }}
+                                </th>
+                                @endforeach
+                            </tr>
+
+                            <tr>
+                                @foreach($dates as $day => $info)
+                                @php
+                                $isDayOff = $info['is_weekend'] || $info['is_holiday'];
+                                $dayOffTitle = $info['is_holiday'] ? $info['holiday_name'] : ($info['is_weekend'] ?
+                                'Libur Akhir Pekan' : '');
+                                @endphp
+                                <th title="{{ $dayOffTitle }}"
+                                    class="px-1 py-1 text-xs text-center font-black border-r border-slate-200 dark:border-slate-700 {{ $isDayOff ? 'bg-rose-500 text-white dark:bg-rose-600 cursor-help' : 'text-slate-700 dark:text-slate-300' }}">
+                                    {{ $day }}
+                                </th>
+                                @endforeach
                             </tr>
                         </thead>
+
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-                            @foreach($siswas as $data)
-                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition">
-                                <td class="px-6 py-4">
-                                    <span class="block font-bold text-slate-800 dark:text-slate-200">{{ $data['nama']
-                                        }}</span>
-                                    <span class="text-[10px] text-slate-400">NISN: {{ $data['nisn'] ?? '-' }}</span>
+                            @foreach($students as $index => $student)
+                            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition">
+                                <td
+                                    class="px-4 py-2 sticky left-0 z-10 bg-white dark:bg-slate-800 border-r border-slate-100 dark:border-slate-700 text-center font-bold text-slate-400 text-xs">
+                                    {{ $index + 1 }}
+                                </td>
+                                <td
+                                    class="px-4 py-2 sticky left-10 z-10 bg-white dark:bg-slate-800 border-r border-slate-100 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300 text-xs">
+                                    {{ $student->nama_lengkap }}
                                 </td>
 
-                                <td class="px-6 py-4 text-center font-bold text-amber-500">{{ $data['sakit'] }}</td>
-                                <td class="px-6 py-4 text-center font-bold text-blue-500">{{ $data['izin'] }}</td>
-                                <td class="px-6 py-4 text-center font-bold text-rose-500">{{ $data['alfa'] }}</td>
+                                @foreach($dates as $day => $info)
+                                @php
+                                $status = $attendanceData[$student->id][$day] ?? null;
+                                $isDayOff = $info['is_weekend'] || $info['is_holiday'];
+                                $dayOffTitle = $info['is_holiday'] ? $info['holiday_name'] : ($info['is_weekend'] ?
+                                'Libur Akhir Pekan' : '');
 
-                                <td class="px-6 py-4 text-right">
-                                    <a href="{{ route('attendances.student-report', $data['id']) }}"
-                                        class="p-2 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg inline-block transition"
-                                        title="Lihat Riwayat">
-                                        Lihat &rarr;
-                                    </a>
+                                $textClass = 'text-slate-300 dark:text-slate-600';
+                                $label = '-';
+
+                                if($status == 'hadir') { $textClass = 'text-emerald-600 font-bold'; $label = 'H'; }
+                                elseif($status == 'sakit') { $textClass = 'text-amber-500 font-bold'; $label = 'S'; }
+                                elseif($status == 'izin') { $textClass = 'text-blue-500 font-bold'; $label = 'I'; }
+                                elseif($status == 'alfa') { $textClass = 'text-rose-600 font-bold'; $label = 'A'; }
+
+                                // Background merah muda untuk semua hari libur (nasional/weekend)
+                                $bgClass = $isDayOff ? 'bg-rose-50 dark:bg-rose-900/10' : '';
+                                @endphp
+
+                                <td title="{{ $dayOffTitle }}"
+                                    class="px-1 py-2 text-center border-r border-slate-100 dark:border-slate-700 {{ $bgClass }}">
+                                    @if($isDayOff && !$status)
+                                    <span class="text-rose-300 dark:text-rose-800/50 text-[10px] cursor-help">L</span>
+                                    @else
+                                    <span class="{{ $textClass }}">{{ $label }}</span>
+                                    @endif
                                 </td>
+                                @endforeach
                             </tr>
                             @endforeach
                         </tbody>
