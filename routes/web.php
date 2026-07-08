@@ -9,10 +9,14 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookLoanController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\ExamGradeController;
+use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GradeCurveController;
+use App\Http\Controllers\IjazahController;
 use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\Operator\UserController as OperatorUserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RenkinController;
 use App\Http\Controllers\ReportSubmissionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
@@ -117,6 +121,8 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->name('operator
 });
 
 Route::middleware(['auth', 'role:superadmin|operator'])->group(function () {
+    Route::delete('/subjects/bulk-delete', [SubjectController::class, 'bulkDestroy'])->name('subjects.bulkDestroy');
+    Route::patch('/subjects/bulk-update-urutan', [SubjectController::class, 'bulkUpdateUrutan'])->name('subjects.bulk-update-urutan');
     Route::resource('subjects', SubjectController::class)->except(['create', 'show', 'edit']);
     Route::get('kelulusan/import', [KelulusanController::class, 'showImportForm'])->name('kelulusan.import');
     Route::post('kelulusan/import', [KelulusanController::class, 'importExcel'])->name('kelulusan.import.process');
@@ -195,4 +201,26 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     // LETAKKAN INI DI ATAS route resources / rute yang memakai parameter {assessment}
     Route::get('assessments/recap', [AssessmentController::class, 'recap'])->name('assessments.recap');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/rapor/import', [GradeController::class, 'index'])->name('grades.index');
+    Route::post('/rapor/import', [GradeController::class, 'import'])->name('grades.import');
+    Route::get('/rapor/template', [GradeController::class, 'downloadTemplate'])->name('grades.template');
+    Route::get('/rapor/rekap', [GradeController::class, 'recap'])->name('grades.recap');
+    Route::get('/rapor/leger', [GradeController::class, 'ledger'])->name('grades.ledger');
+
+    // Rute CRUD Manual
+    Route::get('/exam-grades', [ExamGradeController::class, 'index'])->name('exam-grades.index');
+    Route::post('/exam-grades', [ExamGradeController::class, 'store'])->name('exam-grades.store');
+    Route::delete('/exam-grades/{examGrade}', [ExamGradeController::class, 'destroy'])->name('exam-grades.destroy');
+
+    // Rute Import Excel
+    Route::post('/exam-grades/import', [ExamGradeController::class, 'import'])->name('exam-grades.import');
+    Route::get('/exam-grades/template', [ExamGradeController::class, 'downloadTemplate'])->name('exam-grades.template');
+    Route::get('/exam-grades/input-kelas', [ExamGradeController::class, 'createBulk'])->name('exam-grades.createBulk');
+    Route::post('/exam-grades/input-kelas', [ExamGradeController::class, 'storeBulk'])->name('exam-grades.storeBulk');
+    Route::get('/ijazah/pengolahan', [IjazahController::class, 'index'])->name('ijazah.index');
+    Route::patch('/subjects/{subject}/toggle-sidanira', [SubjectController::class, 'toggleSidanira'])->name('subjects.toggle-sidanira');
+});
+Route::get('/renkin', [RenkinController::class, 'index'])->name('renkin.index');
 require __DIR__.'/auth.php';
