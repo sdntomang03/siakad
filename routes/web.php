@@ -100,6 +100,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('classrooms/{classroom}/attendances', [AttendanceController::class, 'store'])->name('attendances.store');
     Route::get('students/{student}/attendance-report', [AttendanceController::class, 'studentReport'])->name('attendances.student-report');
     Route::get('attendances/report', [AttendanceController::class, 'index'])->name('attendances.index');
+    Route::get('/attendances/monthly', [AttendanceController::class, 'monthlyRecap'])->name('attendances.monthly');
 
     Route::get('teacher-notes', [TeacherNoteController::class, 'index'])->name('teacher-notes.index');
     Route::post('teacher-notes', [TeacherNoteController::class, 'store'])->name('teacher-notes.store');

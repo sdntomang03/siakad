@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use App\Models\Classroom;
 use App\Models\School;
 use App\Models\Student;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
@@ -239,5 +240,63 @@ class AttendanceController extends Controller
         }
 
         return view('attendances.index', compact('reportData', 'activeYear', 'allClassrooms', 'schools', 'selectedSchoolId'));
+    }
+
+    // ==========================================
+    // FUNGSI REKAP ABSENSI BULANAN
+    // ==========================================
+    public function monthlyRecap(Request $request)
+    {
+        $schoolId = auth()->user()->school_id;
+
+        // Ambil filter (Default: Bulan dan Tahun saat ini)
+        $month = $request->input('month', date('m'));
+        $year = $request->input('year', date('Y'));
+        $classroomId = $request->input('classroom_id');
+
+        // Ambil daftar kelas untuk dropdown
+        $classrooms = Classroom::where('school_id', $schoolId)->orderBy('nama_kelas')->get();
+
+        // Menyiapkan array tanggal dalam 1 bulan penuh menggunakan Carbon
+        $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
+        $dates = [];
+        for ($i = 1; $i <= $daysInMonth; $i++) {
+            $date = Carbon::createFromDate($year, $month, $i);
+            $dates[$i] = [
+                'date' => $date->format('Y-m-d'),
+                'is_weekend' => $date->isWeekend(), // Akan bernilai true jika Sabtu/Minggu
+                'day_name' => $date->locale('id')->isoFormat('dd'), // Singkatan hari (Sen, Sel, Rab...)
+            ];
+        }
+
+        $students = collect();
+        $attendanceData = [];
+        $selectedClassroom = null;
+
+        if ($classroomId) {
+            $selectedClassroom = Classroom::with(['students' => function ($q) {
+                $q->orderBy('nama_lengkap');
+            }])->where('school_id', $schoolId)->find($classroomId);
+
+            if ($selectedClassroom) {
+                $students = $selectedClassroom->students;
+
+                // Ambil semua data absensi di kelas ini pada bulan dan tahun yang dipilih
+                $attendances = Attendance::where('classroom_id', $classroomId)
+                    ->whereYear('tanggal', $year)
+                    ->whereMonth('tanggal', $month)
+                    ->get();
+
+                // Susun data ke dalam matriks: $attendanceData[student_id][tanggal] = status
+                foreach ($attendances as $att) {
+                    $day = Carbon::parse($att->tanggal)->format('j'); // Mengambil angka harinya saja (1-31)
+                    $attendanceData[$att->student_id][$day] = $att->status;
+                }
+            }
+        }
+
+        return view('attendances.monthly', compact(
+            'classrooms', 'month', 'year', 'dates', 'students', 'attendanceData', 'classroomId', 'selectedClassroom'
+        ));
     }
 }
