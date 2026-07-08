@@ -147,7 +147,7 @@
                                     class="px-1 py-2 text-center border-r border-slate-100 dark:border-slate-700 {{ $bgClass }}">
                                     @if($isDayOff && !$status)
                                     <span
-                                        class="text-rose-300 dark:text-rose-800/50 text-xs font-black cursor-help">.</span>
+                                        class="text-rose-300 dark:text-rose-800/50 text-xs font-black cursor-help">L</span>
                                     @else
                                     <span class="{{ $textClass }}">{{ $label }}</span>
                                     @endif
@@ -156,6 +156,81 @@
                             </tr>
                             @endforeach
                         </tbody>
+
+                        <tfoot
+                            class="bg-slate-50 dark:bg-slate-800/90 font-bold text-xs border-t-2 border-slate-200 dark:border-slate-700">
+                            <tr>
+                                <td
+                                    class="sticky left-0 z-10 bg-slate-50 dark:bg-slate-800/90 border-r border-slate-200 dark:border-slate-700">
+                                </td>
+                                <td
+                                    class="px-4 py-2 sticky left-10 z-10 bg-slate-50 dark:bg-slate-800/90 border-r border-slate-200 dark:border-slate-700 text-right text-amber-500 uppercase tracking-wide">
+                                    Total Sakit (S)
+                                </td>
+                                @foreach($dates as $day => $info)
+                                @php
+                                $countS = 0;
+                                foreach($students as $student) {
+                                if(($attendanceData[$student->id][$day] ?? null) == 'sakit') $countS++;
+                                }
+                                $isDayOff = $info['is_weekend'] || $info['is_holiday'];
+                                $bgClass = $isDayOff ? 'bg-rose-50 dark:bg-rose-900/10' : '';
+                                @endphp
+                                <td
+                                    class="px-1 py-2 text-center border-r border-slate-200 dark:border-slate-700 text-amber-500 {{ $bgClass }}">
+                                    {{ $countS > 0 ? $countS : '-' }}
+                                </td>
+                                @endforeach
+                            </tr>
+
+                            <tr>
+                                <td
+                                    class="sticky left-0 z-10 bg-slate-50 dark:bg-slate-800/90 border-r border-slate-200 dark:border-slate-700">
+                                </td>
+                                <td
+                                    class="px-4 py-2 sticky left-10 z-10 bg-slate-50 dark:bg-slate-800/90 border-r border-slate-200 dark:border-slate-700 text-right text-blue-500 uppercase tracking-wide">
+                                    Total Izin (I)
+                                </td>
+                                @foreach($dates as $day => $info)
+                                @php
+                                $countI = 0;
+                                foreach($students as $student) {
+                                if(($attendanceData[$student->id][$day] ?? null) == 'izin') $countI++;
+                                }
+                                $isDayOff = $info['is_weekend'] || $info['is_holiday'];
+                                $bgClass = $isDayOff ? 'bg-rose-50 dark:bg-rose-900/10' : '';
+                                @endphp
+                                <td
+                                    class="px-1 py-2 text-center border-r border-slate-200 dark:border-slate-700 text-blue-500 {{ $bgClass }}">
+                                    {{ $countI > 0 ? $countI : '-' }}
+                                </td>
+                                @endforeach
+                            </tr>
+
+                            <tr>
+                                <td
+                                    class="sticky left-0 z-10 bg-slate-50 dark:bg-slate-800/90 border-r border-slate-200 dark:border-slate-700 border-b">
+                                </td>
+                                <td
+                                    class="px-4 py-2 sticky left-10 z-10 bg-slate-50 dark:bg-slate-800/90 border-r border-slate-200 dark:border-slate-700 border-b text-right text-rose-600 uppercase tracking-wide">
+                                    Total Alfa (A)
+                                </td>
+                                @foreach($dates as $day => $info)
+                                @php
+                                $countA = 0;
+                                foreach($students as $student) {
+                                if(($attendanceData[$student->id][$day] ?? null) == 'alfa') $countA++;
+                                }
+                                $isDayOff = $info['is_weekend'] || $info['is_holiday'];
+                                $bgClass = $isDayOff ? 'bg-rose-50 dark:bg-rose-900/10' : '';
+                                @endphp
+                                <td
+                                    class="px-1 py-2 text-center border-r border-b border-slate-200 dark:border-slate-700 text-rose-600 {{ $bgClass }}">
+                                    {{ $countA > 0 ? $countA : '-' }}
+                                </td>
+                                @endforeach
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
 
@@ -166,7 +241,7 @@
                     <span class="text-amber-500 font-bold">S: Sakit</span>
                     <span class="text-blue-500 font-bold">I: Izin</span>
                     <span class="text-rose-600 font-bold">A: Alfa</span>
-                    <span class="text-rose-400 font-bold text-lg leading-[0px] relative top-1">. : Libur</span>
+                    <span class="text-rose-400 font-bold">L: Libur</span>
                 </div>
 
             </div>
