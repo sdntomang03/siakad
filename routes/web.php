@@ -12,6 +12,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ExamGradeController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GradeCurveController;
+use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\IjazahController;
 use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\Operator\UserController as OperatorUserController;
@@ -101,7 +102,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('students/{student}/attendance-report', [AttendanceController::class, 'studentReport'])->name('attendances.student-report');
     Route::get('attendances/report', [AttendanceController::class, 'index'])->name('attendances.index');
     Route::get('/attendances/monthly', [AttendanceController::class, 'monthlyRecap'])->name('attendances.monthly');
-
+    Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index');
+    Route::post('/holidays', [HolidayController::class, 'store'])->name('holidays.store');
+    Route::delete('/holidays/{holiday}', [HolidayController::class, 'destroy'])->name('holidays.destroy');
     Route::get('teacher-notes', [TeacherNoteController::class, 'index'])->name('teacher-notes.index');
     Route::post('teacher-notes', [TeacherNoteController::class, 'store'])->name('teacher-notes.store');
     Route::delete('teacher-notes/{id}', [TeacherNoteController::class, 'destroy'])->name('teacher-notes.destroy');
