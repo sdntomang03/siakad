@@ -197,15 +197,21 @@
             @endphp
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #d97706;">Persentase Sakit (S)</td>
-                <td colspan="{{ $totalKolomSisa }}" class="text-left sakit">{{ $persenSakit }}%</td>
+                <td colspan="{{ $totalKolomSisa }}" class="text-left sakit">
+                    {{ $grandSakit }} / ({{ $jumlahSiswa }} x {{ $hariEfektif }}) x 100% = {{ $persenSakit }}%
+                </td>
             </tr>
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #2563eb;">Persentase Izin (I)</td>
-                <td colspan="{{ $totalKolomSisa }}" class="text-left izin">{{ $persenIzin }}%</td>
+                <td colspan="{{ $totalKolomSisa }}" class="text-left izin">
+                    {{ $grandIzin }} / ({{ $jumlahSiswa }} x {{ $hariEfektif }}) x 100% = {{ $persenIzin }}%
+                </td>
             </tr>
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #e11d48;">Persentase Alfa (A)</td>
-                <td colspan="{{ $totalKolomSisa }}" class="text-left alfa">{{ $persenAlfa }}%</td>
+                <td colspan="{{ $totalKolomSisa }}" class="text-left alfa">
+                    {{ $grandAlfa }} / ({{ $jumlahSiswa }} x {{ $hariEfektif }}) x 100% = {{ $persenAlfa }}%
+                </td>
             </tr>
         </tfoot>
     </table>
