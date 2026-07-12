@@ -23,7 +23,7 @@ class ModulAjarController extends Controller
             ->first();
 
         // Mengambil data guru (Asumsi relasi user ke tabel employee/karyawan)
-        $namaGuru = $user->nama_lengkap ?? $user->name;
+        $namaGuru = $user->employee->nama_lengkap ?? 'Guru Tidak Ditemukan';
         $nipGuru = $user->employee->nip ?? '-';
 
         return view('modul-ajar.generator', compact('sekolah', 'activeYear', 'namaGuru', 'nipGuru'));

@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->string('tingkat');
             $table->string('mata_pelajaran');
-            $table->string('topik');
+            $table->text('topik');
 
             $table->longText('html_content'); // Untuk menyimpan hasil modul HTML
             $table->timestamps();
