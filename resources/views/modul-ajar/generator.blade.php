@@ -404,7 +404,7 @@
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold align-top bg-emerald-50">Kegiatan Awal</td>
                             <td colspan="4" class="p-2 bg-white">
-                                <p class="mb-2">(AI: Tuliskan kegiatan pendahuluan untuk pertemuan ${i})</p>
+                                <div class="mb-2">(AI: Tuliskan kegiatan pendahuluan untuk pertemuan ${i} menggunakan tag <ul class="list-disc list-inside"> atau <ol class="list-decimal list-inside">)</div>
                             </td>
                         </tr>
                         <tr class="border border-black">
@@ -412,13 +412,13 @@
                             <td colspan="4" class="p-2 space-y-4 bg-white">
                                 <div>
                                     <strong class="text-blue-700 block">Langkah Pembelajaran:</strong>
-                                    <p>(AI: Tuliskan aktivitas inti pertemuan ${i} secara mendetail berdasarkan cakupan materi.)</p>
+                                    <div class="mt-1">(AI: Tuliskan aktivitas inti pertemuan ${i} secara mendetail. Gunakan tag <ol class="list-decimal list-inside space-y-1"> untuk langkah-langkahnya.)</div>
                                 </div>
                             </td>
                         </tr>
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold align-top bg-emerald-50">Kegiatan Penutup</td>
-                            <td colspan="4" class="p-2 bg-white">(AI: Refleksi, kesimpulan, dan doa penutup untuk pertemuan ${i})</td>
+                            <td colspan="4" class="p-2 bg-white">(AI: Refleksi, kesimpulan, dan doa penutup untuk pertemuan ${i} menggunakan tag <ul class="list-disc list-inside">)</td>
                         </tr>
                 `;
 
@@ -428,22 +428,26 @@
                         </tr>
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold align-top bg-amber-50">LKPD Pertemuan ${i}</td>
-                            <td colspan="4" class="p-2 bg-white">(AI: Buatkan LKPD spesifik Pertemuan ${i})</td>
+                            <td colspan="4" class="p-2 bg-white">(AI: Buatkan instruksi LKPD spesifik Pertemuan ${i})</td>
                         </tr>
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold align-top bg-amber-50">Soal Evaluasi Pertemuan ${i}</td>
-                            <td colspan="4" class="p-2 bg-white">(AI: Buatkan TEPAT 5 soal latihan/evaluasi Pertemuan ${i})</td>
+                            <td colspan="4" class="p-2 bg-white">
+                                (AI: Buatkan TEPAT 5 soal latihan/evaluasi Pertemuan ${i}. <strong>WAJIB</strong> gunakan tag <code>&lt;ol class="list-decimal list-inside space-y-2"&gt;</code> agar ada nomornya!)
+                            </td>
                         </tr>
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold align-top bg-amber-50">Kunci Jawaban Pertemuan ${i}</td>
-                            <td colspan="4" class="p-2 bg-white">(AI: Kunci jawaban dari 5 soal Pertemuan ${i} di atas)</td>
+                            <td colspan="4" class="p-2 bg-white">
+                                (AI: Kunci jawaban dari 5 soal Pertemuan ${i}. <strong>WAJIB</strong> gunakan tag <code>&lt;ol class="list-decimal list-inside space-y-1"&gt;</code> agar ada nomornya!)
+                            </td>
                         </tr>
                 `;
             }
 
             const prompt = `
                 Bertindaklah sebagai Konsultan Kurikulum Merdeka Kemendikbud.
-                Susunlah Modul Ajar dalam format HTML (<div> dan <table>). JANGAN gunakan Markdown.
+                Susunlah Modul Ajar dalam format HTML (hanya <div> dan <table>). JANGAN gunakan raw Markdown (seperti * atau -).
 
                 DATA INPUT:
                 - Mapel: ${mapel}, Topik: ${topik}
@@ -453,9 +457,10 @@
                 - Kepala Sekolah: ${namaKS} (NIP: ${nipKS})
                 - Guru: ${namaGuru} (NIP: ${nipGuru})
 
-                Instruksi Tambahan:
-                1. Buatkan TEPAT 5 soal evaluasi per pertemuan di bagian lampiran.
-                2. PASTIKAN NIP Kepala Sekolah dan NIP Guru ditulis PERSIS seperti Data Input di atas pada bagian TANDA TANGAN.
+                Instruksi Tambahan (SANGAT PENTING):
+                1. Untuk poin/daftar (Tujuan Pembelajaran, Langkah-langkah), WAJIB gunakan tag HTML <ul class="list-disc list-inside"> atau <ol class="list-decimal list-inside">. Jika tidak menggunakan class Tailwind tersebut, bullet/nomor tidak akan muncul.
+                2. Untuk Soal dan Kunci Jawaban di bagian lampiran, WAJIB buat tepat 5 soal berurutan menggunakan tag HTML <ol class="list-decimal list-inside space-y-2">.
+                3. PASTIKAN NIP Kepala Sekolah dan NIP Guru ditulis PERSIS seperti Data Input di atas pada bagian TANDA TANGAN.
 
                 HTML STRUKTUR:
                 <div class="max-w-[210mm] mx-auto p-4 bg-white text-black font-serif">
@@ -496,11 +501,15 @@
                         </tr>
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold bg-blue-50">Dimensi Profil Lulusan</td>
-                            <td colspan="4" class="p-2 bg-white">${selectedProfiles}</td>
+                            <td colspan="4" class="p-2 bg-white">
+                                <ul class="list-disc list-inside">
+                                    ${selectedProfiles.split(', ').map(p => `<li>${p}</li>`).join('')}
+                                </ul>
+                            </td>
                         </tr>
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold bg-blue-50">Pendekatan/Metode</td>
-                            <td colspan="4" class="p-2 bg-white">(AI: Isi relevan)</td>
+                            <td colspan="4" class="p-2 bg-white">(AI: Isi dengan tag <ul class="list-disc list-inside">)</td>
                         </tr>
                     </table>
 
@@ -513,7 +522,9 @@
                             <td colspan="6" class="p-2 bg-emerald-100 font-bold text-emerald-900">1. Tujuan Pembelajaran</td>
                         </tr>
                         <tr class="border border-black">
-                            <td colspan="6" class="p-2 bg-white">(AI: Isi Tujuan Pembelajaran sesuai Topik)</td>
+                            <td colspan="6" class="p-2 bg-white">
+                                (AI: Isi Tujuan Pembelajaran sesuai Topik. <strong>WAJIB</strong> gunakan tag <code>&lt;ol class="list-decimal list-inside space-y-1"&gt;</code>)
+                            </td>
                         </tr>
 
                         <!-- Langkah Pembelajaran -->
