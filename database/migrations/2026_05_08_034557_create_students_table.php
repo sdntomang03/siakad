@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->string('nisn')->unique()->nullable();
             $table->string('nipd')->nullable();
+            $table->string('class_code')->nullable();
             $table->string('nik', 16)->nullable();
             $table->string('no_kk', 16)->nullable();
             $table->string('no_registrasi_akta_lahir')->nullable();

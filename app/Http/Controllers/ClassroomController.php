@@ -158,7 +158,11 @@ class ClassroomController extends Controller
             ->orderBy('nama_lengkap', 'asc')
             ->get();
 
-        // B. DATA UNTUK PENUGASAN GURU MAPEL (TAMBAHAN BARU)
+        // --- TAMBAHAN FILTER CLASS CODE ---
+        // Mengambil daftar unik class_code dari availableStudents yang tidak null/kosong
+        $availableClassCodes = $availableStudents->pluck('class_code')->filter()->unique()->values();
+
+        // B. DATA UNTUK PENUGASAN GURU MAPEL
         // 1. Ambil Mapel kategori 'guru_mapel' yang sesuai tingkat kelas ini
         $availableSubjects = Subject::where('school_id', $classroom->school_id)
             ->where('tingkat', $classroom->tingkat)
@@ -178,12 +182,12 @@ class ClassroomController extends Controller
         return view('classrooms.show', compact(
             'classroom',
             'availableStudents',
+            'availableClassCodes', // Tambahan passing variabel class_code
             'availableSubjects',
             'teachers',
             'currentAssignments'
         ));
     }
-
     // TAMBAHKAN 2 FUNGSI INI DI BAWAH FUNGSI SHOW UNTUK PROSES TAMBAH & HAPUS
 
     public function assignStudent(Request $request, Classroom $classroom)

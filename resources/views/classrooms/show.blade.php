@@ -211,7 +211,8 @@
         </div>
     </div>
 
-    <div x-data="{ show: false, search: '' }" @open-add-student-modal.window="show = true" x-show="show"
+    {{-- MODAL TAMBAH SISWA (DIPERBARUI DENGAN ALPINE FILTER CODE) --}}
+    <div x-data="{ show: false, search: '', filterCode: '' }" @open-add-student-modal.window="show = true" x-show="show"
         class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
         style="display: none;">
 
@@ -225,8 +226,19 @@
                 <p class="text-xs text-slate-500 mt-1 mb-3">Centang nama-nama siswa yang ingin dimasukkan.</p>
 
                 @if($availableStudents->count() > 0)
-                <input type="text" x-model="search" placeholder="Cari nama siswa..."
-                    class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm">
+                <div class="flex gap-2">
+                    <input type="text" x-model="search" placeholder="Cari nama siswa..."
+                        class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm">
+
+                    {{-- DROPDOWN FILTER KODE KELAS (CLASS CODE) --}}
+                    <select x-model="filterCode"
+                        class="w-1/3 rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm">
+                        <option value="">Semua Kode</option>
+                        @foreach($availableClassCodes as $code)
+                        <option value="{{ $code }}">{{ $code }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 @endif
             </div>
 
@@ -235,7 +247,7 @@
                 <div class="space-y-2">
                     @foreach($availableStudents as $availSiswa)
                     <label
-                        x-show="search === '' || '{{ strtolower($availSiswa->nama_lengkap) }}'.includes(search.toLowerCase())"
+                        x-show="(search === '' || '{{ strtolower(addslashes($availSiswa->nama_lengkap)) }}'.includes(search.toLowerCase())) && (filterCode === '' || '{{ $availSiswa->class_code }}' === filterCode)"
                         class="flex items-center gap-4 cursor-pointer p-3 bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-slate-700 rounded-xl transition border border-slate-200 dark:border-slate-700 hover:border-indigo-300 shadow-sm">
 
                         <input type="checkbox" name="student_ids[]" value="{{ $availSiswa->id }}"
@@ -247,6 +259,7 @@
                             <span class="block text-[10px] text-slate-500 uppercase tracking-wider mt-0.5">
                                 {{ $availSiswa->jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' }} • NISN: {{
                                 $availSiswa->nisn ?? '-' }}
+                                @if($availSiswa->class_code) • KODE: <b>{{ $availSiswa->class_code }}</b> @endif
                             </span>
                         </div>
                     </label>
