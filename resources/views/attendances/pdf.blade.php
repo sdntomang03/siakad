@@ -183,24 +183,28 @@
         </tbody>
         <tfoot>
             @php
-            $persenSakit = $grandHadir > 0 ? round(($grandSakit / $grandHadir) * 100, 1) : 0;
-            $persenIzin = $grandHadir > 0 ? round(($grandIzin / $grandHadir) * 100, 1) : 0;
-            $persenAlfa = $grandHadir > 0 ? round(($grandAlfa / $grandHadir) * 100, 1) : 0;
+            $jumlahSiswa = count($students);
+            $hariEfektif = 0;
+            foreach($dates as $info) {
+            if(!$info['is_weekend'] && !$info['is_holiday']) $hariEfektif++;
+            }
+            $penyebut = $jumlahSiswa * $hariEfektif;
+
+            $persenSakit = $penyebut > 0 ? round(($grandSakit / $penyebut) * 100, 1) : 0;
+            $persenIzin = $penyebut > 0 ? round(($grandIzin / $penyebut) * 100, 1) : 0;
+            $persenAlfa = $penyebut > 0 ? round(($grandAlfa / $penyebut) * 100, 1) : 0;
             $totalKolomSisa = count($dates) + 3;
             @endphp
             <tr>
-                <td colspan="2" class="text-left" style="font-weight: bold; color: #d97706;">Persentase Sakit (S) vs
-                    Hadir</td>
+                <td colspan="2" class="text-left" style="font-weight: bold; color: #d97706;">Persentase Sakit (S)</td>
                 <td colspan="{{ $totalKolomSisa }}" class="text-left sakit">{{ $persenSakit }}%</td>
             </tr>
             <tr>
-                <td colspan="2" class="text-left" style="font-weight: bold; color: #2563eb;">Persentase Izin (I) vs
-                    Hadir</td>
+                <td colspan="2" class="text-left" style="font-weight: bold; color: #2563eb;">Persentase Izin (I)</td>
                 <td colspan="{{ $totalKolomSisa }}" class="text-left izin">{{ $persenIzin }}%</td>
             </tr>
             <tr>
-                <td colspan="2" class="text-left" style="font-weight: bold; color: #e11d48;">Persentase Alfa (A) vs
-                    Hadir</td>
+                <td colspan="2" class="text-left" style="font-weight: bold; color: #e11d48;">Persentase Alfa (A)</td>
                 <td colspan="{{ $totalKolomSisa }}" class="text-left alfa">{{ $persenAlfa }}%</td>
             </tr>
         </tfoot>
