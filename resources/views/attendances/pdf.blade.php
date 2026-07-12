@@ -4,6 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Rekap Absensi Bulanan</title>
+
+    <!-- Script MathJax untuk merender LaTeX -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -89,37 +94,6 @@
         .rekap-a {
             color: #e11d48;
         }
-
-        .formula-table {
-            display: inline-table;
-            vertical-align: middle;
-            border-collapse: collapse;
-        }
-
-        .formula-table td {
-            border: none;
-            vertical-align: middle;
-            padding: 0 4px;
-            font-size: 11px;
-        }
-
-        .frac-table {
-            display: inline-table;
-            vertical-align: middle;
-            border-collapse: collapse;
-            text-align: center;
-        }
-
-        .frac-table td {
-            border: none;
-            padding: 0 4px;
-            line-height: 1.2;
-            font-size: 11px;
-        }
-
-        .frac-bottom-cell {
-            border-top: 1.2px solid #000;
-        }
     </style>
 </head>
 
@@ -136,7 +110,9 @@
                 <th rowspan="2" class="nama-siswa">Nama Siswa</th>
                 @foreach($dates as $day => $info)
                 @php $isDayOff = $info['is_weekend'] || $info['is_holiday']; @endphp
-                <th class="{{ $isDayOff ? 'day-off' : '' }}" style="font-size: 8px;">{{ $info['day_name'] }}</th>
+                <th class="{{ $isDayOff ? 'day-off' : '' }}" style="font-size: 8px;">
+                    {{ $info['day_name'] }}
+                </th>
                 @endforeach
                 <th rowspan="2" class="rekap-col rekap-s" style="width: 20px;">S</th>
                 <th rowspan="2" class="rekap-col rekap-i" style="width: 20px;">I</th>
@@ -149,6 +125,7 @@
                 @endforeach
             </tr>
         </thead>
+
         <tbody>
             @php
             $grandHadir = 0;
@@ -156,11 +133,13 @@
             $grandIzin = 0;
             $grandAlfa = 0;
             @endphp
+
             @foreach($students as $index => $student)
             @php
             $totalS = 0;
             $totalI = 0;
             $totalA = 0;
+
             foreach($dates as $day => $info) {
             $status = $attendanceData[$student->id][$day] ?? null;
             if($status == 'hadir') $grandHadir++;
@@ -198,7 +177,7 @@
                 $class = 'dot';
                 } elseif($isDayOff && !$status) {
                 $label = 'L';
-                $class = 'alfa'; // Gunakan warna merah untuk label L
+                $class = 'alfa';
                 }
                 @endphp
                 <td class="{{ $isDayOff ? 'day-off' : '' }}">
@@ -212,15 +191,17 @@
             </tr>
             @endforeach
         </tbody>
+
         <tfoot>
             @php
             $jumlahSiswa = count($students);
             $hariEfektif = 0;
+
             foreach($dates as $info) {
             if(!$info['is_weekend'] && !$info['is_holiday']) $hariEfektif++;
             }
-            $penyebut = $jumlahSiswa * $hariEfektif;
 
+            $penyebut = $jumlahSiswa * $hariEfektif;
             $persenSakit = $penyebut > 0 ? round(($grandSakit / $penyebut) * 100, 1) : 0;
             $persenIzin = $penyebut > 0 ? round(($grandIzin / $penyebut) * 100, 1) : 0;
             $persenAlfa = $penyebut > 0 ? round(($grandAlfa / $penyebut) * 100, 1) : 0;
@@ -228,62 +209,24 @@
             @endphp
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #d97706;">Persentase Sakit (S)</td>
-                <td colspan="{{ $totalKolomSisa }}" class="text-left sakit">
-                    <table class="formula-table">
-                        <tr>
-                            <td>
-                                <table class="frac-table">
-                                    <tr>
-                                        <td>{{ $grandSakit }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="frac-bottom-cell">{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</td>
-                                    </tr>
-                                </table>
-                            </td>
-                            <td>&times; 100% = {{ $persenSakit }}%</td>
-                        </tr>
-                    </table>
+                <td colspan="{{ $totalKolomSisa }}" class="text-left sakit"
+                    style="font-size: 13px; padding-left: 10px;">
+                    \( \frac{ {{ $grandSakit }} }{ {{ $jumlahSiswa }} \times {{ $hariEfektif }} } \times 100\% = {{
+                    $persenSakit }}\% \)
                 </td>
             </tr>
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #2563eb;">Persentase Izin (I)</td>
-                <td colspan="{{ $totalKolomSisa }}" class="text-left izin">
-                    <table class="formula-table">
-                        <tr>
-                            <td>
-                                <table class="frac-table">
-                                    <tr>
-                                        <td>{{ $grandIzin }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="frac-bottom-cell">{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</td>
-                                    </tr>
-                                </table>
-                            </td>
-                            <td>&times; 100% = {{ $persenIzin }}%</td>
-                        </tr>
-                    </table>
+                <td colspan="{{ $totalKolomSisa }}" class="text-left izin" style="font-size: 13px; padding-left: 10px;">
+                    \( \frac{ {{ $grandIzin }} }{ {{ $jumlahSiswa }} \times {{ $hariEfektif }} } \times 100\% = {{
+                    $persenIzin }}\% \)
                 </td>
             </tr>
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #e11d48;">Persentase Alfa (A)</td>
-                <td colspan="{{ $totalKolomSisa }}" class="text-left alfa">
-                    <table class="formula-table">
-                        <tr>
-                            <td>
-                                <table class="frac-table">
-                                    <tr>
-                                        <td>{{ $grandAlfa }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="frac-bottom-cell">{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</td>
-                                    </tr>
-                                </table>
-                            </td>
-                            <td>&times; 100% = {{ $persenAlfa }}%</td>
-                        </tr>
-                    </table>
+                <td colspan="{{ $totalKolomSisa }}" class="text-left alfa" style="font-size: 13px; padding-left: 10px;">
+                    \( \frac{ {{ $grandAlfa }} }{ {{ $jumlahSiswa }} \times {{ $hariEfektif }} } \times 100\% = {{
+                    $persenAlfa }}\% \)
                 </td>
             </tr>
         </tfoot>
