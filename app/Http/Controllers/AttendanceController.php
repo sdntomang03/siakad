@@ -376,6 +376,6 @@ class AttendanceController extends Controller
             'month', 'year', 'dates', 'students', 'attendanceData', 'selectedClassroom', 'periode'
         ))->setPaper('a4', 'landscape');
 
-        return $pdf->download("Rekap_Absensi_{$selectedClassroom->tingkat}.{$selectedClassroom->nama_kelas}_{$periode}.pdf");
+        return $pdf->download("Rekap_Absensi_{$selectedClassroom->tingkat}{$selectedClassroom->nama_kelas}_{$periode}.pdf");
     }
 }
