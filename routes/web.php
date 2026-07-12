@@ -102,6 +102,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('students/{student}/attendance-report', [AttendanceController::class, 'studentReport'])->name('attendances.student-report');
     Route::get('attendances/report', [AttendanceController::class, 'index'])->name('attendances.index');
     Route::get('/attendances/monthly', [AttendanceController::class, 'monthlyRecap'])->name('attendances.monthly');
+    Route::get('/attendances/monthly/pdf', [AttendanceController::class, 'downloadPdf'])->name('attendances.monthly.pdf');
     Route::get('/holidays', [HolidayController::class, 'index'])->name('holidays.index');
     Route::post('/holidays', [HolidayController::class, 'store'])->name('holidays.store');
     Route::delete('/holidays/{holiday}', [HolidayController::class, 'destroy'])->name('holidays.destroy');

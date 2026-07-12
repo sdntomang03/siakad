@@ -8,6 +8,7 @@ use App\Models\Classroom;
 use App\Models\Holiday;
 use App\Models\School;
 use App\Models\Student;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -311,5 +312,70 @@ class AttendanceController extends Controller
         return view('attendances.monthly', compact(
             'classrooms', 'month', 'year', 'dates', 'students', 'attendanceData', 'classroomId', 'selectedClassroom'
         ));
+    }
+
+    // ==========================================
+    // FUNGSI DOWNLOAD PDF REKAP ABSENSI BULANAN
+    // ==========================================
+    public function downloadPdf(Request $request)
+    {
+        $schoolId = auth()->user()->school_id;
+
+        $month = $request->input('month', date('m'));
+        $year = $request->input('year', date('Y'));
+        $classroomId = $request->input('classroom_id');
+
+        if (! $classroomId) {
+            return back()->with('error', 'Silakan pilih kelas terlebih dahulu.');
+        }
+
+        $holidaysData = Holiday::whereYear('tanggal', $year)
+            ->whereMonth('tanggal', $month)
+            ->get();
+
+        $holidays = [];
+        foreach ($holidaysData as $holiday) {
+            $formattedDate = Carbon::parse($holiday->tanggal)->format('Y-m-d');
+            $holidays[$formattedDate] = $holiday->keterangan;
+        }
+
+        $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
+        $dates = [];
+        for ($i = 1; $i <= $daysInMonth; $i++) {
+            $date = Carbon::createFromDate($year, $month, $i);
+            $dateString = $date->format('Y-m-d');
+
+            $dates[$i] = [
+                'date' => $dateString,
+                'is_weekend' => $date->isWeekend(),
+                'is_holiday' => isset($holidays[$dateString]),
+                'day_name' => $date->locale('id')->isoFormat('dd'),
+            ];
+        }
+
+        $selectedClassroom = Classroom::with(['students' => function ($q) {
+            $q->orderBy('nama_lengkap');
+        }])->where('school_id', $schoolId)->findOrFail($classroomId);
+
+        $students = $selectedClassroom->students;
+        $attendanceData = [];
+
+        $attendances = Attendance::where('classroom_id', $classroomId)
+            ->whereYear('tanggal', $year)
+            ->whereMonth('tanggal', $month)
+            ->get();
+
+        foreach ($attendances as $att) {
+            $day = Carbon::parse($att->tanggal)->format('j');
+            $attendanceData[$att->student_id][$day] = $att->status;
+        }
+
+        $periode = Carbon::createFromDate($year, $month, 1)->locale('id')->isoFormat('MMMM YYYY');
+
+        $pdf = Pdf::loadView('attendances.pdf', compact(
+            'month', 'year', 'dates', 'students', 'attendanceData', 'selectedClassroom', 'periode'
+        ))->setPaper('a4', 'landscape');
+
+        return $pdf->download("Rekap_Absensi_{$selectedClassroom->nama_kelas}_{$periode}.pdf");
     }
 }
