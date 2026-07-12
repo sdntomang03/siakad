@@ -61,6 +61,50 @@
             }
         }
 
+        /* ============================================================
+           RAPIKAN BULLET & PENOMORAN
+           Sengaja di-scope ke #output pakai selector ID supaya
+           spesifisitasnya SELALU menang dibanding utility class Tailwind
+           (list-disc/list-decimal/list-inside) ataupun preflight reset
+           (list-style:none). Jadi walau hasil dari AI kadang lupa
+           menambahkan class yang benar, bullet & nomor tetap rapi baik
+           di preview maupun saat dicetak ke PDF.
+           ============================================================ */
+        #output ul,
+        #output ol {
+            list-style-position: outside !important;
+            padding-left: 1.5em !important;
+            margin: 0.35em 0 !important;
+        }
+
+        #output ul {
+            list-style-type: disc !important;
+        }
+
+        #output ol {
+            list-style-type: decimal !important;
+        }
+
+        #output ul ul,
+        #output ol ul {
+            list-style-type: circle !important;
+        }
+
+        #output ol ol,
+        #output ul ol {
+            list-style-type: lower-alpha !important;
+        }
+
+        #output li {
+            display: list-item !important;
+            margin-bottom: 0.3em;
+            padding-left: 0.15em;
+        }
+
+        #output li::marker {
+            font-weight: 700;
+        }
+
         .custom-scroll::-webkit-scrollbar {
             width: 6px;
         }
@@ -399,12 +443,12 @@
             for (let i = 1; i <= jumlahPertemuan; i++) {
                 strukturPertemuan += `
                         <tr class="border border-black bg-emerald-100">
-                            <td colspan="6" class="p-2 font-bold text-center uppercase text-emerald-800">PERTEMUAN ${i}</td>
+                            <td colspan="6" class="p-2 font-bold text-center uppercase text-emerald-800">PERTEMUAN ${i} DARI ${jumlahPertemuan}</td>
                         </tr>
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold align-top bg-emerald-50">Kegiatan Awal</td>
                             <td colspan="4" class="p-2 bg-white">
-                                <div class="mb-2">(AI: Tuliskan kegiatan pendahuluan untuk pertemuan ${i} menggunakan tag <ul class="list-disc list-inside"> atau <ol class="list-decimal list-inside">)</div>
+                                <div class="mb-2">(AI: Tuliskan 3-4 poin kegiatan pendahuluan pertemuan ${i} (mis. salam & doa, presensi, apersepsi, motivasi/tujuan). WAJIB pakai <ul class="list-disc list-inside"> dengan satu <li> per poin, JANGAN teks biasa.)</div>
                             </td>
                         </tr>
                         <tr class="border border-black">
@@ -412,13 +456,13 @@
                             <td colspan="4" class="p-2 space-y-4 bg-white">
                                 <div>
                                     <strong class="text-blue-700 block">Langkah Pembelajaran:</strong>
-                                    <div class="mt-1">(AI: Tuliskan aktivitas inti pertemuan ${i} secara mendetail. Gunakan tag <ol class="list-decimal list-inside space-y-1"> untuk langkah-langkahnya.)</div>
+                                    <div class="mt-1">(AI: Tuliskan langkah-langkah aktivitas inti pertemuan ${i} secara mendetail dan berurutan. WAJIB pakai <ol class="list-decimal list-inside space-y-1"> dengan satu <li> per langkah agar nomornya muncul otomatis.)</div>
                                 </div>
                             </td>
                         </tr>
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold align-top bg-emerald-50">Kegiatan Penutup</td>
-                            <td colspan="4" class="p-2 bg-white">(AI: Refleksi, kesimpulan, dan doa penutup untuk pertemuan ${i} menggunakan tag <ul class="list-disc list-inside">)</td>
+                            <td colspan="4" class="p-2 bg-white">(AI: Tuliskan 2-3 poin refleksi, kesimpulan, dan doa penutup pertemuan ${i}. WAJIB pakai <ul class="list-disc list-inside"> dengan satu <li> per poin.)</td>
                         </tr>
                 `;
 
@@ -433,13 +477,13 @@
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold align-top bg-amber-50">Soal Evaluasi Pertemuan ${i}</td>
                             <td colspan="4" class="p-2 bg-white">
-                                (AI: Buatkan TEPAT 5 soal latihan/evaluasi Pertemuan ${i}. <strong>WAJIB</strong> gunakan tag <code>&lt;ol class="list-decimal list-inside space-y-2"&gt;</code> agar ada nomornya!)
+                                (AI: Buatkan TEPAT 5 soal latihan/evaluasi Pertemuan ${i}, nomor 1 sampai 5. <strong>WAJIB</strong> gunakan <code>&lt;ol class="list-decimal list-inside space-y-2"&gt;</code> dengan satu <code>&lt;li&gt;</code> per soal, JANGAN gabung ke satu paragraf, agar nomornya muncul otomatis.)
                             </td>
                         </tr>
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold align-top bg-amber-50">Kunci Jawaban Pertemuan ${i}</td>
                             <td colspan="4" class="p-2 bg-white">
-                                (AI: Kunci jawaban dari 5 soal Pertemuan ${i}. <strong>WAJIB</strong> gunakan tag <code>&lt;ol class="list-decimal list-inside space-y-1"&gt;</code> agar ada nomornya!)
+                                (AI: Tuliskan kunci jawaban dari ke-5 soal Pertemuan ${i}, urut nomor 1 sampai 5 sesuai nomor soalnya. <strong>WAJIB</strong> gunakan <code>&lt;ol class="list-decimal list-inside space-y-1"&gt;</code> dengan satu <code>&lt;li&gt;</code> per jawaban agar nomornya muncul otomatis.)
                             </td>
                         </tr>
                 `;
@@ -458,9 +502,11 @@
                 - Guru: ${namaGuru} (NIP: ${nipGuru})
 
                 Instruksi Tambahan (SANGAT PENTING):
-                1. Untuk poin/daftar (Tujuan Pembelajaran, Langkah-langkah), WAJIB gunakan tag HTML <ul class="list-disc list-inside"> atau <ol class="list-decimal list-inside">. Jika tidak menggunakan class Tailwind tersebut, bullet/nomor tidak akan muncul.
-                2. Untuk Soal dan Kunci Jawaban di bagian lampiran, WAJIB buat tepat 5 soal berurutan menggunakan tag HTML <ol class="list-decimal list-inside space-y-2">.
-                3. PASTIKAN NIP Kepala Sekolah dan NIP Guru ditulis PERSIS seperti Data Input di atas pada bagian TANDA TANGAN.
+                1. SEMUA daftar/poin (Tujuan Pembelajaran, Langkah-langkah, Kegiatan Awal/Inti/Penutup, dll) WAJIB dibungkus tag <ul> untuk poin biasa atau <ol> untuk urutan bernomor. Selalu tambahkan class Tailwind yang sesuai (list-disc list-inside untuk <ul>, list-decimal list-inside untuk <ol>) sebagai praktik terbaik, TAPI JANGAN pernah menuliskan poin sebagai teks biasa dengan tanda "-" atau "*" manual — wajib pakai tag <li> agar rapi dan bernomor otomatis.
+                2. Setiap <ol>/<ul> WAJIB berisi elemen <li> terpisah untuk tiap poin (bukan satu <li> panjang berisi banyak kalimat). Jangan gabungkan beberapa poin dalam satu baris.
+                3. Untuk Soal Evaluasi dan Kunci Jawaban di bagian lampiran SETIAP pertemuan, WAJIB buat TEPAT 5 butir menggunakan <ol class="list-decimal list-inside space-y-2">, satu <li> per nomor soal, sehingga nomor 1-5 tampil otomatis. Nomor pada Kunci Jawaban HARUS sesuai urutan nomor soalnya (Jawaban 1 untuk Soal 1, dst).
+                4. Untuk setiap PERTEMUAN, isi Kegiatan Awal, Kegiatan Inti, dan Kegiatan Penutup secara LENGKAP dan TERPISAH sesuai jumlah pertemuan yang diminta (${jumlahPertemuan} pertemuan) — jangan digabung menjadi satu pertemuan saja, dan jangan ada pertemuan yang kosong.
+                5. PASTIKAN NIP Kepala Sekolah dan NIP Guru ditulis PERSIS seperti Data Input di atas pada bagian TANDA TANGAN.
 
                 HTML STRUKTUR:
                 <div class="max-w-[210mm] mx-auto p-4 bg-white text-black font-serif">
