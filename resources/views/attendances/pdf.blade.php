@@ -143,7 +143,7 @@
 <body>
 
     <h2>REKAPITULASI ABSENSI BULANAN</h2>
-    <h3>Kelas: {{ $selectedClassroom->tingkat }} - {{ $selectedClassroom->nama_kelas }}</h3>
+    <h3>Kelas: {{ $selectedClassroom->tingkat }}{{ $selectedClassroom->nama_kelas }}</h3>
     <h3>Periode: {{ $periode }}</h3>
 
     <table class="main-table">
@@ -342,7 +342,7 @@
             </td>
             <td>
                 Jakarta, {{ $tanggalTtd }}<br>
-                Guru Kelas {{ $selectedClassroom->tingkat }} - {{ $selectedClassroom->nama_kelas }}
+                Guru Kelas {{ $selectedClassroom->tingkat }}{{ $selectedClassroom->nama_kelas }}
                 <br><br><br><br><br>
                 <strong><u>{{ $selectedClassroom->homeroomTeacher->nama_lengkap ??
                         '(..........................................)' }}</u></strong><br>
