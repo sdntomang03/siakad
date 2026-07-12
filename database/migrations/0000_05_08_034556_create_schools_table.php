@@ -11,9 +11,19 @@ return new class extends Migration
         Schema::create('schools', function (Blueprint $table) {
             $table->id();
             $table->string('npsn')->unique()->nullable();
+
+            // Identitas Utama
             $table->string('nama_sekolah');
+            $table->string('nip')->nullable();
             $table->string('tingkat')->nullable(); // SD, SMP, SMA, SMK
-            $table->text('alamat')->nullable();
+
+            // Pemisahan Alamat
+            $table->string('alamat')->nullable(); // Detail jalan, nomor, RT/RW
+            $table->string('kelurahan')->nullable();
+            $table->string('kecamatan')->nullable();
+            $table->string('kota')->nullable(); // Bisa juga kabupaten/kota
+            $table->string('provinsi')->nullable();
+
             $table->string('logo')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();

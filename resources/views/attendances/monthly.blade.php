@@ -247,17 +247,6 @@
                     </table>
                 </div>
 
-                <div
-                    class="p-4 bg-slate-50 dark:bg-slate-800/80 text-xs text-slate-500 border-t border-slate-200 dark:border-slate-700 flex gap-4">
-                    <span><b>Keterangan:</b></span>
-                    <span class="text-emerald-600 font-bold">H / <span
-                            class="text-lg leading-[0] relative top-1">.</span> : Hadir</span>
-                    <span class="text-amber-500 font-bold">S: Sakit</span>
-                    <span class="text-blue-500 font-bold">I: Izin</span>
-                    <span class="text-rose-600 font-bold">A: Alfa</span>
-                    <span class="text-rose-400 font-bold">L: Libur</span>
-                </div>
-
             </div>
             @endif
 

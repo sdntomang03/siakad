@@ -92,7 +92,7 @@
                 title: '',
                 action: '',
                 method: 'POST',
-                formData: { npsn: '', nama_sekolah: '', tingkat: '', alamat: '', status: true }
+                formData: { npsn: '', nama_sekolah: '', kepala_sekolah: '', nip: '', tingkat: '', alamat: '', kelurahan: '', kecamatan: '', kota: '', provinsi: '', status: true }
             }" @open-school-modal.window="
                 show = true;
                 if ($event.detail && $event.detail.school) {
@@ -104,7 +104,7 @@
                     title = 'Tambah Sekolah Baru';
                     action = '{{ route('superadmin.schools.store') }}';
                     method = 'POST';
-                    formData = { npsn: '', nama_sekolah: '', tingkat: 'SD', alamat: '', status: true };
+                    formData = { npsn: '', nama_sekolah: '', kepala_sekolah: '', nip: '', tingkat: 'SD', alamat: '', kelurahan: '', kecamatan: '', kota: '', provinsi: '', status: true };
                 }
             " x-show="show" class="fixed inset-0 z-[60] overflow-y-auto" style="display: none;">
 
@@ -127,7 +127,7 @@
                                 class="text-slate-400 hover:text-slate-600">&times;</button>
                         </div>
 
-                        <div class="px-6 py-6 space-y-4">
+                        <div class="px-6 py-6 space-y-4 max-h-[70vh] overflow-y-auto">
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">NPSN</label>
                                 <input type="text" name="npsn" x-model="formData.npsn" required
@@ -139,6 +139,22 @@
                                     Sekolah</label>
                                 <input type="text" name="nama_sekolah" x-model="formData.nama_sekolah" required
                                     class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                            </div>
+
+                            <!-- Input Kepala Sekolah dan NIP -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Kepala
+                                        Sekolah</label>
+                                    <input type="text" name="kepala_sekolah" x-model="formData.kepala_sekolah"
+                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-slate-700 dark:text-slate-300">NIP</label>
+                                    <input type="text" name="nip" x-model="formData.nip"
+                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                </div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-4">
@@ -167,8 +183,40 @@
                             <div>
                                 <label
                                     class="block text-sm font-medium text-slate-700 dark:text-slate-300">Alamat</label>
-                                <textarea name="alamat" x-model="formData.alamat" rows="3"
+                                <textarea name="alamat" x-model="formData.alamat" rows="2"
                                     class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 shadow-sm"></textarea>
+                            </div>
+
+                            <!-- Input Detail Alamat -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-slate-700 dark:text-slate-300">Kelurahan /
+                                        Desa</label>
+                                    <input type="text" name="kelurahan" x-model="formData.kelurahan"
+                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-slate-700 dark:text-slate-300">Kecamatan</label>
+                                    <input type="text" name="kecamatan" x-model="formData.kecamatan"
+                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Kota /
+                                        Kabupaten</label>
+                                    <input type="text" name="kota" x-model="formData.kota"
+                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-slate-700 dark:text-slate-300">Provinsi</label>
+                                    <input type="text" name="provinsi" x-model="formData.provinsi"
+                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                </div>
                             </div>
                         </div>
 

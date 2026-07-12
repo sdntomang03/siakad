@@ -21,8 +21,14 @@ class SchoolController extends Controller
         $validated = $request->validate([
             'npsn' => 'required|unique:schools,npsn',
             'nama_sekolah' => 'required|string|max:255',
+            'kepala_sekolah' => 'nullable|string|max:255',
+            'nip' => 'nullable|string|max:255',
             'tingkat' => 'required|in:SD,SMP,SMA,SMK',
             'alamat' => 'nullable|string',
+            'kelurahan' => 'nullable|string|max:255',
+            'kecamatan' => 'nullable|string|max:255',
+            'kota' => 'nullable|string|max:255',
+            'provinsi' => 'nullable|string|max:255',
             'status' => 'boolean',
         ]);
 
@@ -40,8 +46,14 @@ class SchoolController extends Controller
         $validated = $request->validate([
             'npsn' => 'required|unique:schools,npsn,'.$school->id,
             'nama_sekolah' => 'required|string|max:255',
+            'kepala_sekolah' => 'nullable|string|max:255',
+            'nip' => 'nullable|string|max:255',
             'tingkat' => 'required|in:SD,SMP,SMA,SMK',
             'alamat' => 'nullable|string',
+            'kelurahan' => 'nullable|string|max:255',
+            'kecamatan' => 'nullable|string|max:255',
+            'kota' => 'nullable|string|max:255',
+            'provinsi' => 'nullable|string|max:255',
             'status' => 'boolean',
         ]);
 
