@@ -20,13 +20,34 @@ class BookLoanController extends Controller
     public function index()
     {
         $user = auth()->user();
+
+        // 1. Query untuk tabel riwayat ($loans)
         $query = BookLoan::with('student');
+
         if (! $user->hasRole('superadmin')) {
             $query->where('school_id', $user->school_id);
         }
+
+        // Tambahkan filter ini agar tabel hanya menampilkan peminjaman milik siswa
+        // yang diajar oleh guru tersebut di tahun ajaran aktif
+        if ($user->hasRole('guru')) {
+            $employee = $user->employee;
+            if ($employee) {
+                $query->whereHas('student.classrooms', function ($q) use ($employee) {
+                    $q->where('homeroom_teacher_id', $employee->id)
+                        ->whereHas('academicYear', function ($q2) {
+                            $q2->where('is_active', true);
+                        });
+                });
+            } else {
+                // Jika guru tidak memiliki profil employee, kosongkan tabel
+                $query->whereRaw('1 = 0');
+            }
+        }
+
         $loans = $query->orderBy('borrowed_at', 'desc')->get();
-        // daftar siswa untuk form peminjaman
-        // Jika user adalah guru, batasi ke siswa di kelas yang diampu (homeroom)
+
+        // 2. Query untuk form dropdown ($students)
         if ($user->hasRole('guru')) {
             $employee = $user->employee;
             $students = collect();
