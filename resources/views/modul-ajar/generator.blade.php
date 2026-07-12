@@ -497,6 +497,8 @@
                 - Mapel: ${mapel}, Topik: ${topik}
                 - Cakupan Materi: ${cakupan} (Bagi materi ini ke dalam ${jumlahPertemuan} pertemuan).
                 - Identitas: Kelas ${kelas} ${jenjang}, Sekolah: ${namaSekolah}.
+                - Tanggal Dokumen: ${tanggal}, Alokasi Waktu: ${alokasi}
+                - Dimensi Profil Lulusan: ${selectedProfiles}
                 - Kepala Sekolah: ${namaKS} (NIP: ${nipKS})
                 - Guru: ${namaGuru} (NIP: ${nipGuru})
 
