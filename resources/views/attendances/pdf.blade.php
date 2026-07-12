@@ -119,6 +119,12 @@
             </tr>
         </thead>
         <tbody>
+            @php
+            $grandHadir = 0;
+            $grandSakit = 0;
+            $grandIzin = 0;
+            $grandAlfa = 0;
+            @endphp
             @foreach($students as $index => $student)
             @php
             $totalS = 0;
@@ -126,9 +132,10 @@
             $totalA = 0;
             foreach($dates as $day => $info) {
             $status = $attendanceData[$student->id][$day] ?? null;
-            if($status == 'sakit') $totalS++;
-            elseif($status == 'izin') $totalI++;
-            elseif($status == 'alfa') $totalA++;
+            if($status == 'hadir') $grandHadir++;
+            elseif($status == 'sakit') { $totalS++; $grandSakit++; }
+            elseif($status == 'izin') { $totalI++; $grandIzin++; }
+            elseif($status == 'alfa') { $totalA++; $grandAlfa++; }
             }
             @endphp
             <tr>
@@ -175,50 +182,26 @@
             @endforeach
         </tbody>
         <tfoot>
+            @php
+            $persenSakit = $grandHadir > 0 ? round(($grandSakit / $grandHadir) * 100, 1) : 0;
+            $persenIzin = $grandHadir > 0 ? round(($grandIzin / $grandHadir) * 100, 1) : 0;
+            $persenAlfa = $grandHadir > 0 ? round(($grandAlfa / $grandHadir) * 100, 1) : 0;
+            $totalKolomSisa = count($dates) + 3;
+            @endphp
             <tr>
-                <td colspan="2" class="text-left" style="font-weight: bold; color: #d97706;">Total Sakit (S)</td>
-                @foreach($dates as $day => $info)
-                @php
-                $countS = 0;
-                foreach($students as $student) {
-                if(($attendanceData[$student->id][$day] ?? null) == 'sakit') $countS++;
-                }
-                @endphp
-                <td class="{{ ($info['is_weekend'] || $info['is_holiday']) ? 'day-off' : '' }} sakit">
-                    {{ $countS > 0 ? $countS : '-' }}
-                </td>
-                @endforeach
-                <td colspan="3" class="rekap-col"></td>
+                <td colspan="2" class="text-left" style="font-weight: bold; color: #d97706;">Persentase Sakit (S) vs
+                    Hadir</td>
+                <td colspan="{{ $totalKolomSisa }}" class="text-left sakit">{{ $persenSakit }}%</td>
             </tr>
             <tr>
-                <td colspan="2" class="text-left" style="font-weight: bold; color: #2563eb;">Total Izin (I)</td>
-                @foreach($dates as $day => $info)
-                @php
-                $countI = 0;
-                foreach($students as $student) {
-                if(($attendanceData[$student->id][$day] ?? null) == 'izin') $countI++;
-                }
-                @endphp
-                <td class="{{ ($info['is_weekend'] || $info['is_holiday']) ? 'day-off' : '' }} izin">
-                    {{ $countI > 0 ? $countI : '-' }}
-                </td>
-                @endforeach
-                <td colspan="3" class="rekap-col"></td>
+                <td colspan="2" class="text-left" style="font-weight: bold; color: #2563eb;">Persentase Izin (I) vs
+                    Hadir</td>
+                <td colspan="{{ $totalKolomSisa }}" class="text-left izin">{{ $persenIzin }}%</td>
             </tr>
             <tr>
-                <td colspan="2" class="text-left" style="font-weight: bold; color: #e11d48;">Total Alfa (A)</td>
-                @foreach($dates as $day => $info)
-                @php
-                $countA = 0;
-                foreach($students as $student) {
-                if(($attendanceData[$student->id][$day] ?? null) == 'alfa') $countA++;
-                }
-                @endphp
-                <td class="{{ ($info['is_weekend'] || $info['is_holiday']) ? 'day-off' : '' }} alfa">
-                    {{ $countA > 0 ? $countA : '-' }}
-                </td>
-                @endforeach
-                <td colspan="3" class="rekap-col"></td>
+                <td colspan="2" class="text-left" style="font-weight: bold; color: #e11d48;">Persentase Alfa (A) vs
+                    Hadir</td>
+                <td colspan="{{ $totalKolomSisa }}" class="text-left alfa">{{ $persenAlfa }}%</td>
             </tr>
         </tfoot>
     </table>
