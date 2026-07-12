@@ -17,7 +17,11 @@ class DashboardController extends Controller
         // 1. Ambil Tahun Ajaran Aktif
         // Sesuaikan query ini jika nama kolom penanda aktif di tabel Anda berbeda
         // (misal menggunakan 'is_active' => 1, atau 'status' => 'aktif')
-        $activeYear = AcademicYear::where('status', 'aktif')->first() ?? AcademicYear::latest()->first();
+        // Menggunakan 'is_active' = true sesuai dengan struktur migration Anda
+        // Saya juga menambahkan pencarian berdasarkan school_id agar sesuai dengan sekolah user yang login
+        $activeYear = AcademicYear::where('is_active', true)
+            ->where('school_id', $user->school_id)
+            ->first() ?? AcademicYear::where('school_id', $user->school_id)->latest()->first();
         $activeYearId = $activeYear->id ?? 0;
 
         $data = [
