@@ -320,7 +320,7 @@ class AttendanceController extends Controller
     public function downloadPdf(Request $request)
     {
         $schoolId = auth()->user()->school_id;
-
+        $sekolah = School::findOrFail($schoolId);
         $month = $request->input('month', date('m'));
         $year = $request->input('year', date('Y'));
         $classroomId = $request->input('classroom_id');
@@ -373,7 +373,7 @@ class AttendanceController extends Controller
         $periode = Carbon::createFromDate($year, $month, 1)->locale('id')->isoFormat('MMMM YYYY');
 
         $pdf = Pdf::loadView('attendances.pdf', compact(
-            'month', 'year', 'dates', 'students', 'attendanceData', 'selectedClassroom', 'periode'
+            'month', 'year', 'dates', 'students', 'attendanceData', 'selectedClassroom', 'periode', 'sekolah'
         ))->setPaper('a4', 'landscape');
 
         return $pdf->download("Rekap_Absensi_{$selectedClassroom->tingkat}{$selectedClassroom->nama_kelas}_{$periode}.pdf");

@@ -92,9 +92,7 @@
             color: #e11d48;
         }
 
-        /* ==========================================
-           CSS UNTUK PECAHAN (FRAKSI) KHUSUS DOMPDF
-           ========================================== */
+        /* CSS Fraksi */
         table.table-wrapper {
             border-collapse: collapse;
             border: none;
@@ -103,7 +101,6 @@
 
         table.table-wrapper td {
             border: none !important;
-            /* Hilangkan border tabel utama */
             vertical-align: middle !important;
             padding: 0 5px !important;
             font-size: 11px;
@@ -117,15 +114,28 @@
 
         table.table-fraction td {
             border: none !important;
-            /* Cegah border kiri/kanan/atas */
             padding: 1px 4px !important;
             line-height: 1.1;
         }
 
-        /* PERBAIKAN: Selector dibuat sangat spesifik agar tidak tertimpa */
         table.table-fraction td.fraction-top {
             border-bottom: 1px solid #000 !important;
-            /* Paksa garis pecahan muncul */
+        }
+
+        /* CSS Tabel Tanda Tangan */
+        table.signature-table {
+            width: 100%;
+            border: none;
+            margin-top: 40px;
+            page-break-inside: avoid;
+        }
+
+        table.signature-table td {
+            border: none !important;
+            text-align: center;
+            font-size: 11px;
+            vertical-align: top;
+            width: 50%;
         }
     </style>
 </head>
@@ -241,7 +251,6 @@
             $totalKolomSisa = count($dates) + 3;
             @endphp
 
-            <!-- PERSENTASE SAKIT -->
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #d97706;">Persentase Sakit (S)</td>
                 <td colspan="{{ $totalKolomSisa }}" class="text-left sakit" style="padding-left: 10px;">
@@ -257,15 +266,12 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td>
-                                &times; 100% = {{ $persenSakit }}%
-                            </td>
+                            <td>&times; 100% = {{ $persenSakit }}%</td>
                         </tr>
                     </table>
                 </td>
             </tr>
 
-            <!-- PERSENTASE IZIN -->
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #2563eb;">Persentase Izin (I)</td>
                 <td colspan="{{ $totalKolomSisa }}" class="text-left izin" style="padding-left: 10px;">
@@ -281,15 +287,12 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td>
-                                &times; 100% = {{ $persenIzin }}%
-                            </td>
+                            <td>&times; 100% = {{ $persenIzin }}%</td>
                         </tr>
                     </table>
                 </td>
             </tr>
 
-            <!-- PERSENTASE ALFA -->
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #e11d48;">Persentase Alfa (A)</td>
                 <td colspan="{{ $totalKolomSisa }}" class="text-left alfa" style="padding-left: 10px;">
@@ -305,14 +308,47 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td>
-                                &times; 100% = {{ $persenAlfa }}%
-                            </td>
+                            <td>&times; 100% = {{ $persenAlfa }}%</td>
                         </tr>
                     </table>
                 </td>
             </tr>
         </tfoot>
+    </table>
+
+    <!-- KALKULASI HARI KERJA TERAKHIR -->
+    @php
+    // Mencari hari terakhir pada bulan tersebut
+    $lastDayOfMonth = \Carbon\Carbon::createFromDate($year, $month, 1)->endOfMonth();
+
+    // Memundurkan tanggal jika jatuh pada Sabtu (Weekend) atau Minggu
+    while ($lastDayOfMonth->isWeekend()) {
+    $lastDayOfMonth->subDay();
+    }
+
+    $tanggalTtd = $lastDayOfMonth->locale('id')->isoFormat('D MMMM YYYY');
+    @endphp
+
+    <!-- TABEL TANDA TANGAN -->
+    <table class="signature-table">
+        <tr>
+            <td>
+                Mengetahui,<br>
+                Kepala Sekolah
+                <br><br><br><br><br>
+                <strong><u>{{ $sekolah->kepala_sekolah ?? '(..........................................)'
+                        }}</u></strong><br>
+                NIP. {{ $sekolah->nip ?? '..........................................' }}
+            </td>
+            <td>
+                Jakarta, {{ $tanggalTtd }}<br>
+                Guru Kelas {{ $selectedClassroom->tingkat }} - {{ $selectedClassroom->nama_kelas }}
+                <br><br><br><br><br>
+                <strong><u>{{ $selectedClassroom->homeroomTeacher->nama_lengkap ??
+                        '(..........................................)' }}</u></strong><br>
+                NIP. ..........................................
+            </td>
+        </tr>
     </table>
 
 </body>
