@@ -6,20 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('modul_ajars', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('school_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete(); // ID Guru pembuat
+            $table->foreignId('academic_year_id')->nullable()->constrained()->cascadeOnDelete(); // Tahun Pelajaran
+
+            $table->string('tingkat');
+            $table->string('mata_pelajaran');
+            $table->string('topik');
+
+            $table->longText('html_content'); // Untuk menyimpan hasil modul HTML
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('modul_ajars');

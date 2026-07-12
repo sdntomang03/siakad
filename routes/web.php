@@ -15,6 +15,7 @@ use App\Http\Controllers\GradeCurveController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\IjazahController;
 use App\Http\Controllers\KelulusanController;
+use App\Http\Controllers\ModulAjarController;
 use App\Http\Controllers\Operator\UserController as OperatorUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RenkinController;
@@ -84,6 +85,8 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('admin')->name('superadmi
 });
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/modul-generator', [ModulAjarController::class, 'index'])->name('modul.generator');
+    Route::post('/modul-generator/store', [ModulAjarController::class, 'store'])->name('modul.store');
     // Rute Khusus Aktifkan Semester
     Route::patch('/academic-years/{academicYear}/aktifkan', [AcademicYearController::class, 'aktifkan'])
         ->name('academic-years.aktifkan')
