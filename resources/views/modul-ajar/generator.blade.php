@@ -443,7 +443,7 @@
             for (let i = 1; i <= jumlahPertemuan; i++) {
                 strukturPertemuan += `
                         <tr class="border border-black bg-emerald-100">
-                            <td colspan="6" class="p-2 font-bold text-center uppercase text-emerald-800">PERTEMUAN ${i} DARI ${jumlahPertemuan}</td>
+                            <td colspan="6" class="p-2 font-bold text-center uppercase text-emerald-800">PERTEMUAN ${i}</td>
                         </tr>
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold align-top bg-emerald-50">Kegiatan Awal</td>
