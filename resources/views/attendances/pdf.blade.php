@@ -346,7 +346,7 @@
                 <br><br><br><br><br>
                 <strong><u>{{ $selectedClassroom->homeroomTeacher->nama_lengkap ??
                         '(..........................................)' }}</u></strong><br>
-                NIP. ..........................................
+                NIP. {{ $selectedClassroom->homeroomTeacher->nip ?? '..........................................' }}
             </td>
         </tr>
     </table>
