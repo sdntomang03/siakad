@@ -247,6 +247,14 @@
                                 </div>
                             </div>
 
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Tanggal
+                                    Dokumen</label>
+                                <input type="date" id="tanggal"
+                                    class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                            </div>
+
                             <!-- Tombol Generate -->
                             <button onclick="generateModul()" id="btnGenerate"
                                 class="w-full mt-6 py-3 px-6 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex items-center justify-center gap-2">
@@ -370,6 +378,7 @@
             const jenjang = document.getElementById('jenjang').value;
             const fase = document.getElementById('fase').value;
             const kelas = document.getElementById('kelas').value;
+            const tanggal = document.getElementById('tanggal') ? document.getElementById('tanggal').value : '-';
             const alokasi = document.getElementById('alokasiWaktu').value || '-';
             const mapel = document.getElementById('mapel').value;
             const topik = document.getElementById('topik').value;
@@ -389,50 +398,49 @@
 
             for (let i = 1; i <= jumlahPertemuan; i++) {
                 strukturPertemuan += `
-                        <tr class="border border-black bg-slate-200">
-                            <td colspan="6" class="p-2 font-bold text-center uppercase">PERTEMUAN ${i}</td>
+                        <tr class="border border-black bg-emerald-100">
+                            <td colspan="6" class="p-2 font-bold text-center uppercase text-emerald-800">PERTEMUAN ${i}</td>
                         </tr>
                         <tr class="border border-black">
-                            <td colspan="2" class="p-2 font-bold align-top">Kegiatan Awal</td>
-                            <td colspan="4" class="p-2">
+                            <td colspan="2" class="p-2 font-bold align-top bg-emerald-50">Kegiatan Awal</td>
+                            <td colspan="4" class="p-2 bg-white">
                                 <p class="mb-2">(AI: Tuliskan kegiatan pendahuluan untuk pertemuan ${i})</p>
                             </td>
                         </tr>
                         <tr class="border border-black">
-                            <td colspan="2" class="p-2 font-bold align-top">Kegiatan Inti</td>
-                            <td colspan="4" class="p-2 space-y-4">
+                            <td colspan="2" class="p-2 font-bold align-top bg-emerald-50">Kegiatan Inti</td>
+                            <td colspan="4" class="p-2 space-y-4 bg-white">
                                 <div>
                                     <strong class="text-blue-700 block">Langkah Pembelajaran:</strong>
-                                    <p>(AI: Tuliskan aktivitas inti pertemuan ${i} secara mendetail.)</p>
+                                    <p>(AI: Tuliskan aktivitas inti pertemuan ${i} secara mendetail berdasarkan cakupan materi.)</p>
                                 </div>
                             </td>
                         </tr>
                         <tr class="border border-black">
-                            <td colspan="2" class="p-2 font-bold align-top">Kegiatan Penutup</td>
-                            <td colspan="4" class="p-2">(AI: Refleksi, kesimpulan, dan doa penutup untuk pertemuan ${i})</td>
+                            <td colspan="2" class="p-2 font-bold align-top bg-emerald-50">Kegiatan Penutup</td>
+                            <td colspan="4" class="p-2 bg-white">(AI: Refleksi, kesimpulan, dan doa penutup untuk pertemuan ${i})</td>
                         </tr>
                 `;
 
                 strukturLampiran += `
-                        <tr class="border border-black bg-slate-200">
-                            <td colspan="6" class="p-2 font-bold text-center uppercase">LAMPIRAN PERTEMUAN ${i}</td>
+                        <tr class="border border-black bg-amber-200">
+                            <td colspan="6" class="p-2 font-bold text-center uppercase text-amber-900">LAMPIRAN PERTEMUAN ${i}</td>
                         </tr>
                         <tr class="border border-black">
-                            <td colspan="2" class="p-2 font-bold align-top">LKPD Pertemuan ${i}</td>
-                            <td colspan="4" class="p-2">(AI: Buatkan LKPD spesifik Pertemuan ${i})</td>
+                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50">LKPD Pertemuan ${i}</td>
+                            <td colspan="4" class="p-2 bg-white">(AI: Buatkan LKPD spesifik Pertemuan ${i})</td>
                         </tr>
                         <tr class="border border-black">
-                            <td colspan="2" class="p-2 font-bold align-top">Soal Evaluasi Pertemuan ${i}</td>
-                            <td colspan="4" class="p-2">(AI: Buatkan TEPAT 5 soal latihan/evaluasi Pertemuan ${i})</td>
+                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50">Soal Evaluasi Pertemuan ${i}</td>
+                            <td colspan="4" class="p-2 bg-white">(AI: Buatkan TEPAT 5 soal latihan/evaluasi Pertemuan ${i})</td>
                         </tr>
                         <tr class="border border-black">
-                            <td colspan="2" class="p-2 font-bold align-top">Kunci Jawaban Pertemuan ${i}</td>
-                            <td colspan="4" class="p-2">(AI: Kunci jawaban dari 5 soal Pertemuan ${i} di atas)</td>
+                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50">Kunci Jawaban Pertemuan ${i}</td>
+                            <td colspan="4" class="p-2 bg-white">(AI: Kunci jawaban dari 5 soal Pertemuan ${i} di atas)</td>
                         </tr>
                 `;
             }
 
-            // PERBAIKAN: Memasukkan NIP secara eksplisit ke dalam bagian DATA INPUT
             const prompt = `
                 Bertindaklah sebagai Konsultan Kurikulum Merdeka Kemendikbud.
                 Susunlah Modul Ajar dalam format HTML (<div> dan <table>). JANGAN gunakan Markdown.
@@ -441,6 +449,7 @@
                 - Mapel: ${mapel}, Topik: ${topik}
                 - Cakupan Materi: ${cakupan} (Bagi materi ini ke dalam ${jumlahPertemuan} pertemuan).
                 - Identitas: Kelas ${kelas} ${jenjang}, Sekolah: ${namaSekolah}.
+                - Tanggal Pelaksanaan: ${tanggal}
                 - Kepala Sekolah: ${namaKS} (NIP: ${nipKS})
                 - Guru: ${namaGuru} (NIP: ${nipGuru})
 
@@ -450,33 +459,88 @@
 
                 HTML STRUKTUR:
                 <div class="max-w-[210mm] mx-auto p-4 bg-white text-black font-serif">
-                    <h1 class="text-center text-2xl font-bold mb-4 uppercase">MODUL AJAR ${mapel}</h1>
+                    <h1 class="text-center text-2xl font-bold mb-4 uppercase text-blue-800">MODUL AJAR ${mapel}</h1>
+
                     <!-- BAGIAN A -->
                     <table class="w-full border border-black border-collapse mb-6 text-sm">
-                        ... (isi seperti form sebelumnya, lengkapi datanya) ...
+                        <tr class="bg-blue-600 text-white border border-black">
+                            <td colspan="6" class="p-2 font-bold uppercase text-center">A. INFORMASI UMUM</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold bg-blue-50">Nama Penyusun</td>
+                            <td colspan="4" class="p-2 bg-white">${namaGuru}</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold bg-blue-50">Satuan Pendidikan</td>
+                            <td colspan="4" class="p-2 bg-white">${namaSekolah}</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold bg-blue-50">Tanggal Pelaksanaan</td>
+                            <td colspan="4" class="p-2 bg-white">${tanggal}</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold bg-blue-50">Fase / Kelas</td>
+                            <td colspan="4" class="p-2 bg-white">${fase} / ${kelas}</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold bg-blue-50">Mata Pelajaran</td>
+                            <td colspan="4" class="p-2 bg-white">${mapel}</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold bg-blue-50">Topik Utama</td>
+                            <td colspan="4" class="p-2 bg-white">${topik}</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold bg-blue-50">Alokasi Waktu</td>
+                            <td colspan="4" class="p-2 bg-white">${alokasi} (${jumlahPertemuan} Pertemuan)</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold bg-blue-50">Dimensi Profil Lulusan</td>
+                            <td colspan="4" class="p-2 bg-white">${selectedProfiles}</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold bg-blue-50">Pendekatan/Metode</td>
+                            <td colspan="4" class="p-2 bg-white">(AI: Isi relevan)</td>
+                        </tr>
                     </table>
 
                     <!-- BAGIAN B -->
                     <table class="w-full border border-black border-collapse mb-6 text-sm">
-                        ... (Langkah Pembelajaran) ...
+                        <tr class="bg-emerald-600 text-white border border-black">
+                            <td colspan="6" class="p-2 font-bold uppercase text-center">B. KOMPONEN INTI</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="6" class="p-2 bg-emerald-100 font-bold text-emerald-900">1. Tujuan Pembelajaran</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="6" class="p-2 bg-white">(AI: Isi Tujuan Pembelajaran sesuai Topik)</td>
+                        </tr>
+
+                        <!-- Langkah Pembelajaran -->
+                        <tr class="border border-black">
+                            <td colspan="6" class="p-2 bg-emerald-100 font-bold text-emerald-900">2. Langkah Pembelajaran</td>
+                        </tr>
                         ${strukturPertemuan}
                     </table>
 
                     <!-- BAGIAN C -->
                     <table class="w-full border border-black border-collapse mb-10 text-sm">
-                        ... (Lampiran) ...
+                        <tr class="bg-amber-500 text-white border border-black">
+                            <td colspan="6" class="p-2 font-bold uppercase text-center">C. LAMPIRAN</td>
+                        </tr>
                         ${strukturLampiran}
                     </table>
 
+                    <!-- TANDA TANGAN -->
                     <table class="w-full border border-black border-collapse text-sm mb-10 break-inside-avoid">
                         <tr>
-                            <td colspan="3" class="p-4 text-center align-top border border-black w-1/2">
+                            <td colspan="3" class="p-4 text-center align-top border border-black w-1/2 bg-white">
                                 <p class="mb-20">Mengetahui,<br>Kepala Sekolah</p>
                                 <p class="font-bold underline">${namaKS}</p>
                                 <p>NIP. ${nipKS}</p>
                             </td>
-                            <td colspan="3" class="p-4 text-center align-top border border-black w-1/2">
-                                <p class="mb-20"><br>Guru Kelas ${kelas}</p>
+                            <td colspan="3" class="p-4 text-center align-top border border-black w-1/2 bg-white">
+                                <p class="mb-20">Jakarta, ............................<br>Guru Kelas ${kelas}</p>
                                 <p class="font-bold underline">${namaGuru}</p>
                                 <p>NIP. ${nipGuru}</p>
                             </td>
@@ -530,7 +594,6 @@
             }
         }
 
-        // PERBAIKAN: Penanganan Error AJAX yang lebih akurat
         function saveToDatabase() {
             const htmlContent = document.getElementById('output').innerHTML;
             const tingkat = document.getElementById('jenjang').value + " Kelas " + document.getElementById('kelas').value;
@@ -551,7 +614,7 @@
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Accept": "application/json", // PERBAIKAN: Memberitahu Laravel untuk mengembalikan error dalam format JSON
+                    "Accept": "application/json",
                     "X-CSRF-TOKEN": "{{ csrf_token() }}"
                 },
                 body: JSON.stringify({
@@ -563,7 +626,6 @@
                 })
             })
             .then(async response => {
-                // PERBAIKAN: Menangkap response 400/500 dari Laravel
                 if (!response.ok) {
                     const errData = await response.json().catch(() => ({}));
                     throw new Error(errData.message || "Terjadi kesalahan (Status " + response.status + ")");
