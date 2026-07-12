@@ -4,11 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Rekap Absensi Bulanan</title>
-
-    <!-- Script MathJax untuk merender LaTeX -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,21 +21,22 @@
             font-weight: bold;
         }
 
-        table {
+        /* Tabel Utama */
+        table.main-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
         }
 
-        th,
-        td {
+        table.main-table th,
+        table.main-table td {
             border: 1px solid #333;
             padding: 3px;
             text-align: center;
         }
 
         .text-left {
-            text-align: left;
+            text-align: left !important;
         }
 
         .nama-siswa {
@@ -52,6 +48,7 @@
             background-color: #ffcccc;
         }
 
+        /* Warna Status */
         .hadir {
             color: #047857;
             font-weight: bold;
@@ -95,29 +92,38 @@
             color: #e11d48;
         }
 
-        .math-wrapper {
-            display: inline-block;
-            vertical-align: middle;
+        /* ==========================================
+           CSS UNTUK PECAHAN (FRAKSI) KHUSUS DOMPDF
+           ========================================== */
+        .table-wrapper {
+            border-collapse: collapse;
+            border: none;
+            margin: 0;
+        }
+
+        .table-wrapper td {
+            border: none !important;
+            /* Hilangkan border bawaan tabel utama */
+            vertical-align: middle !important;
+            padding: 0 5px !important;
             font-size: 11px;
         }
 
-        .math-fraction {
-            display: inline-table;
-            vertical-align: middle;
-            text-align: center;
+        .table-fraction {
             border-collapse: collapse;
-            margin: 0 4px;
+            text-align: center;
+            margin: 0;
         }
 
-        .math-fraction td {
-            border: none;
-            padding: 1px 4px;
+        .table-fraction td {
+            border: none !important;
+            padding: 1px 4px !important;
             line-height: 1.1;
         }
 
-        .math-num {
-            border-bottom: 1px solid #000 !important;
-            /* Garis bawah untuk pembilang */
+        .fraction-top {
+            border-bottom: 1.2px solid #000 !important;
+            /* Garis pembagi */
         }
     </style>
 </head>
@@ -128,7 +134,7 @@
     <h3>Kelas: {{ $selectedClassroom->tingkat }} - {{ $selectedClassroom->nama_kelas }}</h3>
     <h3>Periode: {{ $periode }}</h3>
 
-    <table>
+    <table class="main-table">
         <thead>
             <tr>
                 <th rowspan="2" style="width: 20px;">No</th>
@@ -232,52 +238,76 @@
             $persenAlfa = $penyebut > 0 ? round(($grandAlfa / $penyebut) * 100, 1) : 0;
             $totalKolomSisa = count($dates) + 3;
             @endphp
+
+            <!-- PERSENTASE SAKIT -->
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #d97706;">Persentase Sakit (S)</td>
                 <td colspan="{{ $totalKolomSisa }}" class="text-left sakit" style="padding-left: 10px;">
-                    <div class="math-wrapper">
-                        <table class="math-fraction">
-                            <tr>
-                                <td class="math-num">{{ $grandSakit }}</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</td>
-                            </tr>
-                        </table>
-                        &times; 100% = {{ $persenSakit }}%
-                    </div>
+                    <table class="table-wrapper">
+                        <tr>
+                            <td>
+                                <table class="table-fraction">
+                                    <tr>
+                                        <td class="fraction-top">{{ $grandSakit }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                &times; 100% = {{ $persenSakit }}%
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
+
+            <!-- PERSENTASE IZIN -->
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #2563eb;">Persentase Izin (I)</td>
                 <td colspan="{{ $totalKolomSisa }}" class="text-left izin" style="padding-left: 10px;">
-                    <div class="math-wrapper">
-                        <table class="math-fraction">
-                            <tr>
-                                <td class="math-num">{{ $grandIzin }}</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</td>
-                            </tr>
-                        </table>
-                        &times; 100% = {{ $persenIzin }}%
-                    </div>
+                    <table class="table-wrapper">
+                        <tr>
+                            <td>
+                                <table class="table-fraction">
+                                    <tr>
+                                        <td class="fraction-top">{{ $grandIzin }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                &times; 100% = {{ $persenIzin }}%
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
+
+            <!-- PERSENTASE ALFA -->
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #e11d48;">Persentase Alfa (A)</td>
                 <td colspan="{{ $totalKolomSisa }}" class="text-left alfa" style="padding-left: 10px;">
-                    <div class="math-wrapper">
-                        <table class="math-fraction">
-                            <tr>
-                                <td class="math-num">{{ $grandAlfa }}</td>
-                            </tr>
-                            <tr>
-                                <td>{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</td>
-                            </tr>
-                        </table>
-                        &times; 100% = {{ $persenAlfa }}%
-                    </div>
+                    <table class="table-wrapper">
+                        <tr>
+                            <td>
+                                <table class="table-fraction">
+                                    <tr>
+                                        <td class="fraction-top">{{ $grandAlfa }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                &times; 100% = {{ $persenAlfa }}%
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
         </tfoot>
