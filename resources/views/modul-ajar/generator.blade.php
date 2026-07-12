@@ -497,7 +497,6 @@
                 - Mapel: ${mapel}, Topik: ${topik}
                 - Cakupan Materi: ${cakupan} (Bagi materi ini ke dalam ${jumlahPertemuan} pertemuan).
                 - Identitas: Kelas ${kelas} ${jenjang}, Sekolah: ${namaSekolah}.
-                - Tanggal Pelaksanaan: ${tanggal}
                 - Kepala Sekolah: ${namaKS} (NIP: ${nipKS})
                 - Guru: ${namaGuru} (NIP: ${nipGuru})
 
@@ -524,10 +523,6 @@
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold bg-blue-50">Satuan Pendidikan</td>
                             <td colspan="4" class="p-2 bg-white">${namaSekolah}</td>
-                        </tr>
-                        <tr class="border border-black">
-                            <td colspan="2" class="p-2 font-bold bg-blue-50">Tanggal Pelaksanaan</td>
-                            <td colspan="4" class="p-2 bg-white">${tanggal}</td>
                         </tr>
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold bg-blue-50">Fase / Kelas</td>
