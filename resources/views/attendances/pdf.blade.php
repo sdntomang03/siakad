@@ -94,6 +94,31 @@
         .rekap-a {
             color: #e11d48;
         }
+
+        .math-wrapper {
+            display: inline-block;
+            vertical-align: middle;
+            font-size: 11px;
+        }
+
+        .math-fraction {
+            display: inline-table;
+            vertical-align: middle;
+            text-align: center;
+            border-collapse: collapse;
+            margin: 0 4px;
+        }
+
+        .math-fraction td {
+            border: none;
+            padding: 1px 4px;
+            line-height: 1.1;
+        }
+
+        .math-num {
+            border-bottom: 1px solid #000 !important;
+            /* Garis bawah untuk pembilang */
+        }
     </style>
 </head>
 
@@ -209,24 +234,50 @@
             @endphp
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #d97706;">Persentase Sakit (S)</td>
-                <td colspan="{{ $totalKolomSisa }}" class="text-left sakit"
-                    style="font-size: 13px; padding-left: 10px;">
-                    \( \frac{ {{ $grandSakit }} }{ {{ $jumlahSiswa }} \times {{ $hariEfektif }} } \times 100\% = {{
-                    $persenSakit }}\% \)
+                <td colspan="{{ $totalKolomSisa }}" class="text-left sakit" style="padding-left: 10px;">
+                    <div class="math-wrapper">
+                        <table class="math-fraction">
+                            <tr>
+                                <td class="math-num">{{ $grandSakit }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</td>
+                            </tr>
+                        </table>
+                        &times; 100% = {{ $persenSakit }}%
+                    </div>
                 </td>
             </tr>
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #2563eb;">Persentase Izin (I)</td>
-                <td colspan="{{ $totalKolomSisa }}" class="text-left izin" style="font-size: 13px; padding-left: 10px;">
-                    \( \frac{ {{ $grandIzin }} }{ {{ $jumlahSiswa }} \times {{ $hariEfektif }} } \times 100\% = {{
-                    $persenIzin }}\% \)
+                <td colspan="{{ $totalKolomSisa }}" class="text-left izin" style="padding-left: 10px;">
+                    <div class="math-wrapper">
+                        <table class="math-fraction">
+                            <tr>
+                                <td class="math-num">{{ $grandIzin }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</td>
+                            </tr>
+                        </table>
+                        &times; 100% = {{ $persenIzin }}%
+                    </div>
                 </td>
             </tr>
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #e11d48;">Persentase Alfa (A)</td>
-                <td colspan="{{ $totalKolomSisa }}" class="text-left alfa" style="font-size: 13px; padding-left: 10px;">
-                    \( \frac{ {{ $grandAlfa }} }{ {{ $jumlahSiswa }} \times {{ $hariEfektif }} } \times 100\% = {{
-                    $persenAlfa }}\% \)
+                <td colspan="{{ $totalKolomSisa }}" class="text-left alfa" style="padding-left: 10px;">
+                    <div class="math-wrapper">
+                        <table class="math-fraction">
+                            <tr>
+                                <td class="math-num">{{ $grandAlfa }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</td>
+                            </tr>
+                        </table>
+                        &times; 100% = {{ $persenAlfa }}%
+                    </div>
                 </td>
             </tr>
         </tfoot>
