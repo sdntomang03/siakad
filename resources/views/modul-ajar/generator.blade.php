@@ -363,9 +363,9 @@
             const apiKey = document.getElementById('apiKey').value.trim();
             const namaSekolah = document.getElementById('namaSekolah').value;
             const namaKS = document.getElementById('namaKS').value;
-            const nipKS = document.getElementById('nipKS').value;
+            const nipKS = document.getElementById('nipKS').value || "-";
             const namaGuru = document.getElementById('namaGuru').value;
-            const nipGuru = document.getElementById('nipGuru').value;
+            const nipGuru = document.getElementById('nipGuru').value || "-";
 
             const jenjang = document.getElementById('jenjang').value;
             const fase = document.getElementById('fase').value;
@@ -432,6 +432,7 @@
                 `;
             }
 
+            // PERBAIKAN: Memasukkan NIP secara eksplisit ke dalam bagian DATA INPUT
             const prompt = `
                 Bertindaklah sebagai Konsultan Kurikulum Merdeka Kemendikbud.
                 Susunlah Modul Ajar dalam format HTML (<div> dan <table>). JANGAN gunakan Markdown.
@@ -439,9 +440,13 @@
                 DATA INPUT:
                 - Mapel: ${mapel}, Topik: ${topik}
                 - Cakupan Materi: ${cakupan} (Bagi materi ini ke dalam ${jumlahPertemuan} pertemuan).
-                - Identitas: Kelas ${kelas} ${jenjang}, Guru: ${namaGuru}, Sekolah: ${namaSekolah}.
+                - Identitas: Kelas ${kelas} ${jenjang}, Sekolah: ${namaSekolah}.
+                - Kepala Sekolah: ${namaKS} (NIP: ${nipKS})
+                - Guru: ${namaGuru} (NIP: ${nipGuru})
 
-                Instruksi Tambahan: Buatkan TEPAT 5 soal evaluasi per pertemuan di bagian lampiran.
+                Instruksi Tambahan:
+                1. Buatkan TEPAT 5 soal evaluasi per pertemuan di bagian lampiran.
+                2. PASTIKAN NIP Kepala Sekolah dan NIP Guru ditulis PERSIS seperti Data Input di atas pada bagian TANDA TANGAN.
 
                 HTML STRUKTUR:
                 <div class="max-w-[210mm] mx-auto p-4 bg-white text-black font-serif">
@@ -525,7 +530,7 @@
             }
         }
 
-        // FUNGSI MENYIMPAN KE DATABASE VIA AJAX LARAVEL
+        // PERBAIKAN: Penanganan Error AJAX yang lebih akurat
         function saveToDatabase() {
             const htmlContent = document.getElementById('output').innerHTML;
             const tingkat = document.getElementById('jenjang').value + " Kelas " + document.getElementById('kelas').value;
@@ -546,7 +551,8 @@
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}" // Wajib di Laravel
+                    "Accept": "application/json", // PERBAIKAN: Memberitahu Laravel untuk mengembalikan error dalam format JSON
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
                 },
                 body: JSON.stringify({
                     tingkat: tingkat,
@@ -556,7 +562,14 @@
                     academic_year_id: academicYearId
                 })
             })
-            .then(response => response.json())
+            .then(async response => {
+                // PERBAIKAN: Menangkap response 400/500 dari Laravel
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.message || "Terjadi kesalahan (Status " + response.status + ")");
+                }
+                return response.json();
+            })
             .then(data => {
                 if(data.status === 'success') {
                     alert(data.message);
@@ -564,7 +577,10 @@
                     alert("Gagal: " + (data.message || "Kesalahan Server"));
                 }
             })
-            .catch(err => alert("Gagal menghubungi server."))
+            .catch(err => {
+                console.error(err);
+                alert("Gagal menyimpan: " + err.message);
+            })
             .finally(() => {
                 btnSaveDb.disabled = false;
                 btnSaveDb.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg> Simpan ke Database`;
