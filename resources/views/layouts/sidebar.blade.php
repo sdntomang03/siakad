@@ -210,6 +210,9 @@
             </div>
         </div>
         @endhasanyrole
-
+        <x-sidebar-link :href="route('modul.generator')" :active="request()->routeIs('modul.*')"
+            icon="M11.017 2.814a1 1 0 011.966 0l1.051 5.558a2 2 0 001.594 1.594l5.558 1.051a1 1 0 010 1.966l-5.558 1.051a2 2 0 00-1.594 1.594l-1.051 5.558a1 1 0 01-1.966 0l-1.051-5.558a2 2 0 00-1.594-1.594l-5.558-1.051a1 1 0 010-1.966l5.558-1.051a2 2 0 001.594-1.594l1.051-5.558zM20 2v4m2-2h-4">
+            Modul Ajar AI
+        </x-sidebar-link>
     </nav>
 </aside>
