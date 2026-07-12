@@ -89,6 +89,32 @@
         .rekap-a {
             color: #e11d48;
         }
+
+        .formula {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+        }
+
+        .frac {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .frac-top {
+            display: block;
+            padding: 0 4px 2px;
+            line-height: 1.1;
+        }
+
+        .frac-bottom {
+            display: block;
+            border-top: 1.2px solid #000;
+            padding: 2px 4px 0;
+            line-height: 1.1;
+        }
     </style>
 </head>
 
@@ -198,19 +224,37 @@
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #d97706;">Persentase Sakit (S)</td>
                 <td colspan="{{ $totalKolomSisa }}" class="text-left sakit">
-                    {{ $grandSakit }} / ({{ $jumlahSiswa }} x {{ $hariEfektif }}) x 100% = {{ $persenSakit }}%
+                    <span class="formula">
+                        <span class="frac">
+                            <span class="frac-top">{{ $grandSakit }}</span>
+                            <span class="frac-bottom">{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</span>
+                        </span>
+                        <span>&times; 100% = {{ $persenSakit }}%</span>
+                    </span>
                 </td>
             </tr>
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #2563eb;">Persentase Izin (I)</td>
                 <td colspan="{{ $totalKolomSisa }}" class="text-left izin">
-                    {{ $grandIzin }} / ({{ $jumlahSiswa }} x {{ $hariEfektif }}) x 100% = {{ $persenIzin }}%
+                    <span class="formula">
+                        <span class="frac">
+                            <span class="frac-top">{{ $grandIzin }}</span>
+                            <span class="frac-bottom">{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</span>
+                        </span>
+                        <span>&times; 100% = {{ $persenIzin }}%</span>
+                    </span>
                 </td>
             </tr>
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #e11d48;">Persentase Alfa (A)</td>
                 <td colspan="{{ $totalKolomSisa }}" class="text-left alfa">
-                    {{ $grandAlfa }} / ({{ $jumlahSiswa }} x {{ $hariEfektif }}) x 100% = {{ $persenAlfa }}%
+                    <span class="formula">
+                        <span class="frac">
+                            <span class="frac-top">{{ $grandAlfa }}</span>
+                            <span class="frac-bottom">{{ $jumlahSiswa }} &times; {{ $hariEfektif }}</span>
+                        </span>
+                        <span>&times; 100% = {{ $persenAlfa }}%</span>
+                    </span>
                 </td>
             </tr>
         </tfoot>
