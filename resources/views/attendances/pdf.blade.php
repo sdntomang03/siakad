@@ -72,6 +72,23 @@
             font-weight: bold;
             font-size: 12px;
         }
+
+        .rekap-col {
+            background-color: #f3f4f6;
+            font-weight: bold;
+        }
+
+        .rekap-s {
+            color: #d97706;
+        }
+
+        .rekap-i {
+            color: #2563eb;
+        }
+
+        .rekap-a {
+            color: #e11d48;
+        }
     </style>
 </head>
 
@@ -90,6 +107,9 @@
                 @php $isDayOff = $info['is_weekend'] || $info['is_holiday']; @endphp
                 <th class="{{ $isDayOff ? 'day-off' : '' }}" style="font-size: 8px;">{{ $info['day_name'] }}</th>
                 @endforeach
+                <th rowspan="2" class="rekap-col rekap-s" style="width: 20px;">S</th>
+                <th rowspan="2" class="rekap-col rekap-i" style="width: 20px;">I</th>
+                <th rowspan="2" class="rekap-col rekap-a" style="width: 20px;">A</th>
             </tr>
             <tr>
                 @foreach($dates as $day => $info)
@@ -100,6 +120,17 @@
         </thead>
         <tbody>
             @foreach($students as $index => $student)
+            @php
+            $totalS = 0;
+            $totalI = 0;
+            $totalA = 0;
+            foreach($dates as $day => $info) {
+            $status = $attendanceData[$student->id][$day] ?? null;
+            if($status == 'sakit') $totalS++;
+            elseif($status == 'izin') $totalI++;
+            elseif($status == 'alfa') $totalA++;
+            }
+            @endphp
             <tr>
                 <td>{{ $index + 1 }}</td>
                 <td class="text-left nama-siswa">{{ $student->nama_lengkap }}</td>
@@ -136,6 +167,10 @@
                     <span class="{{ $class }}">{{ $label }}</span>
                 </td>
                 @endforeach
+
+                <td class="rekap-col rekap-s">{{ $totalS > 0 ? $totalS : '-' }}</td>
+                <td class="rekap-col rekap-i">{{ $totalI > 0 ? $totalI : '-' }}</td>
+                <td class="rekap-col rekap-a">{{ $totalA > 0 ? $totalA : '-' }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -153,6 +188,7 @@
                     {{ $countS > 0 ? $countS : '-' }}
                 </td>
                 @endforeach
+                <td colspan="3" class="rekap-col"></td>
             </tr>
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #2563eb;">Total Izin (I)</td>
@@ -167,6 +203,7 @@
                     {{ $countI > 0 ? $countI : '-' }}
                 </td>
                 @endforeach
+                <td colspan="3" class="rekap-col"></td>
             </tr>
             <tr>
                 <td colspan="2" class="text-left" style="font-weight: bold; color: #e11d48;">Total Alfa (A)</td>
@@ -181,6 +218,7 @@
                     {{ $countA > 0 ? $countA : '-' }}
                 </td>
                 @endforeach
+                <td colspan="3" class="rekap-col"></td>
             </tr>
         </tfoot>
     </table>
