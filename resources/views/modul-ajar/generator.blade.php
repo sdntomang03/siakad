@@ -448,7 +448,7 @@
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold align-top bg-emerald-50">Kegiatan Awal</td>
                             <td colspan="4" class="p-2 bg-white">
-                                <div class="mb-2">(AI: Tuliskan 3-4 poin kegiatan pendahuluan pertemuan ${i} (mis. salam & doa, presensi, apersepsi, motivasi/tujuan). WAJIB pakai <ul class="list-disc list-inside"> dengan satu <li> per poin, JANGAN teks biasa.)</div>
+                                <div class="mb-2">(AI: Tuliskan 3-4 poin kegiatan pendahuluan pertemuan ${i} (mis. salam & doa, presensi, apersepsi, motivasi/tujuan). WAJIB pakai <ol class="list-decimal list-inside space-y-1"> dengan satu <li> per poin, JANGAN teks biasa.)</div>
                             </td>
                         </tr>
                         <tr class="border border-black">
@@ -462,7 +462,7 @@
                         </tr>
                         <tr class="border border-black">
                             <td colspan="2" class="p-2 font-bold align-top bg-emerald-50">Kegiatan Penutup</td>
-                            <td colspan="4" class="p-2 bg-white">(AI: Tuliskan 2-3 poin refleksi, kesimpulan, dan doa penutup pertemuan ${i}. WAJIB pakai <ul class="list-disc list-inside"> dengan satu <li> per poin.)</td>
+                            <td colspan="4" class="p-2 bg-white">(AI: Tuliskan 2-3 poin refleksi, kesimpulan, dan doa penutup pertemuan ${i}. WAJIB pakai <ol class="list-decimal list-inside space-y-1"> dengan satu <li> per poin.)</td>
                         </tr>
                 `;
 
