@@ -8,6 +8,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookLoanController;
 use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ExamGradeController;
 use App\Http\Controllers\GradeController;
