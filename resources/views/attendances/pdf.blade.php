@@ -95,35 +95,37 @@
         /* ==========================================
            CSS UNTUK PECAHAN (FRAKSI) KHUSUS DOMPDF
            ========================================== */
-        .table-wrapper {
+        table.table-wrapper {
             border-collapse: collapse;
             border: none;
             margin: 0;
         }
 
-        .table-wrapper td {
+        table.table-wrapper td {
             border: none !important;
-            /* Hilangkan border bawaan tabel utama */
+            /* Hilangkan border tabel utama */
             vertical-align: middle !important;
             padding: 0 5px !important;
             font-size: 11px;
         }
 
-        .table-fraction {
+        table.table-fraction {
             border-collapse: collapse;
             text-align: center;
             margin: 0;
         }
 
-        .table-fraction td {
+        table.table-fraction td {
             border: none !important;
+            /* Cegah border kiri/kanan/atas */
             padding: 1px 4px !important;
             line-height: 1.1;
         }
 
-        .fraction-top {
-            border-bottom: 1.2px solid #000 !important;
-            /* Garis pembagi */
+        /* PERBAIKAN: Selector dibuat sangat spesifik agar tidak tertimpa */
+        table.table-fraction td.fraction-top {
+            border-bottom: 1px solid #000 !important;
+            /* Paksa garis pecahan muncul */
         }
     </style>
 </head>
