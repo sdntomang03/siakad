@@ -46,6 +46,7 @@ class StudentsImport implements ToCollection, WithHeadingRow
                 'nisn' => $row['nisn'] ?? null,
                 'nipd' => $row['nipd'] ?? null,
                 'status' => 'aktif',
+                'class_code' => $row['class_code'] ?? null,
             ]);
         }
     }

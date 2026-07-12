@@ -35,7 +35,6 @@ class UsersImport implements ToCollection, WithHeadingRow
             $user = User::create([
                 'name' => $row['name'],
                 'email' => $row['email'],
-                'class_code' => $row['class_code'] ?? null,
                 'school_id' => $this->schoolId,
                 'password' => Hash::make('12345678'), // Default password
             ]);
