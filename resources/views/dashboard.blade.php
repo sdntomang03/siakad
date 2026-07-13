@@ -105,7 +105,7 @@
                             <p class="font-black text-xl text-slate-800 dark:text-slate-200">{{ $myClass->tingkat }} -
                                 {{ $myClass->nama_kelas }}</p>
                         </div>
-                        <a href="{{ route('classrooms.show', $myClass->id) }}"
+                        <a href="{{ route('classrooms.show', $myClass->hashid) }}"
                             class="p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
                             &rarr;
                         </a>

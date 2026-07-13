@@ -7,7 +7,7 @@ use Vinkla\Hashids\Facades\Hashids;
 trait Hashidable
 {
     /**
-     * Encode ID secara otomatis saat membuat URL (misal: route('classrooms.show', $classroom))
+     * Encode otomatis untuk Route Model Binding (misal: /classrooms/{classroom})
      */
     public function getRouteKey()
     {
@@ -15,16 +15,22 @@ trait Hashidable
     }
 
     /**
-     * Decode kode unik kembali menjadi ID saat menangkap parameter dari URL
+     * Decode otomatis saat menangkap dari Route Model Binding
      */
     public function resolveRouteBinding($value, $field = null)
     {
-        // Decode string menjadi array. Jika gagal/tidak valid, hasilnya array kosong
         $decoded = Hashids::decode($value);
-
-        // Ambil ID dari index pertama array
         $id = $decoded[0] ?? null;
 
         return $this->where($field ?? $this->getRouteKeyName(), $id)->firstOrFail();
+    }
+
+    /**
+     * Akses manual ID yang sudah ter-encode (Dipanggil dengan: $model->hashid)
+     * Tambahkan fungsi ini!
+     */
+    public function getHashidAttribute()
+    {
+        return Hashids::encode($this->getKey());
     }
 }
