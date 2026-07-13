@@ -59,7 +59,7 @@
                     @endphp
 
                     @if($myClass)
-                    <a href="{{ route('attendances.show', $myClass->id) }}"
+                    <a href="{{ route('attendances.show', $myClass->hashid) }}"
                         class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-md hover:bg-indigo-700 transition transform hover:-translate-y-0.5 w-full md:w-auto">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
