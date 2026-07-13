@@ -26,13 +26,8 @@
 
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div
-                    class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 text-center">
-                    <p class="text-xs font-bold text-slate-500 uppercase">Hadir</p>
-                    <p class="text-3xl font-black text-emerald-500 mt-2">{{ $rekap['hadir'] }}</p>
-                    <p class="text-[10px] text-slate-400 mt-1">Hari Kerja</p>
-                </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+
                 <div
                     class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 text-center border-b-4 border-b-amber-400">
                     <p class="text-xs font-bold text-slate-500 uppercase">Sakit</p>
