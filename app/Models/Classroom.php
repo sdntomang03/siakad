@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Traits\BelongsToSchool;
+use App\Traits\Hashidable;
 use Illuminate\Database\Eloquent\Model;
 
 class Classroom extends Model
 {
-    use BelongsToSchool;
+    use BelongsToSchool, Hashidable;
 
     protected $guarded = ['id'];
 
