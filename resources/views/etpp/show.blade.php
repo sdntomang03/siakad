@@ -1,4 +1,4 @@
-<x-guard-layout>
+<x-guest-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
             Pengecekan <span class="text-indigo-600">e-TPP Pegawai</span>
@@ -130,4 +130,4 @@
 
         </div>
     </div>
-</x-guard-layout>
+</x-guest-layout>
