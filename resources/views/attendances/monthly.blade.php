@@ -161,7 +161,7 @@
                                 } elseif(!$isDayOff && !$status) {
                                 // LOGIKA BARU: Jika hari kerja & kosong, anggap Hadir dengan tanda titik
                                 $textClass = 'text-emerald-600 font-black text-lg';
-                                $label = '•';
+                                $label = 'H';
                                 }
 
                                 $bgClass = $isDayOff ? 'bg-rose-50 dark:bg-rose-900/10' : '';
