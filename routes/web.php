@@ -233,5 +233,8 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/subjects/{subject}/toggle-sidanira', [SubjectController::class, 'toggleSidanira'])->name('subjects.toggle-sidanira');
 });
 Route::get('/renkin', [RenkinController::class, 'index'])->name('renkin.index');
-Route::get('/etpp', [EtppController::class, 'index'])->name('etpp.index');
+Route::post('/etpp/search', [EtppController::class, 'search'])->name('etpp.search');
+
+// 2. Route GET dengan parameter {nip} untuk URL bersih (Misal: /etpp/198502022010012004)
+Route::get('/etpp/{nip?}', [EtppController::class, 'show'])->name('etpp.show');
 require __DIR__.'/auth.php';

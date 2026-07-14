@@ -7,22 +7,42 @@ use Illuminate\Http\Request;
 
 class EtppController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Menangkap inputan dari Form, lalu mengubahnya menjadi URL bersih
+     */
+    public function search(Request $request)
     {
-        $nip = $request->get('nip');
-        $employee = null;
+        $request->validate([
+            'nip' => 'required|string',
+        ]);
 
-        // Jika ada pencarian NIP di URL
-        if ($nip) {
-            // Cari data pegawai berdasarkan NIP
-            $employee = Employee::where('nip', $nip)->first();
-        }
-        // Jika tidak ada pencarian, dan yang login adalah guru/pegawai, otomatis tampilkan miliknya
-        elseif (auth()->user()->hasAnyRole(['guru', 'kepsek', 'operator'])) {
-            $employee = auth()->user()->employee;
-            $nip = $employee->nip ?? null;
+        // Mengalihkan pengguna ke: /etpp/198502022010012004
+        return redirect()->route('etpp.show', ['nip' => $request->nip]);
+    }
+
+    /**
+     * Memproses NIP yang ada di dalam URL
+     */
+    public function show($nip = null)
+    {
+        $user = auth()->user();
+
+        // Skenario 1: Jika URL hanya dipanggil "/etpp" (tanpa NIP di belakangnya)
+        if (! $nip) {
+            // Jika yang login adalah guru/pegawai yang punya NIP, otomatis redirect ke NIP dia sendiri
+            if ($user->hasAnyRole(['guru', 'kepsek', 'operator']) && isset($user->employee->nip)) {
+                return redirect()->route('etpp.show', ['nip' => $user->employee->nip]);
+            }
+
+            // Jika yang login admin/tidak punya NIP, tampilkan form kosong
+            return view('etpp.show', ['employee' => null, 'nip' => null]);
         }
 
-        return view('etpp.index', compact('employee', 'nip'));
+        // Skenario 2: Jika ada NIP di URL (Misal: /etpp/198502022010012004)
+        // Cari data pegawai berdasarkan NIP tersebut
+        $employee = Employee::where('nip', $nip)->first();
+
+        // Lempar datanya ke tampilan HTML
+        return view('etpp.show', compact('employee', 'nip'));
     }
 }
