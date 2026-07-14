@@ -40,7 +40,7 @@
                     </div>
                     @endif
 
-                    <form action="{{ route('attendances.show', $classroom->id) }}" method="GET"
+                    <form action="{{ route('attendances.show', $classroom->hashid) }}" method="GET"
                         class="flex items-end gap-3 w-full md:w-auto">
                         <div class="flex-1 md:flex-none">
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Pilih Tanggal</label>
