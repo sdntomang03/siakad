@@ -73,7 +73,7 @@
             @elseif($employee)
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                {{-- KIRI: Profil Pegawai --}}
+                {{-- KIRI: Profil Pegawai (Tetap Tampil) --}}
                 <div
                     class="md:col-span-1 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden self-start">
                     <div
@@ -106,133 +106,42 @@
                     </div>
                 </div>
 
-                {{-- KANAN: Rekap Kelengkapan Dokumen --}}
-                <div class="md:col-span-2 space-y-6">
+                {{-- KANAN: Fitur Sedang Dalam Perbaikan --}}
+                <div class="md:col-span-2 flex items-stretch">
                     <div
-                        class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
+                        class="w-full bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 sm:p-12 flex flex-col items-center justify-center text-center">
 
-                        <div
-                            class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-800 dark:text-white">Daftar Dokumen e-TPP</h3>
-                                <p class="text-xs text-gray-500 mt-1">Periode Bulan Berjalan</p>
+                        {{-- Ikon Ilustrasi (Animasi Wrench/Gear) --}}
+                        <div class="relative w-24 h-24 mb-6">
+                            <div
+                                class="absolute inset-0 bg-yellow-100 dark:bg-yellow-900/30 rounded-full animate-ping opacity-75">
                             </div>
                             <div
-                                class="px-4 py-2 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg text-center">
-                                <span
-                                    class="block text-[10px] font-bold text-yellow-600 dark:text-yellow-400 uppercase tracking-wider">Status
-                                    Keseluruhan</span>
-                                <span class="block text-sm font-black text-yellow-700 dark:text-yellow-500">BELUM
-                                    LENGKAP</span>
+                                class="relative w-24 h-24 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-600 dark:text-yellow-400 rounded-full flex items-center justify-center">
+                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                                    </path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
                             </div>
                         </div>
 
-                        {{-- Progress Bar Kelengkapan --}}
-                        <div class="mb-8">
-                            <div class="flex justify-between text-xs font-bold mb-1">
-                                <span class="text-gray-600 dark:text-gray-400">Progres Kelengkapan</span>
-                                <span class="text-indigo-600 dark:text-indigo-400">75%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                                <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 75%"></div>
-                            </div>
-                        </div>
+                        <h3 class="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-200 mb-2">
+                            Fitur Sedang Dalam Pengembangan
+                        </h3>
+                        <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto leading-relaxed">
+                            Mohon maaf, modul <strong class="text-gray-700 dark:text-gray-300">Kelengkapan Dokumen
+                                e-TPP</strong> saat ini sedang dalam proses sinkronisasi dan perbaikan sistem. Silakan
+                            cek kembali secara berkala.
+                        </p>
 
-                        {{-- List Dokumen Syarat (Mockup) --}}
-                        <div class="space-y-4">
-
-                            {{-- Dokumen 1: Valid --}}
-                            <div
-                                class="flex items-start gap-4 p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
-                                <div class="mt-0.5">
-                                    <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">Rekap Presensi
-                                        (Absensi Elektronik)</h4>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Kehadiran 100%. Data
-                                        ditarik otomatis dari sistem absensi.</p>
-                                </div>
-                                <div class="hidden sm:block">
-                                    <span
-                                        class="px-2.5 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-[10px] font-bold uppercase rounded border border-green-200 dark:border-green-800">Selesai</span>
-                                </div>
-                            </div>
-
-                            {{-- Dokumen 2: Valid --}}
-                            <div
-                                class="flex items-start gap-4 p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
-                                <div class="mt-0.5">
-                                    <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">Surat Keputusan (SK)
-                                        Pembagian Tugas</h4>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Sesuai dengan jam mengajar
-                                        (Min. 24 Jam).</p>
-                                </div>
-                                <div class="hidden sm:block">
-                                    <span
-                                        class="px-2.5 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-[10px] font-bold uppercase rounded border border-green-200 dark:border-green-800">Selesai</span>
-                                </div>
-                            </div>
-
-                            {{-- Dokumen 3: Menunggu Validasi --}}
-                            <div
-                                class="flex items-start gap-4 p-4 rounded-xl border border-yellow-200 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/20">
-                                <div class="mt-0.5">
-                                    <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">Laporan Kinerja
-                                        Bulanan (Jurnal)</h4>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Dokumen telah diunggah.
-                                        Sedang menunggu persetujuan dari Kepala Sekolah.</p>
-                                </div>
-                                <div class="hidden sm:block">
-                                    <span
-                                        class="px-2.5 py-1 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 text-[10px] font-bold uppercase rounded border border-yellow-200 dark:border-yellow-800">Menunggu</span>
-                                </div>
-                            </div>
-
-                            {{-- Dokumen 4: Belum Upload --}}
-                            @if($employee->tugas_tambahan)
-                            <div
-                                class="flex items-start gap-4 p-4 rounded-xl border border-red-200 dark:border-red-700 bg-red-50 dark:bg-red-900/20">
-                                <div class="mt-0.5">
-                                    <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">Laporan Tugas
-                                        Tambahan</h4>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Dokumen bukti pelaksanaan
-                                        tugas sebagai <strong>{{ $employee->tugas_tambahan }}</strong> belum diserahkan.
-                                    </p>
-                                </div>
-                                <div class="hidden sm:block">
-                                    <span
-                                        class="px-2.5 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 text-[10px] font-bold uppercase rounded border border-red-200 dark:border-red-800">Kurang</span>
-                                </div>
-                            </div>
-                            @endif
-
+                        <div class="mt-8">
+                            <span
+                                class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-bold rounded-full uppercase tracking-widest border border-gray-200 dark:border-gray-600">
+                                Estimasi Selesai: Segera
+                            </span>
                         </div>
 
                     </div>
