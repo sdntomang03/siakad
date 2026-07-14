@@ -62,7 +62,7 @@
                 </div>
             </div>
 
-            <form action="{{ route('attendances.store', $classroom->id) }}" method="POST">
+            <form action="{{ route('attendances.store', $classroom->hashid) }}" method="POST">
                 @csrf
                 <input type="hidden" name="tanggal" value="{{ $tanggal }}">
 
