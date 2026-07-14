@@ -106,6 +106,7 @@
                         <thead
                             class="text-[10px] text-slate-500 uppercase tracking-wider bg-slate-50/50 dark:bg-slate-900/30">
                             <tr>
+                                <th class="px-6 py-3">No</th>
                                 <th class="px-6 py-3">Nama Siswa</th>
 
                                 <th class="px-6 py-3 text-center bg-amber-50/30 text-amber-700">S</th>
@@ -117,6 +118,7 @@
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                             @foreach($siswas as $data)
                             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition">
+                                <td class="px-6 py-4">{{ $loop->iteration }}</td>
                                 <td class="px-6 py-4">
                                     <span class="block font-bold text-slate-800 dark:text-slate-200">{{ $data['nama']
                                         }}</span>
