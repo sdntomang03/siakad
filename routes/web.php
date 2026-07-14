@@ -10,6 +10,7 @@ use App\Http\Controllers\BookLoanController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\EtppController;
 use App\Http\Controllers\ExamGradeController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GradeCurveController;
@@ -232,4 +233,5 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/subjects/{subject}/toggle-sidanira', [SubjectController::class, 'toggleSidanira'])->name('subjects.toggle-sidanira');
 });
 Route::get('/renkin', [RenkinController::class, 'index'])->name('renkin.index');
+Route::get('/etpp', [EtppController::class, 'index'])->name('etpp.index');
 require __DIR__.'/auth.php';
