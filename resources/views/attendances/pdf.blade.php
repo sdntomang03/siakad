@@ -216,7 +216,7 @@
                 $label = 'A';
                 $class = 'alfa';
                 } elseif(!$isDayOff && !$status) {
-                $label = '•';
+                $label = 'H';
                 $class = 'dot';
                 } elseif($isDayOff && !$status) {
                 $label = 'L';
