@@ -29,7 +29,7 @@ class AssessmentController extends Controller
         $waliKelas = Classroom::where('homeroom_teacher_id', $employeeId)
             ->where('academic_year_id', $activeYearId)
             ->get();
-
+        dd($waliKelas);
         foreach ($waliKelas as $kelas) {
             // Jika wali kelas, ambil semua mapel khusus wali kelas di tingkat tersebut
             $subjects = Subject::where('school_id', $schoolId)
