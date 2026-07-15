@@ -18,10 +18,19 @@ class AssessmentController extends Controller
     public function create()
     {
         $employeeId = auth()->user()->employee->id ?? 0;
-
-        // Asumsi Anda punya cara ambil Tahun Ajaran Aktif. Misal ID-nya 1:
-        $activeYearId = 1; // Ganti dengan logika ActiveYear Anda
         $schoolId = auth()->user()->school_id;
+
+        // PERBAIKAN: Ambil ID Tahun Ajaran secara dinamis (Otomatis melacak yang aktif)
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+
+        // Jika tidak ada tahun ajaran aktif, kembalikan error
+        if (! $activeYear) {
+            return back()->with('error', 'Tidak ada Tahun Ajaran Aktif untuk sekolah Anda. Harap hubungi Admin.');
+        }
+
+        $activeYearId = $activeYear->id;
 
         $classesData = [];
 
@@ -29,7 +38,7 @@ class AssessmentController extends Controller
         $waliKelas = Classroom::where('homeroom_teacher_id', $employeeId)
             ->where('academic_year_id', $activeYearId)
             ->get();
-        dd($waliKelas);
+
         foreach ($waliKelas as $kelas) {
             // Jika wali kelas, ambil semua mapel khusus wali kelas di tingkat tersebut
             $subjects = Subject::where('school_id', $schoolId)
@@ -83,9 +92,20 @@ class AssessmentController extends Controller
             'tanggal' => 'required|date',
         ]);
 
+        $schoolId = auth()->user()->school_id;
+
+        // PERBAIKAN: Ambil ID Tahun Ajaran aktif saat menyimpan
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+
+        if (! $activeYear) {
+            return back()->with('error', 'Gagal menyimpan: Tahun ajaran aktif belum ditentukan.');
+        }
+
         $assessment = Assessment::create([
-            'school_id' => auth()->user()->school_id,
-            'academic_year_id' => 1, // Ganti ke ActiveYear ID Anda
+            'school_id' => $schoolId,
+            'academic_year_id' => $activeYear->id,
             'classroom_id' => $request->classroom_id,
             'subject_id' => $request->subject_id,
             'employee_id' => auth()->user()->employee->id ?? 0,
@@ -203,7 +223,7 @@ class AssessmentController extends Controller
         $employeeId = auth()->user()->employee->id ?? 0;
         $schoolId = auth()->user()->school_id;
 
-        // PERBAIKAN: Ambil ID Tahun Ajaran secara dinamis (Otomatis melacak yang aktif)
+        // Ambil ID Tahun Ajaran secara dinamis
         $activeYear = AcademicYear::where('school_id', $schoolId)
             ->where('is_active', true)
             ->first();
