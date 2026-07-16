@@ -128,7 +128,7 @@
                     </a>
 
                     @if(isset($myClass) && $myClass)
-                    <a href="{{ route('attendances.show', $myClass->id) }}"
+                    <a href="{{ route('attendances.show', $myClass->hashid) }}"
                         class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-blue-500 transition flex flex-col items-center justify-center text-center group">
                         <svg class="w-8 h-8 text-blue-500 mb-2 group-hover:scale-110 transition-transform" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
