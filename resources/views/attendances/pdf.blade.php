@@ -342,7 +342,7 @@
             </td>
             <td>
                 Jakarta, {{ $tanggalTtd }}<br>
-                Guru Kelas {{ $selectedClassroom->tingkat }}{{ $selectedClassroom->nama_kelas }}
+                Guru {{ $selectedClassroom->nama_kelas }}
                 <br><br><br><br><br>
                 <strong><u>{{ $selectedClassroom->homeroomTeacher->nama_lengkap ??
                         '(..........................................)' }}</u></strong><br>
