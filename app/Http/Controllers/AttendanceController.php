@@ -257,7 +257,6 @@ class AttendanceController extends Controller
 
         $classrooms = Classroom::where('school_id', $schoolId)->orderBy('nama_kelas')->get();
 
-        // 1. CARA BARU: Mengambil data hari libur dan memformat ulang tanggalnya secara manual (Foolproof)
         $holidaysData = Holiday::whereYear('tanggal', $year)
             ->whereMonth('tanggal', $month)
             ->get();
@@ -268,17 +267,24 @@ class AttendanceController extends Controller
             $holidays[$formattedDate] = $holiday->keterangan;
         }
 
-        // 2. Siapkan array tanggal (Tetap Sama)
+        // ==========================================
+        // LOGIKA BARU: Batasi Tanggal Sampai Hari Ini
+        // ==========================================
         $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
+        $today = Carbon::now();
+
+        // Cek jika bulan dan tahun yang di-request sama dengan waktu saat ini
+        $endDay = ($year == $today->year && $month == $today->month) ? $today->day : $daysInMonth;
+
         $dates = [];
-        for ($i = 1; $i <= $daysInMonth; $i++) {
+        // Loop dibatasi hanya sampai $endDay
+        for ($i = 1; $i <= $endDay; $i++) {
             $date = Carbon::createFromDate($year, $month, $i);
-            $dateString = $date->format('Y-m-d'); // Ini juga murni "YYYY-MM-DD"
+            $dateString = $date->format('Y-m-d');
 
             $dates[$i] = [
                 'date' => $dateString,
                 'is_weekend' => $date->isWeekend(),
-                // Pengecekan sekarang pasti cocok karena formatnya sudah persis sama
                 'is_holiday' => isset($holidays[$dateString]),
                 'holiday_name' => $holidays[$dateString] ?? null,
                 'day_name' => $date->locale('id')->isoFormat('dd'),
@@ -304,7 +310,10 @@ class AttendanceController extends Controller
 
                 foreach ($attendances as $att) {
                     $day = Carbon::parse($att->tanggal)->format('j');
-                    $attendanceData[$att->student_id][$day] = $att->status;
+                    // Pastikan hanya merekam data absen yang masuk range $endDay
+                    if ($day <= $endDay) {
+                        $attendanceData[$att->student_id][$day] = $att->status;
+                    }
                 }
             }
         }
@@ -339,9 +348,16 @@ class AttendanceController extends Controller
             $holidays[$formattedDate] = $holiday->keterangan;
         }
 
+        // ==========================================
+        // LOGIKA BARU: Batasi Tanggal Sampai Hari Ini
+        // ==========================================
         $daysInMonth = Carbon::createFromDate($year, $month, 1)->daysInMonth;
+        $today = Carbon::now();
+
+        $endDay = ($year == $today->year && $month == $today->month) ? $today->day : $daysInMonth;
+
         $dates = [];
-        for ($i = 1; $i <= $daysInMonth; $i++) {
+        for ($i = 1; $i <= $endDay; $i++) {
             $date = Carbon::createFromDate($year, $month, $i);
             $dateString = $date->format('Y-m-d');
 
@@ -349,6 +365,7 @@ class AttendanceController extends Controller
                 'date' => $dateString,
                 'is_weekend' => $date->isWeekend(),
                 'is_holiday' => isset($holidays[$dateString]),
+                'holiday_name' => $holidays[$dateString] ?? null,
                 'day_name' => $date->locale('id')->isoFormat('dd'),
             ];
         }
@@ -367,7 +384,10 @@ class AttendanceController extends Controller
 
         foreach ($attendances as $att) {
             $day = Carbon::parse($att->tanggal)->format('j');
-            $attendanceData[$att->student_id][$day] = $att->status;
+            // Pastikan data absen juga tidak melebihi tanggal hari ini
+            if ($day <= $endDay) {
+                $attendanceData[$att->student_id][$day] = $att->status;
+            }
         }
 
         $periode = Carbon::createFromDate($year, $month, 1)->locale('id')->isoFormat('MMMM YYYY');
