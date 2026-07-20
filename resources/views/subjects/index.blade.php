@@ -368,6 +368,7 @@
                     window.location.reload(); // Muat ulang untuk melihat hasil susunan baru
                 } else {
                     alert('Gagal menyimpan urutan.');
+                    data.errors && console.error(data.errors);
                 }
             })
             .catch(error => {
