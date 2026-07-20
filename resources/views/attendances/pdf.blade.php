@@ -143,7 +143,7 @@
 <body>
 
     <h2>REKAPITULASI ABSENSI BULANAN</h2>
-    <h3>{{ $selectedClassroom->nama_kelas }}</h3>
+    <h3>Kelas {{ $selectedClassroom->nama_kelas }}</h3>
     <h3>Periode: {{ $periode }}</h3>
 
     <table class="main-table">
