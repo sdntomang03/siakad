@@ -39,8 +39,7 @@
 
         .bg-paper {
             background-color: var(--paper);
-            background-image:
-                linear-gradient(var(--paper-2) 1px, transparent 1px);
+            background-image: linear-gradient(var(--paper-2) 1px, transparent 1px);
             background-size: 100% 2.75rem;
             background-position: 0 6.5rem;
         }
@@ -50,60 +49,18 @@
             box-shadow: 0 8px 24px -8px rgba(185, 130, 42, 0.55), inset 0 0 0 3px rgba(255, 255, 255, 0.35);
         }
 
-        .ticket {
-            position: relative;
-            background: var(--card);
-        }
-
-        .ticket::before,
-        .ticket::after {
-            content: "";
-            position: absolute;
-            width: 28px;
-            height: 28px;
-            background: var(--paper);
-            border-radius: 999px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .ticket::before {
-            left: -14px;
-        }
-
-        .ticket::after {
-            right: -14px;
-        }
-
-        @media (min-width: 768px) {
-
-            .ticket::before,
-            .ticket::after {
-                left: auto;
-                right: auto;
-                top: -14px;
-                transform: translateX(-50%);
-            }
-
-            .ticket::before {
-                left: 38%;
-                top: -14px;
-            }
-
-            .ticket::after {
-                left: 38%;
-                top: auto;
-                bottom: -14px;
-            }
-        }
-
-        .certificate {
-            background: var(--card);
-            border: 1.5px dashed rgba(20, 38, 34, 0.25);
-        }
-
         .stat-divider:not(:last-child) {
             border-right: 1px solid var(--line);
+        }
+
+        .deck-card {
+            position: absolute;
+            width: 15rem;
+            border-radius: 1.5rem;
+            background: var(--card);
+            border: 1px solid var(--line);
+            box-shadow: 0 20px 45px -20px rgba(20, 38, 34, 0.35);
+            padding: 1.5rem;
         }
     </style>
 </head>
@@ -123,11 +80,20 @@
                             Tomang 03 Pagi</div>
                     </div>
                 </div>
+
+                <div class="hidden md:flex items-center gap-8 text-sm font-semibold text-[var(--pine)]">
+                    <a href="#modul" class="hover:text-[var(--gold-dark)] transition">Modul</a>
+                    <a href="#keunggulan" class="hover:text-[var(--gold-dark)] transition">Keunggulan</a>
+                    <a href="#kontak" class="hover:text-[var(--gold-dark)] transition">Kontak</a>
+                </div>
+
                 <div class="flex items-center gap-4">
                     @if (Route::has('login'))
                     @auth
                     <a href="{{ url('/dashboard') }}"
-                        class="text-sm font-semibold text-[var(--pine)] hover:text-[var(--gold-dark)] transition">Dashboard</a>
+                        class="px-5 py-2.5 bg-[var(--pine)] text-white rounded-full text-sm font-bold hover:bg-[var(--ink)] transition shadow-sm">
+                        Dashboard
+                    </a>
                     @else
                     <a href="{{ route('login') }}"
                         class="px-5 py-2.5 bg-[var(--pine)] text-white rounded-full text-sm font-bold hover:bg-[var(--ink)] transition shadow-sm">
@@ -142,7 +108,7 @@
 
     <main class="flex-grow pt-[4.5rem] bg-paper">
         <!-- Hero -->
-        <section class="max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-16">
+        <section class="max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-28">
             <div class="grid lg:grid-cols-[1.05fr_0.95fr] gap-14 items-center">
                 <div>
                     <div
@@ -152,22 +118,24 @@
                     </div>
                     <h1
                         class="font-display text-5xl md:text-6xl font-semibold text-[var(--ink)] leading-[1.08] tracking-tight mb-6">
-                        Satu portal untuk<br>
-                        setiap langkah akademik<br>
-                        <span class="italic text-[var(--pine-light)]">di SDN Tomang 03 Pagi.</span>
+                        Satu sistem untuk<br>
+                        seluruh urusan akademik<br>
+                        <span class="italic text-[var(--pine-light)]">SDN Tomang 03 Pagi.</span>
                     </h1>
                     <p class="text-[var(--moss)] text-lg leading-relaxed max-w-lg mb-9">
-                        Cek pengumuman kelulusan, pantau data siswa, dan kelola administrasi sekolah
-                        secara digital, transparan, dan dapat diakses kapan saja.
+                        Presensi, nilai, keuangan, hingga jadwal pelajaran dikelola dalam satu
+                        portal digital yang rapi, transparan, dan mudah diakses oleh guru maupun staf.
                     </p>
                     <div class="flex flex-wrap items-center gap-4 mb-12">
-                        <a href="#kelulusan"
+                        @if (Route::has('login'))
+                        <a href="{{ route('login') }}"
                             class="inline-flex items-center gap-2 px-6 py-3.5 bg-[var(--gold)] text-[var(--ink)] rounded-full font-bold hover:bg-[var(--gold-dark)] hover:text-white transition shadow-md shadow-[var(--gold)]/20">
-                            Cek Kelulusan <i class="fas fa-arrow-right text-sm"></i>
+                            Masuk ke Sistem <i class="fas fa-arrow-right text-sm"></i>
                         </a>
-                        <a href="#staff"
+                        @endif
+                        <a href="#modul"
                             class="inline-flex items-center gap-2 px-6 py-3.5 border border-[var(--ink)]/15 text-[var(--ink)] rounded-full font-bold hover:border-[var(--ink)]/40 transition">
-                            Portal Staff &amp; Guru
+                            Lihat Modul
                         </a>
                     </div>
                     <div class="flex flex-wrap gap-x-8 gap-y-4">
@@ -189,96 +157,175 @@
                     </div>
                 </div>
 
-                <!-- Signature element: digital certificate card -->
-                <div class="relative mx-auto max-w-sm w-full">
-                    <div class="certificate rounded-[1.75rem] p-8 rotate-1 shadow-2xl shadow-[var(--ink)]/10">
-                        <div class="flex items-center justify-between mb-8">
-                            <span class="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-[var(--moss)]">Ijazah
-                                Digital</span>
-                            <span class="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-[var(--moss)]">No.
-                                03/2026</span>
-                        </div>
-                        <div class="flex justify-center mb-8">
-                            <div
-                                class="w-20 h-20 rounded-full seal flex items-center justify-center text-white text-2xl">
-                                <i class="fas fa-award"></i>
-                            </div>
-                        </div>
-                        <p class="text-center font-display italic text-lg text-[var(--ink)] leading-snug mb-6">
-                            &ldquo;Dinyatakan lulus dengan predikat terbaik&rdquo;
-                        </p>
+                <!-- Signature element: stacked module cards -->
+                <div class="relative h-[22rem] hidden lg:block">
+                    <div class="deck-card -rotate-6 top-4 left-2">
                         <div
-                            class="border-t border-dashed border-[var(--ink)]/15 pt-5 flex justify-between text-xs text-[var(--moss)] font-semibold">
-                            <span>SDN Tomang 03 Pagi</span>
-                            <span>Jakarta Barat</span>
+                            class="w-10 h-10 rounded-xl bg-[var(--pine)]/10 text-[var(--pine)] flex items-center justify-center mb-4">
+                            <i class="fas fa-calendar-check"></i>
                         </div>
+                        <div class="font-display font-semibold text-[var(--ink)] mb-1">Presensi</div>
+                        <div class="text-xs text-[var(--moss)]">Kehadiran harian real-time</div>
                     </div>
-                    <div class="absolute -bottom-4 -left-4 w-24 h-24 rounded-full bg-[var(--gold)]/15 -z-10"></div>
-                    <div class="absolute -top-6 -right-6 w-16 h-16 rounded-full bg-[var(--pine)]/10 -z-10"></div>
+                    <div class="deck-card rotate-2 top-16 left-32">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-[var(--gold)]/15 text-[var(--gold-dark)] flex items-center justify-center mb-4">
+                            <i class="fas fa-square-poll-vertical"></i>
+                        </div>
+                        <div class="font-display font-semibold text-[var(--ink)] mb-1">Nilai &amp; Rapor</div>
+                        <div class="text-xs text-[var(--moss)]">Rekap otomatis per semester</div>
+                    </div>
+                    <div class="deck-card -rotate-2 top-32 left-8">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-[var(--pine)]/10 text-[var(--pine)] flex items-center justify-center mb-4">
+                            <i class="fas fa-sack-dollar"></i>
+                        </div>
+                        <div class="font-display font-semibold text-[var(--ink)] mb-1">Keuangan Sekolah</div>
+                        <div class="text-xs text-[var(--moss)]">Anggaran &amp; belanja tercatat</div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Feature cards -->
-        <section class="max-w-6xl mx-auto px-5 sm:px-8 pb-20">
-            <div class="grid md:grid-cols-2 gap-10 md:gap-16">
-                <div id="kelulusan"
-                    class="ticket rounded-[1.75rem] p-8 border border-[var(--line)] shadow-lg shadow-[var(--ink)]/5">
+        <!-- Modul -->
+        <section id="modul" class="max-w-6xl mx-auto px-5 sm:px-8 pb-24">
+            <div class="max-w-xl mb-12">
+                <div class="text-xs font-bold uppercase tracking-[0.18em] text-[var(--gold-dark)] mb-3">Modul Sistem
+                </div>
+                <h2 class="font-display text-3xl md:text-4xl font-semibold text-[var(--ink)] tracking-tight">
+                    Enam modul inti, satu portal terpadu
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div
+                    class="bg-[var(--card)] rounded-[1.5rem] p-7 border border-[var(--line)] shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all">
                     <div
-                        class="w-14 h-14 rounded-2xl bg-[var(--gold)]/15 text-[var(--gold-dark)] flex items-center justify-center text-2xl mb-6">
-                        <i class="fas fa-scroll"></i>
+                        class="w-12 h-12 rounded-xl bg-[var(--pine)]/10 text-[var(--pine)] flex items-center justify-center text-xl mb-5">
+                        <i class="fas fa-id-card-clip"></i>
                     </div>
-                    <h3 class="font-display text-2xl font-semibold text-[var(--ink)] mb-3">Pengumuman Kelulusan</h3>
-                    <p class="text-[var(--moss)] mb-8 leading-relaxed">
-                        Cek status kelulusan siswa kelas VI tahun ajaran 2025/2026 secara online
-                        menggunakan Nomor Induk Siswa Nasional (NISN).
-                    </p>
-                    <a href="#"
-                        class="inline-flex items-center gap-2 text-[var(--pine)] font-bold hover:gap-3.5 transition-all">
-                        Cek Kelulusan <i class="fas fa-arrow-right text-sm"></i>
-                    </a>
+                    <h3 class="font-display text-lg font-semibold text-[var(--ink)] mb-2">Data Induk Siswa &amp; Guru
+                    </h3>
+                    <p class="text-sm text-[var(--moss)] leading-relaxed">Satu basis data terpusat untuk profil,
+                        riwayat, dan status seluruh siswa dan tenaga pendidik.</p>
                 </div>
 
-                <div id="staff" class="ticket rounded-[1.75rem] p-8 text-white relative overflow-hidden"
-                    style="background: var(--ink);">
-                    <div class="absolute top-0 right-0 p-8 opacity-[0.08] text-8xl">
-                        <i class="fas fa-user-shield"></i>
+                <div
+                    class="bg-[var(--card)] rounded-[1.5rem] p-7 border border-[var(--line)] shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-[var(--gold)]/15 text-[var(--gold-dark)] flex items-center justify-center text-xl mb-5">
+                        <i class="fas fa-calendar-check"></i>
                     </div>
-                    <h3 class="font-display text-2xl font-semibold mb-3 relative z-10">Portal Staff &amp; Guru</h3>
-                    <p class="text-white/60 mb-8 leading-relaxed relative z-10">
-                        Kelola data siswa, nilai, dan administrasi sekolah melalui dashboard
-                        khusus tenaga pendidik.
-                    </p>
+                    <h3 class="font-display text-lg font-semibold text-[var(--ink)] mb-2">Presensi Digital</h3>
+                    <p class="text-sm text-[var(--moss)] leading-relaxed">Pencatatan kehadiran harian dengan rekap
+                        otomatis sakit, izin, dan alfa per bulan.</p>
+                </div>
 
-                    @auth
-                    <a href="{{ url('/dashboard') }}"
-                        class="inline-flex items-center justify-center w-full py-4 bg-[var(--gold)] text-[var(--ink)] rounded-2xl font-bold hover:bg-[var(--gold-dark)] hover:text-white transition relative z-10">
-                        Buka Dashboard
-                    </a>
-                    @else
-                    <form method="POST" action="{{ route('login') }}" class="space-y-3.5 relative z-10">
-                        @csrf
-                        @if (session('error'))
-                        <div class="text-xs text-red-400 font-bold">{{ session('error') }}</div>
-                        @endif
-                        <div class="flex flex-col gap-3">
-                            <input type="email" name="email" placeholder="Email Staff" required
-                                class="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm placeholder:text-white/40 focus:ring-2 focus:ring-[var(--gold)] focus:outline-none">
-                            <input type="password" name="password" placeholder="Password" required
-                                class="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm placeholder:text-white/40 focus:ring-2 focus:ring-[var(--gold)] focus:outline-none">
-                            <button type="submit"
-                                class="w-full py-3.5 bg-[var(--gold)] text-[var(--ink)] rounded-xl font-bold hover:bg-[var(--gold-dark)] hover:text-white transition">
-                                Masuk ke Sistem
-                            </button>
-                        </div>
-                    </form>
-                    @endauth
+                <div
+                    class="bg-[var(--card)] rounded-[1.5rem] p-7 border border-[var(--line)] shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-[var(--pine)]/10 text-[var(--pine)] flex items-center justify-center text-xl mb-5">
+                        <i class="fas fa-file-pen"></i>
+                    </div>
+                    <h3 class="font-display text-lg font-semibold text-[var(--ink)] mb-2">Ujian &amp; Bank Soal</h3>
+                    <p class="text-sm text-[var(--moss)] leading-relaxed">Ujian berbasis komputer dengan penilaian
+                        otomatis dan bank soal terorganisir per kelas.</p>
+                </div>
+
+                <div
+                    class="bg-[var(--card)] rounded-[1.5rem] p-7 border border-[var(--line)] shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-[var(--gold)]/15 text-[var(--gold-dark)] flex items-center justify-center text-xl mb-5">
+                        <i class="fas fa-square-poll-vertical"></i>
+                    </div>
+                    <h3 class="font-display text-lg font-semibold text-[var(--ink)] mb-2">Nilai &amp; Rapor</h3>
+                    <p class="text-sm text-[var(--moss)] leading-relaxed">Pengolahan nilai per mata pelajaran hingga
+                        cetak rapor siap tanda tangan.</p>
+                </div>
+
+                <div
+                    class="bg-[var(--card)] rounded-[1.5rem] p-7 border border-[var(--line)] shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-[var(--pine)]/10 text-[var(--pine)] flex items-center justify-center text-xl mb-5">
+                        <i class="fas fa-sack-dollar"></i>
+                    </div>
+                    <h3 class="font-display text-lg font-semibold text-[var(--ink)] mb-2">Keuangan &amp; Anggaran</h3>
+                    <p class="text-sm text-[var(--moss)] leading-relaxed">Pencatatan transaksi belanja dan anggaran
+                        sekolah yang rapi dan bisa diaudit.</p>
+                </div>
+
+                <div
+                    class="bg-[var(--card)] rounded-[1.5rem] p-7 border border-[var(--line)] shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-[var(--gold)]/15 text-[var(--gold-dark)] flex items-center justify-center text-xl mb-5">
+                        <i class="fas fa-calendar-days"></i>
+                    </div>
+                    <h3 class="font-display text-lg font-semibold text-[var(--ink)] mb-2">Jadwal &amp; Kalender Akademik
+                    </h3>
+                    <p class="text-sm text-[var(--moss)] leading-relaxed">Jadwal pelajaran, agenda sekolah, dan kalender
+                        akademik dalam satu tampilan.</p>
                 </div>
             </div>
         </section>
+
+        <!-- Keunggulan -->
+        <section id="keunggulan" class="bg-[var(--ink)] text-white">
+            <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20">
+                <div class="max-w-xl mb-12">
+                    <div class="text-xs font-bold uppercase tracking-[0.18em] text-[var(--gold)] mb-3">Keunggulan</div>
+                    <h2 class="font-display text-3xl md:text-4xl font-semibold tracking-tight">
+                        Dibangun untuk kebutuhan sekolah negeri
+                    </h2>
+                </div>
+                <div class="grid md:grid-cols-3 gap-10">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-xl mb-5">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <h3 class="font-display text-lg font-semibold mb-2">Aman &amp; Transparan</h3>
+                        <p class="text-sm text-white/60 leading-relaxed">Setiap perubahan data tercatat, sehingga proses
+                            administrasi dapat dipertanggungjawabkan.</p>
+                    </div>
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-xl mb-5">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3 class="font-display text-lg font-semibold mb-2">Cepat &amp; Ringan</h3>
+                        <p class="text-sm text-white/60 leading-relaxed">Diakses dari perangkat apa pun tanpa instalasi
+                            tambahan, cocok untuk kondisi jaringan sekolah.</p>
+                    </div>
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-xl mb-5">
+                            <i class="fas fa-people-group"></i>
+                        </div>
+                        <h3 class="font-display text-lg font-semibold mb-2">Mudah Digunakan</h3>
+                        <p class="text-sm text-white/60 leading-relaxed">Antarmuka sederhana yang dirancang agar guru
+                            dan staf dapat langsung menggunakannya.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        @if (Route::has('login'))
+        <section class="max-w-6xl mx-auto px-5 sm:px-8 py-20">
+            <div class="bg-[var(--card)] border border-[var(--line)] rounded-[2rem] px-8 py-14 text-center shadow-sm">
+                <h2 class="font-display text-3xl md:text-4xl font-semibold text-[var(--ink)] tracking-tight mb-4">
+                    Siap mengelola akademik lebih rapi?
+                </h2>
+                <p class="text-[var(--moss)] max-w-md mx-auto mb-8">
+                    Masuk dengan akun staf atau guru untuk mulai menggunakan seluruh modul SIAKAD.
+                </p>
+                <a href="{{ route('login') }}"
+                    class="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--pine)] text-white rounded-full font-bold hover:bg-[var(--ink)] transition shadow-md">
+                    Masuk ke Sistem <i class="fas fa-arrow-right text-sm"></i>
+                </a>
+            </div>
+        </section>
+        @endif
     </main>
 
-    <footer class="bg-[var(--card)] border-t border-[var(--line)] py-12">
+    <footer id="kontak" class="bg-[var(--card)] border-t border-[var(--line)] py-12">
         <div class="max-w-6xl mx-auto px-5 sm:px-8 flex flex-col items-center gap-6">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-full seal flex items-center justify-center text-white text-xs">
