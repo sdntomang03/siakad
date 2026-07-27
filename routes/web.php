@@ -115,6 +115,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('teacher-notes', [TeacherNoteController::class, 'store'])->name('teacher-notes.store');
     Route::delete('teacher-notes/{id}', [TeacherNoteController::class, 'destroy'])->name('teacher-notes.destroy');
     Route::get('teacher-notes/report', [TeacherNoteController::class, 'report'])->name('teacher-notes.report');
+    Route::put('/teacher-notes/{id}', [TeacherNoteController::class, 'update'])->name('teacher-notes.update');
 });
 
 Route::middleware(['auth', 'role:operator'])->prefix('operator')->name('operator.')->group(function () {

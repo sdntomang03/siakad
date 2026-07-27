@@ -129,6 +129,41 @@ class TeacherNoteController extends Controller
         return back()->with('success', 'Jurnal kejadian berhasil disimpan.');
     }
 
+    // 4. MENGEDIT CATATAN
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'jenis_catatan' => 'required|string',
+            'catatan' => 'required|string',
+        ]);
+
+        $note = TeacherNote::findOrFail($id);
+        $isForReport = $request->has('is_for_report') ? 1 : 0;
+
+        // Jika guru mencentang "Terapkan ke seluruh siswa di kejadian ini"
+        if ($request->has('update_all')) {
+            TeacherNote::where('classroom_id', $note->classroom_id)
+                ->where('catatan', $note->getOriginal('catatan'))
+                ->where('created_at', $note->created_at)
+                ->update([
+                    'jenis_catatan' => $request->jenis_catatan,
+                    'catatan' => $request->catatan,
+                    'is_for_report' => $isForReport,
+                ]);
+            $pesan = 'Catatan berhasil diperbarui untuk semua siswa yang terlibat.';
+        } else {
+            // Hanya update untuk 1 siswa spesifik
+            $note->update([
+                'jenis_catatan' => $request->jenis_catatan,
+                'catatan' => $request->catatan,
+                'is_for_report' => $isForReport,
+            ]);
+            $pesan = 'Catatan untuk siswa tersebut berhasil diperbarui.';
+        }
+
+        return back()->with('success', $pesan);
+    }
+
     // 3. MENGHAPUS CATATAN (INDIVIDU ATAU KELOMPOK)
     public function destroy(Request $request, $id)
     {

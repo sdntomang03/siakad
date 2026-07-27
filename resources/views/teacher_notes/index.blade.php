@@ -286,7 +286,117 @@
                                 <td class="px-6 py-4 flex justify-end gap-2">
                                     @hasanyrole('guru|superadmin|operator')
 
-                                    {{-- Tombol Hapus 1 Siswa Saja --}}
+                                    {{-- A. TOMBOL & MODAL EDIT MENGGUNAKAN ALPINE.JS --}}
+                                    <div x-data="{ editModal: false }">
+                                        <button type="button" @click="editModal = true"
+                                            class="p-2 text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition"
+                                            title="Edit Catatan">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                                </path>
+                                            </svg>
+                                        </button>
+
+                                        {{-- Struktur Modal Edit (di-teleport agar tidak terpotong tabel) --}}
+                                        <template x-teleport="body">
+                                            <div x-show="editModal"
+                                                x-transition:enter="transition ease-out duration-300"
+                                                x-transition:enter-start="opacity-0"
+                                                x-transition:enter-end="opacity-100"
+                                                x-transition:leave="transition ease-in duration-200"
+                                                x-transition:leave-start="opacity-100"
+                                                x-transition:leave-end="opacity-0"
+                                                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+                                                style="display: none;">
+
+                                                <div class="absolute inset-0" @click="editModal = false"></div>
+
+                                                <div class="relative w-full max-w-lg bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden"
+                                                    @click.stop>
+                                                    <form action="{{ route('teacher-notes.update', $riwayat->id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <div
+                                                            class="p-6 border-b border-slate-100 dark:border-slate-700">
+                                                            <h3
+                                                                class="text-lg font-bold text-slate-800 dark:text-white">
+                                                                Edit Kejadian</h3>
+                                                            <p class="text-xs text-slate-500">Siswa: {{
+                                                                $riwayat->student->nama_lengkap ?? '-' }}</p>
+                                                        </div>
+                                                        <div class="p-6 space-y-4">
+                                                            <div>
+                                                                <label
+                                                                    class="block text-xs font-bold text-slate-500 uppercase mb-2">Jenis
+                                                                    Catatan</label>
+                                                                <select name="jenis_catatan" required
+                                                                    class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500 font-bold text-indigo-700 dark:text-indigo-400">
+                                                                    <option value="Catatan Wali Kelas" {{ $riwayat->
+                                                                        jenis_catatan == 'Catatan Wali Kelas' ?
+                                                                        'selected' : '' }}>Catatan Wali Kelas</option>
+                                                                    <option value="Prestasi Anak" {{ $riwayat->
+                                                                        jenis_catatan == 'Prestasi Anak' ? 'selected' :
+                                                                        '' }}>Prestasi / Penghargaan</option>
+                                                                    <option value="Pelanggaran / Kedisiplinan" {{
+                                                                        $riwayat->jenis_catatan == 'Pelanggaran /
+                                                                        Kedisiplinan' ? 'selected' : '' }}>Pelanggaran /
+                                                                        Kedisiplinan</option>
+                                                                    <option value="Perkembangan Sikap" {{ $riwayat->
+                                                                        jenis_catatan == 'Perkembangan Sikap' ?
+                                                                        'selected' : '' }}>Perkembangan Sikap</option>
+                                                                </select>
+                                                            </div>
+                                                            <div>
+                                                                <label
+                                                                    class="block text-xs font-bold text-slate-500 uppercase mb-2">Deskripsi
+                                                                    Kejadian</label>
+                                                                <textarea name="catatan" required rows="3"
+                                                                    class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">{{ $riwayat->catatan }}</textarea>
+                                                            </div>
+                                                            <div>
+                                                                <label
+                                                                    class="flex items-center gap-3 cursor-pointer mt-4">
+                                                                    <input type="checkbox" name="is_for_report"
+                                                                        value="1" {{ $riwayat->is_for_report ? 'checked'
+                                                                    : '' }} class="w-5 h-5 text-indigo-600 bg-white
+                                                                    border-slate-300 rounded focus:ring-indigo-500">
+                                                                    <span
+                                                                        class="text-sm font-bold text-slate-700 dark:text-slate-200">Tampilkan
+                                                                        di Raport E-Rapor</span>
+                                                                </label>
+                                                            </div>
+
+                                                            {{-- Fitur Cerdas: Update Massal --}}
+                                                            <div
+                                                                class="p-3 bg-amber-50 dark:bg-amber-900/30 rounded-xl border border-amber-100 dark:border-amber-800/50 mt-4">
+                                                                <label class="flex items-start gap-3 cursor-pointer">
+                                                                    <input type="checkbox" name="update_all" value="1"
+                                                                        class="w-4 h-4 text-amber-600 mt-0.5 rounded focus:ring-amber-500">
+                                                                    <span
+                                                                        class="text-xs text-amber-800 dark:text-amber-400 font-medium">Centang
+                                                                        ini jika ingin menerapkan teks editan ke
+                                                                        <b>seluruh siswa</b> yang telibat pada catatan
+                                                                        kejadian yang sama.</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div
+                                                            class="p-4 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-700">
+                                                            <button type="button" @click="editModal = false"
+                                                                class="px-5 py-2 text-sm font-bold text-slate-500 hover:text-slate-700 transition">Batal</button>
+                                                            <button type="submit"
+                                                                class="px-5 py-2 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg hover:bg-indigo-700 transition">Update
+                                                                Kejadian</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    {{-- B. TOMBOL HAPUS 1 SISWA SAJA --}}
                                     <form
                                         action="{{ route('teacher-notes.destroy', ['id' => $riwayat->id, 'mode' => 'siswa']) }}"
                                         method="POST">
@@ -303,7 +413,7 @@
                                         </button>
                                     </form>
 
-                                    {{-- Tombol Hapus 1 Kejadian (Semua Siswa Terkait) --}}
+                                    {{-- C. TOMBOL HAPUS 1 KEJADIAN (SEMUA SISWA TERKAIT) --}}
                                     <form
                                         action="{{ route('teacher-notes.destroy', ['id' => $riwayat->id, 'mode' => 'kejadian']) }}"
                                         method="POST">
