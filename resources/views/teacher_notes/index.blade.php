@@ -314,10 +314,12 @@
 
                                                 <div class="relative w-full max-w-lg bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden"
                                                     @click.stop>
+                                                    <!-- PASTIKAN MENAMBAHKAN enctype="multipart/form-data" PADA TAG FORM -->
                                                     <form action="{{ route('teacher-notes.update', $riwayat->id) }}"
-                                                        method="POST">
+                                                        method="POST" enctype="multipart/form-data">
                                                         @csrf
                                                         @method('PUT')
+
                                                         <div
                                                             class="p-6 border-b border-slate-100 dark:border-slate-700">
                                                             <h3
@@ -326,6 +328,7 @@
                                                             <p class="text-xs text-slate-500">Siswa: {{
                                                                 $riwayat->student->nama_lengkap ?? '-' }}</p>
                                                         </div>
+
                                                         <div class="p-6 space-y-4">
                                                             <div>
                                                                 <label
@@ -368,7 +371,20 @@
                                                                 </label>
                                                             </div>
 
-                                                            {{-- Fitur Cerdas: Update Massal --}}
+                                                            {{-- AREA TAMBAH FOTO BARU --}}
+                                                            <div
+                                                                class="pt-2 border-t border-slate-100 dark:border-slate-700 mt-4">
+                                                                <label
+                                                                    class="block text-xs font-bold text-slate-500 uppercase mb-2">Tambah
+                                                                    Foto Baru (Opsional)</label>
+                                                                <input type="file" name="foto[]" multiple
+                                                                    accept="image/jpeg, image/png, image/webp"
+                                                                    class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/50 dark:file:text-indigo-400 cursor-pointer">
+                                                                <p class="text-[10px] text-slate-400 mt-2">*Foto yang
+                                                                    baru diunggah akan otomatis ditambahkan ke foto yang
+                                                                    sudah ada sebelumnya.</p>
+                                                            </div>
+
                                                             <div
                                                                 class="p-3 bg-amber-50 dark:bg-amber-900/30 rounded-xl border border-amber-100 dark:border-amber-800/50 mt-4">
                                                                 <label class="flex items-start gap-3 cursor-pointer">
@@ -376,12 +392,13 @@
                                                                         class="w-4 h-4 text-amber-600 mt-0.5 rounded focus:ring-amber-500">
                                                                     <span
                                                                         class="text-xs text-amber-800 dark:text-amber-400 font-medium">Centang
-                                                                        ini jika ingin menerapkan teks editan ke
-                                                                        <b>seluruh siswa</b> yang telibat pada catatan
-                                                                        kejadian yang sama.</span>
+                                                                        ini jika ingin menerapkan teks editan <b>dan
+                                                                            tambahan foto baru</b> ke seluruh siswa yang
+                                                                        telibat pada catatan kejadian yang sama.</span>
                                                                 </label>
                                                             </div>
                                                         </div>
+
                                                         <div
                                                             class="p-4 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-700">
                                                             <button type="button" @click="editModal = false"

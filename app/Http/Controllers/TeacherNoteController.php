@@ -135,30 +135,71 @@ class TeacherNoteController extends Controller
         $request->validate([
             'jenis_catatan' => 'required|string',
             'catatan' => 'required|string',
+            'foto' => 'nullable|array',
+            'foto.*' => 'image|mimes:jpeg,png,jpg,webp|max:10240', // Sama seperti pengaturan limit 10MB
+        ], [
+            'foto.*.max' => 'Ukuran setiap foto dari HP maksimal 10MB.',
+            'foto.*.image' => 'File harus berupa gambar.',
+            'foto.*.mimes' => 'Format foto harus jpeg, png, jpg, atau webp.',
         ]);
 
         $note = TeacherNote::findOrFail($id);
         $isForReport = $request->has('is_for_report') ? 1 : 0;
 
+        // 1. PROSES FOTO LAMA & FOTO BARU
+        $fotoPaths = $note->foto ?? []; // Ambil foto lama (jika ada)
+        if (! is_array($fotoPaths)) {
+            $fotoPaths = [];
+        }
+
+        if ($request->hasFile('foto')) {
+            $manager = ImageManager::usingDriver(Driver::class);
+
+            if (! Storage::disk('public')->exists('jurnal_foto')) {
+                Storage::disk('public')->makeDirectory('jurnal_foto');
+            }
+
+            foreach ($request->file('foto') as $file) {
+                $fileName = Str::random(40).'.webp';
+                $destinationPath = storage_path('app/public/jurnal_foto/'.$fileName);
+
+                $manager->decode($file)
+                    ->scaleDown(width: 1000)
+                    ->save($destinationPath, quality: 80);
+
+                // Tambahkan path foto baru ke dalam array foto lama
+                $fotoPaths[] = 'jurnal_foto/'.$fileName;
+            }
+        }
+
+        // 2. PROSES UPDATE DATA
         // Jika guru mencentang "Terapkan ke seluruh siswa di kejadian ini"
         if ($request->has('update_all')) {
-            TeacherNote::where('classroom_id', $note->classroom_id)
+
+            // Gunakan get() lalu foreach() agar cast array/JSON pada kolom foto berfungsi dengan benar di Laravel
+            $relatedNotes = TeacherNote::where('classroom_id', $note->classroom_id)
                 ->where('catatan', $note->getOriginal('catatan'))
                 ->where('created_at', $note->created_at)
-                ->update([
+                ->get();
+
+            foreach ($relatedNotes as $relatedNote) {
+                $relatedNote->update([
                     'jenis_catatan' => $request->jenis_catatan,
                     'catatan' => $request->catatan,
                     'is_for_report' => $isForReport,
+                    'foto' => $fotoPaths,
                 ]);
-            $pesan = 'Catatan berhasil diperbarui untuk semua siswa yang terlibat.';
+            }
+            $pesan = 'Catatan beserta foto baru berhasil diperbarui untuk semua siswa yang terlibat.';
         } else {
             // Hanya update untuk 1 siswa spesifik
             $note->update([
                 'jenis_catatan' => $request->jenis_catatan,
                 'catatan' => $request->catatan,
                 'is_for_report' => $isForReport,
+                'foto' => $fotoPaths,
             ]);
-            $pesan = 'Catatan untuk siswa tersebut berhasil diperbarui.';
+            $pesan = 'Catatan beserta foto baru untuk siswa tersebut berhasil diperbarui.';
         }
 
         return back()->with('success', $pesan);
