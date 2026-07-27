@@ -69,7 +69,7 @@ class TeacherNoteController extends Controller
             'student_ids' => 'required|array|min:1',
             // Update: Validasi foto sebagai array
             'foto' => 'nullable|array',
-            'foto.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+            'foto.*' => 'image|mimes:jpeg,png,jpg,webp|max:10240',
         ], [
             'student_ids.required' => 'Pilih minimal satu siswa yang terlibat.',
             'foto.*.max' => 'Ukuran setiap foto tidak boleh lebih dari 2MB.',
