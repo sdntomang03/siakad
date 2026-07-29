@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assessment_criteria_tables', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('assessments', function (Blueprint $table) {
+            $table->enum('format', ['tes', 'non-tes'])->default('tes')->after('assessment_type_id');
+            $table->integer('scale')->nullable()->after('format'); // Menyimpan angka 3, 4, atau 5
         });
     }
 
@@ -22,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assessment_criteria_tables');
+        Schema::table('assessments', function (Blueprint $table) {
+            //
+        });
     }
 };
