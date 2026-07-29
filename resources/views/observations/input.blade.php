@@ -107,10 +107,27 @@
             <!-- MATRIKS TABEL -->
             <div
                 class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <div class="p-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
-                    <h3 class="text-base font-black text-slate-800 dark:text-white">Matriks Penilaian Siswa</h3>
-                    <p class="text-xs font-bold text-slate-500 mt-1">Pilih nilai lalu ketik catatan singkat (opsional).
-                        Klik logo AI untuk merapikan catatan.</p>
+
+                <!-- HEADER MATRIKS & TOMBOL GENERATE MASSAL -->
+                <div
+                    class="p-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-base font-black text-slate-800 dark:text-white">Matriks Penilaian Siswa</h3>
+                        <p class="text-xs font-medium text-slate-500 mt-1">Isi skor & ketik catatan mentah untuk semua
+                            siswa. Lalu klik <strong class="text-indigo-600">Generate AI Semua Siswa</strong> agar AI
+                            merapikannya sekaligus.</p>
+                    </div>
+
+                    <!-- TOMBOL GENERATE SEMUA -->
+                    <button type="button" id="btnGenerateAll" onclick="generateAllAINotesBatch()"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition shadow-sm shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="m12 3-1.9 5.8a2 2 0 0 1-1.277 1.277L3 12l5.8 1.9a2 2 0 0 1 1.277 1.277L12 21l1.9-5.8a2 2 0 0 1 1.277-1.277L21 12l-5.8-1.9a2 2 0 0 1-1.277-1.277C13.8 4.2 12 3 12 3Z" />
+                        </svg>
+                        Generate AI Semua Siswa
+                    </button>
                 </div>
 
                 <div class="overflow-x-auto relative">
@@ -182,7 +199,7 @@
                                 </td>
                                 @endforeach
 
-                                <!-- INPUT CATATAN DENGAN TOMBOL AI -->
+                                <!-- INPUT CATATAN DENGAN TOMBOL AI (Individu) -->
                                 @php
                                 $catatanSiswa = $existingNotes[$siswa->id] ?? '';
                                 @endphp
@@ -196,7 +213,7 @@
                                             onclick="generateAINote({{ $siswa->id }}, '{{ addslashes($siswa->nama_lengkap) }}')"
                                             id="btnAi_{{ $siswa->id }}"
                                             class="shrink-0 p-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white border border-indigo-200 rounded-lg transition-colors shadow-sm flex items-center justify-center"
-                                            title="Rapikan catatan dengan AI">
+                                            title="Rapikan catatan khusus siswa ini">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24"
                                                 fill="none" stroke="currentColor" stroke-width="2"
                                                 stroke-linecap="round" stroke-linejoin="round">
@@ -214,7 +231,7 @@
                 </div>
             </div>
 
-            <!-- TOMBOL SIMPAN -->
+            <!-- TOMBOL SIMPAN (FORM) -->
             <div class="flex justify-end pt-2 pb-6">
                 <button type="submit"
                     class="px-8 py-3.5 bg-emerald-600 text-white rounded-xl text-sm font-black shadow-lg shadow-emerald-500/30 hover:bg-emerald-700 transform hover:-translate-y-0.5 transition-all flex items-center gap-2">
@@ -222,22 +239,139 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
                         </path>
                     </svg>
-                    Simpan
+                    Simpan Penilaian Observasi
                 </button>
             </div>
         </form>
 
     </div>
 
-    <!-- SCRIPT AI GENERATOR[cite: 6] -->
+    <!-- SCRIPT AI GENERATOR -->
     <script>
-        // Siapkan data Kriteria dari PHP ke Array Javascript
+        // Siapkan referensi ke kriteria dan daftar siswa dari Laravel
         const criteriaData = [
             @foreach($assessment->criteria as $k)
                 { id: {{ $k->id }}, text: "{{ addslashes($k->descriptor) }}" },
             @endforeach
         ];
 
+        const allStudents = [
+            @foreach($students as $siswa)
+                { id: {{ $siswa->id }}, name: "{{ addslashes($siswa->nama_lengkap) }}" },
+            @endforeach
+        ];
+
+        const maxScale = {{ $assessment->scale }};
+
+        // ==============================================
+        // 1. FUNGSI GENERATE AI MASSAL (BATCH)
+        // ==============================================
+        async function generateAllAINotesBatch() {
+            const apiKey = document.getElementById('geminiApiKey').value.trim();
+            if (!apiKey) {
+                alert("Silakan masukkan Gemini API Key di kolom paling atas terlebih dahulu!");
+                return;
+            }
+
+            // Kumpulkan data semua siswa yang sudah memiliki skor atau catatan mentah
+            let studentsData = [];
+
+            allStudents.forEach(student => {
+                const inputField = document.getElementById(`note_${student.id}`);
+                const rawNote = inputField.value.trim();
+
+                let scoreDetails = [];
+                let isAnyAssessed = false;
+
+                criteriaData.forEach((crit, index) => {
+                    const checkedRadio = document.querySelector(`input[name="scores[${student.id}][${crit.id}]"]:checked`);
+                    const score = (checkedRadio && checkedRadio.value !== "") ? checkedRadio.value : null;
+                    if(score) {
+                        isAnyAssessed = true;
+                        scoreDetails.push(`K${index + 1}=${score}`);
+                    }
+                });
+
+                if (isAnyAssessed || rawNote) {
+                    studentsData.push({
+                        id: student.id,
+                        nama: student.name,
+                        skor: scoreDetails.join(', '),
+                        catatan_mentah: rawNote || "-"
+                    });
+                }
+            });
+
+            if (studentsData.length === 0) {
+                alert("Pilih nilai matriks observasi atau isi catatan mentah untuk setidaknya satu siswa terlebih dahulu.");
+                return;
+            }
+
+            // Animasi Loading Tombol
+            const btnGenerateAll = document.getElementById('btnGenerateAll');
+            const originalBtnText = btnGenerateAll.innerHTML;
+            btnGenerateAll.disabled = true;
+            btnGenerateAll.innerHTML = `<svg class="w-4 h-4 animate-spin inline mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> AI Menyusun ${studentsData.length} Catatan...`;
+
+            // Prompt Batch yang mewajibkan balasan berformat JSON
+            const prompt = `
+                Tugas Anda: Menyusun deskripsi nilai rapor (1-2 kalimat) untuk siswa berdasarkan data observasi.
+                Gunakan bahasa Indonesia yang profesional, positif, memotivasi, dan mudah dipahami wali murid.
+
+                Kriteria Observasi (Skor Maksimal ${maxScale}):
+                ${criteriaData.map((c, i) => `K${i+1}: ${c.text}`).join('\n')}
+
+                Data Siswa (Format JSON input):
+                ${JSON.stringify(studentsData)}
+
+                ATURAN SANGAT PENTING:
+                Anda WAJIB memberikan balasan HANYA dalam format array JSON murni persis seperti struktur di bawah ini. Jangan tambahkan kata pembuka/penutup, jangan bungkus dengan tag markdown (\`\`\`json).
+                [
+                  {"id": 1, "catatan": "Ananda sangat baik dalam... namun perlu bimbingan di..."},
+                  {"id": 2, "catatan": "..."}
+                ]
+            `;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-goog-api-key': apiKey },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.7 } })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error?.message || "Error API Gemini.");
+
+                let rawText = data.candidates[0].content.parts[0].text.trim();
+
+                // Membersihkan tag markdown jika AI bandel
+                rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+                const parsedResult = JSON.parse(rawText);
+
+                // Kembalikan narasi AI ke dalam masing-masing input textbox
+                parsedResult.forEach(item => {
+                    const inputField = document.getElementById(`note_${item.id}`);
+                    if (inputField) {
+                        inputField.value = item.catatan;
+
+                        // Berikan efek highlight hijau sekilas agar user tahu form berhasil diisi
+                        inputField.classList.add('bg-emerald-50', 'border-emerald-500');
+                        setTimeout(() => inputField.classList.remove('bg-emerald-50', 'border-emerald-500'), 1500);
+                    }
+                });
+
+            } catch (error) {
+                alert("Gagal memproses AI secara massal (format salah/koneksi putus). Coba ulangi kembali.\nError: " + error.message);
+            } finally {
+                btnGenerateAll.disabled = false;
+                btnGenerateAll.innerHTML = originalBtnText;
+            }
+        }
+
+        // ==============================================
+        // 2. FUNGSI GENERATE AI INDIVIDU
+        // ==============================================
         async function generateAINote(studentId, studentName) {
             const apiKey = document.getElementById('geminiApiKey').value.trim();
             if (!apiKey) {
@@ -248,9 +382,7 @@
             const inputField = document.getElementById(`note_${studentId}`);
             const btnAi = document.getElementById(`btnAi_${studentId}`);
             const rawNote = inputField.value.trim();
-            const maxScale = {{ $assessment->scale }};
 
-            // Kumpulkan nilai skor yang dipilih untuk siswa ini
             let scoreDetails = [];
             let isAnyAssessed = false;
 
@@ -263,27 +395,19 @@
             });
 
             if (!isAnyAssessed && !rawNote) {
-                alert("Silakan isi nilai matriks observasi atau ketik draf kasar terlebih dahulu sebelum menggunakan AI.");
+                alert("Silakan isi nilai matriks observasi atau ketik draf kasar terlebih dahulu.");
                 return;
             }
 
-            // Susun Prompt
             const prompt = `
                 Anda adalah asisten guru profesional yang bertugas menyusun catatan deskripsi nilai raport/observasi.
-
                 Data Siswa: ${studentName}
                 Hasil Observasi (Skala 1 - ${maxScale}):
                 ${scoreDetails.join('\n')}
-
                 Catatan mentah dari guru: "${rawNote || 'Tidak ada catatan mentah'}"
-
-                Instruksi:
-                1. Analisis skor observasi tersebut (skor mendekati ${maxScale} artinya sangat baik, skor 1 artinya kurang).
-                2. Jadikan catatan mentah dari guru dan skor di atas menjadi 1-2 kalimat naratif deskriptif yang rapi, profesional, memotivasi, dan mudah dipahami oleh orang tua wali murid.
-                3. Jangan bertele-tele, langsung berikan hasilnya. Jangan menggunakan tag markdown tebal/miring.
+                Instruksi: Jadikan catatan mentah dan skor di atas menjadi 1-2 kalimat naratif deskriptif yang rapi, positif, dan memotivasi. Jangan bertele-tele.
             `;
 
-            // Animasi Loading
             btnAi.disabled = true;
             btnAi.innerHTML = `<svg class="w-5 h-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
 
@@ -297,16 +421,11 @@
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error?.message || "Error API Gemini.");
 
-                // Ambil text dan buang enter/spasi berlebih
                 let generatedNote = data.candidates[0].content.parts[0].text.trim().replace(/\n/g, ' ');
-
-                // Isi kembali ke input
                 inputField.value = generatedNote;
-
             } catch (error) {
                 alert("Gagal menghubungi AI: " + error.message);
             } finally {
-                // Kembalikan tombol ke icon awal
                 btnAi.disabled = false;
                 btnAi.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.277 1.277L3 12l5.8 1.9a2 2 0 0 1 1.277 1.277L12 21l1.9-5.8a2 2 0 0 1 1.277-1.277L21 12l-5.8-1.9a2 2 0 0 1-1.277-1.277C13.8 4.2 12 3 12 3Z"/></svg>`;
             }
