@@ -18,6 +18,7 @@ use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\IjazahController;
 use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\ModulAjarController;
+use App\Http\Controllers\ObservationController;
 use App\Http\Controllers\Operator\UserController as OperatorUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RenkinController;
@@ -211,6 +212,11 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::delete('assessments/{assessment}', [AssessmentController::class, 'destroy'])->name('assessments.destroy');
     // LETAKKAN INI DI ATAS route resources / rute yang memakai parameter {assessment}
     Route::get('assessments/recap', [AssessmentController::class, 'recap'])->name('assessments.recap');
+    // Rute untuk Penilaian Observasi / Non-Tes
+    Route::get('/observations/create', [ObservationController::class, 'create'])->name('observations.create');
+    Route::post('/observations', [ObservationController::class, 'store'])->name('observations.store');
+    Route::get('/observations/{assessment}/input', [ObservationController::class, 'input'])->name('observations.input');
+    Route::post('/observations/{assessment}/scores', [ObservationController::class, 'updateScores'])->name('observations.updateScores');
 });
 
 Route::middleware(['auth'])->group(function () {

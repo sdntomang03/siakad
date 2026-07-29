@@ -54,4 +54,9 @@ class Assessment extends Model
 
         return $this->belongsTo(AssessmentType::class, 'assessment_type_id');
     }
+
+    public function criteria()
+    {
+        return $this->hasMany(AssessmentCriterion::class);
+    }
 }
