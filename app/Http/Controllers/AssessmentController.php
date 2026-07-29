@@ -228,7 +228,6 @@ class AssessmentController extends Controller
             ->where('is_active', true)
             ->first();
 
-        // Jika tidak ada tahun ajaran aktif, fallback ke 0 untuk mencegah error
         $activeYearId = $activeYear ? $activeYear->id : 0;
 
         // 1. SIAPKAN DATA UNTUK DROPDOWN
@@ -259,32 +258,38 @@ class AssessmentController extends Controller
             $classesData[$kelasId]['subjects'][] = ['id' => $mk->subject->id, 'nama' => $mk->subject->nama_mapel];
         }
 
-        // 2. JIKA GURU SUDAH MEMILIH KELAS & MAPEL, AMBIL DATA NILAINYA
+        // 2. AMBIL DATA NILAI
         $students = collect();
         $assessments = collect();
         $matrixScores = [];
         $assessmentTypes = AssessmentType::where('school_id', $schoolId)->get();
 
-        if ($request->filled('classroom_id') && $request->filled('subject_id')) {
+        if ($request->filled('classroom_id')) {
+            $classroomId = $request->classroom_id;
 
             // Kueri dasar untuk mengambil penilaian
-            $queryUjian = Assessment::where('classroom_id', $request->classroom_id)
-                ->where('subject_id', $request->subject_id);
+            $queryUjian = Assessment::where('classroom_id', $classroomId)
+                ->with('subject'); // Load nama mapel
 
-            // Jika filter Jenis Penilaian dipilih, tambahkan ke kueri
+            // Jika pilih mapel spesifik
+            if ($request->filled('subject_id') && $request->subject_id !== 'all') {
+                $queryUjian->where('subject_id', $request->subject_id);
+            }
+
+            // Jika pilih jenis penilaian (Ulangan Harian, UTS, dll)
             if ($request->filled('assessment_type_id')) {
                 $queryUjian->where('assessment_type_id', $request->assessment_type_id);
             }
 
-            // Eksekusi kueri
-            $assessments = $queryUjian->orderBy('tanggal', 'asc')->get();
+            // Urutkan berdasarkan Mapel lalu Tanggal
+            $assessments = $queryUjian->orderBy('subject_id', 'asc')->orderBy('tanggal', 'asc')->get();
 
-            // Ambil daftar siswa di kelas tersebut (baris tabel)
-            $students = Student::whereHas('classrooms', function ($q) use ($request) {
-                $q->where('classrooms.id', $request->classroom_id);
+            // Ambil siswa
+            $students = Student::whereHas('classrooms', function ($q) use ($classroomId) {
+                $q->where('classrooms.id', $classroomId);
             })->orderBy('nama_lengkap', 'asc')->get();
 
-            // Ambil nilainya jika ada penilaian yang sesuai
+            // Ambil skor
             if ($assessments->count() > 0) {
                 $rawScores = AssessmentScore::whereIn('assessment_id', $assessments->pluck('id'))->get();
                 foreach ($rawScores as $score) {

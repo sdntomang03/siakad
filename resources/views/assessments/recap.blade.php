@@ -19,8 +19,10 @@
                     this.availableSubjects = this.selectedClassId && this.classesData[this.selectedClassId]
                         ? this.classesData[this.selectedClassId].subjects
                         : [];
-                    // Reset mapel jika kelas diubah dan bukan load awal
-                    if(this.$event) this.selectedSubjectId = '';
+                    // Tetap pertahankan value 'all' jika dipilih
+                    if(this.$event && this.selectedSubjectId !== 'all') {
+                        this.selectedSubjectId = '';
+                    }
                 }
             }"
             class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
@@ -44,6 +46,7 @@
                     <select name="subject_id" required x-model="selectedSubjectId"
                         class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">
                         <option value="">-- Pilih Mapel --</option>
+                        <option value="all" class="font-bold text-indigo-600">Semua Mata Pelajaran</option>
                         <template x-for="subject in availableSubjects" :key="subject.id">
                             <option :value="subject.id" x-text="subject.nama"></option>
                         </template>
@@ -91,6 +94,32 @@
                 <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
                     <thead
                         class="text-xs text-slate-700 uppercase bg-slate-100/80 dark:bg-slate-900/80 dark:text-slate-300">
+                        <!-- Baris Grouping Mata Pelajaran -->
+                        @if(request('subject_id') === 'all')
+                        <tr>
+                            <th colspan="2"
+                                class="px-4 py-2 border-r border-b border-slate-200 dark:border-slate-700 sticky left-0 bg-slate-200 dark:bg-slate-800 z-20">
+                            </th>
+
+                            @php
+                            $groupedAssessments = $assessments->groupBy('subject_id');
+                            @endphp
+
+                            @foreach($groupedAssessments as $subjectId => $subjectAssessments)
+                            <th colspan="{{ $subjectAssessments->count() }}"
+                                class="px-4 py-2 text-center border-b border-r border-slate-200 dark:border-slate-700 bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 font-bold">
+                                {{ $subjectAssessments->first()->subject->nama_mapel ?? 'Mata Pelajaran' }}
+                            </th>
+                            <!-- Kolom Rata-rata Per Mapel -->
+                            <th
+                                class="px-2 border-b border-slate-200 dark:border-slate-700 bg-slate-200 dark:bg-slate-800">
+                            </th>
+                            @endforeach
+                            <th class="border-b border-slate-200 dark:border-slate-700"></th>
+                        </tr>
+                        @endif
+
+                        <!-- Baris Nama Kolom -->
                         <tr>
                             <th class="px-4 py-4 w-10 text-center sticky left-0 bg-slate-100 dark:bg-slate-900 z-10">No
                             </th>
@@ -98,30 +127,42 @@
                                 class="px-4 py-4 w-64 sticky left-10 bg-slate-100 dark:bg-slate-900 z-10 border-r border-slate-200 dark:border-slate-700">
                                 Nama Siswa</th>
 
-                            @foreach($assessments as $ujian)
-                            <th class="px-4 py-4 text-center min-w-[120px] group cursor-default"
+                            @if(request('subject_id') === 'all')
+                            @foreach($groupedAssessments as $subjectId => $subjectAssessments)
+                            @foreach($subjectAssessments as $ujian)
+                            <th class="px-4 py-4 text-center min-w-[120px] group cursor-default border-r border-slate-200 dark:border-slate-700"
                                 title="{{ $ujian->keterangan }}">
-
                                 <span class="block font-black text-indigo-600 dark:text-indigo-400">{{
-                                    $ujian->assessmentType->singkatan ?? 'Tidak Diketahui' }}</span>
-
+                                    $ujian->assessmentType->singkatan ?? 'Unknown' }}</span>
                                 <span
                                     class="block text-[10px] text-slate-500 mt-1 font-normal truncate max-w-[120px]">{{
                                     $ujian->tanggal->format('d/m') }}</span>
                             </th>
                             @endforeach
-
+                            <th
+                                class="px-4 py-4 text-center bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border-r border-slate-200 dark:border-slate-700">
+                                Rata2 Mapel</th>
+                            @endforeach
+                            @else
+                            @foreach($assessments as $ujian)
+                            <th class="px-4 py-4 text-center min-w-[120px] group cursor-default"
+                                title="{{ $ujian->keterangan }}">
+                                <span class="block font-black text-indigo-600 dark:text-indigo-400">{{
+                                    $ujian->assessmentType->singkatan ?? 'Unknown' }}</span>
+                                <span
+                                    class="block text-[10px] text-slate-500 mt-1 font-normal truncate max-w-[120px]">{{
+                                    $ujian->tanggal->format('d/m') }}</span>
+                            </th>
+                            @endforeach
                             <th
                                 class="px-4 py-4 text-center bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border-l border-slate-200 dark:border-slate-700">
                                 Rata-Rata</th>
+                            @endif
                         </tr>
                     </thead>
+
                     <tbody>
                         @foreach($students as $index => $siswa)
-                        @php
-                        $totalNilai = 0;
-                        $jumlahUjianTerisi = 0;
-                        @endphp
                         <tr
                             class="border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50">
                             <td
@@ -133,6 +174,44 @@
                                     title="{{ $siswa->nama_lengkap }}">{{ $siswa->nama_lengkap }}</span>
                             </td>
 
+                            @if(request('subject_id') === 'all')
+                            @foreach($groupedAssessments as $subjectId => $subjectAssessments)
+                            @php
+                            $totalNilaiMapel = 0;
+                            $jumlahUjianTerisiMapel = 0;
+                            @endphp
+
+                            @foreach($subjectAssessments as $ujian)
+                            @php
+                            $nilai = $matrixScores[$siswa->id][$ujian->id] ?? null;
+                            if($nilai !== null) {
+                            $totalNilaiMapel += $nilai;
+                            $jumlahUjianTerisiMapel++;
+                            }
+                            @endphp
+                            <td
+                                class="px-4 py-3 text-center border-r border-slate-100 dark:border-slate-700 font-semibold {{ $nilai !== null && $nilai < 75 ? 'text-rose-500' : 'text-slate-700 dark:text-slate-300' }}">
+                                {{ $nilai ?? '-' }}
+                            </td>
+                            @endforeach
+
+                            <!-- Rata-rata per Mapel -->
+                            @php
+                            $rataRataMapel = $jumlahUjianTerisiMapel > 0 ? round($totalNilaiMapel /
+                            $jumlahUjianTerisiMapel, 1) : 0;
+                            @endphp
+                            <td
+                                class="px-4 py-3 text-center font-black bg-indigo-50/50 dark:bg-indigo-900/10 border-r border-slate-200 dark:border-slate-700 {{ $rataRataMapel > 0 && $rataRataMapel < 75 ? 'text-rose-600' : 'text-indigo-600' }}">
+                                {{ $rataRataMapel > 0 ? $rataRataMapel : '-' }}
+                            </td>
+                            @endforeach
+
+                            @else
+                            <!-- JIKA HANYA 1 MAPEL -->
+                            @php
+                            $totalNilai = 0;
+                            $jumlahUjianTerisi = 0;
+                            @endphp
                             @foreach($assessments as $ujian)
                             @php
                             $nilai = $matrixScores[$siswa->id][$ujian->id] ?? null;
@@ -154,6 +233,8 @@
                                 class="px-4 py-3 text-center font-black bg-indigo-50/50 dark:bg-indigo-900/10 border-l border-slate-100 dark:border-slate-700 {{ $rataRata > 0 && $rataRata < 75 ? 'text-rose-600' : 'text-indigo-600' }}">
                                 {{ $rataRata > 0 ? $rataRata : '-' }}
                             </td>
+                            @endif
+
                         </tr>
                         @endforeach
                     </tbody>
