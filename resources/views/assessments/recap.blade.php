@@ -178,16 +178,15 @@
                             @foreach($groupedAssessments as $subjectId => $subjectAssessments)
                             @php
                             $totalNilaiMapel = 0;
-                            $jumlahUjianTerisiMapel = 0;
+                            // Total ujian diambil dari jumlah seluruh penilaian yang ada di mapel tersebut
+                            $totalUjianMapel = $subjectAssessments->count();
                             @endphp
 
                             @foreach($subjectAssessments as $ujian)
                             @php
                             $nilai = $matrixScores[$siswa->id][$ujian->id] ?? null;
-                            if($nilai !== null) {
-                            $totalNilaiMapel += $nilai;
-                            $jumlahUjianTerisiMapel++;
-                            }
+                            // Nilai ditambahkan. Jika null (kosong), maka ditambah 0
+                            $totalNilaiMapel += ($nilai ?? 0);
                             @endphp
                             <td
                                 class="px-4 py-3 text-center border-r border-slate-100 dark:border-slate-700 font-semibold {{ $nilai !== null && $nilai < 75 ? 'text-rose-500' : 'text-slate-700 dark:text-slate-300' }}">
@@ -195,14 +194,13 @@
                             </td>
                             @endforeach
 
-                            <!-- Rata-rata per Mapel -->
+                            <!-- Rata-rata per Mapel (dibagi total jumlah ujian meskipun nilainya kosong) -->
                             @php
-                            $rataRataMapel = $jumlahUjianTerisiMapel > 0 ? round($totalNilaiMapel /
-                            $jumlahUjianTerisiMapel, 1) : 0;
+                            $rataRataMapel = $totalUjianMapel > 0 ? round($totalNilaiMapel / $totalUjianMapel, 1) : 0;
                             @endphp
                             <td
-                                class="px-4 py-3 text-center font-black bg-indigo-50/50 dark:bg-indigo-900/10 border-r border-slate-200 dark:border-slate-700 {{ $rataRataMapel > 0 && $rataRataMapel < 75 ? 'text-rose-600' : 'text-indigo-600' }}">
-                                {{ $rataRataMapel > 0 ? $rataRataMapel : '-' }}
+                                class="px-4 py-3 text-center font-black bg-indigo-50/50 dark:bg-indigo-900/10 border-r border-slate-200 dark:border-slate-700 {{ $rataRataMapel < 75 ? 'text-rose-600' : 'text-indigo-600' }}">
+                                {{ $rataRataMapel }}
                             </td>
                             @endforeach
 
@@ -210,15 +208,14 @@
                             <!-- JIKA HANYA 1 MAPEL -->
                             @php
                             $totalNilai = 0;
-                            $jumlahUjianTerisi = 0;
+                            // Total ujian diambil dari seluruh penilaian untuk filter yang dipilih
+                            $totalUjian = $assessments->count();
                             @endphp
                             @foreach($assessments as $ujian)
                             @php
                             $nilai = $matrixScores[$siswa->id][$ujian->id] ?? null;
-                            if($nilai !== null) {
-                            $totalNilai += $nilai;
-                            $jumlahUjianTerisi++;
-                            }
+                            // Nilai ditambahkan. Jika null (kosong), maka ditambah 0
+                            $totalNilai += ($nilai ?? 0);
                             @endphp
                             <td
                                 class="px-4 py-3 text-center font-semibold {{ $nilai !== null && $nilai < 75 ? 'text-rose-500' : 'text-slate-700 dark:text-slate-300' }}">
@@ -226,12 +223,13 @@
                             </td>
                             @endforeach
 
+                            <!-- Rata-rata (dibagi total jumlah ujian meskipun nilainya kosong) -->
                             @php
-                            $rataRata = $jumlahUjianTerisi > 0 ? round($totalNilai / $jumlahUjianTerisi, 1) : 0;
+                            $rataRata = $totalUjian > 0 ? round($totalNilai / $totalUjian, 1) : 0;
                             @endphp
                             <td
-                                class="px-4 py-3 text-center font-black bg-indigo-50/50 dark:bg-indigo-900/10 border-l border-slate-100 dark:border-slate-700 {{ $rataRata > 0 && $rataRata < 75 ? 'text-rose-600' : 'text-indigo-600' }}">
-                                {{ $rataRata > 0 ? $rataRata : '-' }}
+                                class="px-4 py-3 text-center font-black bg-indigo-50/50 dark:bg-indigo-900/10 border-l border-slate-100 dark:border-slate-700 {{ $rataRata < 75 ? 'text-rose-600' : 'text-indigo-600' }}">
+                                {{ $rataRata }}
                             </td>
                             @endif
 
