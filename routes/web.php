@@ -217,6 +217,7 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::post('/observations', [ObservationController::class, 'store'])->name('observations.store');
     Route::get('/observations/{assessment}/input', [ObservationController::class, 'input'])->name('observations.input');
     Route::post('/observations/{assessment}/scores', [ObservationController::class, 'updateScores'])->name('observations.updateScores');
+    Route::get('/observations/{assessment}/report', [ObservationController::class, 'showReport'])->name('observations.report');
 });
 
 Route::middleware(['auth'])->group(function () {

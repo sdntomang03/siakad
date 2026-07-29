@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AcademicYear;
 use App\Models\Assessment;
 use App\Models\AssessmentCriteriaScore;
 use App\Models\AssessmentCriterion;
+use App\Models\AssessmentNote;
+use App\Models\AssessmentType;
+use App\Models\Classroom;
+use App\Models\ClassroomSubject;
 use App\Models\Student;
+use App\Models\Subject;
 use Illuminate\Http\Request;
 
 class ObservationController extends Controller
@@ -13,7 +19,63 @@ class ObservationController extends Controller
     // TAHAP 1: FORM BUAT PENILAIAN NON-TES & DESKRIPTOR
     public function create()
     {
-        // ... (Logika load mapel dan kelas sama seperti AssessmentController@create) ...
+        $employeeId = auth()->user()->employee->id ?? 0;
+        $schoolId = auth()->user()->school_id;
+
+        // Ambil ID Tahun Ajaran secara dinamis
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+
+        if (! $activeYear) {
+            return back()->with('error', 'Tidak ada Tahun Ajaran Aktif untuk sekolah Anda. Harap hubungi Admin.');
+        }
+
+        $activeYearId = $activeYear->id;
+        $classesData = [];
+
+        // 1. Ambil Kelas di mana dia adalah WALI KELAS
+        $waliKelas = Classroom::where('homeroom_teacher_id', $employeeId)
+            ->where('academic_year_id', $activeYearId)
+            ->get();
+
+        foreach ($waliKelas as $kelas) {
+            $subjects = Subject::where('school_id', $schoolId)
+                ->where('tingkat', $kelas->tingkat)
+                ->where('pengampu', 'guru_kelas')
+                ->get();
+
+            $classesData[$kelas->id] = [
+                'nama_kelas' => $kelas->tingkat.' - '.$kelas->nama_kelas,
+                'subjects' => $subjects->map(fn ($s) => ['id' => $s->id, 'nama' => $s->nama_mapel])->toArray(),
+            ];
+        }
+
+        // 2. Ambil Kelas di mana dia adalah GURU MAPEL (Cth: Agama / PJOK)
+        $mapelKhusus = ClassroomSubject::where('employee_id', $employeeId)
+            ->with(['classroom', 'subject'])
+            ->whereHas('classroom', function ($q) use ($activeYearId) {
+                $q->where('academic_year_id', $activeYearId);
+            })
+            ->get();
+
+        foreach ($mapelKhusus as $mk) {
+            $kelasId = $mk->classroom->id;
+
+            if (! isset($classesData[$kelasId])) {
+                $classesData[$kelasId] = [
+                    'nama_kelas' => $mk->classroom->tingkat.' - '.$mk->classroom->nama_kelas,
+                    'subjects' => [],
+                ];
+            }
+            $classesData[$kelasId]['subjects'][] = [
+                'id' => $mk->subject->id,
+                'nama' => $mk->subject->nama_mapel,
+            ];
+        }
+
+        $assessmentTypes = AssessmentType::where('school_id', $schoolId)->get();
+
         return view('observations.create', compact('classesData', 'assessmentTypes'));
     }
 
@@ -23,20 +85,24 @@ class ObservationController extends Controller
         $request->validate([
             'classroom_id' => 'required',
             'subject_id' => 'required',
-            'keterangan' => 'required', // Nama Penilaian
+            'keterangan' => 'required',
             'tanggal' => 'required|date',
-            'scale' => 'required|in:3,4,5', // Pilihan Skala
-            'descriptors' => 'required|array|min:1', // Minimal 1 deskriptor
+            'scale' => 'required|in:3,4,5',
+            'descriptors' => 'required|array|min:1',
             'descriptors.*' => 'required|string|max:255',
         ]);
+
+        $activeYear = AcademicYear::where('school_id', auth()->user()->school_id)
+            ->where('is_active', true)
+            ->first();
 
         // 1. Simpan Header Penilaian (Format Non-Tes)
         $assessment = Assessment::create([
             'school_id' => auth()->user()->school_id,
-            'academic_year_id' => $activeYearId, // Ambil dari logic active year
+            'academic_year_id' => $activeYear->id,
             'classroom_id' => $request->classroom_id,
             'subject_id' => $request->subject_id,
-            'employee_id' => auth()->user()->employee->id,
+            'employee_id' => auth()->user()->employee->id ?? 0,
             'assessment_type_id' => $request->assessment_type_id,
             'keterangan' => $request->keterangan,
             'tanggal' => $request->tanggal,
@@ -52,9 +118,11 @@ class ObservationController extends Controller
             ]);
         }
 
+        // Lempar ke halaman input
         return redirect()->route('observations.input', $assessment->id);
     }
 
+    // TAHAP 3: MENAMPILKAN MATRIKS INPUT PENILAIAN OBSERVASI
     // TAHAP 3: MENAMPILKAN MATRIKS INPUT PENILAIAN OBSERVASI
     public function input(Assessment $assessment)
     {
@@ -71,17 +139,23 @@ class ObservationController extends Controller
             $existingScores[$score->student_id][$score->assessment_criterion_id] = $score->score;
         }
 
-        return view('observations.input', compact('assessment', 'students', 'existingScores'));
+        // === TAMBAHAN UNTUK MEMANGGIL DATA CATATAN ===
+        $rawNotes = AssessmentNote::where('assessment_id', $assessment->id)->get();
+        $existingNotes = $rawNotes->pluck('catatan', 'student_id')->toArray();
+
+        // Jangan lupa tambahkan $existingNotes ke dalam compact()
+        return view('observations.input', compact('assessment', 'students', 'existingScores', 'existingNotes'));
     }
 
     // TAHAP 4: SIMPAN HASIL PENILAIAN OBSERVASI
     public function updateScores(Request $request, Assessment $assessment)
     {
-        // Validasi array multidimensi: scores[student_id][criterion_id] = nilai
         $request->validate([
             'scores' => 'required|array',
+            'notes' => 'nullable|array', // Validasi input notes
         ]);
 
+        // 1. Simpan Skor Matriks (Kriteria)
         foreach ($request->scores as $studentId => $criteriaScores) {
             foreach ($criteriaScores as $criterionId => $scoreValue) {
                 if ($scoreValue !== null) {
@@ -97,6 +171,99 @@ class ObservationController extends Controller
             }
         }
 
-        return redirect()->route('assessments.index')->with('success', 'Nilai observasi berhasil disimpan!');
+        // 2. Simpan Catatan (Baru)
+        if ($request->has('notes')) {
+            foreach ($request->notes as $studentId => $noteText) {
+                if (! empty(trim($noteText))) {
+                    AssessmentNote::updateOrCreate(
+                        [
+                            'assessment_id' => $assessment->id,
+                            'student_id' => $studentId,
+                        ],
+                        ['catatan' => $noteText]
+                    );
+                } else {
+                    // Hapus jika guru mengosongkan catatan yang sebelumnya ada
+                    AssessmentNote::where('assessment_id', $assessment->id)
+                        ->where('student_id', $studentId)
+                        ->delete();
+                }
+            }
+        }
+
+        return redirect()->route('assessments.index')->with('success', 'Nilai dan Catatan observasi berhasil disimpan!');
+    }
+
+    public function showReport(Assessment $assessment)
+    {
+        // Pastikan ini adalah format observasi
+        if ($assessment->format !== 'non-tes') {
+            return redirect()->route('assessments.index')->with('error', 'Format tidak valid.');
+        }
+
+        $assessment->load(['classroom', 'subject', 'criteria']);
+
+        // Ambil daftar siswa di kelas tersebut
+        $students = Student::whereHas('classrooms', function ($query) use ($assessment) {
+            $query->where('classrooms.id', $assessment->classroom_id);
+        })->orderBy('nama_lengkap', 'asc')->get();
+
+        // Ambil semua nilai yang sudah diinput untuk observasi ini
+        $rawScores = AssessmentCriteriaScore::where('assessment_id', $assessment->id)->get();
+
+        // === TAMBAHAN: Ambil data catatan ===
+        $rawNotes = AssessmentNote::where('assessment_id', $assessment->id)->get();
+        $existingNotes = $rawNotes->pluck('catatan', 'student_id')->toArray();
+
+        $reportData = [];
+
+        foreach ($students as $siswa) {
+            $siswaScores = $rawScores->where('student_id', $siswa->id);
+
+            $totalScore = 0;
+            $criteriaCount = 0;
+            $scoresByCriteria = [];
+
+            foreach ($assessment->criteria as $kriteria) {
+                $scoreRecord = $siswaScores->where('assessment_criterion_id', $kriteria->id)->first();
+                $nilai = $scoreRecord ? $scoreRecord->score : null;
+
+                $scoresByCriteria[$kriteria->id] = $nilai;
+
+                if ($nilai !== null) {
+                    $totalScore += $nilai;
+                    $criteriaCount++;
+                }
+            }
+
+            // Hitung rata-rata
+            $average = $criteriaCount > 0 ? round($totalScore / $criteriaCount, 2) : 0;
+
+            // Tentukan Predikat berdasarkan skala (Contoh untuk Skala 1-4)
+            $predikat = '-';
+            if ($criteriaCount > 0) {
+                $persentase = ($average / $assessment->scale) * 100;
+                if ($persentase >= 85) {
+                    $predikat = 'Sangat Baik';
+                } elseif ($persentase >= 70) {
+                    $predikat = 'Baik';
+                } elseif ($persentase >= 55) {
+                    $predikat = 'Cukup';
+                } else {
+                    $predikat = 'Perlu Bimbingan';
+                }
+            }
+
+            $reportData[$siswa->id] = [
+                'scores' => $scoresByCriteria,
+                'average' => $average,
+                'predikat' => $predikat,
+                'is_assessed' => $criteriaCount > 0,
+                // === TAMBAHAN: Masukkan catatan ke dalam data siswa ===
+                'catatan' => $existingNotes[$siswa->id] ?? '-',
+            ];
+        }
+
+        return view('observations.report', compact('assessment', 'students', 'reportData'));
     }
 }

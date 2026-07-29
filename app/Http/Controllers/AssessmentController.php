@@ -269,7 +269,12 @@ class AssessmentController extends Controller
 
             // Kueri dasar untuk mengambil penilaian
             $queryUjian = Assessment::where('classroom_id', $classroomId)
-                ->with('subject'); // Load nama mapel
+                ->with('subject') // Load nama mapel
+                ->where(function ($query) {
+                    // Kecualikan format non-tes (Izinkan 'tes' atau data lama yang formatnya null)
+                    $query->where('format', '!=', 'non-tes')
+                        ->orWhereNull('format');
+                });
 
             // Jika pilih mapel spesifik
             if ($request->filled('subject_id') && $request->subject_id !== 'all') {
