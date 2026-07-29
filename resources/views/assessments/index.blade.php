@@ -27,7 +27,7 @@
                 <!-- Tambahan Tombol Buat Observasi -->
                 <a href="{{ route('observations.create') }}"
                     class="px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold shadow-lg hover:bg-emerald-700 transition">
-                    + Observasi / Non-Tes
+                    + Observasi
                 </a>
 
                 <!-- Tombol Buat Tes Konvensional -->
