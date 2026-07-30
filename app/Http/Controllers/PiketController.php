@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AcademicYear;
 use App\Models\Attendance;
 use App\Models\Classroom;
+use App\Models\ClassroomSubject;
 use App\Models\JadwalPiket;
 use App\Models\JurnalPiket;
 use App\Models\Student;
@@ -18,9 +20,36 @@ class PiketController extends Controller
     public function jadwal(Request $request)
     {
         // Ganti dengan tahun ajaran aktif dari session/sistem Anda
-        $academicYearId = 1;
+        $employeeId = auth()->user()->employee->id ?? 0;
+        $schoolId = auth()->user()->school_id;
 
-        $classrooms = Classroom::orderBy('tingkat')->orderBy('nama_kelas')->get();
+        // Ambil ID Tahun Ajaran aktif
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+        $academicYearId = $activeYear ? $activeYear->id : 0;
+
+        // 1. Ambil Kelas di mana dia adalah WALI KELAS
+        $waliKelas = Classroom::where('homeroom_teacher_id', $employeeId)
+            ->where('academic_year_id', $academicYearId)
+            ->get();
+
+        // 2. Ambil Kelas di mana dia adalah GURU MAPEL
+        $mapelKhusus = ClassroomSubject::where('employee_id', $employeeId)
+            ->whereHas('classroom', function ($q) use ($academicYearId) {
+                $q->where('academic_year_id', $academicYearId);
+            })
+            ->with('classroom')
+            ->get()
+            ->pluck('classroom');
+
+        // 3. Gabungkan kelas, hilangkan duplikasi, lalu urutkan
+        $classrooms = $waliKelas->merge($mapelKhusus)
+            ->unique('id')
+            ->sortBy([
+                ['tingkat', 'asc'],
+                ['nama_kelas', 'asc'],
+            ])->values();
         $classroomId = $request->classroom_id ?? $classrooms->first()->id ?? null;
 
         $students = collect();
@@ -51,7 +80,14 @@ class PiketController extends Controller
             'jadwal' => 'array', // format: jadwal[student_id][] = hari
         ]);
 
-        $academicYearId = 1; // Sesuaikan dengan id tahun ajaran aktif
+        $employeeId = auth()->user()->employee->id ?? 0;
+        $schoolId = auth()->user()->school_id;
+
+        // Ambil ID Tahun Ajaran aktif
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+        $academicYearId = $activeYear ? $activeYear->id : 0;
 
         // Hapus jadwal lama untuk kelas ini
         JadwalPiket::where('classroom_id', $request->classroom_id)
@@ -86,8 +122,36 @@ class PiketController extends Controller
      */
     public function jurnal(Request $request)
     {
-        $academicYearId = 1;
-        $classrooms = Classroom::orderBy('tingkat')->orderBy('nama_kelas')->get();
+        $employeeId = auth()->user()->employee->id ?? 0;
+        $schoolId = auth()->user()->school_id;
+
+        // Ambil ID Tahun Ajaran aktif
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+        $academicYearId = $activeYear ? $activeYear->id : 0;
+
+        // 1. Ambil Kelas di mana dia adalah WALI KELAS
+        $waliKelas = Classroom::where('homeroom_teacher_id', $employeeId)
+            ->where('academic_year_id', $academicYearId)
+            ->get();
+
+        // 2. Ambil Kelas di mana dia adalah GURU MAPEL
+        $mapelKhusus = ClassroomSubject::where('employee_id', $employeeId)
+            ->whereHas('classroom', function ($q) use ($academicYearId) {
+                $q->where('academic_year_id', $academicYearId);
+            })
+            ->with('classroom')
+            ->get()
+            ->pluck('classroom');
+
+        // 3. Gabungkan kelas, hilangkan duplikasi, lalu urutkan
+        $classrooms = $waliKelas->merge($mapelKhusus)
+            ->unique('id')
+            ->sortBy([
+                ['tingkat', 'asc'],
+                ['nama_kelas', 'asc'],
+            ])->values();
         $classroomId = $request->classroom_id ?? $classrooms->first()->id ?? null;
 
         $tanggal = $request->tanggal ?? now()->toDateString();
@@ -135,7 +199,15 @@ class PiketController extends Controller
             'catatan' => 'array',
         ]);
 
-        $academicYearId = 1;
+        $employeeId = auth()->user()->employee->id ?? 0;
+        $schoolId = auth()->user()->school_id;
+
+        // Ambil ID Tahun Ajaran aktif
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+        $academicYearId = $activeYear ? $activeYear->id : 0;
+
         $tanggal = $request->tanggal;
         $classroomId = $request->classroom_id;
 
@@ -184,8 +256,36 @@ class PiketController extends Controller
      */
     public function laporan(Request $request)
     {
-        $academicYearId = 1; // Sesuaikan dengan tahun ajaran aktif
-        $classrooms = Classroom::orderBy('tingkat')->orderBy('nama_kelas')->get();
+        $employeeId = auth()->user()->employee->id ?? 0;
+        $schoolId = auth()->user()->school_id;
+
+        // Ambil ID Tahun Ajaran aktif
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+        $academicYearId = $activeYear ? $activeYear->id : 0;
+
+        // 1. Ambil Kelas di mana dia adalah WALI KELAS
+        $waliKelas = Classroom::where('homeroom_teacher_id', $employeeId)
+            ->where('academic_year_id', $academicYearId)
+            ->get();
+
+        // 2. Ambil Kelas di mana dia adalah GURU MAPEL
+        $mapelKhusus = ClassroomSubject::where('employee_id', $employeeId)
+            ->whereHas('classroom', function ($q) use ($academicYearId) {
+                $q->where('academic_year_id', $academicYearId);
+            })
+            ->with('classroom')
+            ->get()
+            ->pluck('classroom');
+
+        // 3. Gabungkan kelas, hilangkan duplikasi, lalu urutkan
+        $classrooms = $waliKelas->merge($mapelKhusus)
+            ->unique('id')
+            ->sortBy([
+                ['tingkat', 'asc'],
+                ['nama_kelas', 'asc'],
+            ])->values();
         $classroomId = $request->classroom_id ?? $classrooms->first()->id ?? null;
 
         // Default filter bulan dan tahun saat ini

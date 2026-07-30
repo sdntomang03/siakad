@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AcademicYear;
 use App\Models\Classroom;
+use App\Models\ClassroomSubject;
 use App\Models\JadwalPelajaran;
 use App\Models\Subject;
 use Illuminate\Http\Request;
@@ -11,10 +13,32 @@ class JadwalPelajaranController extends Controller
 {
     public function index(Request $request)
     {
-        $academicYearId = 1; // Sesuaikan dengan id tahun ajaran aktif
-        $schoolId = 1; // Sesuaikan dengan id sekolah aktif (jika menggunakan multi-tenant)
+        $employeeId = auth()->user()->employee->id ?? 0;
+        $schoolId = auth()->user()->school_id;
 
-        $classrooms = Classroom::orderBy('tingkat')->orderBy('nama_kelas')->get();
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+        $academicYearId = $activeYear ? $activeYear->id : 0;
+
+        $waliKelas = Classroom::where('homeroom_teacher_id', $employeeId)
+            ->where('academic_year_id', $academicYearId)
+            ->get();
+
+        $mapelKhusus = ClassroomSubject::where('employee_id', $employeeId)
+            ->whereHas('classroom', function ($q) use ($academicYearId) {
+                $q->where('academic_year_id', $academicYearId);
+            })
+            ->with('classroom')
+            ->get()
+            ->pluck('classroom');
+
+        $classrooms = $waliKelas->merge($mapelKhusus)
+            ->unique('id')
+            ->sortBy([
+                ['tingkat', 'asc'],
+                ['nama_kelas', 'asc'],
+            ])->values();
         $classroomId = $request->classroom_id ?? $classrooms->first()->id ?? null;
 
         $hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -55,7 +79,13 @@ class JadwalPelajaranController extends Controller
             'jam_selesai' => 'required|array',
         ]);
 
-        $academicYearId = 1;
+        $employeeId = auth()->user()->employee->id ?? 0;
+        $schoolId = auth()->user()->school_id;
+
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+        $academicYearId = $activeYear ? $activeYear->id : 0;
 
         // Hapus jadwal lama di hari & kelas tersebut sebelum update baru
         JadwalPelajaran::where('classroom_id', $request->classroom_id)
@@ -88,7 +118,13 @@ class JadwalPelajaranController extends Controller
 
     public function edit($classroomId, $hari)
     {
-        $academicYearId = 1;
+        $employeeId = auth()->user()->employee->id ?? 0;
+        $schoolId = auth()->user()->school_id;
+
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+        $academicYearId = $activeYear ? $activeYear->id : 0;
         $classroom = Classroom::findOrFail($classroomId);
 
         // Filter mata pelajaran berdasarkan 'tingkat' kelas yang diedit
