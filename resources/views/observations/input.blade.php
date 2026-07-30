@@ -399,13 +399,18 @@
                 return;
             }
 
-            const prompt = `
-                Anda adalah asisten guru profesional yang bertugas menyusun catatan deskripsi nilai raport/observasi.
+    const prompt = `
+                Anda adalah sistem penyusun laporan akademik profesional yang bertugas menulis catatan hasil observasi/non-tes siswa secara faktual dan objektif. Anda memahami konteks pendidikan dan penilaian akademik. Gunakan bahasa Indonesia yang baku, lugas, dan profesional.
+
                 Data Siswa: ${studentName}
                 Hasil Observasi (Skala 1 - ${maxScale}):
                 ${scoreDetails.join('\n')}
-                Catatan mentah dari guru: "${rawNote || 'Tidak ada catatan mentah'}"
-                Instruksi: Jadikan catatan mentah dan skor di atas menjadi 1-2 kalimat naratif deskriptif yang rapi, positif, dan memotivasi. Jangan bertele-tele.
+                Catatan dari guru: "${rawNote || 'Tidak ada catatan'}"
+
+                Instruksi:
+                Susun 1-2 kalimat deskriptif yang melaporkan kondisi atau capaian siswa murni berdasarkan kombinasi skor dan catatan di atas.
+                Gunakan bahasa baku yang lugas, rapi, dan profesional.
+                DILARANG menambahkan opini, kalimat motivasi, nasihat, atau kata-kata berbunga-bunga. Laporkan apa adanya sesuai data.
             `;
 
             btnAi.disabled = true;
