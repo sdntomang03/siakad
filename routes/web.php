@@ -7,6 +7,7 @@ use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookLoanController;
+use App\Http\Controllers\CapaianPembelajaranController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
@@ -220,6 +221,14 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::get('/observations/{assessment}/input', [ObservationController::class, 'input'])->name('observations.input');
     Route::post('/observations/{assessment}/scores', [ObservationController::class, 'updateScores'])->name('observations.updateScores');
     Route::get('/observations/{assessment}/report', [ObservationController::class, 'showReport'])->name('observations.report');
+    Route::get('/capaian-pembelajaran/import', [CapaianPembelajaranController::class, 'importForm'])->name('cp.import-form');
+    Route::post('/capaian-pembelajaran/import', [CapaianPembelajaranController::class, 'importProcess'])->name('cp.import-process');
+    // Rute CRUD Utama (Tambahkan ->parameters)
+    Route::resource('capaian-pembelajaran', CapaianPembelajaranController::class)
+        ->names('cp')
+        ->parameters([
+            'capaian-pembelajaran' => 'cp',
+        ]);
 });
 
 Route::middleware(['auth', 'role:guru'])->prefix('piket')->name('piket.')->group(function () {
