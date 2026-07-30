@@ -126,7 +126,7 @@
         </div>
         @endhasanyrole
 
-        <div x-data="{ open: {{ request()->routeIs('attendances.*', 'assessments.*', 'teacher-notes.*') ? 'true' : 'false' }} }"
+        <div x-data="{ open: {{ request()->routeIs('attendances.*', 'assessments.*', 'teacher-notes.*', 'piket.*', 'jadwal.*') ? 'true' : 'false' }} }"
             class="space-y-1">
             <button @click="open = !open; if(!sidebarOpen) sidebarOpen = true"
                 class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-700 hover:text-white"
@@ -161,6 +161,19 @@
                     icon="M9 5l7 7-7 7">
                     Catatan Siswa
                 </x-sidebar-link>
+
+                <!-- Menu Baru: Jadwal Pelajaran -->
+                <x-sidebar-link :href="route('jadwal.index')" :active="request()->routeIs('jadwal.*')"
+                    icon="M9 5l7 7-7 7">
+                    Jadwal Pelajaran
+                </x-sidebar-link>
+
+
+                <x-sidebar-link :href="route('piket.jurnal')" :active="request()->routeIs('piket.jurnal')"
+                    icon="M9 5l7 7-7 7">
+                    Jurnal Piket Harian
+                </x-sidebar-link>
+
                 @endrole
             </div>
         </div>

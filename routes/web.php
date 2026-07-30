@@ -16,10 +16,12 @@ use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GradeCurveController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\IjazahController;
+use App\Http\Controllers\JadwalPelajaranController;
 use App\Http\Controllers\KelulusanController;
 use App\Http\Controllers\ModulAjarController;
 use App\Http\Controllers\ObservationController;
 use App\Http\Controllers\Operator\UserController as OperatorUserController;
+use App\Http\Controllers\PiketController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RenkinController;
 use App\Http\Controllers\ReportSubmissionController;
@@ -218,6 +220,23 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::get('/observations/{assessment}/input', [ObservationController::class, 'input'])->name('observations.input');
     Route::post('/observations/{assessment}/scores', [ObservationController::class, 'updateScores'])->name('observations.updateScores');
     Route::get('/observations/{assessment}/report', [ObservationController::class, 'showReport'])->name('observations.report');
+});
+
+Route::middleware(['auth', 'role:guru'])->prefix('piket')->name('piket.')->group(function () {
+    // Pengaturan Jadwal Master
+    Route::get('/jadwal', [PiketController::class, 'jadwal'])->name('jadwal');
+    Route::post('/jadwal', [PiketController::class, 'storeJadwal'])->name('jadwal.store');
+
+    // Pencatatan Jurnal Harian
+    Route::get('/jurnal', [PiketController::class, 'jurnal'])->name('jurnal');
+    Route::post('/jurnal', [PiketController::class, 'storeJurnal'])->name('jurnal.store');
+    Route::get('/laporan', [PiketController::class, 'laporan'])->name('laporan');
+});
+
+Route::middleware(['auth', 'role:guru'])->prefix('jadwal-pelajaran')->name('jadwal.')->group(function () {
+    Route::get('/', [JadwalPelajaranController::class, 'index'])->name('index');
+    Route::post('/store', [JadwalPelajaranController::class, 'store'])->name('store');
+    Route::get('/edit/{classroom}/{hari}', [JadwalPelajaranController::class, 'edit'])->name('edit');
 });
 
 Route::middleware(['auth'])->group(function () {

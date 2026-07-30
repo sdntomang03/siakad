@@ -33,7 +33,7 @@
                 <!-- Tombol Buat Tes Konvensional -->
                 <a href="{{ route('assessments.create') }}"
                     class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg hover:bg-indigo-700 transition">
-                    + Buat Tes (Angka)
+                    + Penilaian
                 </a>
             </div>
         </div>

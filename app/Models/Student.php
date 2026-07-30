@@ -75,4 +75,15 @@ class Student extends Model
     {
         return $this->hasMany(BookLoan::class, 'student_id');
     }
+
+    public function jadwalPikets()
+    {
+        return $this->hasMany(JadwalPiket::class);
+    }
+
+    // Relasi ke Jurnal Piket Harian
+    public function jurnalPikets()
+    {
+        return $this->hasMany(JurnalPiket::class);
+    }
 }
