@@ -12,7 +12,8 @@
             class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h3 class="text-lg font-black text-slate-800">Tampilan Tabel Piket</h3>
-                <p class="text-xs text-slate-500 font-medium mt-0.5">Daftar siswa yang bertugas disusun per hari.</p>
+                <p class="text-xs text-slate-500 font-medium mt-0.5">Daftar siswa yang bertugas disusun per hari aktif.
+                </p>
             </div>
             <form method="GET" action="{{ route('piket.daftarJadwal') }}" class="w-full sm:w-auto">
                 <select id="classroom_id" name="classroom_id" onchange="this.form.submit()"
@@ -27,10 +28,25 @@
         </div>
 
         @if($classroomId)
+        <!-- MENCARI HARI YANG ADA SISWANYA SAJA -->
+        @php
+        $hariAktif = [];
+        if(isset($jadwalTersimpan)) {
+        foreach($hariList as $hari) {
+        // Jika hari tersebut ada di array dan jumlah siswanya lebih dari 0
+        if(isset($jadwalTersimpan[$hari]) && count($jadwalTersimpan[$hari]) > 0) {
+        $hariAktif[] = $hari;
+        }
+        }
+        }
+        // Tentukan jumlah kolom untuk keperluan colspan
+        $jumlahKolom = count($hariAktif) > 0 ? count($hariAktif) : 6;
+        @endphp
+
         <!-- TABEL JADWAL -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 
-            <!-- Opsi Tombol Cetak / Aksi lain (Opsional) -->
+            <!-- Opsi Tombol Cetak / Aksi lain -->
             <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
                 <h3 class="text-sm font-black text-slate-800 uppercase tracking-wider">
                     Jadwal Piket Kelas {{ $classrooms->firstWhere('id', $classroomId)->nama_kelas ?? '' }}
@@ -50,19 +66,25 @@
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs uppercase bg-indigo-600 text-white">
                         <tr>
-                            @foreach($hariList as $hari)
-                            <th
-                                class="px-4 py-3 text-center border-r border-indigo-500 w-1/6 font-black tracking-widest">
+                            @if(count($hariAktif) > 0)
+                            @foreach($hariAktif as $hari)
+                            <th class="px-4 py-3 text-center border-r border-indigo-500 font-black tracking-widest"
+                                style="width: {{ 100 / count($hariAktif) }}%">
                                 {{ $hari }}
                             </th>
                             @endforeach
+                            @else
+                            <th class="px-4 py-3 text-center border-r border-indigo-500 font-black tracking-widest">
+                                JADWAL PIKET
+                            </th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
-                        @if($maxSiswaPerHari > 0)
+                        @if($maxSiswaPerHari > 0 && count($hariAktif) > 0)
                         @for($i = 0; $i < $maxSiswaPerHari; $i++) <tr
                             class="border-b border-slate-100 hover:bg-slate-50 transition">
-                            @foreach($hariList as $hari)
+                            @foreach($hariAktif as $hari)
                             <td
                                 class="px-4 py-3 text-center border-r border-slate-100 {{ isset($jadwalTersimpan[$hari][$i]) ? 'font-bold text-slate-800' : 'text-slate-300' }}">
                                 {{ $jadwalTersimpan[$hari][$i] ?? '-' }}
@@ -72,7 +94,8 @@
                             @endfor
                             @else
                             <tr>
-                                <td colspan="6" class="px-4 py-8 text-center text-slate-500 font-medium bg-slate-50/50">
+                                <td colspan="{{ $jumlahKolom }}"
+                                    class="px-4 py-8 text-center text-slate-500 font-medium bg-slate-50/50">
                                     Belum ada jadwal piket yang dibuat untuk kelas ini.
                                 </td>
                             </tr>
