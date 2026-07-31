@@ -75,26 +75,10 @@ class ReportSubmissionController extends Controller
             ->first();
         $academicYearId = $activeYear ? $activeYear->id : null;
 
-        // Memuat relasi academicYear ke dalam query list riwayat
-        $query = ReportSubmission::with('student', 'classroom', 'academicYear');
-
-        if (! $user->hasRole('superadmin')) {
-            if ($schoolId) {
-                $query->where('school_id', $schoolId);
-            } else {
-                $query->whereRaw('1 = 0');
-            }
-        }
-
-        // Menampilkan riwayat (bawah) hanya dari tahun ajaran aktif, buka komentar kode ini:
-        // $query->where('academic_year_id', $academicYearId);
-
-        $submissions = $query->orderBy('updated_at', 'desc')->paginate(20);
-
-        // 2. Ambil daftar rombel HANYA PADA TAHUN AJARAN AKTIF
+        // 2. Ambil daftar rombel HANYA PADA TAHUN AJARAN AKTIF (Pindahkan ke atas)
         if ($user->hasRole('superadmin')) {
             $myClassrooms = Classroom::with('academicYear')
-                ->where('academic_year_id', $academicYearId) // Filter Tahun Ajaran Aktif
+                ->where('academic_year_id', $academicYearId)
                 ->orderBy('tingkat')
                 ->orderBy('nama_kelas')
                 ->get();
@@ -104,17 +88,38 @@ class ReportSubmissionController extends Controller
             if ($schoolId && $employeeId) {
                 $myClassrooms = Classroom::with('academicYear')
                     ->where('school_id', $schoolId)
-                    ->where('academic_year_id', $academicYearId) // Filter Tahun Ajaran Aktif
+                    ->where('academic_year_id', $academicYearId)
                     ->where('homeroom_teacher_id', $employeeId)
                     ->orderBy('tingkat')->orderBy('nama_kelas')
                     ->get();
             }
         }
 
+        // Ambil array ID kelas yang diampu
+        $classIds = $myClassrooms->pluck('id')->all();
+
+        // 3. Memuat relasi academicYear ke dalam query list riwayat
+        $query = ReportSubmission::with('student', 'classroom', 'academicYear');
+
+        if (! $user->hasRole('superadmin')) {
+            if ($schoolId) {
+                // Filter riwayat khusus untuk kelas yang diampu guru ini saja
+                $query->where('school_id', $schoolId)
+                    ->whereIn('classroom_id', $classIds);
+            } else {
+                $query->whereRaw('1 = 0');
+            }
+        } else {
+            // Filter tambahan untuk superadmin agar riwayat bawah hanya dari tahun ajaran aktif
+            $query->where('academic_year_id', $academicYearId);
+        }
+
+        $submissions = $query->orderBy('updated_at', 'desc')->paginate(20);
+
+        // 4. Ambil daftar siswa untuk keperluan form di panel atas
         if ($user->hasRole('superadmin')) {
             $students = Student::orderBy('nama_lengkap')->get();
         } else {
-            $classIds = $myClassrooms->pluck('id')->all();
             $students = $classIds ? Student::whereHas('classrooms', fn ($q) => $q->whereIn('classrooms.id', $classIds))
                 ->with('classrooms')
                 ->orderBy('nama_lengkap')
