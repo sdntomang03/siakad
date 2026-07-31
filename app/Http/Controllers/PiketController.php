@@ -341,4 +341,74 @@ class PiketController extends Controller
             'classrooms', 'classroomId', 'students', 'rekapPiket', 'bulan', 'tahun', 'bulanList'
         ));
     }
+
+    /**
+     * 4. HALAMAN DAFTAR JADWAL PIKET (READ-ONLY / CETAK)
+     */
+    public function daftarJadwal(Request $request)
+    {
+        $employeeId = auth()->user()->employee->id ?? 0;
+        $schoolId = auth()->user()->school_id;
+
+        // Ambil ID Tahun Ajaran aktif
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+        $academicYearId = $activeYear ? $activeYear->id : 0;
+
+        // 1. Ambil Kelas di mana dia adalah WALI KELAS
+        $waliKelas = Classroom::where('homeroom_teacher_id', $employeeId)
+            ->where('academic_year_id', $academicYearId)
+            ->get();
+
+        // 2. Ambil Kelas di mana dia adalah GURU MAPEL
+        $mapelKhusus = ClassroomSubject::where('employee_id', $employeeId)
+            ->whereHas('classroom', function ($q) use ($academicYearId) {
+                $q->where('academic_year_id', $academicYearId);
+            })
+            ->with('classroom')
+            ->get()
+            ->pluck('classroom');
+
+        // 3. Gabungkan kelas
+        $classrooms = $waliKelas->merge($mapelKhusus)
+            ->unique('id')
+            ->sortBy([
+                ['tingkat', 'asc'],
+                ['nama_kelas', 'asc'],
+            ])->values();
+
+        $classroomId = $request->classroom_id ?? $classrooms->first()->id ?? null;
+
+        $hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+
+        $jadwalTersimpan = [];
+        $maxSiswaPerHari = 0;
+
+        if ($classroomId) {
+            // Ambil semua jadwal untuk kelas ini beserta data siswanya
+            $jadwals = JadwalPiket::with('student')
+                ->where('classroom_id', $classroomId)
+                ->where('academic_year_id', $academicYearId)
+                ->get();
+
+            // Kelompokkan siswa per hari dan cari tahu jumlah siswa terbanyak dalam satu hari (untuk membuat baris tabel)
+            foreach ($hariList as $hari) {
+                // Urutkan nama siswa sesuai abjad, lalu ambil namanya saja menjadi array indeks 0, 1, 2...
+                $siswaHariIni = $jadwals->where('hari', $hari)
+                    ->sortBy('student.nama_lengkap')
+                    ->pluck('student.nama_lengkap')
+                    ->values()
+                    ->toArray();
+
+                $jadwalTersimpan[$hari] = $siswaHariIni;
+
+                if (count($siswaHariIni) > $maxSiswaPerHari) {
+                    $maxSiswaPerHari = count($siswaHariIni);
+                }
+            }
+        }
+
+        return view('piket.daftar-jadwal', compact('classrooms', 'classroomId', 'hariList', 'jadwalTersimpan', 'maxSiswaPerHari'));
+    }
 }
