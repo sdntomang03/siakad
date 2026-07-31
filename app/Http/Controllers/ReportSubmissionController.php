@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AcademicYear; // Pastikan model ini di-import
 use App\Models\Classroom;
 use App\Models\ReportSubmission;
 use App\Models\Student;
@@ -68,6 +69,12 @@ class ReportSubmissionController extends Controller
         $user = auth()->user();
         $schoolId = $user->school_id ?? optional($user->employee)->school_id;
 
+        // 1. Ambil ID Tahun Ajaran aktif
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+        $academicYearId = $activeYear ? $activeYear->id : null;
+
         // Memuat relasi academicYear ke dalam query list riwayat
         $query = ReportSubmission::with('student', 'classroom', 'academicYear');
 
@@ -79,17 +86,25 @@ class ReportSubmissionController extends Controller
             }
         }
 
+        // Menampilkan riwayat (bawah) hanya dari tahun ajaran aktif, buka komentar kode ini:
+        // $query->where('academic_year_id', $academicYearId);
+
         $submissions = $query->orderBy('updated_at', 'desc')->paginate(20);
 
-        // Ambil daftar rombel beserta data tahun ajaran aktifnya
+        // 2. Ambil daftar rombel HANYA PADA TAHUN AJARAN AKTIF
         if ($user->hasRole('superadmin')) {
-            $myClassrooms = Classroom::with('academicYear')->orderBy('tingkat')->orderBy('nama_kelas')->get();
+            $myClassrooms = Classroom::with('academicYear')
+                ->where('academic_year_id', $academicYearId) // Filter Tahun Ajaran Aktif
+                ->orderBy('tingkat')
+                ->orderBy('nama_kelas')
+                ->get();
         } else {
             $employeeId = optional($user->employee)->id;
             $myClassrooms = collect();
             if ($schoolId && $employeeId) {
                 $myClassrooms = Classroom::with('academicYear')
                     ->where('school_id', $schoolId)
+                    ->where('academic_year_id', $academicYearId) // Filter Tahun Ajaran Aktif
                     ->where('homeroom_teacher_id', $employeeId)
                     ->orderBy('tingkat')->orderBy('nama_kelas')
                     ->get();
