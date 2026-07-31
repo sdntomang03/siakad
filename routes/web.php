@@ -235,7 +235,7 @@ Route::middleware(['auth', 'role:guru'])->prefix('piket')->name('piket.')->group
     // Pengaturan Jadwal Master
     Route::get('/jadwal', [PiketController::class, 'jadwal'])->name('jadwal');
     Route::post('/jadwal', [PiketController::class, 'storeJadwal'])->name('jadwal.store');
-    Route::get('/piket/daftar-jadwal', [PiketController::class, 'daftarJadwal'])->name('piket.daftarJadwal');
+    Route::get('/daftar-jadwal', [PiketController::class, 'daftarJadwal'])->name('daftarJadwal');
 
     // Pencatatan Jurnal Harian
     Route::get('/jurnal', [PiketController::class, 'jurnal'])->name('jurnal');
