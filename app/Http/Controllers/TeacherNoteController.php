@@ -65,6 +65,7 @@ class TeacherNoteController extends Controller
         $request->validate([
             'classroom_id' => 'required|exists:classrooms,id',
             'jenis_catatan' => 'required|string',
+            'tanggal' => 'required|date',
             'catatan' => 'required|string',
             'student_ids' => 'required|array|min:1',
             // Update: Validasi foto sebagai array
@@ -118,6 +119,7 @@ class TeacherNoteController extends Controller
                 'academic_year_id' => $activeYear->id,
                 'classroom_id' => $request->classroom_id,
                 'student_id' => $studentId,
+                'tanggal' => $request->tanggal,
                 'employee_id' => $employeeId,
                 'jenis_catatan' => $request->jenis_catatan,
                 'catatan' => $request->catatan,
@@ -133,6 +135,7 @@ class TeacherNoteController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
+            'tanggal' => 'required|date',
             'jenis_catatan' => 'required|string',
             'catatan' => 'required|string',
             'foto' => 'nullable|array',
@@ -194,6 +197,7 @@ class TeacherNoteController extends Controller
         } else {
             // Hanya update untuk 1 siswa spesifik
             $note->update([
+                'tanggal' => $request->tanggal,
                 'jenis_catatan' => $request->jenis_catatan,
                 'catatan' => $request->catatan,
                 'is_for_report' => $isForReport,

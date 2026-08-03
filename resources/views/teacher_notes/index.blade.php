@@ -73,7 +73,13 @@
                         <h3 class="text-lg font-black text-slate-800 dark:text-white">Form Jurnal Kejadian</h3>
 
                         <div class="flex flex-col md:flex-row gap-4">
-                            <div class="w-full md:w-1/3">
+                            <div class="w-full md:w-1/4">
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tanggal
+                                    Kejadian</label>
+                                <input type="date" name="tanggal" required value="{{ date('Y-m-d') }}"
+                                    class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-sm focus:ring-indigo-500 font-bold text-slate-700 dark:text-slate-300">
+                            </div>
+                            <div class="w-full md:w-1/4">
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Jenis
                                     Catatan</label>
                                 <select name="jenis_catatan" required
@@ -84,7 +90,7 @@
                                     <option value="Perkembangan Sikap">Perkembangan Sikap</option>
                                 </select>
                             </div>
-                            <div class="w-full md:w-2/3 flex items-center pt-2 md:pt-6">
+                            <div class="w-full md:w-2/4 flex items-center pt-2 md:pt-6">
                                 <label class="flex items-center gap-3 cursor-pointer">
                                     <input type="checkbox" name="is_for_report" value="1" checked
                                         class="w-6 h-6 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-500 dark:bg-slate-800 dark:border-slate-600">
@@ -99,7 +105,6 @@
                         </div>
 
                         <div>
-
                             <div class="flex flex-col md:flex-row gap-4">
                                 <div class="w-full md:w-2/3">
                                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Deskripsi
@@ -115,7 +120,6 @@
                                         class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/50 dark:file:text-indigo-400 cursor-pointer">
                                     <p class="text-[10px] text-slate-400 mt-2">*Maksimal 2MB. Format: JPG, PNG, WEBP.
                                     </p>
-
                                 </div>
                             </div>
                             @error('student_ids')
@@ -196,9 +200,16 @@
                             @forelse($riwayatCatatan as $riwayat)
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
                                 <td class="px-6 py-4 font-bold text-slate-600 dark:text-slate-400 whitespace-nowrap">
-                                    {{ $riwayat->created_at->format('d M Y') }}
-                                    <span class="block text-[10px] font-normal text-slate-400">{{
-                                        $riwayat->created_at->format('H:i') }}</span>
+                                    @php
+                                    $tgl = $riwayat->tanggal ? \Carbon\Carbon::parse($riwayat->tanggal) :
+                                    $riwayat->created_at;
+                                    @endphp
+                                    {{ $tgl->format('d M Y') }}
+
+                                    @if(!$riwayat->tanggal)
+                                    <span class="block text-[10px] font-normal text-slate-400">{{ $tgl->format('H:i')
+                                        }}</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">
                                     {{ $riwayat->student->nama_lengkap ?? 'Siswa dihapus' }}
@@ -314,7 +325,6 @@
 
                                                 <div class="relative w-full max-w-lg bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden"
                                                     @click.stop>
-                                                    <!-- PASTIKAN MENAMBAHKAN enctype="multipart/form-data" PADA TAG FORM -->
                                                     <form action="{{ route('teacher-notes.update', $riwayat->id) }}"
                                                         method="POST" enctype="multipart/form-data">
                                                         @csrf
@@ -330,6 +340,14 @@
                                                         </div>
 
                                                         <div class="p-6 space-y-4">
+                                                            <div>
+                                                                <label
+                                                                    class="block text-xs font-bold text-slate-500 uppercase mb-2">Tanggal
+                                                                    Kejadian</label>
+                                                                <input type="date" name="tanggal" required
+                                                                    value="{{ $riwayat->tanggal ? $riwayat->tanggal : $riwayat->created_at->format('Y-m-d') }}"
+                                                                    class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500 font-bold text-slate-700 dark:text-slate-300">
+                                                            </div>
                                                             <div>
                                                                 <label
                                                                     class="block text-xs font-bold text-slate-500 uppercase mb-2">Jenis
