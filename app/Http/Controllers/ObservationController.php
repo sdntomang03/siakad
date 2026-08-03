@@ -87,7 +87,7 @@ class ObservationController extends Controller
             'subject_id' => 'required',
             'keterangan' => 'required',
             'tanggal' => 'required|date',
-            'scale' => 'required|in:1,3,4,5',
+            'scale' => 'required|in:1,2,3,4,5',
             'descriptors' => 'required|array|min:1',
             'descriptors.*' => 'required|string|max:255',
         ]);

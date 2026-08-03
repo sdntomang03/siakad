@@ -82,9 +82,10 @@
                         <select name="scale" required
                             class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500 font-bold text-emerald-600">
                             <option value="1">1 Saja</option>
-                            <option value="3" selected>1 sampai 3</option>
-                            <option value="4">1 sampai 4</option>
-                            <option value="5">1 sampai 5</option>
+                            <option value="2">1 - 2</option>
+                            <option value="3">1 - 3</option>
+                            <option value="4">1 - 4</option>
+                            <option value="5">1 - 5</option>
                         </select>
                     </div>
                 </div>
