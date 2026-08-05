@@ -93,12 +93,8 @@
                                 Nama Siswa</th>
 
                             @foreach($subjects as $subject)
-                            @php
-                            // Ambil daftar jenis penilaian yang sudah ada skornya di mapel ini
-                            $usedTypes = $usedTypesPerSubject[$subject->id] ?? [];
-                            @endphp
+                            @php $usedTypes = $usedTypesPerSubject[$subject->id] ?? []; @endphp
 
-                            <!-- Pastikan mapel sesuai filter dan memiliki setidaknya 1 jenis penilaian -->
                             @if((request('subject_id') === 'all' || request('subject_id') == $subject->id) &&
                             count($usedTypes) > 0)
                             <th colspan="{{ count($usedTypes) }}"
@@ -107,6 +103,14 @@
                             </th>
                             @endif
                             @endforeach
+
+                            <!-- Kolom Judul Rata-Rata dan Ranking -->
+                            <th rowspan="2"
+                                class="px-4 py-2 w-24 text-center border-b border-l border-slate-300 dark:border-slate-600 bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 font-bold">
+                                Rata-Rata<br>Total</th>
+                            <th rowspan="2"
+                                class="px-4 py-2 w-20 text-center border-b border-l border-slate-300 dark:border-slate-600 bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 font-bold">
+                                Rank</th>
                         </tr>
 
                         <!-- Baris 2: Nama-Nama Jenis Penilaian -->
@@ -131,6 +135,7 @@
                         @foreach($students as $index => $siswa)
                         <tr
                             class="border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                            <!-- Kolom Ranking No. yang diperbarui karena siswa sudah terurut dari Controller -->
                             <td
                                 class="px-4 py-3 font-bold text-center sticky left-0 bg-white dark:bg-slate-800 group-hover:bg-slate-50 dark:group-hover:bg-slate-700/50 border-r border-slate-100 dark:border-slate-700">
                                 {{ $index + 1 }}
@@ -157,6 +162,20 @@
                             @endforeach
                             @endif
                             @endforeach
+
+                            <!-- Output Rata-Rata Keseluruhan dan Rank -->
+                            @php
+                            $overallAvg = $studentAverages[$siswa->id] ?? 0;
+                            $rank = $studentRanks[$siswa->id] ?? '-';
+                            @endphp
+                            <td
+                                class="px-4 py-3 text-center border-l border-slate-100 dark:border-slate-700 font-black bg-indigo-50/50 dark:bg-indigo-900/10 {{ $overallAvg > 0 && $overallAvg < 75 ? 'text-rose-600' : 'text-indigo-600 dark:text-indigo-400' }}">
+                                {{ $overallAvg > 0 ? $overallAvg : '-' }}
+                            </td>
+                            <td
+                                class="px-4 py-3 text-center border-l border-slate-100 dark:border-slate-700 font-black bg-amber-50/50 dark:bg-amber-900/10 text-amber-600 dark:text-amber-400">
+                                {{ $rank }}
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>

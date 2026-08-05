@@ -312,7 +312,6 @@ class AssessmentController extends Controller
         $employeeId = auth()->user()->employee->id ?? 0;
         $schoolId = auth()->user()->school_id;
 
-        // Ambil ID Tahun Ajaran secara dinamis
         $activeYear = AcademicYear::where('school_id', $schoolId)
             ->where('is_active', true)
             ->first();
@@ -347,11 +346,13 @@ class AssessmentController extends Controller
             $classesData[$kelasId]['subjects'][] = ['id' => $mk->subject->id, 'nama' => $mk->subject->nama_mapel];
         }
 
-        // 2. AMBIL DATA DAN HITUNG RATA-RATA
+        // 2. AMBIL DATA DAN HITUNG RATA-RATA & RANKING
         $students = collect();
         $subjects = collect();
         $averageScores = [];
-        $usedTypesPerSubject = []; // Array untuk menyimpan jenis penilaian yang ada nilainya per mapel
+        $usedTypesPerSubject = [];
+        $studentAverages = []; // Array Rata-Rata Keseluruhan Siswa
+        $studentRanks = [];    // Array Ranking Siswa
 
         if ($request->filled('classroom_id')) {
             $classroomId = $request->classroom_id;
@@ -360,15 +361,20 @@ class AssessmentController extends Controller
                 $q->where('classrooms.id', $classroomId);
             })->orderBy('nama_lengkap', 'asc')->get();
 
-            // PASTIKAN me-load relasi 'assessmentType'
-            $assessments = Assessment::where('classroom_id', $classroomId)
+            // Kueri Penilaian - Filter berdasarkan Mapel jika di-request
+            $queryAss = Assessment::where('classroom_id', $classroomId)
                 ->with(['subject', 'assessmentType'])
                 ->where(function ($query) {
                     $query->where('format', '!=', 'non-tes')
                         ->orWhereNull('format');
-                })->get();
+                });
 
-            // Dapatkan daftar mapel yang memiliki penilaian
+            // Membatasi kueri jika dropdown Mapel tidak diset "Semua Mata Pelajaran"
+            if ($request->filled('subject_id') && $request->subject_id !== 'all') {
+                $queryAss->where('subject_id', $request->subject_id);
+            }
+
+            $assessments = $queryAss->get();
             $subjects = $assessments->pluck('subject')->unique('id')->sortBy('nama_mapel');
 
             if ($assessments->count() > 0) {
@@ -377,14 +383,12 @@ class AssessmentController extends Controller
 
                 $temp = [];
 
-                // Looping hanya pada data yang sudah memiliki skor/nilai
                 foreach ($rawScores as $score) {
                     $ass = $assessmentMap[$score->assessment_id];
                     $subjId = $ass->subject_id;
                     $typeId = $ass->assessment_type_id;
                     $stuId = $score->student_id;
 
-                    // Daftarkan jenis penilaian ini ke dalam mapel terkait (karena ada nilainya)
                     if ($ass->assessmentType) {
                         $usedTypesPerSubject[$subjId][$typeId] = $ass->assessmentType;
                     }
@@ -396,18 +400,53 @@ class AssessmentController extends Controller
                     $temp[$stuId][$subjId][$typeId]['count'] += 1;
                 }
 
-                // Kalkulasi rata-ratanya
-                foreach ($temp as $stuId => $subjData) {
-                    foreach ($subjData as $subjId => $typeData) {
-                        foreach ($typeData as $typeId => $data) {
-                            $averageScores[$stuId][$subjId][$typeId] = round($data['total'] / $data['count'], 1);
+                // Kalkulasi Rata-rata Jenis & Keseluruhan per Siswa
+                foreach ($students as $student) {
+                    $stuId = $student->id;
+                    $totalAvg = 0;
+                    $countAvg = 0;
+
+                    if (isset($temp[$stuId])) {
+                        foreach ($temp[$stuId] as $subjId => $typeData) {
+                            foreach ($typeData as $typeId => $data) {
+                                $avg = round($data['total'] / $data['count'], 1);
+                                $averageScores[$stuId][$subjId][$typeId] = $avg;
+
+                                $totalAvg += $avg;
+                                $countAvg++;
+                            }
                         }
                     }
+                    // Rata-rata keseluruhan
+                    $studentAverages[$stuId] = $countAvg > 0 ? round($totalAvg / $countAvg, 1) : 0;
+                }
+
+                // Urutkan collection $students dari rata-rata tertinggi ke terendah
+                $students = $students->sortByDesc(function ($student) use ($studentAverages) {
+                    return $studentAverages[$student->id];
+                })->values(); // reindex
+
+                // Menentukan Ranking (dengan sistem peringkat padat untuk nilai seri)
+                $currentRank = 1;
+                $previousAvg = null;
+                $actualPosition = 1;
+
+                foreach ($students as $student) {
+                    $avg = $studentAverages[$student->id];
+
+                    if ($previousAvg !== null && $avg < $previousAvg) {
+                        $currentRank = $actualPosition;
+                    }
+
+                    // Beri strip '-' jika nilainya 0 (kosong/belum ada nilai)
+                    $studentRanks[$student->id] = $avg > 0 ? $currentRank : '-';
+
+                    $previousAvg = $avg;
+                    $actualPosition++;
                 }
             }
         }
 
-        // Lempar $usedTypesPerSubject menggantikan $assessmentTypes
-        return view('assessments.recap_types', compact('classesData', 'students', 'subjects', 'usedTypesPerSubject', 'averageScores'));
+        return view('assessments.recap_types', compact('classesData', 'students', 'subjects', 'usedTypesPerSubject', 'averageScores', 'studentAverages', 'studentRanks'));
     }
 }
