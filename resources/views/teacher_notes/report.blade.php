@@ -84,7 +84,8 @@
                                         <span
                                             class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[10px] font-bold uppercase">{{
                                             $note->jenis_catatan }}</span>
-
+                                        <span class="text-[10px] text-slate-400">{{
+                                            \Carbon\Carbon::parse($note->tanggal)->format('d M Y') }}</span>
                                     </div>
                                     <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{{
                                         $note->catatan }}</p>
