@@ -93,9 +93,15 @@
                                 Nama Siswa</th>
 
                             @foreach($subjects as $subject)
-                            <!-- Sembunyikan mapel jika filternya spesifik untuk 1 mapel tapi ini mapel lain -->
-                            @if(request('subject_id') === 'all' || request('subject_id') == $subject->id)
-                            <th colspan="{{ $assessmentTypes->count() }}"
+                            @php
+                            // Ambil daftar jenis penilaian yang sudah ada skornya di mapel ini
+                            $usedTypes = $usedTypesPerSubject[$subject->id] ?? [];
+                            @endphp
+
+                            <!-- Pastikan mapel sesuai filter dan memiliki setidaknya 1 jenis penilaian -->
+                            @if((request('subject_id') === 'all' || request('subject_id') == $subject->id) &&
+                            count($usedTypes) > 0)
+                            <th colspan="{{ count($usedTypes) }}"
                                 class="px-4 py-3 text-center border-b border-r border-slate-300 dark:border-slate-600 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 font-bold">
                                 {{ $subject->nama_mapel }}
                             </th>
@@ -106,8 +112,11 @@
                         <!-- Baris 2: Nama-Nama Jenis Penilaian -->
                         <tr>
                             @foreach($subjects as $subject)
-                            @if(request('subject_id') === 'all' || request('subject_id') == $subject->id)
-                            @foreach($assessmentTypes as $type)
+                            @php $usedTypes = $usedTypesPerSubject[$subject->id] ?? []; @endphp
+
+                            @if((request('subject_id') === 'all' || request('subject_id') == $subject->id) &&
+                            count($usedTypes) > 0)
+                            @foreach($usedTypes as $type)
                             <th class="px-3 py-3 text-center border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 min-w-[80px]"
                                 title="{{ $type->nama }}">
                                 {{ $type->singkatan }}
@@ -133,8 +142,11 @@
                             </td>
 
                             @foreach($subjects as $subject)
-                            @if(request('subject_id') === 'all' || request('subject_id') == $subject->id)
-                            @foreach($assessmentTypes as $type)
+                            @php $usedTypes = $usedTypesPerSubject[$subject->id] ?? []; @endphp
+
+                            @if((request('subject_id') === 'all' || request('subject_id') == $subject->id) &&
+                            count($usedTypes) > 0)
+                            @foreach($usedTypes as $type)
                             @php
                             $avg = $averageScores[$siswa->id][$subject->id][$type->id] ?? null;
                             @endphp

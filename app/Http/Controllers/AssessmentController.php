@@ -350,8 +350,8 @@ class AssessmentController extends Controller
         // 2. AMBIL DATA DAN HITUNG RATA-RATA
         $students = collect();
         $subjects = collect();
-        $assessmentTypes = AssessmentType::where('school_id', $schoolId)->orderBy('id', 'asc')->get();
         $averageScores = [];
+        $usedTypesPerSubject = []; // Array untuk menyimpan jenis penilaian yang ada nilainya per mapel
 
         if ($request->filled('classroom_id')) {
             $classroomId = $request->classroom_id;
@@ -360,9 +360,9 @@ class AssessmentController extends Controller
                 $q->where('classrooms.id', $classroomId);
             })->orderBy('nama_lengkap', 'asc')->get();
 
-            // Ambil semua penilaian di kelas tersebut (di semua mapel)
+            // PASTIKAN me-load relasi 'assessmentType'
             $assessments = Assessment::where('classroom_id', $classroomId)
-                ->with('subject')
+                ->with(['subject', 'assessmentType'])
                 ->where(function ($query) {
                     $query->where('format', '!=', 'non-tes')
                         ->orWhereNull('format');
@@ -375,14 +375,19 @@ class AssessmentController extends Controller
                 $rawScores = AssessmentScore::whereIn('assessment_id', $assessments->pluck('id'))->get();
                 $assessmentMap = $assessments->keyBy('id');
 
-                // Variabel sementara untuk menghitung total & jumlah (count)
                 $temp = [];
 
+                // Looping hanya pada data yang sudah memiliki skor/nilai
                 foreach ($rawScores as $score) {
                     $ass = $assessmentMap[$score->assessment_id];
                     $subjId = $ass->subject_id;
                     $typeId = $ass->assessment_type_id;
                     $stuId = $score->student_id;
+
+                    // Daftarkan jenis penilaian ini ke dalam mapel terkait (karena ada nilainya)
+                    if ($ass->assessmentType) {
+                        $usedTypesPerSubject[$subjId][$typeId] = $ass->assessmentType;
+                    }
 
                     if (! isset($temp[$stuId][$subjId][$typeId])) {
                         $temp[$stuId][$subjId][$typeId] = ['total' => 0, 'count' => 0];
@@ -402,6 +407,7 @@ class AssessmentController extends Controller
             }
         }
 
-        return view('assessments.recap_types', compact('classesData', 'students', 'subjects', 'assessmentTypes', 'averageScores'));
+        // Lempar $usedTypesPerSubject menggantikan $assessmentTypes
+        return view('assessments.recap_types', compact('classesData', 'students', 'subjects', 'usedTypesPerSubject', 'averageScores'));
     }
 }
