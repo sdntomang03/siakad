@@ -67,10 +67,14 @@
                     </select>
                 </div>
 
-                <div x-show="selectedSubjectId" style="display: none;">
+                <div x-show="selectedSubjectId" style="display: none;" class="flex flex-col gap-3">
                     <button type="submit"
                         class="w-full px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-black shadow-md hover:bg-indigo-700 transition">
-                        Tampilkan Rekap &rarr;
+                        Detail Nilai (Gradebook) &rarr;
+                    </button>
+                    <button type="submit" formaction="{{ route('assessments.recapByType') }}"
+                        class="w-full px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-black shadow-md hover:bg-emerald-700 transition">
+                        Rata-Rata per Jenis Penilaian &rarr;
                     </button>
                 </div>
             </form>

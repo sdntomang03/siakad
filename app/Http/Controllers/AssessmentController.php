@@ -305,4 +305,103 @@ class AssessmentController extends Controller
 
         return view('assessments.recap', compact('classesData', 'students', 'assessments', 'matrixScores', 'assessmentTypes'));
     }
+
+    // MENAMPILKAN MATRIKS RATA-RATA PER JENIS PENILAIAN
+    public function recapByType(Request $request)
+    {
+        $employeeId = auth()->user()->employee->id ?? 0;
+        $schoolId = auth()->user()->school_id;
+
+        // Ambil ID Tahun Ajaran secara dinamis
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+
+        $activeYearId = $activeYear ? $activeYear->id : 0;
+
+        // 1. SIAPKAN DATA UNTUK DROPDOWN
+        $classesData = [];
+
+        $waliKelas = Classroom::where('homeroom_teacher_id', $employeeId)
+            ->where('academic_year_id', $activeYearId)
+            ->get();
+
+        foreach ($waliKelas as $kelas) {
+            $subjects = Subject::where('school_id', $schoolId)->where('tingkat', $kelas->tingkat)->where('pengampu', 'guru_kelas')->get();
+            $classesData[$kelas->id] = [
+                'nama_kelas' => $kelas->tingkat.' - '.$kelas->nama_kelas,
+                'subjects' => $subjects->map(fn ($s) => ['id' => $s->id, 'nama' => $s->nama_mapel])->toArray(),
+            ];
+        }
+
+        $mapelKhusus = ClassroomSubject::where('employee_id', $employeeId)
+            ->with(['classroom', 'subject'])
+            ->whereHas('classroom', fn ($q) => $q->where('academic_year_id', $activeYearId))
+            ->get();
+
+        foreach ($mapelKhusus as $mk) {
+            $kelasId = $mk->classroom->id;
+            if (! isset($classesData[$kelasId])) {
+                $classesData[$kelasId] = ['nama_kelas' => $mk->classroom->tingkat.' - '.$mk->classroom->nama_kelas, 'subjects' => []];
+            }
+            $classesData[$kelasId]['subjects'][] = ['id' => $mk->subject->id, 'nama' => $mk->subject->nama_mapel];
+        }
+
+        // 2. AMBIL DATA DAN HITUNG RATA-RATA
+        $students = collect();
+        $subjects = collect();
+        $assessmentTypes = AssessmentType::where('school_id', $schoolId)->orderBy('id', 'asc')->get();
+        $averageScores = [];
+
+        if ($request->filled('classroom_id')) {
+            $classroomId = $request->classroom_id;
+
+            $students = Student::whereHas('classrooms', function ($q) use ($classroomId) {
+                $q->where('classrooms.id', $classroomId);
+            })->orderBy('nama_lengkap', 'asc')->get();
+
+            // Ambil semua penilaian di kelas tersebut (di semua mapel)
+            $assessments = Assessment::where('classroom_id', $classroomId)
+                ->with('subject')
+                ->where(function ($query) {
+                    $query->where('format', '!=', 'non-tes')
+                        ->orWhereNull('format');
+                })->get();
+
+            // Dapatkan daftar mapel yang memiliki penilaian
+            $subjects = $assessments->pluck('subject')->unique('id')->sortBy('nama_mapel');
+
+            if ($assessments->count() > 0) {
+                $rawScores = AssessmentScore::whereIn('assessment_id', $assessments->pluck('id'))->get();
+                $assessmentMap = $assessments->keyBy('id');
+
+                // Variabel sementara untuk menghitung total & jumlah (count)
+                $temp = [];
+
+                foreach ($rawScores as $score) {
+                    $ass = $assessmentMap[$score->assessment_id];
+                    $subjId = $ass->subject_id;
+                    $typeId = $ass->assessment_type_id;
+                    $stuId = $score->student_id;
+
+                    if (! isset($temp[$stuId][$subjId][$typeId])) {
+                        $temp[$stuId][$subjId][$typeId] = ['total' => 0, 'count' => 0];
+                    }
+                    $temp[$stuId][$subjId][$typeId]['total'] += $score->score;
+                    $temp[$stuId][$subjId][$typeId]['count'] += 1;
+                }
+
+                // Kalkulasi rata-ratanya
+                foreach ($temp as $stuId => $subjData) {
+                    foreach ($subjData as $subjId => $typeData) {
+                        foreach ($typeData as $typeId => $data) {
+                            $averageScores[$stuId][$subjId][$typeId] = round($data['total'] / $data['count'], 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        return view('assessments.recap_types', compact('classesData', 'students', 'subjects', 'assessmentTypes', 'averageScores'));
+    }
 }

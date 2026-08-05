@@ -215,6 +215,7 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::delete('assessments/{assessment}', [AssessmentController::class, 'destroy'])->name('assessments.destroy');
     // LETAKKAN INI DI ATAS route resources / rute yang memakai parameter {assessment}
     Route::get('assessments/recap', [AssessmentController::class, 'recap'])->name('assessments.recap');
+    Route::get('/assessments/recap-by-type', [AssessmentController::class, 'recapByType'])->name('assessments.recapByType');
     // Rute untuk Penilaian Observasi / Non-Tes
     Route::get('/observations/create', [ObservationController::class, 'create'])->name('observations.create');
     Route::post('/observations', [ObservationController::class, 'store'])->name('observations.store');
