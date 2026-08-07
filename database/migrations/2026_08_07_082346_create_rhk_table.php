@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('rhk', function (Blueprint $table) {
             $table->id();
             // Foreign key ke tabel kategori
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('kategori_id')->constrained('kategori')->onDelete('cascade');
             $table->text('deskripsi_rhk');
             $table->timestamps();

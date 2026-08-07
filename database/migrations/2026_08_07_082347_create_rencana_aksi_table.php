@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('rencana_aksi', function (Blueprint $table) {
             $table->id();
             // Foreign key ke tabel rhk
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('rhk_id')->constrained('rhk')->onDelete('cascade');
             $table->text('deskripsi_ra');
             $table->text('kriteria_keberhasilan');

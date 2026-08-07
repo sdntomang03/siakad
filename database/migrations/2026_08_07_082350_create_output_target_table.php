@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('output_target', function (Blueprint $table) {
             $table->id();
             // Foreign key ke tabel rencana_aksi
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('rencana_aksi_id')->constrained('rencana_aksi')->onDelete('cascade');
             $table->text('deskripsi_output');
             $table->string('target_waktu', 10);
