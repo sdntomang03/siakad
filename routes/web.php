@@ -272,7 +272,6 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::get('/renkin', [RenkinController::class, 'index'])->name('renkin.index');
 Route::post('/etpp/search', [EtppController::class, 'search'])->name('etpp.search');
-Route::get('/etpp', [EtppController::class, 'search'])->name('etpp.search');
 Route::get('/etpp/import', [EtppController::class, 'showImportForm'])->name('etpp.import.form');
 
 // Rute untuk memproses form upload JSON
