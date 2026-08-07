@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
-// Tambahkan model Kategori jika Anda menggunakannya di method search
-use App\Models\Kategori;
+use App\Models\Kategori; // Pastikan model Kategori di-import untuk fungsi search
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,10 +12,11 @@ class EtppController extends Controller
 {
     /**
      * Menangkap inputan dari Form, lalu mengubahnya menjadi URL bersih
+     * sekaligus menangani logika pencarian dan Filter TW
      */
     public function search(Request $request)
     {
-        // Tangkap input dari URL (GET request)
+        // Tangkap input dari form (GET request)
         $nip = $request->input('nip');
         $filter_tw = $request->input('tw', 'semua'); // Default 'semua' jika kosong
 
@@ -30,17 +30,19 @@ class EtppController extends Controller
             // Cari data pegawai
             $employee = Employee::where('nip', $nip)->first();
 
-            // Jika pegawai ditemukan, tarik data e-Kinerja
-            if ($employee) {
+            // Jika pegawai ditemukan, tarik data e-Kinerja berdasarkan user_id milik pegawai tersebut
+            if ($employee && $employee->user_id) {
+
                 // Tarik Kategori beserta relasi di dalamnya (Eager Loading)
-                $query = Kategori::with([
-                    'rhk.rencanaAksi.outputTarget' => function ($q) use ($filter_tw) {
-                        // Filter Output berdasarkan TW jika bukan 'semua'
-                        if ($filter_tw !== 'semua') {
-                            $q->where('target_waktu', $filter_tw);
-                        }
-                    },
-                ]);
+                $query = Kategori::where('user_id', $employee->user_id)
+                    ->with([
+                        'rhk.rencanaAksi.outputTarget' => function ($q) use ($filter_tw) {
+                            // Filter Output berdasarkan TW jika bukan 'semua'
+                            if ($filter_tw !== 'semua') {
+                                $q->where('target_waktu', $filter_tw);
+                            }
+                        },
+                    ]);
 
                 // Sembunyikan Kategori/RHK yang tidak memiliki output sesuai filter TW
                 if ($filter_tw !== 'semua') {
@@ -53,12 +55,12 @@ class EtppController extends Controller
             }
         }
 
-        // Lempar data ke view
+        // Lempar data ke view (Gunakan etpp.show karena view utamanya ada di sana)
         return view('etpp.show', compact('nip', 'employee', 'filter_tw', 'data_kategori'));
     }
 
     /**
-     * Memproses NIP yang ada di dalam URL
+     * Memproses NIP yang ada di dalam URL jika diakses langsung tanpa lewat form
      */
     public function show($nip = null)
     {
@@ -66,21 +68,22 @@ class EtppController extends Controller
 
         // Skenario 1: Jika URL hanya dipanggil "/etpp" (tanpa NIP di belakangnya)
         if (! $nip) {
-            // Jika yang login adalah guru/pegawai yang punya NIP, otomatis redirect ke NIP dia sendiri
-            if ($user->hasAnyRole(['guru', 'kepsek', 'operator']) && isset($user->employee->nip)) {
-                return redirect()->route('etpp.show', ['nip' => $user->employee->nip]);
+            // Jika yang login adalah guru/pegawai yang punya NIP, otomatis redirect ke pencarian NIP dia sendiri
+            if ($user && $user->hasAnyRole(['guru', 'kepsek', 'operator']) && isset($user->employee->nip)) {
+                return redirect()->route('etpp.search', ['nip' => $user->employee->nip]);
             }
 
             // Jika yang login admin/tidak punya NIP, tampilkan form kosong
-            return view('etpp.show', ['employee' => null, 'nip' => null]);
+            return view('etpp.show', [
+                'employee' => null,
+                'nip' => null,
+                'filter_tw' => 'semua',
+                'data_kategori' => collect(),
+            ]);
         }
 
-        // Skenario 2: Jika ada NIP di URL (Misal: /etpp/198502022010012004)
-        // Cari data pegawai berdasarkan NIP tersebut
-        $employee = Employee::where('nip', $nip)->first();
-
-        // Lempar datanya ke tampilan HTML
-        return view('etpp.show', compact('employee', 'nip'));
+        // Skenario 2: Redirect ke method search agar logic filter terpusat di satu tempat
+        return redirect()->route('etpp.search', ['nip' => $nip]);
     }
 
     /**
@@ -115,16 +118,21 @@ class EtppController extends Controller
                 return back()->with('error', 'Isi file JSON tidak valid!');
             }
 
-            // Ambil ID user yang sedang login untuk disimpan ke semua tabel
+            // Ambil ID user yang sedang login
             $userId = auth()->id();
 
-            // 3. Gunakan DB Transaction agar aman (jika ada error di tengah jalan, data akan di-rollback)
+            // Pastikan user sedang login sebelum import
+            if (! $userId) {
+                return back()->with('error', 'Sesi login Anda telah habis. Silakan login kembali.');
+            }
+
+            // 3. Gunakan DB Transaction agar aman (jika ada error, data dibatalkan otomatis)
             DB::transaction(function () use ($data, $userId) {
                 foreach ($data as $kategoriData) {
 
-                    // Insert Kategori dengan user_id
+                    // Insert Kategori
                     $kategoriId = DB::table('kategori')->insertGetId([
-                        'user_id' => $userId,
+                        'user_id' => $userId, // <-- Disisipkan di sini
                         'nama_kategori' => $kategoriData['nama_kategori'],
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -134,9 +142,9 @@ class EtppController extends Controller
                     if (isset($kategoriData['rhk']) && is_array($kategoriData['rhk'])) {
                         foreach ($kategoriData['rhk'] as $rhkData) {
 
-                            // Insert RHK dengan user_id
+                            // Insert RHK
                             $rhkId = DB::table('rhk')->insertGetId([
-                                'user_id' => $userId,
+                                'user_id' => $userId, // <-- Disisipkan di sini
                                 'kategori_id' => $kategoriId,
                                 'deskripsi_rhk' => $rhkData['deskripsi_rhk'],
                                 'created_at' => now(),
@@ -147,9 +155,9 @@ class EtppController extends Controller
                             if (isset($rhkData['rencana_aksi']) && is_array($rhkData['rencana_aksi'])) {
                                 foreach ($rhkData['rencana_aksi'] as $raData) {
 
-                                    // Insert Rencana Aksi dengan user_id
+                                    // Insert Rencana Aksi
                                     $raId = DB::table('rencana_aksi')->insertGetId([
-                                        'user_id' => $userId,
+                                        'user_id' => $userId, // <-- Disisipkan di sini
                                         'rhk_id' => $rhkId,
                                         'deskripsi_ra' => $raData['deskripsi_ra'],
                                         'kriteria_keberhasilan' => $raData['kriteria_keberhasilan'],
@@ -161,9 +169,9 @@ class EtppController extends Controller
                                     if (isset($raData['output_target']) && is_array($raData['output_target'])) {
                                         foreach ($raData['output_target'] as $outputData) {
 
-                                            // Insert Output dengan user_id
+                                            // Insert Output
                                             DB::table('output_target')->insert([
-                                                'user_id' => $userId,
+                                                'user_id' => $userId, // <-- Disisipkan di sini
                                                 'rencana_aksi_id' => $raId,
                                                 'deskripsi_output' => $outputData['deskripsi_output'],
                                                 'target_waktu' => $outputData['target_waktu'],
@@ -182,7 +190,7 @@ class EtppController extends Controller
             return back()->with('success', 'Data JSON e-Kinerja berhasil diimpor!');
 
         } catch (Exception $e) {
-            // Jika ada error, tampilkan pesannya
+            // Jika ada error, tampilkan pesannya (berguna untuk debugging jika masih error)
             return back()->with('error', 'Terjadi kesalahan sistem: '.$e->getMessage());
         }
     }
