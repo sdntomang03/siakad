@@ -14,12 +14,45 @@ class EtppController extends Controller
      */
     public function search(Request $request)
     {
-        $request->validate([
-            'nip' => 'required|string',
-        ]);
+        // Tangkap input dari URL (GET request)
+        $nip = $request->input('nip');
+        $filter_tw = $request->input('tw', 'semua'); // Default 'semua' jika kosong
 
-        // Mengalihkan pengguna ke: /etpp/198502022010012004
-        return redirect()->route('etpp.show', ['nip' => $request->nip]);
+        $employee = null;
+        $data_kategori = collect(); // Kosongkan data secara default
+
+        if ($nip) {
+            // Bersihkan spasi berlebih pada NIP
+            $nip = trim($nip);
+
+            // Cari data pegawai
+            $employee = Employee::where('nip', $nip)->first();
+
+            // Jika pegawai ditemukan, tarik data e-Kinerja
+            if ($employee) {
+                // Tarik Kategori beserta relasi di dalamnya (Eager Loading)
+                $query = Kategori::with([
+                    'rhk.rencanaAksi.outputTarget' => function ($q) use ($filter_tw) {
+                        // Filter Output berdasarkan TW jika bukan 'semua'
+                        if ($filter_tw !== 'semua') {
+                            $q->where('target_waktu', $filter_tw);
+                        }
+                    },
+                ]);
+
+                // Sembunyikan Kategori/RHK yang tidak memiliki output sesuai filter TW
+                if ($filter_tw !== 'semua') {
+                    $query->whereHas('rhk.rencanaAksi.outputTarget', function ($q) use ($filter_tw) {
+                        $q->where('target_waktu', $filter_tw);
+                    });
+                }
+
+                $data_kategori = $query->get();
+            }
+        }
+
+        // Lempar data ke view
+        return view('etpp.show', compact('nip', 'employee', 'filter_tw', 'data_kategori'));
     }
 
     /**
