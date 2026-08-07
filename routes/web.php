@@ -272,7 +272,10 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::get('/renkin', [RenkinController::class, 'index'])->name('renkin.index');
 Route::post('/etpp/search', [EtppController::class, 'search'])->name('etpp.search');
+Route::get('/etpp/import', [EtppController::class, 'showImportForm'])->name('etpp.import.form');
 
+// Rute untuk memproses form upload JSON
+Route::post('/etpp/import', [EtppController::class, 'importJson'])->name('etpp.import.process');
 // 2. Route GET dengan parameter {nip} untuk URL bersih (Misal: /etpp/198502022010012004)
 Route::get('/etpp/{nip?}', [EtppController::class, 'show'])->name('etpp.show');
 require __DIR__.'/auth.php';
