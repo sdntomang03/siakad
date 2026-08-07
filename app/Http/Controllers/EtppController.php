@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+// Tambahkan model Kategori jika Anda menggunakannya di method search
+use App\Models\Kategori;
 use Exception;
-use Illuminate\Http\Request; // Ditambahkan untuk proses Import JSON
-use Illuminate\Support\Facades\DB; // Ditambahkan untuk menangkap error saat Import JSON
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EtppController extends Controller
 {
@@ -113,12 +115,16 @@ class EtppController extends Controller
                 return back()->with('error', 'Isi file JSON tidak valid!');
             }
 
+            // Ambil ID user yang sedang login untuk disimpan ke semua tabel
+            $userId = auth()->id();
+
             // 3. Gunakan DB Transaction agar aman (jika ada error di tengah jalan, data akan di-rollback)
-            DB::transaction(function () use ($data) {
+            DB::transaction(function () use ($data, $userId) {
                 foreach ($data as $kategoriData) {
 
-                    // Insert Kategori
+                    // Insert Kategori dengan user_id
                     $kategoriId = DB::table('kategori')->insertGetId([
+                        'user_id' => $userId,
                         'nama_kategori' => $kategoriData['nama_kategori'],
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -128,8 +134,9 @@ class EtppController extends Controller
                     if (isset($kategoriData['rhk']) && is_array($kategoriData['rhk'])) {
                         foreach ($kategoriData['rhk'] as $rhkData) {
 
-                            // Insert RHK
+                            // Insert RHK dengan user_id
                             $rhkId = DB::table('rhk')->insertGetId([
+                                'user_id' => $userId,
                                 'kategori_id' => $kategoriId,
                                 'deskripsi_rhk' => $rhkData['deskripsi_rhk'],
                                 'created_at' => now(),
@@ -140,8 +147,9 @@ class EtppController extends Controller
                             if (isset($rhkData['rencana_aksi']) && is_array($rhkData['rencana_aksi'])) {
                                 foreach ($rhkData['rencana_aksi'] as $raData) {
 
-                                    // Insert Rencana Aksi
+                                    // Insert Rencana Aksi dengan user_id
                                     $raId = DB::table('rencana_aksi')->insertGetId([
+                                        'user_id' => $userId,
                                         'rhk_id' => $rhkId,
                                         'deskripsi_ra' => $raData['deskripsi_ra'],
                                         'kriteria_keberhasilan' => $raData['kriteria_keberhasilan'],
@@ -153,8 +161,9 @@ class EtppController extends Controller
                                     if (isset($raData['output_target']) && is_array($raData['output_target'])) {
                                         foreach ($raData['output_target'] as $outputData) {
 
-                                            // Insert Output
+                                            // Insert Output dengan user_id
                                             DB::table('output_target')->insert([
+                                                'user_id' => $userId,
                                                 'rencana_aksi_id' => $raId,
                                                 'deskripsi_output' => $outputData['deskripsi_output'],
                                                 'target_waktu' => $outputData['target_waktu'],
