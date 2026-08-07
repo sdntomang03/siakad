@@ -194,4 +194,50 @@ class EtppController extends Controller
             return back()->with('error', 'Terjadi kesalahan sistem: '.$e->getMessage());
         }
     }
+
+    /**
+     * Menampilkan e-Kinerja milik user yang sedang login
+     */
+    public function myEkinerja(Request $request)
+    {
+        // 1. Ambil data user yang sedang login
+        $user = auth()->user();
+
+        // Pastikan user sudah login (meski sudah dijaga middleware)
+        if (! $user) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        // Ambil data profil pegawai dari user ini (Asumsi Anda punya relasi employee di model User)
+        // Jika tidak ada relasi, Anda bisa query: Employee::where('user_id', $user->id)->first();
+        $employee = $user->employee ?? null;
+
+        // 2. Tangkap parameter filter Target Waktu (TW)
+        $filter_tw = $request->input('tw', 'semua');
+
+        $data_kategori = collect();
+
+        // 3. Tarik data e-Kinerja secara spesifik HANYA untuk user_id yang sedang login
+        $query = Kategori::where('user_id', $user->id)
+            ->with([
+                'rhk.rencanaAksi.outputTarget' => function ($q) use ($filter_tw) {
+                    // Filter Output berdasarkan TW jika bukan 'semua'
+                    if ($filter_tw !== 'semua') {
+                        $q->where('target_waktu', $filter_tw);
+                    }
+                },
+            ]);
+
+        // Jika filter diaktifkan, sembunyikan Kategori/RHK yang tidak memiliki output di TW tersebut
+        if ($filter_tw !== 'semua') {
+            $query->whereHas('rhk.rencanaAksi.outputTarget', function ($q) use ($filter_tw) {
+                $q->where('target_waktu', $filter_tw);
+            });
+        }
+
+        $data_kategori = $query->get();
+
+        // 4. Lempar data ke view baru
+        return view('etpp.my-ekinerja', compact('employee', 'filter_tw', 'data_kategori'));
+    }
 }
