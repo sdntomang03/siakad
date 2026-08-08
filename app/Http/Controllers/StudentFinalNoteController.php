@@ -12,6 +12,24 @@ use Illuminate\Http\Request;
 
 class StudentFinalNoteController extends Controller
 {
+    /**
+     * Menampilkan daftar siswa dalam satu kelas untuk diisi catatan akhirnya
+     */
+    public function index($classroom_id)
+    {
+        $classroom = Classroom::findOrFail($classroom_id);
+
+        // Ambil data siswa yang terdaftar di kelas tersebut
+        $students = Student::where('classroom_id', $classroom_id)
+            ->orderBy('nama', 'asc') // Urutkan berdasarkan abjad
+            ->get();
+
+        return view('catatan_akhir.index', compact('classroom', 'students'));
+    }
+
+    /**
+     * Menampilkan form pengisian catatan akhir per siswa
+     */
     public function edit($student_id, $classroom_id)
     {
         // Asumsi menggunakan tahun ajaran aktif dari session/pengaturan
@@ -40,12 +58,10 @@ class StudentFinalNoteController extends Controller
             ->where('status', 'tidak_terlaksana')
             ->count();
 
-        // 3. Tarik Rekap Absensi (Contoh Mockup, sesuaikan dengan tabel Absensi Anda)
-        /*
-        $sakit = Absensi::where('student_id', $student_id)->where('status', 'S')->count();
-        $izin = Absensi::where('student_id', $student_id)->where('status', 'I')->count();
-        $alpha = Absensi::where('student_id', $student_id)->where('status', 'A')->count();
-        */
+        // 3. Tarik Rekap Absensi
+        // $sakit = Absensi::where('student_id', $student_id)->where('status', 'S')->count();
+        // $izin = Absensi::where('student_id', $student_id)->where('status', 'I')->count();
+        // $alpha = Absensi::where('student_id', $student_id)->where('status', 'A')->count();
         $sakit = 0;
         $izin = 0;
         $alpha = 0;
@@ -63,6 +79,9 @@ class StudentFinalNoteController extends Controller
         ));
     }
 
+    /**
+     * Memproses penyimpanan catatan akhir
+     */
     public function update(Request $request, $student_id, $classroom_id)
     {
         $request->validate([
@@ -73,9 +92,8 @@ class StudentFinalNoteController extends Controller
             'alpha' => 'required|integer|min:0',
         ]);
 
-        $employee_id = auth()->user()->employee->id ?? null; // Sesuaikan dengan relasi login Anda
+        $employee_id = auth()->user()->employee->id ?? null;
 
-        // Simpan atau Update menggunakan UpdateOrCreate
         StudentFinalNote::updateOrCreate(
             [
                 'student_id' => $student_id,
