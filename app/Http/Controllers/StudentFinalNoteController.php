@@ -81,7 +81,6 @@ class StudentFinalNoteController extends Controller
         $teacherNotes = TeacherNote::where('student_id', $student_id)
             ->where('classroom_id', $classroom_id)
             ->where('academic_year_id', $active_academic_year_id)
-            ->where('is_for_report', true)
             ->get();
 
         // 2. Tarik Rekap Jurnal Piket
