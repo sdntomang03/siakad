@@ -10,16 +10,19 @@ return new class extends Migration
     {
         Schema::create('bukti_dukung', function (Blueprint $table) {
             $table->id();
-            // Foreign key agar kepemilikannya jelas
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-
-            // Foreign key untuk mengaitkan bukti dengan output tertentu
             $table->foreignId('output_target_id')->constrained('output_target')->onDelete('cascade');
 
-            // Informasi file bukti dukung
-            $table->string('nama_bukti'); // Contoh: "Sertifikat Pelatihan", "SK Mengajar"
-            $table->string('file_path');  // Lokasi file disimpan (storage/app/public/...) atau URL Google Drive
-            table->text('tautan')->nullable();
+            $table->string('nama_bukti');
+
+          
+            $table->enum('jenis_bukti', ['file', 'link'])->default('file');
+
+        
+            $table->string('file_path')->nullable();
+
+       
+            $table->text('tautan')->nullable();
 
             $table->timestamps();
         });
