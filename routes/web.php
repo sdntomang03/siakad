@@ -301,7 +301,7 @@ Route::get('/etpp/{nip?}', [EtppController::class, 'show'])->name('etpp.show');
 Route::get('/realisasi/{nip?}', [EtppController::class, 'show'])->name('etpp.show');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/kelas/{classroom_id}/catatan-akhir', [StudentFinalNoteController::class, 'index'])->name('catatan_akhir.index');
+    Route::get('/catatan-akhir', [StudentFinalNoteController::class, 'index'])->name('catatan_akhir.index');
     // Menampilkan halaman pembuatan catatan akhir per siswa
     Route::get('/catatan-akhir/{student_id}/{classroom_id}', [StudentFinalNoteController::class, 'edit'])->name('catatan_akhir.edit');
 

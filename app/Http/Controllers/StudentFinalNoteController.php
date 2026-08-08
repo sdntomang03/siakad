@@ -15,16 +15,53 @@ class StudentFinalNoteController extends Controller
     /**
      * Menampilkan daftar siswa dalam satu kelas untuk diisi catatan akhirnya
      */
-    public function index($classroom_id)
+    public function index(Request $request)
     {
-        $classroom = Classroom::findOrFail($classroom_id);
+        $user = auth()->user();
+        abort_if(! $user->hasAnyRole(['superadmin', 'operator', 'guru', 'kepsek']), 403, 'Akses ditolak.');
 
-        // Ambil data siswa yang terdaftar di kelas tersebut
-        $students = Student::where('classroom_id', $classroom_id)
-            ->orderBy('nama', 'asc') // Urutkan berdasarkan abjad
-            ->get();
+        $selectedSchoolId = $user->hasRole('superadmin') ? $request->query('school_id') : $user->school_id;
+        $schools = $user->hasRole('superadmin') ? School::orderBy('nama_sekolah')->get() : collect();
 
-        return view('catatan_akhir.index', compact('classroom', 'students'));
+        $activeYear = null;
+        $allClassrooms = collect();
+        $students = collect();
+        $selectedClassroom = null;
+
+        if ($selectedSchoolId) {
+            $activeYear = AcademicYear::where('school_id', $selectedSchoolId)
+                ->where('is_active', true)
+                ->first();
+
+            if ($activeYear) {
+                // Query dasar untuk mengambil kelas di tahun ajaran aktif
+                $classroomQuery = Classroom::where('school_id', $selectedSchoolId)
+                    ->where('academic_year_id', $activeYear->id);
+
+                // Jika user adalah Guru, hanya tampilkan kelas di mana dia menjadi Wali Kelas
+                if ($user->hasRole('guru')) {
+                    $employeeId = $user->employee->id ?? 0;
+                    $classroomQuery->where('homeroom_teacher_id', $employeeId);
+                }
+
+                $allClassrooms = $classroomQuery->get();
+
+                // Jika user sudah memilih kelas dari dropdown
+                if ($request->classroom_id) {
+                    // Validasi agar guru tidak bisa "mengintip" kelas orang lain dengan memanipulasi URL
+                    $selectedClassroom = Classroom::find($request->classroom_id);
+                    if ($selectedClassroom && $allClassrooms->contains('id', $selectedClassroom->id)) {
+                        $students = Student::where('classroom_id', $selectedClassroom->id)
+                            ->orderBy('nama_lengkap', 'asc') // Sesuaikan dengan kolom nama di DB Anda
+                            ->get();
+                    }
+                }
+            }
+        }
+
+        return view('catatan_akhir.index', compact(
+            'schools', 'selectedSchoolId', 'activeYear', 'allClassrooms', 'selectedClassroom', 'students'
+        ));
     }
 
     /**
