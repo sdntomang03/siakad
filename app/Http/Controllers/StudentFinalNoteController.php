@@ -92,7 +92,6 @@ class StudentFinalNoteController extends Controller
 
         // 2. Tarik Rekap Catatan Guru (Tanpa filter is_for_report)
         $teacherNotes = TeacherNote::where('student_id', $student_id)
-            ->where('classroom_id', $classroom_id)
             ->where('academic_year_id', $active_academic_year_id)
             ->orderBy('tanggal', 'desc')
             ->get();
