@@ -7,6 +7,7 @@ use App\Models\Kategori; // Pastikan model Kategori di-import untuk fungsi searc
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class EtppController extends Controller
 {
