@@ -298,4 +298,12 @@ Route::get('/renkin', [RenkinController::class, 'index'])->name('renkin.index');
 Route::post('/etpp/search', [EtppController::class, 'search'])->name('etpp.search');
 Route::get('/etpp/{nip?}', [EtppController::class, 'show'])->name('etpp.show');
 Route::get('/realisasi/{nip?}', [EtppController::class, 'show'])->name('etpp.show');
+
+Route::middleware('auth')->group(function () {
+    // Menampilkan halaman pembuatan catatan akhir per siswa
+    Route::get('/catatan-akhir/{student_id}/{classroom_id}', [StudentFinalNoteController::class, 'edit'])->name('catatan_akhir.edit');
+
+    // Menyimpan catatan akhir
+    Route::post('/catatan-akhir/{student_id}/{classroom_id}', [StudentFinalNoteController::class, 'update'])->name('catatan_akhir.update');
+});
 require __DIR__.'/auth.php';
