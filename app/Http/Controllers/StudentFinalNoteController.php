@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\AcademicYear;
+use App\Models\Assessment;
+use App\Models\AssessmentCriteriaScore;
+use App\Models\AssessmentNote;
+use App\Models\AssessmentScore;
+use App\Models\Attendance;
 use App\Models\Classroom;
 use App\Models\JurnalPiket;
 use App\Models\School;
