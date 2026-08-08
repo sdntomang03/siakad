@@ -150,8 +150,19 @@
                         </div>
 
                         {{-- Body Daftar RHK & Aksi --}}
+
                         <div class="p-5 space-y-6">
-                            @forelse($kategori->rhk as $rhk)
+                            @php
+                            // Menyaring RHK: Hanya simpan RHK yang memiliki minimal 1 Rencana Aksi dengan Output sesuai
+                            filter TW
+                            $filteredRhk = $kategori->rhk->filter(function($rhk) {
+                            return $rhk->rencanaAksi->contains(function($ra) {
+                            return count($ra->outputTarget) > 0;
+                            });
+                            });
+                            @endphp
+
+                            @forelse($filteredRhk as $rhk)
                             <div class="space-y-3">
                                 {{-- Judul RHK --}}
                                 <h4 class="font-semibold text-sm text-indigo-700 dark:text-indigo-400 leading-snug">
@@ -162,7 +173,7 @@
                                 <div class="pl-4 border-l-2 border-indigo-100 dark:border-indigo-900/50 space-y-4">
                                     @foreach($rhk->rencanaAksi as $ra)
 
-                                    {{-- Hanya tampilkan jika output memiliki data (sesuai filter TW) --}}
+                                    {{-- Hanya tampilkan jika Rencana Aksi memiliki Output --}}
                                     @if(count($ra->outputTarget) > 0)
                                     <div
                                         class="bg-gray-50/50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-100 dark:border-gray-700">
@@ -201,7 +212,6 @@
                                                     </div>
 
                                                     <div class="pl-12 space-y-3">
-
                                                         {{-- Daftar Bukti Dukung yang Sudah Diupload --}}
                                                         @if(isset($output->buktiDukung) && $output->buktiDukung->count()
                                                         > 0)
@@ -306,7 +316,6 @@
                                                         </div>
                                                         @endif
 
-
                                                         {{-- Form Upload Bukti Baru (Dinamis: Link / File) --}}
                                                         <form action="{{ route('etpp.upload_bukti') }}" method="POST"
                                                             enctype="multipart/form-data"
@@ -365,12 +374,13 @@
                                 </div>
                             </div>
 
+                            {{-- Hanya tampilkan pemisah jika bukan elemen terakhir yang di loop --}}
                             @if(!$loop->last)
                             <hr class="border-gray-100 dark:border-gray-700"> @endif
 
                             @empty
-                            <p class="text-sm text-gray-500 italic">Belum ada Rencana Hasil Kerja untuk kategori ini.
-                            </p>
+                            <p class="text-sm text-gray-500 italic">Belum ada Rencana Hasil Kerja yang sesuai dengan
+                                filter.</p>
                             @endforelse
                         </div>
                     </div>
