@@ -40,11 +40,9 @@ class StudentFinalNoteController extends Controller
                 ->first();
 
             if ($activeYear) {
-                // Query dasar untuk mengambil kelas di tahun ajaran aktif
                 $classroomQuery = Classroom::where('school_id', $selectedSchoolId)
                     ->where('academic_year_id', $activeYear->id);
 
-                // Jika user adalah Guru, hanya tampilkan kelas di mana dia menjadi Wali Kelas
                 if ($user->hasRole('guru')) {
                     $employeeId = $user->employee->id ?? 0;
                     $classroomQuery->where('homeroom_teacher_id', $employeeId);
@@ -52,13 +50,11 @@ class StudentFinalNoteController extends Controller
 
                 $allClassrooms = $classroomQuery->get();
 
-                // PERBAIKAN: Gunakan Eager Loading 'with' untuk mengambil data relasi students
                 if ($request->classroom_id) {
                     $selectedClassroom = Classroom::with(['students' => function ($q) {
                         $q->orderBy('nama_lengkap', 'asc');
                     }])->find($request->classroom_id);
 
-                    // Validasi kepemilikan kelas, lalu ambil dari relasi
                     if ($selectedClassroom && $allClassrooms->contains('id', $selectedClassroom->id)) {
                         $students = $selectedClassroom->students;
                     }
@@ -71,13 +67,16 @@ class StudentFinalNoteController extends Controller
         ));
     }
 
+    /**
+     * Menampilkan form pengisian catatan akhir per siswa dengan data REAL
+     */
     public function edit($student_id, $classroom_id)
     {
-        $user = auth()->user();
-        $schoolId = $user->school_id ?? ($user->employee->school_id ?? 0);
+        $student = Student::findOrFail($student_id);
+        $classroom = Classroom::findOrFail($classroom_id);
 
-        // 1. Ambil Tahun Ajaran Aktif secara Dinamis
-        $activeYear = AcademicYear::where('school_id', $schoolId)
+        // 1. Ambil Tahun Ajaran Aktif berdasarkan KELASNYA (Sangat aman untuk Superadmin & Multi-Tenant)
+        $activeYear = AcademicYear::where('school_id', $classroom->school_id)
             ->where('is_active', true)
             ->first();
 
@@ -87,37 +86,49 @@ class StudentFinalNoteController extends Controller
 
         $active_academic_year_id = $activeYear->id;
 
-        $student = Student::findOrFail($student_id);
-        $classroom = Classroom::findOrFail($classroom_id);
-
-        // 2. Tarik Rekap Catatan Guru (Hanya filter Siswa & Tahun Ajaran)
+        // 2. Tarik Rekap Catatan Guru (Memastikan ID Tahun Ajaran Sama persis)
         $teacherNotes = TeacherNote::where('student_id', $student_id)
             ->where('academic_year_id', $active_academic_year_id)
             ->orderBy('tanggal', 'desc')
             ->get();
 
         // 3. Tarik Rekap Jurnal Piket
-        $jurnalPiket = JurnalPiket::where('student_id', $student_id)
+        $piketTerlaksana = JurnalPiket::where('student_id', $student_id)
             ->where('academic_year_id', $active_academic_year_id)
-            ->get();
+            ->where('status', 'terlaksana')
+            ->count();
 
-        $piketTerlaksana = $jurnalPiket->where('status', 'terlaksana')->count();
-        $piketTidak = $jurnalPiket->where('status', 'tidak_terlaksana')->count();
-        $catatanPiket = $jurnalPiket->where('status', 'tidak_terlaksana')
+        $piketTidak = JurnalPiket::where('student_id', $student_id)
+            ->where('academic_year_id', $active_academic_year_id)
+            ->where('status', 'tidak_terlaksana')
+            ->count();
+
+        $catatanPiket = JurnalPiket::where('student_id', $student_id)
+            ->where('academic_year_id', $active_academic_year_id)
+            ->where('status', 'tidak_terlaksana')
             ->whereNotNull('catatan')
-            ->where('catatan', '!=', '');
-
-        // 4. Tarik Rekap Absensi
-        $absensi = Attendance::where('student_id', $student_id)
-            ->where('academic_year_id', $active_academic_year_id)
+            ->where('catatan', '!=', '')
             ->get();
 
-        $sakit = $absensi->where('status', 'sakit')->count();
-        $izin = $absensi->where('status', 'izin')->count();
-        $alpha = $absensi->where('status', 'alfa')->count();
+        // 4. Tarik Rekap Absensi (Direct Database Query agar akurat)
+        $sakit = Attendance::where('student_id', $student_id)
+            ->where('academic_year_id', $active_academic_year_id)
+            ->where('status', 'sakit')
+            ->count();
+
+        $izin = Attendance::where('student_id', $student_id)
+            ->where('academic_year_id', $active_academic_year_id)
+            ->where('status', 'izin')
+            ->count();
+
+        $alpha = Attendance::where('student_id', $student_id)
+            ->where('academic_year_id', $active_academic_year_id)
+            ->where('status', 'alfa')
+            ->count();
 
         // 5. Tarik Rekap Nilai TES (Rata-rata per Mapel)
         $tesAssessments = Assessment::where('academic_year_id', $active_academic_year_id)
+            ->where('classroom_id', $classroom_id)
             ->where(function ($q) {
                 $q->where('format', '!=', 'non-tes')->orWhereNull('format');
             })->with('subject')->get();
@@ -148,6 +159,7 @@ class StudentFinalNoteController extends Controller
 
         // 6. Tarik Rekap Penilaian NON-TES / OBSERVASI (Predikat & Catatan)
         $nonTesAssessments = Assessment::where('academic_year_id', $active_academic_year_id)
+            ->where('classroom_id', $classroom_id)
             ->where('format', 'non-tes')
             ->with('subject', 'criteria')->get();
 
