@@ -306,7 +306,8 @@
                                                         </div>
                                                         @endif
 
-                                                        {{-- Form Upload Bukti Baru (Dinamis: File / Link) --}}
+
+                                                        {{-- Form Upload Bukti Baru (Dinamis: Link / File) --}}
                                                         <form action="{{ route('etpp.upload_bukti') }}" method="POST"
                                                             enctype="multipart/form-data"
                                                             class="flex flex-col sm:flex-row gap-3 items-center bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 mt-2">
@@ -320,21 +321,22 @@
                                                             <select name="jenis_bukti"
                                                                 onchange="toggleBuktiInput(this, {{ $output->id }})"
                                                                 class="w-full sm:w-1/4 text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1.5 focus:ring-indigo-500 focus:border-indigo-500 transition">
-                                                                <option value="link">Tautkan Link</option>
+                                                                <option value="link" selected>Tautkan Link</option>
                                                                 <option value="file">Unggah File</option>
                                                             </select>
 
-                                                            {{-- Input 1: File --}}
+                                                            {{-- Input 1: Link (Tampil secara default) --}}
+                                                            <input type="url" name="link_bukti"
+                                                                id="input_link_{{ $output->id }}" required
+                                                                placeholder="Contoh: https://drive.google.com/..."
+                                                                style="display: block;"
+                                                                class="w-full text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1.5 focus:ring-indigo-500 focus:border-indigo-500 transition">
+
+                                                            {{-- Input 2: File (Sembunyi secara default) --}}
                                                             <input type="file" name="file_bukti"
-                                                                id="input_file_{{ $output->id }}" required
+                                                                id="input_file_{{ $output->id }}" style="display: none;"
                                                                 accept=".pdf,.jpg,.jpeg,.png"
                                                                 class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer transition">
-
-                                                            {{-- Input 2: Link (Sembunyi secara default) --}}
-                                                            <input type="url" name="link_bukti"
-                                                                id="input_link_{{ $output->id }}" style="display: none;"
-                                                                placeholder="Contoh: https://drive.google.com/..."
-                                                                class="w-full text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1.5 focus:ring-indigo-500 focus:border-indigo-500 transition">
 
                                                             {{-- Tombol Submit --}}
                                                             <button type="submit"
