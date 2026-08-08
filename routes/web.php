@@ -270,25 +270,37 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/ijazah/pengolahan', [IjazahController::class, 'index'])->name('ijazah.index');
     Route::patch('/subjects/{subject}/toggle-sidanira', [SubjectController::class, 'toggleSidanira'])->name('subjects.toggle-sidanira');
 });
-Route::get('/renkin', [RenkinController::class, 'index'])->name('renkin.index');
-Route::post('/etpp/search', [EtppController::class, 'search'])->name('etpp.search');
-Route::get('/etpp/import', [EtppController::class, 'showImportForm'])->name('etpp.import.form');
-Route::get('/etpp/ku', [EtppController::class, 'myEkinerja'])
-    ->name('etpp.ku')
-    ->middleware('auth');
-Route::post('/etpp/upload-bukti', [EtppController::class, 'uploadBukti'])
-    ->name('etpp.upload_bukti')
-    ->middleware('auth');
-Route::delete('/etpp/bukti/{id}', [EtppController::class, 'destroyBukti'])
-    ->name('etpp.destroy_bukti')
-    ->middleware('auth');
+/*
+|--------------------------------------------------------------------------
+| ROUTE PUBLIK (Bisa diakses tanpa login)
+|--------------------------------------------------------------------------
+*/
 
-// Rute untuk menghapus SEMUA file bukti pada 1 output tertentu
-Route::delete('/etpp/output/{output_id}/bukti', [EtppController::class, 'destroyBuktiByOutput'])
-    ->name('etpp.destroy_bukti_output')
-    ->middleware('auth');
-// Rute untuk memproses form upload JSON
-Route::post('/etpp/import', [EtppController::class, 'importJson'])->name('etpp.import.process');
-// 2. Route GET dengan parameter {nip} untuk URL bersih (Misal: /etpp/198502022010012004)
+Route::get('/renkin', [RenkinController::class, 'index'])->name('renkin.index');
+
+// Rute Pencarian dan Lihat e-Kinerja berdasarkan NIP
+Route::post('/etpp/search', [EtppController::class, 'search'])->name('etpp.search');
 Route::get('/etpp/{nip?}', [EtppController::class, 'show'])->name('etpp.show');
+
+/*
+|--------------------------------------------------------------------------
+| ROUTE PROTECTED (Wajib login / middleware auth)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+
+    // Rute e-Kinerja Saya
+    Route::get('/etpp/ku', [EtppController::class, 'myEkinerja'])->name('etpp.ku');
+
+    // Rute Kelola Bukti Dukung
+    Route::post('/etpp/upload-bukti', [EtppController::class, 'uploadBukti'])->name('etpp.upload_bukti');
+    Route::delete('/etpp/bukti/{id}', [EtppController::class, 'destroyBukti'])->name('etpp.destroy_bukti');
+    Route::delete('/etpp/output/{output_id}/bukti', [EtppController::class, 'destroyBuktiByOutput'])->name('etpp.destroy_bukti_output');
+
+    // Rute Import Data JSON
+    Route::get('/etpp/import', [EtppController::class, 'showImportForm'])->name('etpp.import.form');
+    Route::post('/etpp/import', [EtppController::class, 'importJson'])->name('etpp.import.process');
+
+});
 require __DIR__.'/auth.php';
