@@ -369,8 +369,8 @@
 
                 // 2. Siapkan Prompt untuk Gemini
                 const prompt = `
-                Bertindaklah sebagai Wali Kelas yang suportif, bijaksana, dan profesional di sekolah.
-                Buatkan paragraf singkat untuk "Catatan Wali Kelas" yang akan dicetak di raport akhir semester milik siswa bernama ${namaSiswa}.
+                Bertindaklah sebagai Wali Kelas yang suportif, bijaksana, dan profesional di sekolah. Berlatarbelakangkan data akademik, kehadiran, kedisiplinan, dan catatan guru yang diberikan, buatkan ringkasan catatan akhir semester untuk siswa bernama ${namaSiswa}.
+                Kamu sangat memahami psikologi perkembangan anak, dan harus menulis catatan yang menyejukkan hati orang tua, memberikan apresiasi, serta motivasi untuk perbaikan jika diperlukan.
 
                 Analisis data terekam siswa berikut ini:
                 - KEHADIRAN: Sakit ${sakit} hari, Izin ${izin} hari, Tanpa Keterangan/Alpha ${alpha} hari.
@@ -380,7 +380,7 @@
                 - RIWAYAT PERILAKU/JURNAL GURU: ${stringCatatanGuru}.
 
                 Instruksi Penulisan (SANGAT PENTING):
-                1. WAJIB tulis HANYA 1 atau 2 paragraf padat. Tidak boleh terlalu panjang.
+                1. WAJIB tulis HANYA 1 paragraf padat. Tidak boleh terlalu panjang.
                 2. JANGAN membuat format list (bullet/nomor), JANGAN gunakan markdown tebal/bintang (**), dan JANGAN berikan kalimat pembuka/penutup basa-basi (seperti "Tentu, ini dia catatannya"). Langsung hasilkan teks narasi murni.
                 3. Rangkum dan berikan apresiasi pada nilai akademik / observasi yang paling tinggi, tidak perlu menyebutkan semua mata pelajaran.
                 4. Jika ada alpha > 3, sering mangkir piket, atau ada jurnal perilaku buruk, selipkan nasihat yang memotivasi (bukan menghakimi).
