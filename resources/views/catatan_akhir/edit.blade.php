@@ -109,12 +109,26 @@
                         </div>
                     </div>
 
-                    {{-- 2. Rekap Nilai Ujian/Tes --}}
+                    {{-- 2. Rekap Nilai Ujian/Tes & Peringkat --}}
                     <div
                         class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <h3
                             class="font-black text-slate-800 dark:text-slate-200 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2 uppercase tracking-wider text-sm">
                             Nilai Tes Akademik</h3>
+
+                        {{-- Indikator Peringkat --}}
+                        <div
+                            class="mb-4 flex justify-between items-center bg-indigo-50 dark:bg-indigo-900/30 p-3 rounded-lg border border-indigo-100 dark:border-indigo-800/50">
+                            <span
+                                class="text-xs font-bold text-indigo-800 dark:text-indigo-300 uppercase tracking-wider">Peringkat
+                                Kelas</span>
+                            <span class="text-sm font-black text-indigo-600 dark:text-indigo-400" id="valPeringkat"
+                                data-rank="{{ $studentRank }}" data-total="{{ $totalStudents }}">
+                                {{ $studentRank !== '-' ? $studentRank . ' dari ' . $totalStudents . ' Siswa' : 'Belum
+                                Terperingkat' }}
+                            </span>
+                        </div>
+
                         @if($rekapNilai->isNotEmpty())
                         <ul class="text-sm space-y-2" id="listNilaiTes">
                             @foreach($rekapNilai as $nilai)
@@ -164,7 +178,7 @@
                         @else
                         <div
                             class="text-center bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                            <p class="text-sm text-slate-500 italic">Belum ada nilai observasi non-tes.</p>
+                            <p class="text-sm text-slate-500 italic">Belum ada penilaian praktik atau proyek.</p>
                         </div>
                         @endif
                     </div>
@@ -233,8 +247,7 @@
                             <input type="hidden" name="piket_terlaksana" value="{{ $piketTerlaksana }}">
                             <input type="hidden" name="piket_tidak_terlaksana" value="{{ $piketTidak }}">
 
-                            {{-- Penyesuaian Angka Kehadiran (Selalu tersinkronisasi otomatis dengan hasil Live
-                            Database) --}}
+                            {{-- Penyesuaian Angka Kehadiran --}}
                             <div
                                 class="bg-slate-50 dark:bg-slate-900/30 p-5 rounded-xl border border-slate-100 dark:border-slate-700/50">
                                 <h4
@@ -245,21 +258,24 @@
                                         <label
                                             class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">Sakit
                                             (Hari)</label>
-                                        <input type="number" name="sakit" value="{{ old('sakit', $sakit) }}" min="0"
+                                        <input type="number" name="sakit" id="inputSakit"
+                                            value="{{ old('sakit', $finalNote->sakit ?? $sakit) }}" min="0"
                                             class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
                                     </div>
                                     <div>
                                         <label
                                             class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">Izin
                                             (Hari)</label>
-                                        <input type="number" name="izin" value="{{ old('izin', $izin) }}" min="0"
+                                        <input type="number" name="izin" id="inputIzin"
+                                            value="{{ old('izin', $finalNote->izin ?? $izin) }}" min="0"
                                             class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
                                     </div>
                                     <div>
                                         <label
                                             class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">Alpha
                                             (Hari)</label>
-                                        <input type="number" name="alpha" value="{{ old('alpha', $alpha) }}" min="0"
+                                        <input type="number" name="alpha" id="inputAlpha"
+                                            value="{{ old('alpha', $finalNote->alpha ?? $alpha) }}" min="0"
                                             class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
                                     </div>
                                 </div>
@@ -315,11 +331,17 @@
             try {
                 // 1. Kumpulkan Data Langsung dari Blade (Mencegah input tersangkut)
                 const namaSiswa = "{{ $student->nama_lengkap ?? $student->nama }}";
-                const sakit = {{ $sakit }};
-                const izin = {{ $izin }};
-                const alpha = {{ $alpha }};
+                const sakit = document.getElementById('inputSakit').value || 0;
+                const izin = document.getElementById('inputIzin').value || 0;
+                const alpha = document.getElementById('inputAlpha').value || 0;
+
                 const piketBagus = {{ $piketTerlaksana }};
                 const piketBuruk = {{ $piketTidak }};
+
+                const rankElem = document.getElementById('valPeringkat');
+                const rankData = rankElem.getAttribute('data-rank');
+                const totalData = rankElem.getAttribute('data-total');
+                const stringPeringkat = rankData !== '-' ? `${rankData} dari ${totalData} siswa` : 'Belum ada peringkat';
 
                 // Susun Catatan Piket Detail
                 let stringPiketDetail = "";
@@ -374,6 +396,7 @@ Kamu adalah Wali Kelas yang suportif, bijaksana, dan profesional di sekolah dasa
 <data_siswa>
 Nama: ${namaSiswa}
 Kehadiran: Sakit ${sakit} hari, Izin ${izin} hari, Tanpa Keterangan/Alpha ${alpha} hari
+Peringkat Kelas: ${stringPeringkat}
 Piket: Terlaksana ${piketBagus} kali, Mangkir ${piketBuruk} kali${stringPiketDetail ? `, alasan sering mangkir: ${stringPiketDetail}` : ''}
 Rata-rata Nilai Akademik (Tes): ${stringNilaiTes}
 Nilai Observasi (Praktik/Proyek): ${stringObservasi}
@@ -386,10 +409,10 @@ Tulis satu paragraf narasi catatan akhir semester untuk siswa di atas, khusus be
 Aturan Penulisan (WAJIB dipatuhi):
 1. Hasilkan HANYA satu paragraf, 3-5 kalimat, sekitar 80-120 kata. Tanpa list, tanpa markdown (bintang/tebal), tanpa kalimat pembuka atau penutup basa-basi (misalnya "Berikut catatannya" atau "Semoga bermanfaat"). Langsung teks narasi.
 2. Sebut siswa sebagai "Ananda ${namaSiswa}" satu kali di awal paragraf, selanjutnya gunakan kata ganti (ia/dirinya) agar tidak diulang-ulang.
-3. Pilih satu atau dua capaian akademik/observasi TERTINGGI untuk diapresiasi secara spesifik namun ringkas. Tidak perlu menyebutkan semua mata pelajaran atau seluruh nilai.
-4. Sampaikan data kehadiran dan kedisiplinan secara kualitatif (misalnya "kehadiran sangat baik" atau "perlu ditingkatkan kedisiplinannya"), bukan menyebut angka mentah, kecuali angkanya memang signifikan untuk ditonjolkan sebagai pencapaian (misalnya kehadiran sempurna).
-5. Sisipkan nasihat motivasi (bukan menghakimi) HANYA jika memang relevan, yaitu bila alpha > 3 hari atau sakit >5 hari, piket sering mangkir, atau ada catatan perilaku yang kurang baik di jurnal guru. Jika semua data baik/netral, jangan memaksakan poin perbaikan; fokus pada apresiasi dan dorongan agar konsisten.
-6. Gunakan bahasa Indonesia baku yang sopan, hangat, dan rapi, sesuai gaya penulisan wali kelas di buku raport.
+3. Berikan apresiasi jika peringkatnya baik, atau berikan apresiasi spesifik pada capaian akademik/observasi tertingginya secara ringkas.
+4. Sampaikan data kehadiran dan kedisiplinan secara kualitatif (misalnya "kehadiran sangat baik" atau "perlu ditingkatkan kedisiplinannya"), bukan menyebut angka mentah, kecuali angkanya memang signifikan untuk ditonjolkan.
+5. Sisipkan nasihat motivasi (bukan menghakimi) HANYA jika memang relevan, yaitu bila alpha > 3 hari, sering mangkir piket, nilai merosot, atau ada catatan perilaku yang kurang baik. Jika semua data baik/netral, fokus pada apresiasi dan dorongan untuk konsisten.
+6. Gunakan bahasa Indonesia baku yang sopan, hangat, dan rapi.
 `;
 
                 // 3. Panggil API Gemini
