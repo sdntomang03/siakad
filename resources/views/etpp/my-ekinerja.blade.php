@@ -150,7 +150,6 @@
                         </div>
 
                         {{-- Body Daftar RHK & Aksi --}}
-
                         <div class="p-5 space-y-6">
                             @php
                             // Menyaring RHK: Hanya simpan RHK yang memiliki minimal 1 Rencana Aksi dengan Output sesuai
@@ -313,6 +312,7 @@
                                                                 </div>
                                                                 @endforeach
                                                             </div>
+
                                                         </div>
                                                         @endif
 
@@ -376,7 +376,8 @@
 
                             {{-- Hanya tampilkan pemisah jika bukan elemen terakhir yang di loop --}}
                             @if(!$loop->last)
-                            <hr class="border-gray-100 dark:border-gray-700"> @endif
+                            <hr class="border-gray-100 dark:border-gray-700">
+                            @endif
 
                             @empty
                             <p class="text-sm text-gray-500 italic">Belum ada Rencana Hasil Kerja yang sesuai dengan
