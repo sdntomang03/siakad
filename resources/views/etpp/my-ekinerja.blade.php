@@ -28,6 +28,31 @@
                     berdasarkan Target Waktu (TW).</p>
             </div>
 
+            {{-- Menampilkan Notifikasi Sukses/Error --}}
+            @if(session('success'))
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg relative" role="alert">
+                <strong class="font-bold">Berhasil!</strong>
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+            @endif
+
+            @if(session('error'))
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
+                <strong class="font-bold">Gagal!</strong>
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+            @endif
+
+            @if ($errors->any())
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
+                <ul class="list-disc pl-5">
+                    @foreach ($errors->all() as $error)
+                    <li class="text-sm">{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
             {{-- Card Filter TW (Tanpa Input NIP) --}}
             <div
                 class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
@@ -155,7 +180,6 @@
                                         </div>
 
                                         {{-- Output & Target Waktu --}}
-
                                         <div>
                                             <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
                                                 Target, Output & Bukti Dukung</p>
@@ -176,87 +200,120 @@
                                                         </span>
                                                     </div>
 
-                                                    {{-- Daftar Bukti Dukung yang Sudah Diupload --}}
-                                                    @if(isset($output->buktiDukung) && $output->buktiDukung->count() >
-                                                    0)
-                                                    <div class="space-y-2 mt-3 mb-4">
+                                                    <div class="pl-12 space-y-3">
+                                                        {{-- Daftar Bukti Dukung yang Sudah Diupload --}}
+                                                        @if(isset($output->buktiDukung) && $output->buktiDukung->count()
+                                                        > 0)
+                                                        <div class="space-y-2 mt-3 mb-4">
 
-                                                        {{-- Header Bukti & Tombol Hapus Semua (Per Output) --}}
-                                                        <div
-                                                            class="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-1">
-                                                            <p
-                                                                class="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                                                                Bukti Terlampir:</p>
-
-                                                            <form
-                                                                action="{{ route('etpp.destroy_bukti_output', $output->id) }}"
-                                                                method="POST"
-                                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus SEMUA dokumen bukti pada output ini?');">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="text-[11px] font-bold text-red-500 hover:text-red-700 transition flex items-center gap-1">
-                                                                    <svg class="w-3 h-3" fill="none"
-                                                                        stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round"
-                                                                            stroke-linejoin="round" stroke-width="2"
-                                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                                                        </path>
-                                                                    </svg>
-                                                                    Hapus Semua
-                                                                </button>
-                                                            </form>
-                                                        </div>
-
-                                                        {{-- Daftar Individual File Bukti --}}
-                                                        <div class="flex flex-wrap gap-2">
-                                                            @foreach($output->buktiDukung as $bukti)
+                                                            {{-- Header Bukti & Tombol Hapus Semua (Per Output) --}}
                                                             <div
-                                                                class="inline-flex items-center bg-indigo-50 dark:bg-indigo-900/20 rounded-md border border-indigo-100 dark:border-indigo-800/50 overflow-hidden">
+                                                                class="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-1">
+                                                                <p
+                                                                    class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                                                    Bukti Terlampir:</p>
 
-                                                                {{-- Link Lihat Dokumen --}}
-                                                                <a href="{{ asset('storage/' . $bukti->file_path) }}"
-                                                                    target="_blank"
-                                                                    class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition"
-                                                                    title="Lihat Dokumen">
-                                                                    <svg class="w-4 h-4 shrink-0" fill="none"
-                                                                        stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round"
-                                                                            stroke-linejoin="round" stroke-width="2"
-                                                                            d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
-                                                                        </path>
-                                                                    </svg>
-                                                                    <span
-                                                                        class="truncate max-w-[150px] sm:max-w-[200px]">{{
-                                                                        $bukti->nama_bukti }}</span>
-                                                                </a>
-
-                                                                {{-- Tombol Hapus Individual --}}
                                                                 <form
-                                                                    action="{{ route('etpp.destroy_bukti', $bukti->id) }}"
+                                                                    action="{{ route('etpp.destroy_bukti_output', $output->id) }}"
                                                                     method="POST"
-                                                                    onsubmit="return confirm('Hapus file dokumen ini?');"
-                                                                    class="flex">
+                                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus SEMUA dokumen bukti pada output ini?');">
                                                                     @csrf
                                                                     @method('DELETE')
                                                                     <button type="submit"
-                                                                        class="px-2 py-1.5 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white dark:bg-red-900/30 dark:hover:bg-red-600 dark:hover:text-white transition"
-                                                                        title="Hapus Dokumen">
-                                                                        <svg class="w-4 h-4" fill="none"
+                                                                        class="text-[11px] font-bold text-red-500 hover:text-red-700 transition flex items-center gap-1">
+                                                                        <svg class="w-3 h-3" fill="none"
                                                                             stroke="currentColor" viewBox="0 0 24 24">
                                                                             <path stroke-linecap="round"
                                                                                 stroke-linejoin="round" stroke-width="2"
-                                                                                d="M6 18L18 6M6 6l12 12"></path>
+                                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                                            </path>
                                                                         </svg>
+                                                                        Hapus Semua
                                                                     </button>
                                                                 </form>
-
                                                             </div>
-                                                            @endforeach
-                                                        </div>
 
+                                                            {{-- Daftar Individual File Bukti --}}
+                                                            <div class="flex flex-wrap gap-2">
+                                                                @foreach($output->buktiDukung as $bukti)
+                                                                <div
+                                                                    class="inline-flex items-center bg-indigo-50 dark:bg-indigo-900/20 rounded-md border border-indigo-100 dark:border-indigo-800/50 overflow-hidden">
+
+                                                                    {{-- Link Lihat Dokumen --}}
+                                                                    <a href="{{ asset('storage/' . $bukti->file_path) }}"
+                                                                        target="_blank"
+                                                                        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition"
+                                                                        title="Lihat Dokumen">
+                                                                        <svg class="w-4 h-4 shrink-0" fill="none"
+                                                                            stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round"
+                                                                                stroke-linejoin="round" stroke-width="2"
+                                                                                d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
+                                                                            </path>
+                                                                        </svg>
+                                                                        <span
+                                                                            class="truncate max-w-[150px] sm:max-w-[200px]">{{
+                                                                            $bukti->nama_bukti }}</span>
+                                                                    </a>
+
+                                                                    {{-- Tombol Hapus Individual --}}
+                                                                    <form
+                                                                        action="{{ route('etpp.destroy_bukti', $bukti->id) }}"
+                                                                        method="POST"
+                                                                        onsubmit="return confirm('Hapus file dokumen ini?');"
+                                                                        class="flex">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit"
+                                                                            class="px-2 py-1.5 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white dark:bg-red-900/30 dark:hover:bg-red-600 dark:hover:text-white transition"
+                                                                            title="Hapus Dokumen">
+                                                                            <svg class="w-4 h-4" fill="none"
+                                                                                stroke="currentColor"
+                                                                                viewBox="0 0 24 24">
+                                                                                <path stroke-linecap="round"
+                                                                                    stroke-linejoin="round"
+                                                                                    stroke-width="2"
+                                                                                    d="M6 18L18 6M6 6l12 12"></path>
+                                                                            </svg>
+                                                                        </button>
+                                                                    </form>
+
+                                                                </div>
+                                                                @endforeach
+                                                            </div>
+
+                                                        </div>
+                                                        @endif
+
+                                                        {{-- Form Upload Bukti Baru --}}
+                                                        <form action="{{ route('etpp.upload_bukti') }}" method="POST"
+                                                            enctype="multipart/form-data"
+                                                            class="flex flex-col sm:flex-row gap-3 items-center bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 mt-2">
+                                                            @csrf
+
+                                                            {{-- Hidden ID Output Target --}}
+                                                            <input type="hidden" name="output_target_id"
+                                                                value="{{ $output->id }}">
+
+                                                            {{-- Input File --}}
+                                                            <input type="file" name="file_bukti" required
+                                                                accept=".pdf,.jpg,.jpeg,.png"
+                                                                class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 dark:file:bg-indigo-900 dark:file:text-indigo-300 cursor-pointer transition">
+
+                                                            {{-- Tombol Submit --}}
+                                                            <button type="submit"
+                                                                class="w-full sm:w-auto shrink-0 bg-indigo-600 text-white text-xs px-5 py-2 rounded-md hover:bg-indigo-700 font-bold transition shadow-sm flex items-center justify-center gap-1.5">
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                                    viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                                        stroke-width="2"
+                                                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
+                                                                    </path>
+                                                                </svg>
+                                                                Unggah Bukti
+                                                            </button>
+                                                        </form>
                                                     </div>
-                                                    @endif
 
                                                 </li>
                                                 @endforeach
