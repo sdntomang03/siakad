@@ -384,11 +384,11 @@ Tugas:
 Tulis satu paragraf narasi catatan akhir semester untuk siswa di atas, khusus berdasarkan data yang tersedia. Jangan mengarang informasi, nilai, atau kejadian yang tidak ada di data.
 
 Aturan Penulisan (WAJIB dipatuhi):
-1. Hasilkan HANYA satu paragraf, 4-6 kalimat, sekitar 80-120 kata. Tanpa list, tanpa markdown (bintang/tebal), tanpa kalimat pembuka atau penutup basa-basi (misalnya "Berikut catatannya" atau "Semoga bermanfaat"). Langsung teks narasi.
+1. Hasilkan HANYA satu paragraf, 3-5 kalimat, sekitar 80-120 kata. Tanpa list, tanpa markdown (bintang/tebal), tanpa kalimat pembuka atau penutup basa-basi (misalnya "Berikut catatannya" atau "Semoga bermanfaat"). Langsung teks narasi.
 2. Sebut siswa sebagai "Ananda ${namaSiswa}" satu kali di awal paragraf, selanjutnya gunakan kata ganti (ia/dirinya) agar tidak diulang-ulang.
 3. Pilih satu atau dua capaian akademik/observasi TERTINGGI untuk diapresiasi secara spesifik namun ringkas. Tidak perlu menyebutkan semua mata pelajaran atau seluruh nilai.
 4. Sampaikan data kehadiran dan kedisiplinan secara kualitatif (misalnya "kehadiran sangat baik" atau "perlu ditingkatkan kedisiplinannya"), bukan menyebut angka mentah, kecuali angkanya memang signifikan untuk ditonjolkan sebagai pencapaian (misalnya kehadiran sempurna).
-5. Sisipkan nasihat motivasi (bukan menghakimi) HANYA jika memang relevan, yaitu bila alpha > 3 hari, piket sering mangkir, atau ada catatan perilaku yang kurang baik di jurnal guru. Jika semua data baik/netral, jangan memaksakan poin perbaikan; fokus pada apresiasi dan dorongan agar konsisten.
+5. Sisipkan nasihat motivasi (bukan menghakimi) HANYA jika memang relevan, yaitu bila alpha > 3 hari atau sakit >5 hari, piket sering mangkir, atau ada catatan perilaku yang kurang baik di jurnal guru. Jika semua data baik/netral, jangan memaksakan poin perbaikan; fokus pada apresiasi dan dorongan agar konsisten.
 6. Gunakan bahasa Indonesia baku yang sopan, hangat, dan rapi, sesuai gaya penulisan wali kelas di buku raport.
 `;
 
