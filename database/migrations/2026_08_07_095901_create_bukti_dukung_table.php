@@ -19,9 +19,7 @@ return new class extends Migration
             // Informasi file bukti dukung
             $table->string('nama_bukti'); // Contoh: "Sertifikat Pelatihan", "SK Mengajar"
             $table->string('file_path');  // Lokasi file disimpan (storage/app/public/...) atau URL Google Drive
-
-            // Opsional: Jika butuh status verifikasi/validasi
-            // $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
+            table->text('tautan')->nullable();
 
             $table->timestamps();
         });

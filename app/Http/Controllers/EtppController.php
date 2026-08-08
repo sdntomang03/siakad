@@ -239,50 +239,60 @@ class EtppController extends Controller
     }
 
     /**
-     * DITAMBAHKAN: Method untuk memproses upload Bukti Dukung
+     * Method untuk memproses upload Bukti Dukung (Bisa File atau Link)
      */
     public function uploadBukti(Request $request)
     {
-        // 1. Validasi (nama_bukti dihapus dari validasi karena dibuat otomatis)
+        // 1. Validasi dinamis berdasarkan jenis_bukti
         $request->validate([
             'output_target_id' => 'required|exists:output_target,id',
-            'file_bukti' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // Maks 5MB
+            'jenis_bukti' => 'required|in:file,link',
+            // Jika pilih file, maka file_bukti wajib diisi
+            'file_bukti' => 'nullable|required_if:jenis_bukti,file|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            // Jika pilih link, maka link_bukti wajib diisi dan formatnya harus URL
+            'link_bukti' => 'nullable|required_if:jenis_bukti,link|url',
+        ], [
+            'file_bukti.required_if' => 'File dokumen wajib diunggah jika Anda memilih opsi File.',
+            'link_bukti.required_if' => 'Tautan/URL wajib diisi jika Anda memilih opsi Link.',
+            'link_bukti.url' => 'Format Tautan tidak valid. Pastikan diawali dengan http:// atau https://',
         ]);
 
         try {
             $user = auth()->user();
+            $outputTarget = DB::table('output_target')->where('id', $request->output_target_id)->first();
 
-            if ($request->hasFile('file_bukti')) {
-                $file = $request->file('file_bukti');
+            // Buat nama otomatis
+            $namaOutputBersih = Str::limit($outputTarget->deskripsi_output, 150, '...');
+            $namaBuktiOtomatis = $namaOutputBersih.' - '.$user->name;
 
-                // 2. Ambil data Output Target untuk mendapatkan nama output-nya
-                $outputTarget = DB::table('output_target')->where('id', $request->output_target_id)->first();
+            // Siapkan kerangka data yang akan disimpan
+            $dataInsert = [
+                'user_id' => $user->id,
+                'output_target_id' => $request->output_target_id,
+                'nama_bukti' => $namaBuktiOtomatis,
+                'jenis_bukti' => $request->jenis_bukti,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
 
-                // 3. Buat nama bukti otomatis: [Deskripsi Output] - [Nama User]
-                // Kita batasi panjang deskripsi output (misal 150 karakter) agar tidak error masuk ke database (batas varchar 255)
-                $namaOutputBersih = Str::limit($outputTarget->deskripsi_output, 150, '...');
-                $namaBuktiOtomatis = $namaOutputBersih.' - '.$user->name;
-
-                // 4. Simpan file fisik ke folder 'storage/app/public/bukti_dukung'
-                $path = $file->store('bukti_dukung', 'public');
-
-                // 5. Masukkan data ke tabel bukti_dukung
-                DB::table('bukti_dukung')->insert([
-                    'user_id' => $user->id,
-                    'output_target_id' => $request->output_target_id,
-                    'nama_bukti' => $namaBuktiOtomatis,
-                    'file_path' => $path,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-
-                return back()->with('success', 'Bukti dukung berhasil diunggah!');
+            // 2. Cek apakah File atau Link yang disimpan
+            if ($request->jenis_bukti === 'file' && $request->hasFile('file_bukti')) {
+                // Simpan File Fisik
+                $dataInsert['file_path'] = $request->file('file_bukti')->store('bukti_dukung', 'public');
+                $dataInsert['tautan'] = null;
+            } elseif ($request->jenis_bukti === 'link') {
+                // Simpan Tautan/URL
+                $dataInsert['tautan'] = $request->link_bukti;
+                $dataInsert['file_path'] = null;
             }
 
-            return back()->with('error', 'File tidak ditemukan saat diupload.');
+            // 3. Masukkan ke database
+            DB::table('bukti_dukung')->insert($dataInsert);
+
+            return back()->with('success', 'Bukti dukung berhasil ditambahkan!');
 
         } catch (Exception $e) {
-            return back()->with('error', 'Gagal mengunggah: '.$e->getMessage());
+            return back()->with('error', 'Gagal menambahkan bukti: '.$e->getMessage());
         }
     }
 

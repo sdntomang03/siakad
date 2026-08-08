@@ -235,16 +235,36 @@
                                                             </div>
 
                                                             {{-- Daftar Individual File Bukti --}}
+                                                            {{-- Daftar Individual File & Link Bukti --}}
                                                             <div class="flex flex-wrap gap-2">
                                                                 @foreach($output->buktiDukung as $bukti)
                                                                 <div
                                                                     class="inline-flex items-center bg-indigo-50 dark:bg-indigo-900/20 rounded-md border border-indigo-100 dark:border-indigo-800/50 overflow-hidden">
 
+                                                                    {{-- Cek Jenis Bukti (Tentukan URL yang dipakai)
+                                                                    --}}
+                                                                    @php
+                                                                    $urlBukti = $bukti->jenis_bukti === 'link' ?
+                                                                    $bukti->tautan : asset('storage/' .
+                                                                    $bukti->file_path);
+                                                                    @endphp
+
                                                                     {{-- Link Lihat Dokumen --}}
-                                                                    <a href="{{ asset('storage/' . $bukti->file_path) }}"
-                                                                        target="_blank"
+                                                                    <a href="{{ $urlBukti }}" target="_blank"
                                                                         class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition"
                                                                         title="Lihat Dokumen">
+
+                                                                        {{-- Ikon berubah tergantung jenis (File / Link)
+                                                                        --}}
+                                                                        @if($bukti->jenis_bukti === 'link')
+                                                                        <svg class="w-4 h-4 shrink-0" fill="none"
+                                                                            stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round"
+                                                                                stroke-linejoin="round" stroke-width="2"
+                                                                                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                                                            </path>
+                                                                        </svg>
+                                                                        @else
                                                                         <svg class="w-4 h-4 shrink-0" fill="none"
                                                                             stroke="currentColor" viewBox="0 0 24 24">
                                                                             <path stroke-linecap="round"
@@ -252,6 +272,8 @@
                                                                                 d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
                                                                             </path>
                                                                         </svg>
+                                                                        @endif
+
                                                                         <span
                                                                             class="truncate max-w-[150px] sm:max-w-[200px]">{{
                                                                             $bukti->nama_bukti }}</span>
@@ -261,7 +283,7 @@
                                                                     <form
                                                                         action="{{ route('etpp.destroy_bukti', $bukti->id) }}"
                                                                         method="POST"
-                                                                        onsubmit="return confirm('Hapus file dokumen ini?');"
+                                                                        onsubmit="return confirm('Hapus dokumen ini?');"
                                                                         class="flex">
                                                                         @csrf
                                                                         @method('DELETE')
@@ -283,10 +305,11 @@
                                                                 @endforeach
                                                             </div>
 
+                                                            {{-- BATAS DAFTAR BUKTI --}}
                                                         </div>
                                                         @endif
 
-                                                        {{-- Form Upload Bukti Baru --}}
+                                                        {{-- Form Upload Bukti Baru (Dinamis: File / Link) --}}
                                                         <form action="{{ route('etpp.upload_bukti') }}" method="POST"
                                                             enctype="multipart/form-data"
                                                             class="flex flex-col sm:flex-row gap-3 items-center bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 mt-2">
@@ -296,10 +319,25 @@
                                                             <input type="hidden" name="output_target_id"
                                                                 value="{{ $output->id }}">
 
-                                                            {{-- Input File --}}
-                                                            <input type="file" name="file_bukti" required
+                                                            {{-- Dropdown Pilih Jenis Bukti --}}
+                                                            <select name="jenis_bukti"
+                                                                onchange="toggleBuktiInput(this, {{ $output->id }})"
+                                                                class="w-full sm:w-1/4 text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1.5 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                                                <option value="file">Unggah File</option>
+                                                                <option value="link">Tautkan Link</option>
+                                                            </select>
+
+                                                            {{-- Input 1: File --}}
+                                                            <input type="file" name="file_bukti"
+                                                                id="input_file_{{ $output->id }}" required
                                                                 accept=".pdf,.jpg,.jpeg,.png"
-                                                                class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 dark:file:bg-indigo-900 dark:file:text-indigo-300 cursor-pointer transition">
+                                                                class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer transition">
+
+                                                            {{-- Input 2: Link (Sembunyi secara default) --}}
+                                                            <input type="url" name="link_bukti"
+                                                                id="input_link_{{ $output->id }}" style="display: none;"
+                                                                placeholder="Contoh: https://drive.google.com/..."
+                                                                class="w-full text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1.5 focus:ring-indigo-500 focus:border-indigo-500 transition">
 
                                                             {{-- Tombol Submit --}}
                                                             <button type="submit"
@@ -311,60 +349,92 @@
                                                                         d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
                                                                     </path>
                                                                 </svg>
-                                                                Unggah Bukti
+                                                                Simpan
                                                             </button>
                                                         </form>
-                                                    </div>
 
-                                                </li>
-                                                @endforeach
-                                            </ul>
+                                                    </div>
+                                                    @endif
+
+                                                    {{-- Form Upload Bukti Baru --}}
+                                                    <form action="{{ route('etpp.upload_bukti') }}" method="POST"
+                                                        enctype="multipart/form-data"
+                                                        class="flex flex-col sm:flex-row gap-3 items-center bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 mt-2">
+                                                        @csrf
+
+                                                        {{-- Hidden ID Output Target --}}
+                                                        <input type="hidden" name="output_target_id"
+                                                            value="{{ $output->id }}">
+
+                                                        {{-- Input File --}}
+                                                        <input type="file" name="file_bukti" required
+                                                            accept=".pdf,.jpg,.jpeg,.png"
+                                                            class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 dark:file:bg-indigo-900 dark:file:text-indigo-300 cursor-pointer transition">
+
+                                                        {{-- Tombol Submit --}}
+                                                        <button type="submit"
+                                                            class="w-full sm:w-auto shrink-0 bg-indigo-600 text-white text-xs px-5 py-2 rounded-md hover:bg-indigo-700 font-bold transition shadow-sm flex items-center justify-center gap-1.5">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                                viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
+                                                                </path>
+                                                            </svg>
+                                                            Unggah Bukti
+                                                        </button>
+                                                    </form>
                                         </div>
 
+                                        </li>
+                                        @endforeach
+                                        </ul>
                                     </div>
-                                    @endif
 
-                                    @endforeach
                                 </div>
+                                @endif
+
+                                @endforeach
                             </div>
-
-                            @if(!$loop->last)
-                            <hr class="border-gray-100 dark:border-gray-700"> @endif
-                            @empty
-                            <p class="text-sm text-gray-500 italic">Belum ada Rencana Hasil Kerja untuk kategori ini.
-                            </p>
-                            @endforelse
                         </div>
-                    </div>
-                    @endforeach
-                    @else
-                    {{-- Tampilan jika Data Kosong / Belum Import Data e-Kinerja --}}
-                    <div
-                        class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center flex flex-col items-center justify-center h-full min-h-[300px]">
-                        <div
-                            class="relative w-20 h-20 mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-400 dark:text-gray-500">
-                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-700 dark:text-gray-300">Dokumen Tidak Ditemukan</h3>
-                        <p class="text-sm text-gray-500 mt-1 max-w-sm">Anda belum mengimpor data e-Kinerja, atau tidak
-                            ada output yang sesuai dengan filter <strong class="text-gray-600 dark:text-gray-400">{{
-                                $filter_tw }}</strong>.</p>
 
-                        <a href="{{ route('etpp.import.form') }}"
-                            class="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-md hover:bg-indigo-700 transition">
-                            Import Data e-Kinerja Sekarang
-                        </a>
+                        @if(!$loop->last)
+                        <hr class="border-gray-100 dark:border-gray-700"> @endif
+                        @empty
+                        <p class="text-sm text-gray-500 italic">Belum ada Rencana Hasil Kerja untuk kategori ini.
+                        </p>
+                        @endforelse
                     </div>
-                    @endif
-
                 </div>
-            </div>
+                @endforeach
+                @else
+                {{-- Tampilan jika Data Kosong / Belum Import Data e-Kinerja --}}
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center flex flex-col items-center justify-center h-full min-h-[300px]">
+                    <div
+                        class="relative w-20 h-20 mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-400 dark:text-gray-500">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-700 dark:text-gray-300">Dokumen Tidak Ditemukan</h3>
+                    <p class="text-sm text-gray-500 mt-1 max-w-sm">Anda belum mengimpor data e-Kinerja, atau tidak
+                        ada output yang sesuai dengan filter <strong class="text-gray-600 dark:text-gray-400">{{
+                            $filter_tw }}</strong>.</p>
 
+                    <a href="{{ route('etpp.import.form') }}"
+                        class="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-md hover:bg-indigo-700 transition">
+                        Import Data e-Kinerja Sekarang
+                    </a>
+                </div>
+                @endif
+
+            </div>
         </div>
+
+    </div>
     </div>
 
 </body>
