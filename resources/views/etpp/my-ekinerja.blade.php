@@ -152,8 +152,10 @@
                         {{-- Body Daftar RHK & Aksi --}}
                         <div class="p-5 space-y-6">
                             @php
-                            // Menyaring RHK: Hanya simpan RHK yang memiliki minimal 1 Rencana Aksi dengan Output sesuai
-                            filter TW
+                            /*
+                            * Menyaring RHK: Hanya simpan RHK yang memiliki
+                            * minimal 1 Rencana Aksi dengan Output sesuai filter TW
+                            */
                             $filteredRhk = $kategori->rhk->filter(function($rhk) {
                             return $rhk->rencanaAksi->contains(function($ra) {
                             return count($ra->outputTarget) > 0;
