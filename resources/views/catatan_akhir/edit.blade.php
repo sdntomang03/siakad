@@ -409,9 +409,9 @@ Tulis satu paragraf narasi catatan akhir semester untuk siswa di atas, khusus be
 Aturan Penulisan (WAJIB dipatuhi):
 1. Hasilkan HANYA satu paragraf, 3-5 kalimat, sekitar 80-120 kata. Tanpa list, tanpa markdown (bintang/tebal), tanpa kalimat pembuka atau penutup basa-basi (misalnya "Berikut catatannya" atau "Semoga bermanfaat"). Langsung teks narasi.
 2. Sebut siswa sebagai "Ananda ${namaSiswa}" satu kali di awal paragraf, selanjutnya gunakan kata ganti agar tidak diulang-ulang.
-3. Berikan apresiasi jika peringkatnya baik, atau berikan apresiasi spesifik pada capaian akademik/observasi tertingginya secara ringkas. Tidak perlu menyebutkan deskripsi nilai secara detail setiap mata pelajaran, cukup fokus pada capaian yang menonjol. Jika peringkatnya rendah, fokus pada saran perbaikan dan dorongan untuk meningkatkan prestasi.
+3. Berikan apresiasi jika peringkatnya baik, atau berikan apresiasi spesifik pada capaian akademik tertingginya secara ringkas. Tidak perlu menyebutkan deskripsi nilai observasi secara detail setiap mata pelajaran, cukup fokus pada capaian yang menonjol. Jika peringkatnya rendah, fokus pada saran perbaikan dan dorongan untuk meningkatkan prestasi.
 4. Sampaikan data kehadiran dan kedisiplinan secara kualitatif (misalnya "kehadiran sangat baik" atau "perlu ditingkatkan kedisiplinannya"), bukan menyebut angka mentah, kecuali angkanya memang signifikan untuk ditonjolkan.
-5. Sisipkan nasihat motivasi (bukan menghakimi) HANYA jika memang relevan, yaitu bila alpha > 3 hari, sering mangkir piket, nilai merosot, atau ada catatan perilaku yang kurang baik. Jika semua data baik/netral, fokus pada apresiasi dan dorongan untuk konsisten.
+5. Sisipkan nasihat motivasi (bukan menghakimi) HANYA jika memang relevan, yaitu bila sakit > 3 hari, sering mangkir piket, nilai merosot, atau ada catatan perilaku yang kurang baik. Jika semua data baik/netral, fokus pada apresiasi dan dorongan untuk konsisten.
 6. Gunakan bahasa Indonesia baku yang sopan, hangat, dan rapi. Tidak perlu menulisakan peringkat siswa secara eksplisit jika tidak relevan, cukup gunakan kualitatif.
 7. Jangan menggunakan kata sempurna, luar biasa, hebat, atau kata-kata hiperbola. Gunakan kata yang realistis dan menenangkan hati orang tua.
 `;
