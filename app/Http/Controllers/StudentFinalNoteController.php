@@ -73,8 +73,19 @@ class StudentFinalNoteController extends Controller
 
     public function edit($student_id, $classroom_id)
     {
-        // 1. Asumsi menggunakan tahun ajaran aktif
-        $active_academic_year_id = 1; // Ubah sesuai ID tahun ajaran aktif sistem Anda
+        $user = auth()->user();
+        $schoolId = $user->school_id ?? ($user->employee->school_id ?? 0);
+
+        // 1. Ambil Tahun Ajaran Aktif secara Dinamis
+        $activeYear = AcademicYear::where('school_id', $schoolId)
+            ->where('is_active', true)
+            ->first();
+
+        if (! $activeYear) {
+            return back()->with('error', 'Tahun ajaran aktif belum diatur oleh Admin!');
+        }
+
+        $active_academic_year_id = $activeYear->id;
 
         $student = Student::findOrFail($student_id);
         $classroom = Classroom::findOrFail($classroom_id);
@@ -173,7 +184,9 @@ class StudentFinalNoteController extends Controller
 
             if ($scores->count() > 0) {
                 $avg = $scores->sum('score') / $scores->count();
-                $persentase = ($avg / $ass->scale) * 100;
+                // Cegah error division by zero jika scale tidak sengaja null di database
+                $scale = $ass->scale ?? 4;
+                $persentase = ($avg / $scale) * 100;
 
                 $predikat = 'Perlu Bimbingan';
                 if ($persentase >= 85) {
