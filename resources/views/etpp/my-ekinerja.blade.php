@@ -320,8 +320,8 @@
                                                             <select name="jenis_bukti"
                                                                 onchange="toggleBuktiInput(this, {{ $output->id }})"
                                                                 class="w-full sm:w-1/4 text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1.5 focus:ring-indigo-500 focus:border-indigo-500 transition">
-                                                                <option value="file">Unggah File</option>
                                                                 <option value="link">Tautkan Link</option>
+                                                                <option value="file">Unggah File</option>
                                                             </select>
 
                                                             {{-- Input 1: File --}}
