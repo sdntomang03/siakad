@@ -270,17 +270,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/ijazah/pengolahan', [IjazahController::class, 'index'])->name('ijazah.index');
     Route::patch('/subjects/{subject}/toggle-sidanira', [SubjectController::class, 'toggleSidanira'])->name('subjects.toggle-sidanira');
 });
-/*
-|--------------------------------------------------------------------------
-| ROUTE PUBLIK (Bisa diakses tanpa login)
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/renkin', [RenkinController::class, 'index'])->name('renkin.index');
-
-// Rute Pencarian dan Lihat e-Kinerja berdasarkan NIP
-Route::post('/etpp/search', [EtppController::class, 'search'])->name('etpp.search');
-Route::get('/etpp/{nip?}', [EtppController::class, 'show'])->name('etpp.show');
 
 /*
 |--------------------------------------------------------------------------
@@ -303,4 +292,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/etpp/import', [EtppController::class, 'importJson'])->name('etpp.import.process');
 
 });
+Route::get('/renkin', [RenkinController::class, 'index'])->name('renkin.index');
+
+// Rute Pencarian dan Lihat e-Kinerja berdasarkan NIP
+Route::post('/etpp/search', [EtppController::class, 'search'])->name('etpp.search');
+Route::get('/etpp/{nip?}', [EtppController::class, 'show'])->name('etpp.show');
 require __DIR__.'/auth.php';
