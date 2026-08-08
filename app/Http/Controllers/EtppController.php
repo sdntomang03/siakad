@@ -296,6 +296,9 @@ class EtppController extends Controller
         }
     }
 
+    /**
+     * Menghapus 1 Bukti (File atau Link)
+     */
     public function destroyBukti($id)
     {
         try {
@@ -309,23 +312,23 @@ class EtppController extends Controller
                 return back()->with('error', 'Dokumen tidak ditemukan atau Anda tidak memiliki akses.');
             }
 
-            // Hapus file fisik dari storage
-            if (Storage::disk('public')->exists($bukti->file_path)) {
+            // Hapus file fisik dari storage HANYA JIKA file_path tidak kosong (bukan link)
+            if (! empty($bukti->file_path) && Storage::disk('public')->exists($bukti->file_path)) {
                 Storage::disk('public')->delete($bukti->file_path);
             }
 
             // Hapus data dari database
             DB::table('bukti_dukung')->where('id', $id)->delete();
 
-            return back()->with('success', 'File bukti berhasil dihapus.');
+            return back()->with('success', 'Bukti berhasil dihapus.');
 
         } catch (Exception $e) {
-            return back()->with('error', 'Gagal menghapus file: '.$e->getMessage());
+            return back()->with('error', 'Gagal menghapus data: '.$e->getMessage());
         }
     }
 
     /**
-     * DITAMBAHKAN: Menghapus Semua File Bukti dalam 1 Output
+     * Menghapus Semua File/Link Bukti dalam 1 Output
      */
     public function destroyBuktiByOutput($output_id)
     {
@@ -342,7 +345,8 @@ class EtppController extends Controller
 
             // Looping untuk menghapus semua file fisiknya
             foreach ($buktiList as $bukti) {
-                if (Storage::disk('public')->exists($bukti->file_path)) {
+                // Hapus HANYA JIKA file_path tidak kosong (bukan link)
+                if (! empty($bukti->file_path) && Storage::disk('public')->exists($bukti->file_path)) {
                     Storage::disk('public')->delete($bukti->file_path);
                 }
             }
@@ -353,10 +357,10 @@ class EtppController extends Controller
                 ->where('user_id', auth()->id())
                 ->delete();
 
-            return back()->with('success', 'Semua file bukti pada output tersebut berhasil dibersihkan.');
+            return back()->with('success', 'Semua bukti pada output tersebut berhasil dibersihkan.');
 
         } catch (Exception $e) {
-            return back()->with('error', 'Gagal menghapus file: '.$e->getMessage());
+            return back()->with('error', 'Gagal menghapus data: '.$e->getMessage());
         }
     }
 }
