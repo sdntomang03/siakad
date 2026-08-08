@@ -98,12 +98,18 @@ class StudentFinalNoteController extends Controller
             ->count();
 
         // 3. Tarik Rekap Absensi
-        // $sakit = Absensi::where('student_id', $student_id)->where('status', 'S')->count();
-        // $izin = Absensi::where('student_id', $student_id)->where('status', 'I')->count();
-        // $alpha = Absensi::where('student_id', $student_id)->where('status', 'A')->count();
         $sakit = 0;
         $izin = 0;
         $alpha = 0;
+
+        // 4. Tarik Rekap Nilai Siswa (Contoh Mockup, sesuaikan dengan Model Nilai Anda nanti)
+        $rekapNilai = collect([
+            (object) ['nama_mapel' => 'Pendidikan Agama & Budi Pekerti', 'nilai_akhir' => 88],
+            (object) ['nama_mapel' => 'Pendidikan Pancasila', 'nilai_akhir' => 85],
+            (object) ['nama_mapel' => 'Bahasa Indonesia', 'nilai_akhir' => 90],
+            (object) ['nama_mapel' => 'Matematika', 'nilai_akhir' => 78],
+            (object) ['nama_mapel' => 'Ilmu Pengetahuan Alam', 'nilai_akhir' => 82],
+        ]);
 
         // Cari apakah sudah ada data catatan akhir sebelumnya
         $finalNote = StudentFinalNote::where('student_id', $student_id)
@@ -114,7 +120,8 @@ class StudentFinalNoteController extends Controller
         return view('catatan_akhir.edit', compact(
             'student', 'classroom', 'teacherNotes',
             'piketTerlaksana', 'piketTidak',
-            'sakit', 'izin', 'alpha', 'finalNote', 'active_academic_year_id'
+            'sakit', 'izin', 'alpha', 'finalNote', 'active_academic_year_id',
+            'rekapNilai' // Lempar variabel Rekap Nilai ke View
         ));
     }
 
