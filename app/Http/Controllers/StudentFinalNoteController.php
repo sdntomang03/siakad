@@ -77,10 +77,11 @@ class StudentFinalNoteController extends Controller
         $student = Student::findOrFail($student_id);
         $classroom = Classroom::findOrFail($classroom_id);
 
-        // 1. Tarik Rekap Catatan Guru (Hanya yang is_for_report = true)
+        // 1. Tarik SEMUA Rekap Catatan Guru (Tanpa filter is_for_report)
         $teacherNotes = TeacherNote::where('student_id', $student_id)
             ->where('classroom_id', $classroom_id)
             ->where('academic_year_id', $active_academic_year_id)
+            ->orderBy('tanggal', 'desc') // Urutkan dari kejadian terbaru
             ->get();
 
         // 2. Tarik Rekap Jurnal Piket
@@ -101,13 +102,20 @@ class StudentFinalNoteController extends Controller
         $izin = 0;
         $alpha = 0;
 
-        // 4. Tarik Rekap Nilai Siswa (Contoh Mockup, sesuaikan dengan Model Nilai Anda nanti)
+        // 4. Tarik Rekap Nilai Siswa (Contoh Mockup Lengkap)
+        // INGAT: Ganti ini dengan query ke tabel nilai/grade Anda yang sebenarnya nanti
         $rekapNilai = collect([
             (object) ['nama_mapel' => 'Pendidikan Agama & Budi Pekerti', 'nilai_akhir' => 88],
             (object) ['nama_mapel' => 'Pendidikan Pancasila', 'nilai_akhir' => 85],
             (object) ['nama_mapel' => 'Bahasa Indonesia', 'nilai_akhir' => 90],
             (object) ['nama_mapel' => 'Matematika', 'nilai_akhir' => 78],
             (object) ['nama_mapel' => 'Ilmu Pengetahuan Alam', 'nilai_akhir' => 82],
+            (object) ['nama_mapel' => 'Ilmu Pengetahuan Sosial', 'nilai_akhir' => 84],
+            (object) ['nama_mapel' => 'Bahasa Inggris', 'nilai_akhir' => 89],
+            (object) ['nama_mapel' => 'Seni Budaya', 'nilai_akhir' => 92],
+            (object) ['nama_mapel' => 'Pendidikan Jasmani, Olahraga, & Kesehatan', 'nilai_akhir' => 86],
+            (object) ['nama_mapel' => 'Prakarya dan Kewirausahaan', 'nilai_akhir' => 88],
+            (object) ['nama_mapel' => 'Muatan Lokal', 'nilai_akhir' => 90],
         ]);
 
         // Cari apakah sudah ada data catatan akhir sebelumnya
@@ -120,7 +128,7 @@ class StudentFinalNoteController extends Controller
             'student', 'classroom', 'teacherNotes',
             'piketTerlaksana', 'piketTidak',
             'sakit', 'izin', 'alpha', 'finalNote', 'active_academic_year_id',
-            'rekapNilai' // Lempar variabel Rekap Nilai ke View
+            'rekapNilai'
         ));
     }
 

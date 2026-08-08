@@ -40,19 +40,19 @@
                                     (Absensi)</p>
                                 <ul class="text-sm space-y-2">
                                     <li
-                                        class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg">
+                                        class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
                                         <span class="text-slate-600 dark:text-slate-400 font-medium">Sakit</span>
                                         <span class="font-bold text-amber-500">{{ $finalNote->sakit ?? $sakit }}
                                             Hari</span>
                                     </li>
                                     <li
-                                        class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg">
+                                        class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
                                         <span class="text-slate-600 dark:text-slate-400 font-medium">Izin</span>
                                         <span class="font-bold text-blue-500">{{ $finalNote->izin ?? $izin }}
                                             Hari</span>
                                     </li>
                                     <li
-                                        class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg">
+                                        class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
                                         <span class="text-slate-600 dark:text-slate-400 font-medium">Alpha</span>
                                         <span class="font-bold text-rose-500">{{ $finalNote->alpha ?? $alpha }}
                                             Hari</span>
@@ -65,13 +65,13 @@
                                     Piket Harian</p>
                                 <ul class="text-sm space-y-2">
                                     <li
-                                        class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg">
+                                        class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
                                         <span class="text-slate-600 dark:text-slate-400 font-medium">Tugas
                                             Terlaksana</span>
                                         <span class="font-bold text-emerald-500">{{ $piketTerlaksana }}x</span>
                                     </li>
                                     <li
-                                        class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg">
+                                        class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
                                         <span class="text-slate-600 dark:text-slate-400 font-medium">Tidak/Kabur</span>
                                         <span class="font-bold text-rose-500">{{ $piketTidak }}x</span>
                                     </li>
@@ -88,10 +88,11 @@
                             Rekap Nilai Akademik</h3>
 
                         @if(isset($rekapNilai) && count($rekapNilai) > 0)
+                        {{-- Scrollbar dihapus, dibiarkan melar ke bawah --}}
                         <ul class="text-sm space-y-2">
                             @foreach($rekapNilai as $nilai)
                             <li
-                                class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg">
+                                class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2.5 rounded-lg border border-slate-100 dark:border-slate-700/50">
                                 <span class="text-slate-600 dark:text-slate-400 font-medium truncate pr-3">{{
                                     $nilai->nama_mapel }}</span>
                                 <span class="font-black text-indigo-600 dark:text-indigo-400">{{ $nilai->nilai_akhir
@@ -121,14 +122,22 @@
                                 pada semester ini.</p>
                         </div>
                         @else
-                        <ul class="text-sm space-y-3 max-h-80 overflow-y-auto pr-2">
+                        {{-- Scrollbar dihapus, dibiarkan melar ke bawah --}}
+                        <ul class="text-sm space-y-3">
                             @foreach($teacherNotes as $note)
                             <li
-                                class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                                <span
-                                    class="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 text-[10px] font-bold uppercase rounded tracking-wider mb-2">{{
-                                    $note->jenis_catatan }}</span>
-                                <p class="text-slate-600 dark:text-slate-300 leading-relaxed">{{ $note->catatan }}</p>
+                                class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span
+                                        class="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 text-[10px] font-bold uppercase rounded tracking-wider">{{
+                                        $note->jenis_catatan }}</span>
+                                    <span
+                                        class="text-[10px] text-slate-400 font-bold bg-white dark:bg-slate-800 px-2 py-1 rounded shadow-sm">
+                                        {{ \Carbon\Carbon::parse($note->tanggal)->translatedFormat('d M Y') }}
+                                    </span>
+                                </div>
+                                <p class="text-slate-600 dark:text-slate-300 leading-relaxed mt-1">{{ $note->catatan }}
+                                </p>
                             </li>
                             @endforeach
                         </ul>
