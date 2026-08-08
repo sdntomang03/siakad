@@ -279,6 +279,14 @@ Route::get('/etpp/ku', [EtppController::class, 'myEkinerja'])
 Route::post('/etpp/upload-bukti', [EtppController::class, 'uploadBukti'])
     ->name('etpp.upload_bukti')
     ->middleware('auth');
+Route::delete('/etpp/bukti/{id}', [EtppController::class, 'destroyBukti'])
+    ->name('etpp.destroy_bukti')
+    ->middleware('auth');
+
+// Rute untuk menghapus SEMUA file bukti pada 1 output tertentu
+Route::delete('/etpp/output/{output_id}/bukti', [EtppController::class, 'destroyBuktiByOutput'])
+    ->name('etpp.destroy_bukti_output')
+    ->middleware('auth');
 // Rute untuk memproses form upload JSON
 Route::post('/etpp/import', [EtppController::class, 'importJson'])->name('etpp.import.process');
 // 2. Route GET dengan parameter {nip} untuk URL bersih (Misal: /etpp/198502022010012004)

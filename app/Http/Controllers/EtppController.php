@@ -7,6 +7,7 @@ use App\Models\Kategori; // Pastikan model Kategori di-import untuk fungsi searc
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class EtppController extends Controller
@@ -282,6 +283,70 @@ class EtppController extends Controller
 
         } catch (Exception $e) {
             return back()->with('error', 'Gagal mengunggah: '.$e->getMessage());
+        }
+    }
+
+    public function destroyBukti($id)
+    {
+        try {
+            // Cari data bukti yang sesuai dengan ID dan dimiliki oleh user yang sedang login
+            $bukti = DB::table('bukti_dukung')
+                ->where('id', $id)
+                ->where('user_id', auth()->id())
+                ->first();
+
+            if (! $bukti) {
+                return back()->with('error', 'Dokumen tidak ditemukan atau Anda tidak memiliki akses.');
+            }
+
+            // Hapus file fisik dari storage
+            if (Storage::disk('public')->exists($bukti->file_path)) {
+                Storage::disk('public')->delete($bukti->file_path);
+            }
+
+            // Hapus data dari database
+            DB::table('bukti_dukung')->where('id', $id)->delete();
+
+            return back()->with('success', 'File bukti berhasil dihapus.');
+
+        } catch (Exception $e) {
+            return back()->with('error', 'Gagal menghapus file: '.$e->getMessage());
+        }
+    }
+
+    /**
+     * DITAMBAHKAN: Menghapus Semua File Bukti dalam 1 Output
+     */
+    public function destroyBuktiByOutput($output_id)
+    {
+        try {
+            // Tarik semua bukti yang terikat dengan output tersebut dan milik user ini
+            $buktiList = DB::table('bukti_dukung')
+                ->where('output_target_id', $output_id)
+                ->where('user_id', auth()->id())
+                ->get();
+
+            if ($buktiList->isEmpty()) {
+                return back()->with('error', 'Tidak ada bukti yang bisa dihapus pada output ini.');
+            }
+
+            // Looping untuk menghapus semua file fisiknya
+            foreach ($buktiList as $bukti) {
+                if (Storage::disk('public')->exists($bukti->file_path)) {
+                    Storage::disk('public')->delete($bukti->file_path);
+                }
+            }
+
+            // Hapus semua baris data dari database
+            DB::table('bukti_dukung')
+                ->where('output_target_id', $output_id)
+                ->where('user_id', auth()->id())
+                ->delete();
+
+            return back()->with('success', 'Semua file bukti pada output tersebut berhasil dibersihkan.');
+
+        } catch (Exception $e) {
+            return back()->with('error', 'Gagal menghapus file: '.$e->getMessage());
         }
     }
 }
