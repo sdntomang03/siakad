@@ -15,13 +15,10 @@ return new class extends Migration
 
             $table->string('nama_bukti');
 
-          
             $table->enum('jenis_bukti', ['file', 'link'])->default('file');
 
-        
             $table->string('file_path')->nullable();
 
-       
             $table->text('tautan')->nullable();
 
             $table->timestamps();
