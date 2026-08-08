@@ -368,24 +368,29 @@
                 }
 
                 // 2. Siapkan Prompt untuk Gemini
-                const prompt = `
-                Bertindaklah sebagai Wali Kelas yang suportif, bijaksana, dan profesional di sekolah. Berlatarbelakangkan data akademik, kehadiran, kedisiplinan, dan catatan guru yang diberikan, buatkan ringkasan catatan akhir semester untuk siswa bernama ${namaSiswa}.
-                Kamu sangat memahami psikologi perkembangan anak, dan harus menulis catatan yang menyejukkan hati orang tua, memberikan apresiasi, serta motivasi untuk perbaikan jika diperlukan.
+              const prompt = `
+Kamu adalah Wali Kelas yang suportif, bijaksana, dan profesional di sekolah dasar. Kamu memahami psikologi perkembangan anak dan menulis catatan akhir semester yang menenangkan hati orang tua saat membaca raport, tetap jujur, dan memberi apresiasi maupun motivasi perbaikan bila perlu.
 
-                Analisis data terekam siswa berikut ini:
-                - KEHADIRAN: Sakit ${sakit} hari, Izin ${izin} hari, Tanpa Keterangan/Alpha ${alpha} hari.
-                - TUGAS KEDISIPLINAN (PIKET): Terlaksana ${piketBagus} kali, Mangkir ${piketBuruk} kali. ${stringPiketDetail ? 'Alasan sering mangkir: ' + stringPiketDetail : ''}
-                - RATA-RATA NILAI AKADEMIK (TES): ${stringNilaiTes}.
-                - NILAI OBSERVASI (PRAKTIK/PROYEK): ${stringObservasi}.
-                - RIWAYAT PERILAKU/JURNAL GURU: ${stringCatatanGuru}.
+<data_siswa>
+Nama: ${namaSiswa}
+Kehadiran: Sakit ${sakit} hari, Izin ${izin} hari, Tanpa Keterangan/Alpha ${alpha} hari
+Piket: Terlaksana ${piketBagus} kali, Mangkir ${piketBuruk} kali${stringPiketDetail ? `, alasan sering mangkir: ${stringPiketDetail}` : ''}
+Rata-rata Nilai Akademik (Tes): ${stringNilaiTes}
+Nilai Observasi (Praktik/Proyek): ${stringObservasi}
+Riwayat Perilaku/Jurnal Guru: ${stringCatatanGuru || 'Tidak ada catatan khusus'}
+</data_siswa>
 
-                Instruksi Penulisan (SANGAT PENTING):
-                1. WAJIB tulis HANYA 1 paragraf padat. Tidak boleh terlalu panjang.
-                2. JANGAN membuat format list (bullet/nomor), JANGAN gunakan markdown tebal/bintang (**), dan JANGAN berikan kalimat pembuka/penutup basa-basi (seperti "Tentu, ini dia catatannya"). Langsung hasilkan teks narasi murni.
-                3. Rangkum dan berikan apresiasi pada nilai akademik / observasi yang paling tinggi, tidak perlu menyebutkan semua mata pelajaran.
-                4. Jika ada alpha > 3, sering mangkir piket, atau ada jurnal perilaku buruk, selipkan nasihat yang memotivasi (bukan menghakimi).
-                5. Gunakan bahasa Indonesia baku yang sopan, rapi, dan menyejukkan hati orang tua saat membaca raport.
-                `;
+Tugas:
+Tulis satu paragraf narasi catatan akhir semester untuk siswa di atas, khusus berdasarkan data yang tersedia. Jangan mengarang informasi, nilai, atau kejadian yang tidak ada di data.
+
+Aturan Penulisan (WAJIB dipatuhi):
+1. Hasilkan HANYA satu paragraf, 4-6 kalimat, sekitar 80-120 kata. Tanpa list, tanpa markdown (bintang/tebal), tanpa kalimat pembuka atau penutup basa-basi (misalnya "Berikut catatannya" atau "Semoga bermanfaat"). Langsung teks narasi.
+2. Sebut siswa sebagai "Ananda ${namaSiswa}" satu kali di awal paragraf, selanjutnya gunakan kata ganti (ia/dirinya) agar tidak diulang-ulang.
+3. Pilih satu atau dua capaian akademik/observasi TERTINGGI untuk diapresiasi secara spesifik namun ringkas. Tidak perlu menyebutkan semua mata pelajaran atau seluruh nilai.
+4. Sampaikan data kehadiran dan kedisiplinan secara kualitatif (misalnya "kehadiran sangat baik" atau "perlu ditingkatkan kedisiplinannya"), bukan menyebut angka mentah, kecuali angkanya memang signifikan untuk ditonjolkan sebagai pencapaian (misalnya kehadiran sempurna).
+5. Sisipkan nasihat motivasi (bukan menghakimi) HANYA jika memang relevan, yaitu bila alpha > 3 hari, piket sering mangkir, atau ada catatan perilaku yang kurang baik di jurnal guru. Jika semua data baik/netral, jangan memaksakan poin perbaikan; fokus pada apresiasi dan dorongan agar konsisten.
+6. Gunakan bahasa Indonesia baku yang sopan, hangat, dan rapi, sesuai gaya penulisan wali kelas di buku raport.
+`;
 
                 // 3. Panggil API Gemini
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`, {
