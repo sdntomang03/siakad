@@ -16,66 +16,37 @@ class EtppController extends Controller
      * Menangkap inputan dari Form, lalu mengubahnya menjadi URL bersih
      * sekaligus menangani logika pencarian dan Filter TW
      */
+    /**
+     * Menangkap inputan POST dari Form, lalu membuangnya (redirect) menjadi URL GET bersih
+     */
     public function search(Request $request)
     {
-        // Tangkap input dari form (GET request)
-        $nip = $request->input('nip');
-        $filter_tw = $request->input('tw', 'semua'); // Default 'semua' jika kosong
+        $request->validate([
+            'nip' => 'required',
+        ]);
 
-        $employee = null;
-        $data_kategori = collect(); // Kosongkan data secara default
-
-        if ($nip) {
-            // Bersihkan spasi berlebih pada NIP
-            $nip = trim($nip);
-
-            // Cari data pegawai
-            $employee = Employee::where('nip', $nip)->first();
-
-            // Jika pegawai ditemukan, tarik data e-Kinerja berdasarkan user_id milik pegawai tersebut
-            if ($employee && $employee->user_id) {
-
-                // Tarik Kategori beserta relasi di dalamnya (Eager Loading)
-                $query = Kategori::where('user_id', $employee->user_id)
-                    ->with([
-                        'rhk.rencanaAksi.outputTarget' => function ($q) use ($filter_tw) {
-                            // Filter Output berdasarkan TW jika bukan 'semua'
-                            if ($filter_tw !== 'semua') {
-                                $q->where('target_waktu', $filter_tw);
-                            }
-                        },
-                    ]);
-
-                // Sembunyikan Kategori/RHK yang tidak memiliki output sesuai filter TW
-                if ($filter_tw !== 'semua') {
-                    $query->whereHas('rhk.rencanaAksi.outputTarget', function ($q) use ($filter_tw) {
-                        $q->where('target_waktu', $filter_tw);
-                    });
-                }
-
-                $data_kategori = $query->get();
-            }
-        }
-
-        // Lempar data ke view (Gunakan etpp.show karena view utamanya ada di sana)
-        return view('etpp.show', compact('nip', 'employee', 'filter_tw', 'data_kategori'));
+        // Tangkap input dan alihkan ke method show (GET) dengan membawa parameter
+        return redirect()->route('etpp.show', [
+            'nip' => trim($request->nip),
+            'tw' => $request->tw ?? 'semua',
+        ]);
     }
 
     /**
-     * Memproses NIP yang ada di dalam URL jika diakses langsung tanpa lewat form
+     * Memproses NIP dari URL (GET) dan menampilkan hasilnya
      */
-    public function show($nip = null)
+    public function show(Request $request, $nip = null)
     {
         $user = auth()->user();
 
-        // Skenario 1: Jika URL hanya dipanggil "/etpp" (tanpa NIP di belakangnya)
+        // Skenario 1: Jika URL diakses tanpa NIP di belakangnya
         if (! $nip) {
-            // Jika yang login adalah guru/pegawai yang punya NIP, otomatis redirect ke pencarian NIP dia sendiri
+            // Jika yang login punya NIP, otomatis redirect ke pencarian NIP dia sendiri
             if ($user && $user->hasAnyRole(['guru', 'kepsek', 'operator']) && isset($user->employee->nip)) {
-                return redirect()->route('etpp.search', ['nip' => $user->employee->nip]);
+                return redirect()->route('etpp.show', ['nip' => $user->employee->nip]);
             }
 
-            // Jika yang login admin/tidak punya NIP, tampilkan form kosong
+            // Jika tidak ada NIP, tampilkan form pencarian kosong
             return view('etpp.show', [
                 'employee' => null,
                 'nip' => null,
@@ -84,8 +55,34 @@ class EtppController extends Controller
             ]);
         }
 
-        // Skenario 2: Redirect ke method search agar logic filter terpusat di satu tempat
-        return redirect()->route('etpp.search', ['nip' => $nip]);
+        // Skenario 2: Jika ada NIP, jalankan logika pencarian database di sini
+        $filter_tw = $request->input('tw', 'semua'); // Tangkap filter TW dari URL
+        $employee = Employee::where('nip', $nip)->first();
+        $data_kategori = collect();
+
+        // Jika pegawai ditemukan, tarik data e-Kinerja
+        if ($employee && $employee->user_id) {
+            $query = Kategori::where('user_id', $employee->user_id)
+                ->with([
+                    'rhk.rencanaAksi.outputTarget' => function ($q) use ($filter_tw) {
+                        if ($filter_tw !== 'semua') {
+                            $q->where('target_waktu', $filter_tw);
+                        }
+                    },
+                ]);
+
+            // Sembunyikan Kategori/RHK yang tidak memiliki output sesuai filter TW
+            if ($filter_tw !== 'semua') {
+                $query->whereHas('rhk.rencanaAksi.outputTarget', function ($q) use ($filter_tw) {
+                    $q->where('target_waktu', $filter_tw);
+                });
+            }
+
+            $data_kategori = $query->get();
+        }
+
+        // Lempar data ke view
+        return view('etpp.show', compact('nip', 'employee', 'filter_tw', 'data_kategori'));
     }
 
     /**
