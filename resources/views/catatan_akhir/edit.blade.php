@@ -413,6 +413,7 @@ Aturan Penulisan (WAJIB dipatuhi):
 4. Sampaikan data kehadiran dan kedisiplinan secara kualitatif (misalnya "kehadiran sangat baik" atau "perlu ditingkatkan kedisiplinannya"), bukan menyebut angka mentah, kecuali angkanya memang signifikan untuk ditonjolkan.
 5. Sisipkan nasihat motivasi (bukan menghakimi) HANYA jika memang relevan, yaitu bila alpha > 3 hari, sering mangkir piket, nilai merosot, atau ada catatan perilaku yang kurang baik. Jika semua data baik/netral, fokus pada apresiasi dan dorongan untuk konsisten.
 6. Gunakan bahasa Indonesia baku yang sopan, hangat, dan rapi.
+7. Jangan menggunakan kata sempurna, luar biasa, hebat, atau kata-kata hiperbola. Gunakan kata yang realistis dan menenangkan hati orang tua.
 `;
 
                 // 3. Panggil API Gemini
