@@ -297,4 +297,5 @@ Route::get('/renkin', [RenkinController::class, 'index'])->name('renkin.index');
 // Rute Pencarian dan Lihat e-Kinerja berdasarkan NIP
 Route::post('/etpp/search', [EtppController::class, 'search'])->name('etpp.search');
 Route::get('/etpp/{nip?}', [EtppController::class, 'show'])->name('etpp.show');
+Route::get('/realisasi/{nip?}', [EtppController::class, 'show'])->name('etpp.show');
 require __DIR__.'/auth.php';
