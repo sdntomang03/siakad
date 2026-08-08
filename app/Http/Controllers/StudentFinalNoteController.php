@@ -47,14 +47,15 @@ class StudentFinalNoteController extends Controller
 
                 $allClassrooms = $classroomQuery->get();
 
-                // Jika user sudah memilih kelas dari dropdown
+                // PERBAIKAN: Gunakan Eager Loading 'with' untuk mengambil data relasi students
                 if ($request->classroom_id) {
-                    // Validasi agar guru tidak bisa "mengintip" kelas orang lain dengan memanipulasi URL
-                    $selectedClassroom = Classroom::find($request->classroom_id);
+                    $selectedClassroom = Classroom::with(['students' => function ($q) {
+                        $q->orderBy('nama_lengkap', 'asc');
+                    }])->find($request->classroom_id);
+
+                    // Validasi kepemilikan kelas, lalu ambil dari relasi
                     if ($selectedClassroom && $allClassrooms->contains('id', $selectedClassroom->id)) {
-                        $students = Student::where('classroom_id', $selectedClassroom->id)
-                            ->orderBy('nama_lengkap', 'asc') // Sesuaikan dengan kolom nama di DB Anda
-                            ->get();
+                        $students = $selectedClassroom->students;
                     }
                 }
             }
