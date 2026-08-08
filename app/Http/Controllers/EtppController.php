@@ -241,11 +241,10 @@ class EtppController extends Controller
      */
     public function uploadBukti(Request $request)
     {
-        // 1. Validasi input dan file
+        // 1. Validasi (nama_bukti dihapus dari validasi karena dibuat otomatis)
         $request->validate([
             'output_target_id' => 'required|exists:output_target,id',
-            'nama_bukti' => 'required|string|max:255',
-            'file_bukti' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // Maks 5MB, format PDF/Gambar
+            'file_bukti' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // Maks 5MB
         ]);
 
         try {
@@ -254,20 +253,28 @@ class EtppController extends Controller
             if ($request->hasFile('file_bukti')) {
                 $file = $request->file('file_bukti');
 
-                // 2. Simpan file fisik ke folder 'storage/app/public/bukti_dukung'
+                // 2. Ambil data Output Target untuk mendapatkan nama output-nya
+                $outputTarget = DB::table('output_target')->where('id', $request->output_target_id)->first();
+
+                // 3. Buat nama bukti otomatis: [Deskripsi Output] - [Nama User]
+                // Kita batasi panjang deskripsi output (misal 150 karakter) agar tidak error masuk ke database (batas varchar 255)
+                $namaOutputBersih = Str::limit($outputTarget->deskripsi_output, 150, '...');
+                $namaBuktiOtomatis = $namaOutputBersih.' - '.$user->name;
+
+                // 4. Simpan file fisik ke folder 'storage/app/public/bukti_dukung'
                 $path = $file->store('bukti_dukung', 'public');
 
-                // 3. Masukkan data ke tabel bukti_dukung
+                // 5. Masukkan data ke tabel bukti_dukung
                 DB::table('bukti_dukung')->insert([
                     'user_id' => $user->id,
                     'output_target_id' => $request->output_target_id,
-                    'nama_bukti' => $request->nama_bukti,
+                    'nama_bukti' => $namaBuktiOtomatis,
                     'file_path' => $path,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
 
-                return back()->with('success', "Bukti dukung '{$request->nama_bukti}' berhasil diunggah!");
+                return back()->with('success', 'Bukti dukung berhasil diunggah!');
             }
 
             return back()->with('error', 'File tidak ditemukan saat diupload.');

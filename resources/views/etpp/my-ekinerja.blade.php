@@ -201,29 +201,31 @@
                                                         </div>
                                                         @endif
 
-                                                        {{-- Form Upload Bukti Baru --}}
+                                                        {{-- Form Upload Bukti Baru (Tanpa Input Nama) --}}
                                                         <form action="{{ route('etpp.upload_bukti') }}" method="POST"
                                                             enctype="multipart/form-data"
-                                                            class="flex flex-col sm:flex-row gap-2 items-center bg-gray-50 dark:bg-gray-900/50 p-2.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
+                                                            class="flex flex-col sm:flex-row gap-3 items-center bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 mt-2">
                                                             @csrf
 
                                                             {{-- Hidden ID Output Target --}}
                                                             <input type="hidden" name="output_target_id"
                                                                 value="{{ $output->id }}">
 
-                                                            {{-- Input Nama Bukti --}}
-                                                            <input type="text" name="nama_bukti"
-                                                                placeholder="Nama Dokumen (Cth: SK Tim)" required
-                                                                class="w-full sm:w-1/3 text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1.5 focus:ring-indigo-500 focus:border-indigo-500 transition">
-
-                                                            {{-- Input File --}}
+                                                            {{-- Input File Saja --}}
                                                             <input type="file" name="file_bukti" required
                                                                 accept=".pdf,.jpg,.jpeg,.png"
-                                                                class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 dark:file:bg-indigo-900 dark:file:text-indigo-300 cursor-pointer">
+                                                                class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 dark:file:bg-indigo-900 dark:file:text-indigo-300 cursor-pointer transition">
 
                                                             {{-- Tombol Submit --}}
                                                             <button type="submit"
-                                                                class="w-full sm:w-auto shrink-0 bg-indigo-600 text-white text-xs px-4 py-1.5 rounded hover:bg-indigo-700 font-bold transition shadow-sm">
+                                                                class="w-full sm:w-auto shrink-0 bg-indigo-600 text-white text-xs px-5 py-2 rounded-md hover:bg-indigo-700 font-bold transition shadow-sm flex items-center justify-center gap-1.5">
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                                    viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                                        stroke-width="2"
+                                                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
+                                                                    </path>
+                                                                </svg>
                                                                 Unggah Bukti
                                                             </button>
                                                         </form>
