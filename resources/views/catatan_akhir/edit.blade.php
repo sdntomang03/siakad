@@ -61,20 +61,17 @@
                                     <li
                                         class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
                                         <span class="text-slate-600 dark:text-slate-400 font-medium">Sakit</span>
-                                        <span class="font-bold text-amber-500" id="valSakit">{{ $finalNote->sakit ??
-                                            $sakit }} Hari</span>
+                                        <span class="font-bold text-amber-500" id="valSakit">{{ $sakit }} Hari</span>
                                     </li>
                                     <li
                                         class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
                                         <span class="text-slate-600 dark:text-slate-400 font-medium">Izin</span>
-                                        <span class="font-bold text-blue-500" id="valIzin">{{ $finalNote->izin ?? $izin
-                                            }} Hari</span>
+                                        <span class="font-bold text-blue-500" id="valIzin">{{ $izin }} Hari</span>
                                     </li>
                                     <li
                                         class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
                                         <span class="text-slate-600 dark:text-slate-400 font-medium">Alpha</span>
-                                        <span class="font-bold text-rose-500" id="valAlpha">{{ $finalNote->alpha ??
-                                            $alpha }} Hari</span>
+                                        <span class="font-bold text-rose-500" id="valAlpha">{{ $alpha }} Hari</span>
                                     </li>
                                 </ul>
                             </div>
@@ -236,7 +233,8 @@
                             <input type="hidden" name="piket_terlaksana" value="{{ $piketTerlaksana }}">
                             <input type="hidden" name="piket_tidak_terlaksana" value="{{ $piketTidak }}">
 
-                            {{-- Penyesuaian Angka Kehadiran --}}
+                            {{-- Penyesuaian Angka Kehadiran (Selalu tersinkronisasi otomatis dengan hasil Live
+                            Database) --}}
                             <div
                                 class="bg-slate-50 dark:bg-slate-900/30 p-5 rounded-xl border border-slate-100 dark:border-slate-700/50">
                                 <h4
@@ -247,24 +245,21 @@
                                         <label
                                             class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">Sakit
                                             (Hari)</label>
-                                        <input type="number" name="sakit" id="inputSakit"
-                                            value="{{ old('sakit', $finalNote->sakit ?? $sakit) }}" min="0"
+                                        <input type="number" name="sakit" value="{{ old('sakit', $sakit) }}" min="0"
                                             class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
                                     </div>
                                     <div>
                                         <label
                                             class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">Izin
                                             (Hari)</label>
-                                        <input type="number" name="izin" id="inputIzin"
-                                            value="{{ old('izin', $finalNote->izin ?? $izin) }}" min="0"
+                                        <input type="number" name="izin" value="{{ old('izin', $izin) }}" min="0"
                                             class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
                                     </div>
                                     <div>
                                         <label
                                             class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">Alpha
                                             (Hari)</label>
-                                        <input type="number" name="alpha" id="inputAlpha"
-                                            value="{{ old('alpha', $finalNote->alpha ?? $alpha) }}" min="0"
+                                        <input type="number" name="alpha" value="{{ old('alpha', $alpha) }}" min="0"
                                             class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
                                     </div>
                                 </div>
@@ -277,7 +272,7 @@
                                     Akhir & Saran (Tercetak di Raport)</label>
                                 <textarea name="catatan_akhir" id="catatanAkhir" rows="12" required
                                     class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 p-4 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm leading-relaxed"
-                                    placeholder="Cth: Ananda {{ $student->nama_lengkap ?? 'Siswa' }} menunjukkan peningkatan yang luar biasa pada aspek akademik, namun perlu ditingkatkan kembali kedisiplinannya..."></textarea>
+                                    placeholder="Cth: Ananda {{ $student->nama_lengkap ?? 'Siswa' }} menunjukkan peningkatan yang luar biasa pada aspek akademik, namun perlu ditingkatkan kembali kedisiplinannya...">{{ old('catatan_akhir', $finalNote->catatan_akhir ?? '') }}</textarea>
                             </div>
 
                             {{-- Tombol Simpan --}}
@@ -318,14 +313,13 @@
             txt.innerText = "Membaca & Memproses Data...";
 
             try {
-                // 1. Kumpulkan Data dari Panel Kiri & Form
+                // 1. Kumpulkan Data Langsung dari Blade (Mencegah input tersangkut)
                 const namaSiswa = "{{ $student->nama_lengkap ?? $student->nama }}";
-                const sakit = document.getElementById('inputSakit').value || 0;
-                const izin = document.getElementById('inputIzin').value || 0;
-                const alpha = document.getElementById('inputAlpha').value || 0;
-
-                const piketBagus = "{{ $piketTerlaksana }}";
-                const piketBuruk = "{{ $piketTidak }}";
+                const sakit = {{ $sakit }};
+                const izin = {{ $izin }};
+                const alpha = {{ $alpha }};
+                const piketBagus = {{ $piketTerlaksana }};
+                const piketBuruk = {{ $piketTidak }};
 
                 // Susun Catatan Piket Detail
                 let stringPiketDetail = "";

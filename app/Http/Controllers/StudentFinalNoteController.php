@@ -90,36 +90,25 @@ class StudentFinalNoteController extends Controller
         $student = Student::findOrFail($student_id);
         $classroom = Classroom::findOrFail($classroom_id);
 
-        // 2. Tarik Rekap Catatan Guru (Tanpa filter is_for_report)
+        // 2. Tarik Rekap Catatan Guru (Hanya filter Siswa & Tahun Ajaran)
         $teacherNotes = TeacherNote::where('student_id', $student_id)
             ->where('academic_year_id', $active_academic_year_id)
             ->orderBy('tanggal', 'desc')
             ->get();
 
-        // 3. Tarik Rekap Jurnal Piket (Hitungan & Catatan Ketidakhadiran)
-        $piketTerlaksana = JurnalPiket::where('student_id', $student_id)
-            ->where('classroom_id', $classroom_id)
+        // 3. Tarik Rekap Jurnal Piket
+        $jurnalPiket = JurnalPiket::where('student_id', $student_id)
             ->where('academic_year_id', $active_academic_year_id)
-            ->where('status', 'terlaksana')
-            ->count();
-
-        $piketTidak = JurnalPiket::where('student_id', $student_id)
-            ->where('classroom_id', $classroom_id)
-            ->where('academic_year_id', $active_academic_year_id)
-            ->where('status', 'tidak_terlaksana')
-            ->count();
-
-        $catatanPiket = JurnalPiket::where('student_id', $student_id)
-            ->where('classroom_id', $classroom_id)
-            ->where('academic_year_id', $active_academic_year_id)
-            ->where('status', 'tidak_terlaksana')
-            ->whereNotNull('catatan')
-            ->where('catatan', '!=', '')
             ->get();
+
+        $piketTerlaksana = $jurnalPiket->where('status', 'terlaksana')->count();
+        $piketTidak = $jurnalPiket->where('status', 'tidak_terlaksana')->count();
+        $catatanPiket = $jurnalPiket->where('status', 'tidak_terlaksana')
+            ->whereNotNull('catatan')
+            ->where('catatan', '!=', '');
 
         // 4. Tarik Rekap Absensi
         $absensi = Attendance::where('student_id', $student_id)
-            ->where('classroom_id', $classroom_id)
             ->where('academic_year_id', $active_academic_year_id)
             ->get();
 
@@ -128,8 +117,7 @@ class StudentFinalNoteController extends Controller
         $alpha = $absensi->where('status', 'alfa')->count();
 
         // 5. Tarik Rekap Nilai TES (Rata-rata per Mapel)
-        $tesAssessments = Assessment::where('classroom_id', $classroom_id)
-            ->where('academic_year_id', $active_academic_year_id)
+        $tesAssessments = Assessment::where('academic_year_id', $active_academic_year_id)
             ->where(function ($q) {
                 $q->where('format', '!=', 'non-tes')->orWhereNull('format');
             })->with('subject')->get();
@@ -159,8 +147,7 @@ class StudentFinalNoteController extends Controller
         }
 
         // 6. Tarik Rekap Penilaian NON-TES / OBSERVASI (Predikat & Catatan)
-        $nonTesAssessments = Assessment::where('classroom_id', $classroom_id)
-            ->where('academic_year_id', $active_academic_year_id)
+        $nonTesAssessments = Assessment::where('academic_year_id', $active_academic_year_id)
             ->where('format', 'non-tes')
             ->with('subject', 'criteria')->get();
 
@@ -183,7 +170,6 @@ class StudentFinalNoteController extends Controller
 
             if ($scores->count() > 0) {
                 $avg = $scores->sum('score') / $scores->count();
-                // Cegah error division by zero jika scale tidak sengaja null di database
                 $scale = $ass->scale ?? 4;
                 $persentase = ($avg / $scale) * 100;
 
