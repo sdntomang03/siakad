@@ -198,37 +198,33 @@ class EtppController extends Controller
     /**
      * Menampilkan e-Kinerja milik user yang sedang login
      */
+    /**
+     * Menampilkan e-Kinerja milik user yang sedang login
+     */
     public function myEkinerja(Request $request)
     {
-        // 1. Ambil data user yang sedang login
         $user = auth()->user();
 
-        // Pastikan user sudah login (meski sudah dijaga middleware)
         if (! $user) {
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        // Ambil data profil pegawai dari user ini (Asumsi Anda punya relasi employee di model User)
-        // Jika tidak ada relasi, Anda bisa query: Employee::where('user_id', $user->id)->first();
         $employee = $user->employee ?? null;
-
-        // 2. Tangkap parameter filter Target Waktu (TW)
         $filter_tw = $request->input('tw', 'semua');
-
         $data_kategori = collect();
 
-        // 3. Tarik data e-Kinerja secara spesifik HANYA untuk user_id yang sedang login
+        // Tarik data e-Kinerja & tambahkan eager loading untuk buktiDukung
         $query = Kategori::where('user_id', $user->id)
             ->with([
                 'rhk.rencanaAksi.outputTarget' => function ($q) use ($filter_tw) {
-                    // Filter Output berdasarkan TW jika bukan 'semua'
                     if ($filter_tw !== 'semua') {
                         $q->where('target_waktu', $filter_tw);
                     }
                 },
+                // DITAMBAHKAN: Tarik relasi buktiDukung sekaligus agar view bisa membacanya
+                'rhk.rencanaAksi.outputTarget.buktiDukung',
             ]);
 
-        // Jika filter diaktifkan, sembunyikan Kategori/RHK yang tidak memiliki output di TW tersebut
         if ($filter_tw !== 'semua') {
             $query->whereHas('rhk.rencanaAksi.outputTarget', function ($q) use ($filter_tw) {
                 $q->where('target_waktu', $filter_tw);
@@ -237,7 +233,47 @@ class EtppController extends Controller
 
         $data_kategori = $query->get();
 
-        // 4. Lempar data ke view baru
         return view('etpp.my-ekinerja', compact('employee', 'filter_tw', 'data_kategori'));
+    }
+
+    /**
+     * DITAMBAHKAN: Method untuk memproses upload Bukti Dukung
+     */
+    public function uploadBukti(Request $request)
+    {
+        // 1. Validasi input dan file
+        $request->validate([
+            'output_target_id' => 'required|exists:output_target,id',
+            'nama_bukti' => 'required|string|max:255',
+            'file_bukti' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // Maks 5MB, format PDF/Gambar
+        ]);
+
+        try {
+            $user = auth()->user();
+
+            if ($request->hasFile('file_bukti')) {
+                $file = $request->file('file_bukti');
+
+                // 2. Simpan file fisik ke folder 'storage/app/public/bukti_dukung'
+                $path = $file->store('bukti_dukung', 'public');
+
+                // 3. Masukkan data ke tabel bukti_dukung
+                DB::table('bukti_dukung')->insert([
+                    'user_id' => $user->id,
+                    'output_target_id' => $request->output_target_id,
+                    'nama_bukti' => $request->nama_bukti,
+                    'file_path' => $path,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                return back()->with('success', "Bukti dukung '{$request->nama_bukti}' berhasil diunggah!");
+            }
+
+            return back()->with('error', 'File tidak ditemukan saat diupload.');
+
+        } catch (Exception $e) {
+            return back()->with('error', 'Gagal mengunggah: '.$e->getMessage());
+        }
     }
 }

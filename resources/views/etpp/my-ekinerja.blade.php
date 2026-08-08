@@ -155,20 +155,80 @@
                                         </div>
 
                                         {{-- Output & Target Waktu --}}
+
                                         <div>
                                             <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                                                Target & Output</p>
-                                            <ul class="space-y-2">
+                                                Target, Output & Bukti Dukung</p>
+                                            <ul class="space-y-4">
                                                 @foreach($ra->outputTarget as $output)
                                                 <li
-                                                    class="flex items-start gap-3 bg-white dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-700 shadow-sm">
-                                                    <span
-                                                        class="shrink-0 mt-0.5 px-2 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 text-[11px] font-black tracking-wider uppercase rounded">
-                                                        {{ $output->target_waktu }}
-                                                    </span>
-                                                    <span class="text-sm text-gray-600 dark:text-gray-300">
-                                                        {{ $output->deskripsi_output }}
-                                                    </span>
+                                                    class="flex flex-col gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm relative overflow-hidden">
+
+                                                    {{-- Detail Target & Output --}}
+                                                    <div class="flex items-start gap-3">
+                                                        <span
+                                                            class="shrink-0 mt-0.5 px-2 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 text-[11px] font-black tracking-wider uppercase rounded">
+                                                            {{ $output->target_waktu }}
+                                                        </span>
+                                                        <span
+                                                            class="text-sm text-gray-700 dark:text-gray-300 font-medium">
+                                                            {{ $output->deskripsi_output }}
+                                                        </span>
+                                                    </div>
+
+                                                    <div class="pl-12 space-y-3">
+                                                        {{-- Daftar Bukti Dukung yang Sudah Diupload --}}
+                                                        @if(isset($output->buktiDukung) && $output->buktiDukung->count()
+                                                        > 0)
+                                                        <div class="space-y-1 mt-2">
+                                                            <p
+                                                                class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
+                                                                Bukti Terlampir:</p>
+                                                            @foreach($output->buktiDukung as $bukti)
+                                                            <a href="{{ asset('storage/' . $bukti->file_path) }}"
+                                                                target="_blank"
+                                                                class="inline-flex items-center gap-1.5 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1.5 rounded-md border border-indigo-100 dark:border-indigo-800/50 mb-1 mr-1 transition-colors">
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                                    viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                                        stroke-width="2"
+                                                                        d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
+                                                                    </path>
+                                                                </svg>
+                                                                {{ $bukti->nama_bukti }}
+                                                            </a>
+                                                            @endforeach
+                                                        </div>
+                                                        @endif
+
+                                                        {{-- Form Upload Bukti Baru --}}
+                                                        <form action="{{ route('etpp.upload_bukti') }}" method="POST"
+                                                            enctype="multipart/form-data"
+                                                            class="flex flex-col sm:flex-row gap-2 items-center bg-gray-50 dark:bg-gray-900/50 p-2.5 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
+                                                            @csrf
+
+                                                            {{-- Hidden ID Output Target --}}
+                                                            <input type="hidden" name="output_target_id"
+                                                                value="{{ $output->id }}">
+
+                                                            {{-- Input Nama Bukti --}}
+                                                            <input type="text" name="nama_bukti"
+                                                                placeholder="Nama Dokumen (Cth: SK Tim)" required
+                                                                class="w-full sm:w-1/3 text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1.5 focus:ring-indigo-500 focus:border-indigo-500 transition">
+
+                                                            {{-- Input File --}}
+                                                            <input type="file" name="file_bukti" required
+                                                                accept=".pdf,.jpg,.jpeg,.png"
+                                                                class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 dark:file:bg-indigo-900 dark:file:text-indigo-300 cursor-pointer">
+
+                                                            {{-- Tombol Submit --}}
+                                                            <button type="submit"
+                                                                class="w-full sm:w-auto shrink-0 bg-indigo-600 text-white text-xs px-4 py-1.5 rounded hover:bg-indigo-700 font-bold transition shadow-sm">
+                                                                Unggah Bukti
+                                                            </button>
+                                                        </form>
+                                                    </div>
+
                                                 </li>
                                                 @endforeach
                                             </ul>
