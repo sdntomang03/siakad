@@ -81,7 +81,7 @@ class StudentFinalNoteController extends Controller
         $teacherNotes = TeacherNote::where('student_id', $student_id)
             ->where('classroom_id', $classroom_id)
             ->where('academic_year_id', $active_academic_year_id)
-            ->orderBy('tanggal', 'desc') // Urutkan dari kejadian terbaru
+            ->orderBy('tanggal', 'desc')
             ->get();
 
         // 2. Tarik Rekap Jurnal Piket
@@ -97,10 +97,16 @@ class StudentFinalNoteController extends Controller
             ->where('status', 'tidak_terlaksana')
             ->count();
 
-        // 3. Tarik Rekap Absensi
-        $sakit = 0;
-        $izin = 0;
-        $alpha = 0;
+        // 3. Tarik Rekap Absensi (Otomatis dari tabel attendances)
+        $absensi = Attendance::where('student_id', $student_id)
+            ->where('classroom_id', $classroom_id)
+            ->where('academic_year_id', $active_academic_year_id)
+            ->get();
+
+        // Hitung jumlah S, I, A dari data absensi
+        $sakit = $absensi->where('status', 'sakit')->count();
+        $izin = $absensi->where('status', 'izin')->count();
+        $alpha = $absensi->where('status', 'alfa')->count(); // Perhatikan penulisan 'alfa' dari sistem Anda
 
         // 4. Tarik Rekap Nilai Siswa (Contoh Mockup Lengkap)
         // INGAT: Ganti ini dengan query ke tabel nilai/grade Anda yang sebenarnya nanti
