@@ -22,7 +22,7 @@
             </div>
             @endif
 
-            <!-- Kolom API Key AI (Berdasarkan Modul Generator) -->
+            <!-- Kolom API Key AI -->
             <div
                 class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-2xl shadow-sm border border-indigo-200 dark:border-indigo-800/50 flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0"
@@ -43,20 +43,20 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                {{-- KOLOM KIRI: REKAP INFORMASI --}}
+                {{-- KOLOM KIRI: REKAP DATA (Untuk Dibaca AI) --}}
                 <div class="lg:col-span-1 space-y-6">
 
-                    {{-- Rekap Absen & Piket --}}
+                    {{-- 1. Rekap Absen & Piket --}}
                     <div
                         class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <h3
                             class="font-black text-slate-800 dark:text-slate-200 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2 uppercase tracking-wider text-sm">
-                            Rekap Kehadiran & Piket</h3>
+                            Absensi & Piket Harian</h3>
 
                         <div class="space-y-5">
                             <div>
                                 <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Kehadiran
-                                    (Absensi)</p>
+                                    Kelas</p>
                                 <ul class="text-sm space-y-2">
                                     <li
                                         class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
@@ -80,65 +80,108 @@
                             </div>
 
                             <div>
-                                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Kepatuhan
-                                    Piket Harian</p>
-                                <ul class="text-sm space-y-2">
+                                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Tugas
+                                    Kebersihan (Piket)</p>
+                                <ul class="text-sm space-y-2 mb-2">
                                     <li
                                         class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
-                                        <span class="text-slate-600 dark:text-slate-400 font-medium">Tugas
-                                            Terlaksana</span>
+                                        <span class="text-slate-600 dark:text-slate-400 font-medium">Terlaksana</span>
                                         <span class="font-bold text-emerald-500" id="valPiketBagus">{{ $piketTerlaksana
                                             }}x</span>
                                     </li>
                                     <li
                                         class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
-                                        <span class="text-slate-600 dark:text-slate-400 font-medium">Tidak/Kabur</span>
+                                        <span class="text-slate-600 dark:text-slate-400 font-medium">Mangkir</span>
                                         <span class="font-bold text-rose-500" id="valPiketBuruk">{{ $piketTidak
                                             }}x</span>
                                     </li>
                                 </ul>
+                                @if($catatanPiket->count() > 0)
+                                <div class="text-[11px] text-slate-500 bg-rose-50 dark:bg-rose-900/20 p-2 rounded border border-rose-100 dark:border-rose-800/50"
+                                    id="listPiketDetail">
+                                    <strong>Alasan Mangkir:</strong>
+                                    <ul class="list-disc list-inside mt-1">
+                                        @foreach($catatanPiket as $cp)
+                                        <li class="item-piket truncate" title="{{ $cp->catatan }}">{{ $cp->catatan }}
+                                        </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>
 
-                    {{-- Rekap Nilai Akademik --}}
+                    {{-- 2. Rekap Nilai Ujian/Tes --}}
                     <div
                         class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <h3
                             class="font-black text-slate-800 dark:text-slate-200 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2 uppercase tracking-wider text-sm">
-                            Rekap Nilai Akademik</h3>
-
-                        @if(isset($rekapNilai) && count($rekapNilai) > 0)
-                        <ul class="text-sm space-y-2" id="listNilai">
+                            Nilai Tes Akademik</h3>
+                        @if($rekapNilai->isNotEmpty())
+                        <ul class="text-sm space-y-2" id="listNilaiTes">
                             @foreach($rekapNilai as $nilai)
-                            <li
-                                class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2.5 rounded-lg border border-slate-100 dark:border-slate-700/50">
-                                <span class="text-slate-600 dark:text-slate-400 font-medium truncate pr-3"
-                                    data-mapel="{{ $nilai->nama_mapel }}">{{ $nilai->nama_mapel }}</span>
-                                <span class="font-black text-indigo-600 dark:text-indigo-400"
-                                    data-skor="{{ $nilai->nilai_akhir }}">{{ $nilai->nilai_akhir }}</span>
+                            <li class="item-nilai flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-700/50"
+                                data-text="{{ $nilai->nama_mapel }}: {{ $nilai->nilai_akhir }}">
+                                <span class="text-slate-600 dark:text-slate-400 font-medium truncate pr-3">{{
+                                    $nilai->nama_mapel }}</span>
+                                <span class="font-black text-indigo-600 dark:text-indigo-400">{{ $nilai->nilai_akhir
+                                    }}</span>
                             </li>
                             @endforeach
                         </ul>
                         @else
                         <div
                             class="text-center bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                            <p class="text-sm text-slate-500 italic">Data nilai mata pelajaran belum tersedia.</p>
+                            <p class="text-sm text-slate-500 italic">Belum ada nilai ujian format tes.</p>
                         </div>
                         @endif
                     </div>
 
-                    {{-- Rekap Catatan Guru --}}
+                    {{-- 3. Rekap Observasi Non-Tes --}}
                     <div
                         class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
                         <h3
                             class="font-black text-slate-800 dark:text-slate-200 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2 uppercase tracking-wider text-sm">
-                            Catatan Kejadian Guru</h3>
+                            Observasi Praktik / Proyek</h3>
+                        @if($rekapObservasi->isNotEmpty())
+                        <ul class="text-sm space-y-3" id="listObservasi">
+                            @foreach($rekapObservasi as $obs)
+                            <li class="item-observasi bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50"
+                                data-text="Mapel {{ $obs->nama_mapel }} kegiatan {{ $obs->kegiatan }} mendapat predikat {{ $obs->predikat }} (Catatan: {{ $obs->catatan }})">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-bold text-slate-700 dark:text-slate-300 text-xs">{{
+                                        $obs->nama_mapel }}</span>
+                                    <span
+                                        class="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider
+                                            {{ $obs->predikat == 'Sangat Baik' ? 'bg-emerald-100 text-emerald-700' : ($obs->predikat == 'Baik' ? 'bg-blue-100 text-blue-700' : ($obs->predikat == 'Cukup' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700')) }}">
+                                        {{ $obs->predikat }}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 italic mb-1">{{ $obs->kegiatan }}
+                                </p>
+                                <p class="text-xs text-slate-600 dark:text-slate-300">"{{ $obs->catatan }}"</p>
+                            </li>
+                            @endforeach
+                        </ul>
+                        @else
+                        <div
+                            class="text-center bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                            <p class="text-sm text-slate-500 italic">Belum ada nilai observasi non-tes.</p>
+                        </div>
+                        @endif
+                    </div>
 
+                    {{-- 4. Rekap Catatan Guru --}}
+                    <div
+                        class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        <h3
+                            class="font-black text-slate-800 dark:text-slate-200 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2 uppercase tracking-wider text-sm">
+                            Jurnal Perilaku Guru</h3>
                         @if($teacherNotes->isEmpty())
                         <div class="text-center bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50"
                             id="listCatatan">
-                            <p class="text-sm text-slate-500 italic">Tidak ada riwayat catatan.</p>
+                            <p class="text-sm text-slate-500 italic">Tidak ada catatan perilaku/prestasi.</p>
                         </div>
                         @else
                         <ul class="text-sm space-y-3" id="listCatatan">
@@ -149,10 +192,6 @@
                                     <span
                                         class="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 text-[10px] font-bold uppercase rounded tracking-wider type-catatan">{{
                                         $note->jenis_catatan }}</span>
-                                    <span
-                                        class="text-[10px] text-slate-400 font-bold bg-white dark:bg-slate-800 px-2 py-1 rounded shadow-sm">
-                                        {{ \Carbon\Carbon::parse($note->tanggal)->translatedFormat('d M Y') }}
-                                    </span>
                                 </div>
                                 <p class="text-slate-600 dark:text-slate-300 leading-relaxed mt-1 isi-catatan">{{
                                     $note->catatan }}</p>
@@ -163,7 +202,7 @@
                     </div>
                 </div>
 
-                {{-- KOLOM KANAN: FORM INPUT WALI KELAS --}}
+                {{-- KOLOM KANAN: FORM WALI KELAS --}}
                 <div class="lg:col-span-2">
                     <div
                         class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 sticky top-6">
@@ -175,7 +214,7 @@
                                     class="text-xl font-black text-slate-800 dark:text-slate-200 uppercase tracking-tight">
                                     Verifikasi & Kesimpulan Akhir</h3>
                                 <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Isi manual atau gunakan AI
-                                    untuk memproses data dari panel samping secara otomatis.</p>
+                                    untuk memproses ringkasan data di panel kiri.</p>
                             </div>
 
                             {{-- Tombol Generate AI --}}
@@ -186,7 +225,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
-                                <span id="textGenerateAI">Generate AI</span>
+                                <span id="textGenerateAI">Generate Draft Pakai AI</span>
                             </button>
                         </div>
 
@@ -196,36 +235,34 @@
                             <input type="hidden" name="academic_year_id" value="{{ $active_academic_year_id }}">
                             <input type="hidden" name="piket_terlaksana" value="{{ $piketTerlaksana }}">
                             <input type="hidden" name="piket_tidak_terlaksana" value="{{ $piketTidak }}">
-                            <input type="hidden" name="ringkasan_catatan_guru"
-                                value="{{ $teacherNotes->pluck('catatan')->implode(' | ') }}">
 
                             {{-- Penyesuaian Angka Kehadiran --}}
                             <div
                                 class="bg-slate-50 dark:bg-slate-900/30 p-5 rounded-xl border border-slate-100 dark:border-slate-700/50">
                                 <h4
                                     class="font-bold text-slate-700 dark:text-slate-300 mb-4 text-sm uppercase tracking-wider">
-                                    Validasi Absensi Akhir</h4>
+                                    Validasi Data Kehadiran</h4>
                                 <div class="grid grid-cols-3 gap-4">
                                     <div>
                                         <label
-                                            class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">Total
-                                            Sakit</label>
+                                            class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">Sakit
+                                            (Hari)</label>
                                         <input type="number" name="sakit" id="inputSakit"
                                             value="{{ old('sakit', $finalNote->sakit ?? $sakit) }}" min="0"
                                             class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
                                     </div>
                                     <div>
                                         <label
-                                            class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">Total
-                                            Izin</label>
+                                            class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">Izin
+                                            (Hari)</label>
                                         <input type="number" name="izin" id="inputIzin"
                                             value="{{ old('izin', $finalNote->izin ?? $izin) }}" min="0"
                                             class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
                                     </div>
                                     <div>
                                         <label
-                                            class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">Total
-                                            Alpha</label>
+                                            class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">Alpha
+                                            (Hari)</label>
                                         <input type="number" name="alpha" id="inputAlpha"
                                             value="{{ old('alpha', $finalNote->alpha ?? $alpha) }}" min="0"
                                             class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
@@ -235,14 +272,15 @@
 
                             {{-- Catatan Final Wali Kelas --}}
                             <div class="relative">
-                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Catatan
-                                    Perilaku & Akademik (Cetak ke Raport)</label>
-                                <textarea name="catatan_akhir" id="catatanAkhir" rows="9" required
+                                <label
+                                    class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Kesimpulan
+                                    Akhir & Saran (Tercetak di Raport)</label>
+                                <textarea name="catatan_akhir" id="catatanAkhir" rows="12" required
                                     class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 p-4 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm leading-relaxed"
                                     placeholder="Cth: Ananda {{ $student->nama_lengkap ?? 'Siswa' }} menunjukkan peningkatan yang luar biasa pada aspek akademik, namun perlu ditingkatkan kembali kedisiplinannya..."></textarea>
                             </div>
 
-                            {{-- Tombol Aksi --}}
+                            {{-- Tombol Simpan --}}
                             <div class="pt-4 border-t border-slate-100 dark:border-slate-700">
                                 <button type="submit"
                                     class="w-full bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex justify-center items-center gap-2">
@@ -250,11 +288,10 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7"></path>
                                     </svg>
-                                    Simpan Catatan Akhir Siswa
+                                    Simpan Catatan ke Database
                                 </button>
                             </div>
                         </form>
-
                     </div>
                 </div>
 
@@ -262,12 +299,12 @@
         </div>
     </div>
 
-    <!-- Script Generasi AI -->
+    <!-- Script Generasi AI Gemini -->
     <script>
         async function generateCatatanAI() {
             const apiKey = document.getElementById('apiKey').value.trim();
             if (!apiKey) {
-                alert("Mohon masukkan Gemini API Key terlebih dahulu di bagian atas!");
+                alert("Mohon masukkan Gemini API Key Anda terlebih dahulu!");
                 return;
             }
 
@@ -277,11 +314,11 @@
 
             // Simpan state awal tombol
             btn.disabled = true;
-            btn.classList.add('opacity-75', 'cursor-not-allowed');
-            txt.innerText = "Memproses Data...";
+            btn.classList.add('opacity-75', 'cursor-not-allowed', 'animate-pulse');
+            txt.innerText = "Membaca & Memproses Data...";
 
             try {
-                // 1. Kumpulkan Data dari Panel Kiri & Input Form
+                // 1. Kumpulkan Data dari Panel Kiri & Form
                 const namaSiswa = "{{ $student->nama_lengkap ?? $student->nama }}";
                 const sakit = document.getElementById('inputSakit').value || 0;
                 const izin = document.getElementById('inputIzin').value || 0;
@@ -290,56 +327,73 @@
                 const piketBagus = "{{ $piketTerlaksana }}";
                 const piketBuruk = "{{ $piketTidak }}";
 
-                // Susun string nilai
-                let stringNilai = "";
-                const listNilai = document.querySelectorAll('#listNilai li');
-                if(listNilai.length > 0) {
-                    let mapelArr = [];
-                    listNilai.forEach(li => {
-                        let m = li.querySelector('[data-mapel]').getAttribute('data-mapel');
-                        let s = li.querySelector('[data-skor]').getAttribute('data-skor');
-                        mapelArr.push(`${m}: ${s}`);
-                    });
-                    stringNilai = mapelArr.join(', ');
-                } else {
-                    stringNilai = "Data nilai belum tersedia.";
+                // Susun Catatan Piket Detail
+                let stringPiketDetail = "";
+                const listPiket = document.querySelectorAll('.item-piket');
+                if(listPiket.length > 0) {
+                    let arr = [];
+                    listPiket.forEach(li => arr.push(li.innerText));
+                    stringPiketDetail = arr.join('; ');
                 }
 
-                // Susun string catatan guru
-                let stringCatatan = "";
+                // Susun Nilai Ujian Tes
+                let stringNilaiTes = "";
+                const listNilaiTes = document.querySelectorAll('.item-nilai');
+                if(listNilaiTes.length > 0) {
+                    let arr = [];
+                    listNilaiTes.forEach(li => arr.push(li.getAttribute('data-text')));
+                    stringNilaiTes = arr.join(', ');
+                } else {
+                    stringNilaiTes = "Belum ada riwayat nilai ujian tertulis.";
+                }
+
+                // Susun Nilai Observasi Non-Tes
+                let stringObservasi = "";
+                const listObs = document.querySelectorAll('.item-observasi');
+                if(listObs.length > 0) {
+                    let arr = [];
+                    listObs.forEach(li => arr.push(li.getAttribute('data-text')));
+                    stringObservasi = arr.join(' | ');
+                } else {
+                    stringObservasi = "Belum ada penilaian praktik atau proyek.";
+                }
+
+                // Susun Catatan Guru Mapel
+                let stringCatatanGuru = "";
                 const listCatatan = document.querySelectorAll('#listCatatan li');
                 if(listCatatan.length > 0) {
-                    let catArr = [];
+                    let arr = [];
                     listCatatan.forEach(li => {
-                        let tipe = li.querySelector('.type-catatan').innerText;
-                        let isi = li.querySelector('.isi-catatan').innerText;
-                        catArr.push(`(${tipe}) ${isi}`);
+                        let tipe = li.querySelector('.type-catatan') ? li.querySelector('.type-catatan').innerText : '';
+                        let isi = li.querySelector('.isi-catatan') ? li.querySelector('.isi-catatan').innerText : '';
+                        if(tipe && isi) arr.push(`(${tipe}) ${isi}`);
                     });
-                    stringCatatan = catArr.join(' | ');
+                    stringCatatanGuru = arr.join(' | ');
                 } else {
-                    stringCatatan = "Tidak ada riwayat pelanggaran atau prestasi mencolok.";
+                    stringCatatanGuru = "Tidak ada catatan pelanggaran atau prestasi mencolok.";
                 }
 
                 // 2. Siapkan Prompt untuk Gemini
                 const prompt = `
-                Bertindaklah sebagai Wali Kelas yang suportif, bijaksana, dan profesional.
-                Buatkan paragraf singkat "Catatan Wali Kelas" untuk dicetak di raport akhir semester milik siswa bernama ${namaSiswa}.
+                Bertindaklah sebagai Wali Kelas yang suportif, bijaksana, dan profesional di sekolah.
+                Buatkan paragraf singkat untuk "Catatan Wali Kelas" yang akan dicetak di raport akhir semester milik siswa bernama ${namaSiswa}.
 
-                Berdasarkan data riwayat siswa berikut:
-                - Kehadiran: Sakit ${sakit} hari, Izin ${izin} hari, Tanpa Keterangan ${alpha} hari.
-                - Kedisiplinan Tugas (Piket): Terlaksana ${piketBagus} kali, Mangkir/Tidak Terlaksana ${piketBuruk} kali.
-                - Rangkuman Nilai Akademik: ${stringNilai}.
-                - Riwayat Catatan Guru Mapel: ${stringCatatan}.
+                Analisis data terekam siswa berikut ini:
+                - KEHADIRAN: Sakit ${sakit} hari, Izin ${izin} hari, Tanpa Keterangan/Alpha ${alpha} hari.
+                - TUGAS KEDISIPLINAN (PIKET): Terlaksana ${piketBagus} kali, Mangkir ${piketBuruk} kali. ${stringPiketDetail ? 'Alasan sering mangkir: ' + stringPiketDetail : ''}
+                - RATA-RATA NILAI AKADEMIK (TES): ${stringNilaiTes}.
+                - NILAI OBSERVASI (PRAKTIK/PROYEK): ${stringObservasi}.
+                - RIWAYAT PERILAKU/JURNAL GURU: ${stringCatatanGuru}.
 
                 Instruksi Penulisan (SANGAT PENTING):
-                1. Tulis 1 atau 2 paragraf saja. Tidak boleh terlalu panjang.
-                2. JANGAN membuat format list (bullet/nomor), JANGAN gunakan markdown bintang (**), dan JANGAN berikan kalimat pembuka/penutup seperti "Tentu, ini dia catatannya". Langsung hasilkan teks narasi murni.
-                3. Berikan apresiasi pada nilai yang paling menonjol atau prestasi yang baik.
-                4. Jika ada kelemahan di nilai, absen, tugas piket, atau catatan buruk, berikan nasihat atau teguran yang memotivasi dan membangun, bukan menghakimi.
-                5. Gunakan bahasa baku yang rapi dan mudah dibaca oleh orang tua siswa.
+                1. WAJIB tulis HANYA 1 atau 2 paragraf padat. Tidak boleh terlalu panjang.
+                2. JANGAN membuat format list (bullet/nomor), JANGAN gunakan markdown tebal/bintang (**), dan JANGAN berikan kalimat pembuka/penutup basa-basi (seperti "Tentu, ini dia catatannya"). Langsung hasilkan teks narasi murni.
+                3. Rangkum dan berikan apresiasi pada nilai akademik / observasi yang paling tinggi, tidak perlu menyebutkan semua mata pelajaran.
+                4. Jika ada alpha > 3, sering mangkir piket, atau ada jurnal perilaku buruk, selipkan nasihat yang memotivasi (bukan menghakimi).
+                5. Gunakan bahasa Indonesia baku yang sopan, rapi, dan menyejukkan hati orang tua saat membaca raport.
                 `;
 
-                // 3. Panggil API Gemini[cite: 24]
+                // 3. Panggil API Gemini
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-goog-api-key': apiKey },
@@ -352,7 +406,7 @@
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.error?.message || "Kesalahan pada respon API");
+                    throw new Error(data.error?.message || "Kesalahan pada respon API dari Google.");
                 }
 
                 // 4. Masukkan hasil ke dalam textarea
@@ -365,8 +419,8 @@
             } finally {
                 // Kembalikan state tombol
                 btn.disabled = false;
-                btn.classList.remove('opacity-75', 'cursor-not-allowed');
-                txt.innerText = "Generate Ulang AI";
+                btn.classList.remove('opacity-75', 'cursor-not-allowed', 'animate-pulse');
+                txt.innerText = "Generate Ulang dengan AI";
             }
         }
     </script>

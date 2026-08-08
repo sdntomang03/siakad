@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\AcademicYear;
-use App\Models\Attendance;
 use App\Models\Classroom;
 use App\Models\JurnalPiket;
 use App\Models\School;
@@ -67,25 +66,22 @@ class StudentFinalNoteController extends Controller
         ));
     }
 
-    /**
-     * Menampilkan form pengisian catatan akhir per siswa
-     */
     public function edit($student_id, $classroom_id)
     {
-        // Asumsi menggunakan tahun ajaran aktif dari session/pengaturan
-        $active_academic_year_id = 1; // Ubah sesuai logika aplikasi Anda
+        // 1. Asumsi menggunakan tahun ajaran aktif
+        $active_academic_year_id = 1; // Ubah sesuai ID tahun ajaran aktif sistem Anda
 
         $student = Student::findOrFail($student_id);
         $classroom = Classroom::findOrFail($classroom_id);
 
-        // 1. Tarik SEMUA Rekap Catatan Guru (Tanpa filter is_for_report)
+        // 2. Tarik Rekap Catatan Guru (Tanpa filter is_for_report)
         $teacherNotes = TeacherNote::where('student_id', $student_id)
             ->where('classroom_id', $classroom_id)
             ->where('academic_year_id', $active_academic_year_id)
             ->orderBy('tanggal', 'desc')
             ->get();
 
-        // 2. Tarik Rekap Jurnal Piket
+        // 3. Tarik Rekap Jurnal Piket (Hitungan & Catatan Ketidakhadiran)
         $piketTerlaksana = JurnalPiket::where('student_id', $student_id)
             ->where('classroom_id', $classroom_id)
             ->where('academic_year_id', $active_academic_year_id)
@@ -98,34 +94,101 @@ class StudentFinalNoteController extends Controller
             ->where('status', 'tidak_terlaksana')
             ->count();
 
-        // 3. Tarik Rekap Absensi (Otomatis dari tabel attendances)
+        $catatanPiket = JurnalPiket::where('student_id', $student_id)
+            ->where('classroom_id', $classroom_id)
+            ->where('academic_year_id', $active_academic_year_id)
+            ->where('status', 'tidak_terlaksana')
+            ->whereNotNull('catatan')
+            ->where('catatan', '!=', '')
+            ->get();
+
+        // 4. Tarik Rekap Absensi
         $absensi = Attendance::where('student_id', $student_id)
             ->where('classroom_id', $classroom_id)
             ->where('academic_year_id', $active_academic_year_id)
             ->get();
 
-        // Hitung jumlah S, I, A dari data absensi
         $sakit = $absensi->where('status', 'sakit')->count();
         $izin = $absensi->where('status', 'izin')->count();
-        $alpha = $absensi->where('status', 'alfa')->count(); // Perhatikan penulisan 'alfa' dari sistem Anda
+        $alpha = $absensi->where('status', 'alfa')->count();
 
-        // 4. Tarik Rekap Nilai Siswa (Contoh Mockup Lengkap)
-        // INGAT: Ganti ini dengan query ke tabel nilai/grade Anda yang sebenarnya nanti
-        $rekapNilai = collect([
-            (object) ['nama_mapel' => 'Pendidikan Agama & Budi Pekerti', 'nilai_akhir' => 88],
-            (object) ['nama_mapel' => 'Pendidikan Pancasila', 'nilai_akhir' => 85],
-            (object) ['nama_mapel' => 'Bahasa Indonesia', 'nilai_akhir' => 90],
-            (object) ['nama_mapel' => 'Matematika', 'nilai_akhir' => 78],
-            (object) ['nama_mapel' => 'Ilmu Pengetahuan Alam', 'nilai_akhir' => 82],
-            (object) ['nama_mapel' => 'Ilmu Pengetahuan Sosial', 'nilai_akhir' => 84],
-            (object) ['nama_mapel' => 'Bahasa Inggris', 'nilai_akhir' => 89],
-            (object) ['nama_mapel' => 'Seni Budaya', 'nilai_akhir' => 92],
-            (object) ['nama_mapel' => 'Pendidikan Jasmani, Olahraga, & Kesehatan', 'nilai_akhir' => 86],
-            (object) ['nama_mapel' => 'Prakarya dan Kewirausahaan', 'nilai_akhir' => 88],
-            (object) ['nama_mapel' => 'Muatan Lokal', 'nilai_akhir' => 90],
-        ]);
+        // 5. Tarik Rekap Nilai TES (Rata-rata per Mapel)
+        $tesAssessments = Assessment::where('classroom_id', $classroom_id)
+            ->where('academic_year_id', $active_academic_year_id)
+            ->where(function ($q) {
+                $q->where('format', '!=', 'non-tes')->orWhereNull('format');
+            })->with('subject')->get();
 
-        // Cari apakah sudah ada data catatan akhir sebelumnya
+        $testScores = AssessmentScore::where('student_id', $student_id)
+            ->whereIn('assessment_id', $tesAssessments->pluck('id'))->get();
+
+        $rekapNilaiTesMap = [];
+        foreach ($testScores as $score) {
+            $ass = $tesAssessments->where('id', $score->assessment_id)->first();
+            if ($ass && $ass->subject) {
+                $mapel = $ass->subject->nama_mapel;
+                if (! isset($rekapNilaiTesMap[$mapel])) {
+                    $rekapNilaiTesMap[$mapel] = ['total' => 0, 'count' => 0];
+                }
+                $rekapNilaiTesMap[$mapel]['total'] += $score->score;
+                $rekapNilaiTesMap[$mapel]['count']++;
+            }
+        }
+
+        $rekapNilai = collect();
+        foreach ($rekapNilaiTesMap as $mapel => $data) {
+            $rekapNilai->push((object) [
+                'nama_mapel' => $mapel,
+                'nilai_akhir' => round($data['total'] / $data['count'], 1),
+            ]);
+        }
+
+        // 6. Tarik Rekap Penilaian NON-TES / OBSERVASI (Predikat & Catatan)
+        $nonTesAssessments = Assessment::where('classroom_id', $classroom_id)
+            ->where('academic_year_id', $active_academic_year_id)
+            ->where('format', 'non-tes')
+            ->with('subject', 'criteria')->get();
+
+        $nonTestScores = AssessmentCriteriaScore::where('student_id', $student_id)
+            ->whereIn('assessment_criterion_id', $nonTesAssessments->pluck('criteria')->flatten()->pluck('id'))
+            ->get();
+
+        $nonTestNotes = AssessmentNote::where('student_id', $student_id)
+            ->whereIn('assessment_id', $nonTesAssessments->pluck('id'))
+            ->get();
+
+        $rekapObservasi = collect();
+        foreach ($nonTesAssessments as $ass) {
+            $mapel = $ass->subject->nama_mapel ?? 'Mata Pelajaran';
+            $keterangan = $ass->keterangan;
+            $note = $nonTestNotes->where('assessment_id', $ass->id)->first();
+
+            $criteriaIds = $ass->criteria->pluck('id');
+            $scores = $nonTestScores->whereIn('assessment_criterion_id', $criteriaIds);
+
+            if ($scores->count() > 0) {
+                $avg = $scores->sum('score') / $scores->count();
+                $persentase = ($avg / $ass->scale) * 100;
+
+                $predikat = 'Perlu Bimbingan';
+                if ($persentase >= 85) {
+                    $predikat = 'Sangat Baik';
+                } elseif ($persentase >= 70) {
+                    $predikat = 'Baik';
+                } elseif ($persentase >= 55) {
+                    $predikat = 'Cukup';
+                }
+
+                $rekapObservasi->push((object) [
+                    'nama_mapel' => $mapel,
+                    'kegiatan' => $keterangan,
+                    'predikat' => $predikat,
+                    'catatan' => $note ? $note->catatan : '-',
+                ]);
+            }
+        }
+
+        // 7. Cek Riwayat Final Note Sebelumnya
         $finalNote = StudentFinalNote::where('student_id', $student_id)
             ->where('classroom_id', $classroom_id)
             ->where('academic_year_id', $active_academic_year_id)
@@ -133,9 +196,9 @@ class StudentFinalNoteController extends Controller
 
         return view('catatan_akhir.edit', compact(
             'student', 'classroom', 'teacherNotes',
-            'piketTerlaksana', 'piketTidak',
+            'piketTerlaksana', 'piketTidak', 'catatanPiket',
             'sakit', 'izin', 'alpha', 'finalNote', 'active_academic_year_id',
-            'rekapNilai'
+            'rekapNilai', 'rekapObservasi'
         ));
     }
 
