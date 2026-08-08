@@ -180,6 +180,7 @@
                                         </div>
 
                                         {{-- Output & Target Waktu --}}
+
                                         <div>
                                             <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
                                                 Target, Output & Bukti Dukung</p>
