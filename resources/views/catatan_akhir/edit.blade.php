@@ -416,6 +416,7 @@ Aturan Penulisan (WAJIB dipatuhi):
 7. Jangan menggunakan kata sempurna, luar biasa, hebat, atau kata-kata hiperbola. Gunakan kata yang realistis dan menenangkan hati orang tua.
 `;
 
+console.log("Prompt untuk Gemini:", prompt);
                 // 3. Panggil API Gemini
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`, {
                     method: 'POST',
