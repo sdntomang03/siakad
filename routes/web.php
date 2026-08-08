@@ -27,6 +27,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RenkinController;
 use App\Http\Controllers\ReportSubmissionController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentFinalNoteController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SuperAdmin\RolePermissionController;
 use App\Http\Controllers\SuperAdmin\SchoolController;
