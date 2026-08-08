@@ -135,12 +135,7 @@
                             <span class="block font-semibold text-gray-800 dark:text-gray-200">{{
                                 $employee->status_kepegawaian ?? 'Belum Diatur' }}</span>
                         </div>
-                        <div>
-                            <span class="block text-xs font-bold text-gray-400 uppercase tracking-wider">Tugas
-                                Tambahan</span>
-                            <span class="block font-semibold text-gray-800 dark:text-gray-200">{{
-                                $employee->tugas_tambahan ?? 'Tidak Ada' }}</span>
-                        </div>
+
                     </div>
                 </div>
 
