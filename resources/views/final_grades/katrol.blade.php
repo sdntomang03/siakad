@@ -8,31 +8,55 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
+            {{-- TAMPILAN NOTIFIKASI SUKSES / ERROR SISTEM --}}
             @if(session('success'))
             <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl font-bold shadow-sm">
-                {{ session('success') }}
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span>{{ session('success') }}</span>
+                </div>
             </div>
             @endif
 
-            {{-- TAMPILAN ERROR VALIDASI (MENCEGAH ERROR validation.required) --}}
+            @if(session('error'))
+            <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl font-bold shadow-sm">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>{{ session('error') }}</span>
+                </div>
+            </div>
+            @endif
+
+            {{-- TAMPILAN ERROR VALIDASI (DENGAN PENCEGAH KEBOCORAN KODE VALIDATION.REQUIRED) --}}
             @if ($errors->any())
             <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl font-bold shadow-sm mb-6">
                 <div class="flex items-center gap-2 mb-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                        </path>
                     </svg>
-                    <span class="text-sm">Terjadi kesalahan validasi. Silakan periksa kembali inputan Anda.</span>
+                    <span class="uppercase tracking-widest text-xs">Kesalahan Input:</span>
                 </div>
                 <ul class="list-disc list-inside text-sm font-medium">
                     @foreach ($errors->all() as $error)
+                    {{-- Logika untuk menerjemahkan otomatis jika sistem membocorkan kode 'validation.' --}}
+                    @if(str_contains($error, 'validation.'))
+                    <li>Semua data pada form (Kelas, Mata Pelajaran, dan Batas KKM) wajib diisi dengan lengkap.</li>
+                    @break
+                    @else
                     <li>{{ $error }}</li>
+                    @endif
                     @endforeach
                 </ul>
             </div>
             @endif
 
-            {{-- 1. PANEL FILTER KELAS & MAPEL --}}
             {{-- 1. PANEL FILTER KELAS & MAPEL --}}
             <div
                 class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-end justify-between gap-4">
@@ -42,8 +66,7 @@
                     <div class="w-full md:w-1/3">
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Pilih
                             Kelas</label>
-                        {{-- Hapus onchange submit otomatis yang salah --}}
-                        <select name="classroom_id" onchange="if(this.value) this.form.submit()"
+                        <select name="classroom_id" onchange="this.form.submit()"
                             class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500 transition">
                             <option value="">-- Pilih Kelas --</option>
                             @foreach($classrooms as $cls)
@@ -58,8 +81,7 @@
                     <div class="w-full md:w-1/3">
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Mata
                             Pelajaran</label>
-                        {{-- Hapus onchange submit otomatis yang salah --}}
-                        <select name="subject_id" onchange="if(this.value) this.form.submit()"
+                        <select name="subject_id" onchange="this.form.submit()"
                             class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500 transition">
                             <option value="">-- Pilih Mata Pelajaran --</option>
                             @foreach($subjects as $subj)
@@ -72,7 +94,7 @@
                     @endif
                 </form>
 
-                {{-- Tombol Refresh Nilai (Hanya Tampil Jika Filter Sudah Dipilih) --}}
+                {{-- Tombol Refresh Nilai (Hanya Tampil Jika Filter Sudah Dipilih & Data Sudah Ada) --}}
                 @if(request('classroom_id') && request('subject_id') && $grades->isNotEmpty())
                 <form action="{{ route('katrol.fetch') }}" method="POST">
                     @csrf
@@ -93,9 +115,10 @@
                 @endif
             </div>
 
+            {{-- CEK APAKAH FILTER SUDAH DIPILIH --}}
             @if(request('classroom_id') && request('subject_id'))
 
-            {{-- JIKA BELUM ADA DATA SAMA SEKALI --}}
+            {{-- 2A. JIKA BELUM ADA DATA SAMA SEKALI --}}
             @if($grades->isEmpty())
             <div
                 class="py-20 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 text-center flex flex-col items-center justify-center">
@@ -122,11 +145,11 @@
                 </form>
             </div>
 
-            {{-- JIKA DATA SUDAH DITARIK --}}
+            {{-- 2B. JIKA DATA SUDAH DITARIK --}}
             @else
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                {{-- 2. PANEL PENGATURAN RUMUS KATROL --}}
+                {{-- PANEL PENGATURAN RUMUS KATROL --}}
                 <div class="lg:col-span-1">
                     <div
                         class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 sticky top-6">
@@ -180,7 +203,7 @@
                             </div>
 
                             <button type="submit"
-                                onclick="return confirm('Proses ini akan menimpa kolom Nilai Akhir seluruh siswa di mapel ini. Lanjutkan?')"
+                                onclick="return confirm('Proses ini akan menimpa kolom Nilai Akhir seluruh siswa di mapel ini. Anda yakin?')"
                                 class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition mt-4">
                                 Eksekusi Katrol Nilai
                             </button>
@@ -188,7 +211,7 @@
                     </div>
                 </div>
 
-                {{-- 3. PANEL TABEL DATA NILAI --}}
+                {{-- PANEL TABEL DATA NILAI --}}
                 <div class="lg:col-span-2">
                     <div
                         class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
