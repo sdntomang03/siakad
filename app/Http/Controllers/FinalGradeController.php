@@ -68,6 +68,10 @@ class FinalGradeController extends Controller
             'classroom_id' => 'required|exists:classrooms,id',
             'subject_id' => 'required|exists:subjects,id',
             'academic_year_id' => 'required|exists:academic_years,id',
+        ], [
+            'classroom_id.required' => 'Sistem kehilangan data Kelas. Silakan pilih ulang kelas pada filter di atas.',
+            'subject_id.required' => 'Sistem kehilangan data Mata Pelajaran. Silakan pilih ulang.',
+            'academic_year_id.required' => 'Tahun Ajaran aktif belum diatur.',
         ]);
 
         $schoolId = auth()->user()->school_id ?? (auth()->user()->employee->school_id ?? 0);
@@ -159,6 +163,12 @@ class FinalGradeController extends Controller
             'academic_year_id' => 'required|exists:academic_years,id',
             'target_min' => 'required|numeric|min:0|max:100',
             'target_max' => 'required|numeric|min:0|max:100|gt:target_min',
+        ], [
+            'target_min.required' => 'Target nilai terendah (KKM) wajib diisi.',
+            'target_max.required' => 'Target nilai maksimal wajib diisi.',
+            'target_max.gt' => 'Target nilai maksimal harus lebih besar dari target KKM.',
+            'classroom_id.required' => 'Sistem kehilangan referensi kelas. Pilih ulang kelas.',
+            'subject_id.required' => 'Sistem kehilangan referensi mata pelajaran. Pilih ulang mapel.',
         ]);
 
         $grades = SubjectFinalGrade::where('classroom_id', $request->classroom_id)

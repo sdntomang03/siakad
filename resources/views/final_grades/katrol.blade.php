@@ -18,6 +18,23 @@
                 {{ session('error') }}
             </div>
             @endif
+            {{-- TAMPILAN ERROR VALIDASI (MENCEGAH ERROR validation.required) --}}
+            @if ($errors->any())
+            <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl font-bold shadow-sm mb-6">
+                <div class="flex items-center gap-2 mb-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="uppercase tracking-widest text-xs">Kesalahan Input:</span>
+                </div>
+                <ul class="list-disc list-inside text-sm font-medium">
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
 
             {{-- 1. PANEL FILTER KELAS & MAPEL --}}
             <div
