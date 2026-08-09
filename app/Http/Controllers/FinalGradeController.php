@@ -69,9 +69,12 @@ class FinalGradeController extends Controller
             'subject_id' => 'required|exists:subjects,id',
             'academic_year_id' => 'required|exists:academic_years,id',
         ], [
-            'classroom_id.required' => 'Sistem kehilangan data Kelas. Silakan pilih ulang kelas pada filter di atas.',
-            'subject_id.required' => 'Sistem kehilangan data Mata Pelajaran. Silakan pilih ulang.',
-            'academic_year_id.required' => 'Tahun Ajaran aktif belum diatur.',
+            'classroom_id.required' => 'Data Kelas wajib dipilih.',
+            'classroom_id.exists' => 'Kelas yang Anda pilih tidak terdaftar di sistem.',
+            'subject_id.required' => 'Data Mata Pelajaran wajib dipilih.',
+            'subject_id.exists' => 'Mata Pelajaran yang Anda pilih tidak terdaftar.',
+            'academic_year_id.required' => 'Tahun Ajaran aktif belum terdeteksi.',
+            'academic_year_id.exists' => 'Tahun Ajaran tidak valid.',
         ]);
 
         $schoolId = auth()->user()->school_id ?? (auth()->user()->employee->school_id ?? 0);
@@ -164,11 +167,23 @@ class FinalGradeController extends Controller
             'target_min' => 'required|numeric|min:0|max:100',
             'target_max' => 'required|numeric|min:0|max:100|gt:target_min',
         ], [
+            'classroom_id.required' => 'Data Kelas terputus. Silakan pilih kelas kembali.',
+            'classroom_id.exists' => 'Kelas yang dipilih tidak valid.',
+            'subject_id.required' => 'Data Mata Pelajaran terputus. Silakan pilih mapel kembali.',
+            'subject_id.exists' => 'Mata Pelajaran tidak valid.',
+            'academic_year_id.required' => 'Tahun Ajaran aktif belum terdeteksi.',
+            'academic_year_id.exists' => 'Tahun Ajaran tidak valid.',
+
             'target_min.required' => 'Target nilai terendah (KKM) wajib diisi.',
+            'target_min.numeric' => 'Target KKM harus berupa angka.',
+            'target_min.min' => 'Target KKM tidak boleh kurang dari 0.',
+            'target_min.max' => 'Target KKM tidak boleh lebih dari 100.',
+
             'target_max.required' => 'Target nilai maksimal wajib diisi.',
+            'target_max.numeric' => 'Target nilai maksimal harus berupa angka.',
+            'target_max.min' => 'Target nilai maksimal tidak boleh kurang dari 0.',
+            'target_max.max' => 'Target nilai maksimal tidak boleh melebihi 100.',
             'target_max.gt' => 'Target nilai maksimal harus lebih besar dari target KKM.',
-            'classroom_id.required' => 'Sistem kehilangan referensi kelas. Pilih ulang kelas.',
-            'subject_id.required' => 'Sistem kehilangan referensi mata pelajaran. Pilih ulang mapel.',
         ]);
 
         $grades = SubjectFinalGrade::where('classroom_id', $request->classroom_id)
