@@ -60,7 +60,7 @@
             {{-- 1. PANEL FILTER KELAS & MAPEL --}}
             <div
                 class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-end justify-between gap-4">
-                <form action="{{ route('katrol.index') }}" method="GET"
+                <form action="{{ route('rapor.index') }}" method="GET"
                     class="flex flex-col md:flex-row items-end gap-4 w-full">
 
                     <div class="w-full md:w-1/3">
@@ -96,7 +96,7 @@
 
                 {{-- Tombol Refresh Nilai (Hanya Tampil Jika Filter Sudah Dipilih & Data Sudah Ada) --}}
                 @if(request('classroom_id') && request('subject_id') && $grades->isNotEmpty())
-                <form action="{{ route('katrol.fetch') }}" method="POST">
+                <form action="{{ route('rapor.fetch') }}" method="POST">
                     @csrf
                     <input type="hidden" name="academic_year_id" value="{{ $activeYear->id }}">
                     <input type="hidden" name="classroom_id" value="{{ request('classroom_id') }}">
@@ -134,7 +134,7 @@
                 <p class="text-sm text-slate-500 mb-6 max-w-md">Sistem belum merekapitulasi rata-rata nilai ujian dan
                     observasi untuk kelas dan mata pelajaran ini. Silakan tarik data sekarang.</p>
 
-                <form action="{{ route('katrol.fetch') }}" method="POST">
+                <form action="{{ route('rapor.fetch') }}" method="POST">
                     @csrf
                     <input type="hidden" name="academic_year_id" value="{{ $activeYear->id }}">
                     <input type="hidden" name="classroom_id" value="{{ request('classroom_id') }}">
@@ -162,7 +162,7 @@
                                 Maksimal secara proporsional.</p>
                         </div>
 
-                        <form action="{{ route('katrol.process') }}" method="POST" class="space-y-5">
+                        <form action="{{ route('rapor.process') }}" method="POST" class="space-y-5">
                             @csrf
                             <input type="hidden" name="academic_year_id" value="{{ $activeYear->id }}">
                             <input type="hidden" name="classroom_id" value="{{ request('classroom_id') }}">

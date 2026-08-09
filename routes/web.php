@@ -308,9 +308,9 @@ Route::middleware('auth')->group(function () {
 
     // Menyimpan catatan akhir
     Route::post('/catatan-akhir/{student_id}/{classroom_id}', [StudentFinalNoteController::class, 'update'])->name('catatan_akhir.update');
-    Route::get('/katrol-nilai', [FinalGradeController::class, 'index'])->name('katrol.index');
-    Route::post('/katrol-nilai/fetch', [FinalGradeController::class, 'fetchRawScores'])->name('katrol.fetch');
-    Route::post('/katrol-nilai/proses', [FinalGradeController::class, 'katrolNilai'])->name('katrol.process');
+    Route::get('/nilai-akhir', [FinalGradeController::class, 'index'])->name('rapor.index');
+    Route::post('/nilai-akhir/fetch', [FinalGradeController::class, 'fetchRawScores'])->name('rapor.fetch');
+    Route::post('/nilai-akhir/proses', [FinalGradeController::class, 'katrolNilai'])->name('rapor.process');
 });
 
 require __DIR__.'/auth.php';
