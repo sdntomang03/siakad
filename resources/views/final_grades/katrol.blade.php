@@ -33,6 +33,7 @@
             @endif
 
             {{-- 1. PANEL FILTER KELAS & MAPEL --}}
+            {{-- 1. PANEL FILTER KELAS & MAPEL --}}
             <div
                 class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-end justify-between gap-4">
                 <form action="{{ route('katrol.index') }}" method="GET"
@@ -41,7 +42,8 @@
                     <div class="w-full md:w-1/3">
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Pilih
                             Kelas</label>
-                        <select name="classroom_id" onchange="this.form.submit()"
+                        {{-- Hapus onchange submit otomatis yang salah --}}
+                        <select name="classroom_id" onchange="if(this.value) this.form.submit()"
                             class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500 transition">
                             <option value="">-- Pilih Kelas --</option>
                             @foreach($classrooms as $cls)
@@ -56,7 +58,8 @@
                     <div class="w-full md:w-1/3">
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Mata
                             Pelajaran</label>
-                        <select name="subject_id" onchange="this.form.submit()"
+                        {{-- Hapus onchange submit otomatis yang salah --}}
+                        <select name="subject_id" onchange="if(this.value) this.form.submit()"
                             class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500 transition">
                             <option value="">-- Pilih Mata Pelajaran --</option>
                             @foreach($subjects as $subj)
