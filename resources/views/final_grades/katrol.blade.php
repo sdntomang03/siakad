@@ -13,11 +13,7 @@
                 {{ session('success') }}
             </div>
             @endif
-            @if(session('error'))
-            <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl font-bold shadow-sm">
-                {{ session('error') }}
-            </div>
-            @endif
+
             {{-- TAMPILAN ERROR VALIDASI (MENCEGAH ERROR validation.required) --}}
             @if ($errors->any())
             <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl font-bold shadow-sm mb-6">
