@@ -66,7 +66,7 @@ class FinalGradeController extends Controller
      */
     public function fetchRawScores(Request $request)
     {
-        dd('HALO! SAYA BERADA DI FUNGSI FETCH', $request->all());
+
         // Validasi tanpa file excel
         $request->validate([
             'classroom_id' => 'required|exists:classrooms,id',
