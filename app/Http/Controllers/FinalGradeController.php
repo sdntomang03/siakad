@@ -72,6 +72,10 @@ class FinalGradeController extends Controller
             'classroom_id' => 'required|exists:classrooms,id',
             'subject_id' => 'required|exists:subjects,id',
             'academic_year_id' => 'required|exists:academic_years,id',
+        ], [
+            'classroom_id.required' => 'Pilihan Kelas tidak boleh kosong.',
+            'subject_id.required' => 'Mata Pelajaran tidak boleh kosong.',
+            'academic_year_id.required' => 'Tahun Ajaran aktif belum terdeteksi.',
         ]);
 
         $schoolId = auth()->user()->school_id ?? (auth()->user()->employee->school_id ?? 0);
