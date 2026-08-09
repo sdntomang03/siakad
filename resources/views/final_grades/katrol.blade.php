@@ -119,6 +119,7 @@
             @if(request('classroom_id') && request('subject_id'))
 
             {{-- 2A. JIKA BELUM ADA DATA SAMA SEKALI --}}
+            {{-- JIKA BELUM ADA DATA SAMA SEKALI --}}
             @if($grades->isEmpty())
             <div
                 class="py-20 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 text-center flex flex-col items-center justify-center">

@@ -61,24 +61,21 @@ class FinalGradeController extends Controller
     /**
      * MENARIK RATA-RATA NILAI UJIAN & OBSERVASI (Generate Nilai Asli)
      */
+    /**
+     * MENARIK RATA-RATA NILAI UJIAN & OBSERVASI (Generate Nilai Asli)
+     */
     public function fetchRawScores(Request $request)
     {
-        // Validasi yang dilengkapi dengan Pesan Bahasa Indonesia Khusus
+        // Validasi tanpa file excel
         $request->validate([
             'classroom_id' => 'required|exists:classrooms,id',
             'subject_id' => 'required|exists:subjects,id',
             'academic_year_id' => 'required|exists:academic_years,id',
-        ], [
-            'required' => ':attribute tidak boleh kosong. Silakan ulangi filter pilihan Anda.',
-            'exists' => ':attribute tidak valid atau tidak ditemukan di sistem.',
-        ], [
-            'classroom_id' => 'Pilihan Kelas',
-            'subject_id' => 'Pilihan Mata Pelajaran',
-            'academic_year_id' => 'Data Tahun Ajaran Aktif',
         ]);
 
         $schoolId = auth()->user()->school_id ?? (auth()->user()->employee->school_id ?? 0);
 
+        // Ambil semua daftar penilaian untuk Mapel & Kelas ini
         $assessments = Assessment::where('classroom_id', $request->classroom_id)
             ->where('subject_id', $request->subject_id)
             ->where('academic_year_id', $request->academic_year_id)
@@ -89,6 +86,7 @@ class FinalGradeController extends Controller
             return back()->with('error', 'Belum ada satupun jadwal/data penilaian untuk mata pelajaran ini di kelas yang dipilih.');
         }
 
+        // Ambil daftar siswa di kelas tersebut
         $students = Student::whereHas('classrooms', function ($query) use ($request) {
             $query->where('classrooms.id', $request->classroom_id);
         })->get();
@@ -99,6 +97,7 @@ class FinalGradeController extends Controller
 
             foreach ($assessments as $ass) {
                 if ($ass->format === 'non-tes') {
+                    // Nilai Observasi Praktik (Ubah ke Skala 100)
                     $critIds = $ass->criteria->pluck('id');
                     $scores = AssessmentCriteriaScore::where('assessment_id', $ass->id)
                         ->where('student_id', $student->id)
@@ -113,6 +112,7 @@ class FinalGradeController extends Controller
                         $count++;
                     }
                 } else {
+                    // Nilai Ujian (Tes Tertulis)
                     $score = AssessmentScore::where('assessment_id', $ass->id)
                         ->where('student_id', $student->id)
                         ->first();
@@ -124,8 +124,10 @@ class FinalGradeController extends Controller
                 }
             }
 
+            // Hitung rata-rata keseluruhan (Skala 100)
             $nilaiAsli = $count > 0 ? round($totalScore / $count, 2) : 0;
 
+            // Simpan ke SubjectFinalGrade
             $grade = SubjectFinalGrade::firstOrNew([
                 'school_id' => $schoolId,
                 'academic_year_id' => $request->academic_year_id,
@@ -134,8 +136,10 @@ class FinalGradeController extends Controller
                 'subject_id' => $request->subject_id,
             ]);
 
+            // Set nilai asli sesuai hasil tarikan database
             $grade->nilai_asli = $nilaiAsli;
 
+            // Jika nilai akhir masih 0 (baru pertama kali ditarik), samakan dengan nilai asli.
             if (! $grade->exists || $grade->nilai_akhir == 0) {
                 $grade->nilai_akhir = $nilaiAsli;
                 $grade->predikat = $this->hitungPredikat($nilaiAsli);
