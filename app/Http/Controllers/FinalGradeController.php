@@ -3,17 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\AcademicYear;
-use App\Models\Assessment;
-use App\Models\AssessmentCriteriaScore;
-use App\Models\AssessmentScore;
 use App\Models\Classroom;
-use App\Models\Student;
 use App\Models\Subject;
 use App\Models\SubjectFinalGrade;
+use App\Services\FinalGradeService;
+use Exception;
 use Illuminate\Http\Request;
 
 class FinalGradeController extends Controller
 {
+    protected $finalGradeService;
+
+    // Dependency Injection Service ke dalam Controller
+    public function __construct(FinalGradeService $finalGradeService)
+    {
+        $this->finalGradeService = $finalGradeService;
+    }
+
     /**
      * Menampilkan antarmuka halaman Katrol Nilai
      */
@@ -61,13 +67,8 @@ class FinalGradeController extends Controller
     /**
      * MENARIK RATA-RATA NILAI UJIAN & OBSERVASI (Generate Nilai Asli)
      */
-    /**
-     * MENARIK RATA-RATA NILAI UJIAN & OBSERVASI (Generate Nilai Asli)
-     */
     public function fetchRawScores(Request $request)
     {
-
-        // Validasi tanpa file excel
         $request->validate([
             'classroom_id' => 'required|exists:classrooms,id',
             'subject_id' => 'required|exists:subjects,id',
@@ -80,80 +81,20 @@ class FinalGradeController extends Controller
 
         $schoolId = auth()->user()->school_id ?? (auth()->user()->employee->school_id ?? 0);
 
-        // Ambil semua daftar penilaian untuk Mapel & Kelas ini
-        $assessments = Assessment::where('classroom_id', $request->classroom_id)
-            ->where('subject_id', $request->subject_id)
-            ->where('academic_year_id', $request->academic_year_id)
-            ->with('criteria')
-            ->get();
+        try {
+            // Meneruskan eksekusi ke Service
+            $this->finalGradeService->calculateAndSaveRawScores(
+                $schoolId,
+                $request->academic_year_id,
+                $request->classroom_id,
+                $request->subject_id
+            );
 
-        if ($assessments->isEmpty()) {
-            return back()->with('error', 'Belum ada satupun jadwal/data penilaian untuk mata pelajaran ini di kelas yang dipilih.');
+            return back()->with('success', 'Nilai Asli berhasil ditarik dan dihitung dari rekapitulasi ujian. Silakan lakukan proses Katrol jika diperlukan.');
+        } catch (Exception $e) {
+            // Menangkap pesan error dari Service
+            return back()->with('error', $e->getMessage());
         }
-
-        // Ambil daftar siswa di kelas tersebut
-        $students = Student::whereHas('classrooms', function ($query) use ($request) {
-            $query->where('classrooms.id', $request->classroom_id);
-        })->get();
-
-        foreach ($students as $student) {
-            $totalScore = 0;
-            $count = 0;
-
-            foreach ($assessments as $ass) {
-                if ($ass->format === 'non-tes') {
-                    // Nilai Observasi Praktik (Ubah ke Skala 100)
-                    $critIds = $ass->criteria->pluck('id');
-                    $scores = AssessmentCriteriaScore::where('assessment_id', $ass->id)
-                        ->where('student_id', $student->id)
-                        ->whereIn('assessment_criterion_id', $critIds)
-                        ->get();
-
-                    if ($scores->count() > 0) {
-                        $avg = $scores->avg('score');
-                        $scale = $ass->scale ?? 4;
-                        $nilai100 = ($avg / $scale) * 100;
-                        $totalScore += $nilai100;
-                        $count++;
-                    }
-                } else {
-                    // Nilai Ujian (Tes Tertulis)
-                    $score = AssessmentScore::where('assessment_id', $ass->id)
-                        ->where('student_id', $student->id)
-                        ->first();
-
-                    if ($score && $score->score !== null) {
-                        $totalScore += $score->score;
-                        $count++;
-                    }
-                }
-            }
-
-            // Hitung rata-rata keseluruhan (Skala 100)
-            $nilaiAsli = $count > 0 ? round($totalScore / $count, 2) : 0;
-
-            // Simpan ke SubjectFinalGrade
-            $grade = SubjectFinalGrade::firstOrNew([
-                'school_id' => $schoolId,
-                'academic_year_id' => $request->academic_year_id,
-                'classroom_id' => $request->classroom_id,
-                'student_id' => $student->id,
-                'subject_id' => $request->subject_id,
-            ]);
-
-            // Set nilai asli sesuai hasil tarikan database
-            $grade->nilai_asli = $nilaiAsli;
-
-            // Jika nilai akhir masih 0 (baru pertama kali ditarik), samakan dengan nilai asli.
-            if (! $grade->exists || $grade->nilai_akhir == 0) {
-                $grade->nilai_akhir = $nilaiAsli;
-                $grade->predikat = $this->hitungPredikat($nilaiAsli);
-            }
-
-            $grade->save();
-        }
-
-        return back()->with('success', 'Nilai Asli berhasil ditarik dan dihitung dari rekapitulasi ujian. Silakan lakukan proses Katrol jika diperlukan.');
     }
 
     /**
@@ -161,8 +102,6 @@ class FinalGradeController extends Controller
      */
     public function katrolNilai(Request $request)
     {
-
-        // Validasi yang dilengkapi dengan Pesan Bahasa Indonesia Khusus
         $request->validate([
             'classroom_id' => 'required|exists:classrooms,id',
             'subject_id' => 'required|exists:subjects,id',
@@ -184,50 +123,20 @@ class FinalGradeController extends Controller
             'target_max' => 'Target Nilai Maksimal',
         ]);
 
-        $grades = SubjectFinalGrade::where('classroom_id', $request->classroom_id)
-            ->where('subject_id', $request->subject_id)
-            ->where('academic_year_id', $request->academic_year_id)
-            ->get();
+        try {
+            // Meneruskan eksekusi ke Service
+            $this->finalGradeService->applyGradeCurve(
+                $request->academic_year_id,
+                $request->classroom_id,
+                $request->subject_id,
+                $request->target_min,
+                $request->target_max
+            );
 
-        if ($grades->isEmpty()) {
-            return back()->with('error', 'Silakan tarik Nilai Asli terlebih dahulu sebelum mengkatrol.');
+            return back()->with('success', 'Nilai berhasil dikatrol secara proporsional. Peringkat siswa tetap terjaga!');
+        } catch (Exception $e) {
+            // Menangkap pesan error dari Service
+            return back()->with('error', $e->getMessage());
         }
-
-        $nilaiAsliList = $grades->pluck('nilai_asli');
-        $nilaiMinAsli = $nilaiAsliList->min();
-        $nilaiMaxAsli = $nilaiAsliList->max();
-
-        $targetMin = $request->target_min;
-        $targetMax = $request->target_max;
-
-        foreach ($grades as $grade) {
-            if ($nilaiMaxAsli == $nilaiMinAsli) {
-                $nilaiBaru = $targetMax;
-            } else {
-                $nilaiBaru = (($grade->nilai_asli - $nilaiMinAsli) / ($nilaiMaxAsli - $nilaiMinAsli)) * ($targetMax - $targetMin) + $targetMin;
-            }
-
-            $grade->update([
-                'nilai_akhir' => round($nilaiBaru, 2),
-                'predikat' => $this->hitungPredikat($nilaiBaru),
-            ]);
-        }
-
-        return back()->with('success', 'Nilai berhasil dikatrol secara proporsional. Peringkat siswa tetap terjaga!');
-    }
-
-    private function hitungPredikat($nilai)
-    {
-        if ($nilai >= 90) {
-            return 'A';
-        }
-        if ($nilai >= 80) {
-            return 'B';
-        }
-        if ($nilai >= 70) {
-            return 'C';
-        }
-
-        return 'D';
     }
 }
