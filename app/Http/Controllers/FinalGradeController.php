@@ -161,7 +161,7 @@ class FinalGradeController extends Controller
      */
     public function katrolNilai(Request $request)
     {
-        dd('HALO! SAYA BERADA DI FUNGSI KATROL', $request->all());
+
         // Validasi yang dilengkapi dengan Pesan Bahasa Indonesia Khusus
         $request->validate([
             'classroom_id' => 'required|exists:classrooms,id',
