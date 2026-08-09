@@ -21,9 +21,9 @@
 
             {{-- 1. PANEL FILTER KELAS & MAPEL --}}
             <div
-                class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-end justify-between gap-4">
                 <form action="{{ route('katrol.index') }}" method="GET"
-                    class="flex flex-col md:flex-row items-end gap-4">
+                    class="flex flex-col md:flex-row items-end gap-4 w-full">
 
                     <div class="w-full md:w-1/3">
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Pilih
@@ -54,11 +54,60 @@
                         </select>
                     </div>
                     @endif
-
                 </form>
+
+                {{-- Tombol Refresh Nilai (Hanya Tampil Jika Filter Sudah Dipilih) --}}
+                @if(request('classroom_id') && request('subject_id') && $grades->isNotEmpty())
+                <form action="{{ route('katrol.fetch') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="academic_year_id" value="{{ $activeYear->id }}">
+                    <input type="hidden" name="classroom_id" value="{{ request('classroom_id') }}">
+                    <input type="hidden" name="subject_id" value="{{ request('subject_id') }}">
+                    <button type="submit"
+                        class="shrink-0 inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold py-2.5 px-4 rounded-xl transition border border-slate-300 dark:border-slate-600 shadow-sm"
+                        title="Tarik ulang data ujian">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                            </path>
+                        </svg>
+                        Refresh Tarikan Nilai
+                    </button>
+                </form>
+                @endif
             </div>
 
             @if(request('classroom_id') && request('subject_id'))
+
+            {{-- JIKA BELUM ADA DATA SAMA SEKALI --}}
+            @if($grades->isEmpty())
+            <div
+                class="py-20 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 text-center flex flex-col items-center justify-center">
+                <div
+                    class="w-20 h-20 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Nilai Asli Belum Ditarik</h3>
+                <p class="text-sm text-slate-500 mb-6 max-w-md">Sistem belum merekapitulasi rata-rata nilai ujian dan
+                    observasi untuk kelas dan mata pelajaran ini. Silakan tarik data sekarang.</p>
+
+                <form action="{{ route('katrol.fetch') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="academic_year_id" value="{{ $activeYear->id }}">
+                    <input type="hidden" name="classroom_id" value="{{ request('classroom_id') }}">
+                    <input type="hidden" name="subject_id" value="{{ request('subject_id') }}">
+                    <button type="submit"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none transition flex items-center gap-2">
+                        Mulai Tarik Rekap Nilai Ujian
+                    </button>
+                </form>
+            </div>
+
+            {{-- JIKA DATA SUDAH DITARIK --}}
+            @else
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 {{-- 2. PANEL PENGATURAN RUMUS KATROL --}}
@@ -152,7 +201,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-                                    @forelse($grades as $index => $grade)
+                                    @foreach($grades as $index => $grade)
                                     <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition duration-150">
                                         <td class="px-6 py-3 text-center text-slate-500 font-medium">{{ $index + 1 }}
                                         </td>
@@ -172,7 +221,7 @@
                                         <td class="px-6 py-3 text-center">
                                             @if($grade->predikat)
                                             <span
-                                                class="inline-flex items-center justify-center w-6 h-6 rounded bg-slate-100 dark:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300">
+                                                class="inline-flex items-center justify-center px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300">
                                                 {{ $grade->predikat }}
                                             </span>
                                             @else
@@ -180,12 +229,7 @@
                                             @endif
                                         </td>
                                     </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="5" class="py-12 text-center text-slate-500 italic">Belum ada data
-                                            nilai mentah di tabel untuk diolah.</td>
-                                    </tr>
-                                    @endforelse
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -193,6 +237,7 @@
                 </div>
 
             </div>
+            @endif
             @endif
 
         </div>
