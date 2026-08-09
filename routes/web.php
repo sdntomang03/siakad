@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EtppController;
 use App\Http\Controllers\ExamGradeController;
+use App\Http\Controllers\FinalGradeController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GradeCurveController;
 use App\Http\Controllers\HolidayController;
@@ -307,5 +308,9 @@ Route::middleware('auth')->group(function () {
 
     // Menyimpan catatan akhir
     Route::post('/catatan-akhir/{student_id}/{classroom_id}', [StudentFinalNoteController::class, 'update'])->name('catatan_akhir.update');
+    Route::get('/katrol-nilai', [FinalGradeController::class, 'index'])->name('katrol.index');
+
+    // Memproses hitungan algoritma katrol
+    Route::post('/katrol-nilai', [FinalGradeController::class, 'katrolNilai'])->name('katrol.process');
 });
 require __DIR__.'/auth.php';
