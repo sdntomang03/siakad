@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
+use App\Models\AcademicYear;
 use App\Models\Assessment;
 use App\Models\AssessmentCriteriaScore;
 use App\Models\AssessmentScore;
+use App\Models\Classroom;
 use App\Models\Student;
+use App\Models\Subject;
 use App\Models\SubjectFinalGrade;
 use Exception;
 
@@ -138,5 +141,48 @@ class FinalGradeService
         }
 
         return 'D';
+    }
+
+    /**
+     * Mengambil data untuk halaman antarmuka Katrol Nilai
+     */
+    public function getKatrolData($request, $schoolId)
+    {
+        $activeYear = AcademicYear::where('school_id', $schoolId)->where('is_active', true)->first();
+
+        if (! $activeYear) {
+            throw new Exception('Tahun ajaran aktif belum diatur.');
+        }
+
+        $classrooms = Classroom::where('school_id', $schoolId)
+            ->where('academic_year_id', $activeYear->id)
+            ->get();
+
+        $subjects = collect();
+        $grades = collect();
+        $selectedClassroom = null;
+
+        if ($request->filled('classroom_id')) {
+            $selectedClassroom = Classroom::find($request->classroom_id);
+            if ($selectedClassroom) {
+                $subjects = Subject::where('school_id', $schoolId)
+                    ->where('tingkat', $selectedClassroom->tingkat)
+                    ->get();
+            }
+        }
+
+        if ($request->filled('classroom_id') && $request->filled('subject_id')) {
+            // Menggunakan eager loading (with) untuk mencegah N+1 Query Problem
+            $grades = SubjectFinalGrade::with(['student' => function ($q) {
+                $q->orderBy('nama_lengkap', 'asc');
+            }])
+                ->where('classroom_id', $request->classroom_id)
+                ->where('subject_id', $request->subject_id)
+                ->where('academic_year_id', $activeYear->id)
+                ->get()
+                ->sortBy('student.nama_lengkap');
+        }
+
+        return compact('activeYear', 'classrooms', 'subjects', 'grades', 'selectedClassroom');
     }
 }
