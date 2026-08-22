@@ -58,9 +58,9 @@
                                 <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">{{
                                     $siswa->nama_lengkap }}</td>
                                 <td class="px-6 py-4">
-                                    <input type="number" name="scores[{{ $siswa->id }}]"
+                                    <input type="number" name="scores[{{ $siswa->id }}]" data-nisn="{{ $siswa->nisn }}"
                                         value="{{ $existingScores[$siswa->id] ?? '' }}" min="0" max="100" step="0.01"
-                                        class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-center font-bold text-indigo-600 focus:ring-indigo-500"
+                                        class="score-input w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-center font-bold text-indigo-600 focus:ring-indigo-500"
                                         placeholder="-">
                                 </td>
                             </tr>
@@ -78,8 +78,16 @@
                 @if($students->count() > 0)
                 <div
                     class="p-6 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
+
+                    {{-- Tombol Baru: Import JSON --}}
+                    <button type="button" onclick="importJSON()"
+                        class="px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-200/50 hover:bg-emerald-700 transition">
+                        Paste JSON CBT
+                    </button>
+
                     <a href="{{ route('assessments.create') }}"
                         class="px-6 py-2.5 bg-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-300 transition">Batal</a>
+
                     <button type="submit"
                         class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-black text-sm shadow-lg hover:bg-indigo-700 transition">
                         Simpan Nilai
@@ -90,4 +98,70 @@
         </div>
 
     </div>
+
+    {{-- Tambahkan script SweetAlert2 jika belum ada di layout global --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function importJSON() {
+            Swal.fire({
+                title: 'Import Nilai CBT',
+                input: 'textarea',
+                inputPlaceholder: 'Paste (CTRL+V) kode JSON yang dicopy dari CBT di sini...',
+                inputAttributes: {
+                    'aria-label': 'Paste JSON',
+                    'rows': 5
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Proses Import',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#4f46e5', // Warna indigo
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Teks JSON tidak boleh kosong!'
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    try {
+                        // Mencoba mengubah teks menjadi format objek/array
+                        const data = JSON.parse(result.value);
+                        let countSuccess = 0;
+                        let countNotFound = 0;
+
+                        // Perulangan untuk mencocokkan tiap data dari CBT ke tabel Siakad
+                        data.forEach(item => {
+                            // Mengabaikan jika NISN kosong/null dari JSON
+                            if (!item.nisn) return;
+
+                            // Mencari elemen input yang atribut data-nisn nya sama persis
+                            const inputField = document.querySelector(`.score-input[data-nisn="${item.nisn}"]`);
+
+                            if (inputField) {
+                                inputField.value = item.nilai;
+                                countSuccess++;
+                            } else {
+                                countNotFound++;
+                            }
+                        });
+
+                        // Menampilkan notifikasi sukses
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Selesai Import!',
+                            text: `${countSuccess} nilai siswa berhasil diisi ke dalam form. ${countNotFound > 0 ? '('+countNotFound+' NISN tidak cocok/tidak ada di kelas ini)' : ''}`,
+                        });
+
+                    } catch (e) {
+                        // Error handling jika yang di-paste bukan JSON (misal asal ketik text)
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Format Gagal Dibaca',
+                            text: 'Pastikan data yang di-paste adalah JSON yang valid hasil copy dari tombol CBT.',
+                        });
+                    }
+                }
+            });
+        }
+    </script>
 </x-app-layout>

@@ -14,6 +14,7 @@ return new class extends Migration
 
             // Identitas Utama
             $table->string('nama_sekolah');
+            $table->string('kepala_sekolah')->nullable();
             $table->string('nip')->nullable();
             $table->string('tingkat')->nullable(); // SD, SMP, SMA, SMK
 
