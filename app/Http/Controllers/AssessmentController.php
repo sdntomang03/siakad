@@ -401,24 +401,35 @@ class AssessmentController extends Controller
                 }
 
                 // Kalkulasi Rata-rata Jenis & Keseluruhan per Siswa
+                // Kalkulasi Rata-rata Jenis & Keseluruhan per Siswa
                 foreach ($students as $student) {
                     $stuId = $student->id;
-                    $totalAvg = 0;
-                    $countAvg = 0;
+
+                    // Siapkan variabel penampung untuk perhitungan bobot
+                    $totalWeightedScore = 0;
+                    $totalBobot = 0;
 
                     if (isset($temp[$stuId])) {
                         foreach ($temp[$stuId] as $subjId => $typeData) {
                             foreach ($typeData as $typeId => $data) {
+                                // 1. Hitung rata-rata murni per jenis penilaian (Misal: Rata-rata UH)
                                 $avg = round($data['total'] / $data['count'], 1);
                                 $averageScores[$stuId][$subjId][$typeId] = $avg;
 
-                                $totalAvg += $avg;
-                                $countAvg++;
+                                // 2. Ambil nilai bobot dari assessmentType yang bersangkutan (default 1 jika kosong)
+                                $bobot = $usedTypesPerSubject[$subjId][$typeId]->bobot ?? 1;
+
+                                // 3. Kalikan rata-rata jenis penilaian tersebut dengan bobotnya
+                                $totalWeightedScore += ($avg * $bobot);
+
+                                // 4. Kumpulkan total bobot yang digunakan
+                                $totalBobot += $bobot;
                             }
                         }
                     }
-                    // Rata-rata keseluruhan
-                    $studentAverages[$stuId] = $countAvg > 0 ? round($totalAvg / $countAvg, 1) : 0;
+
+                    // Rata-rata keseluruhan = Total Nilai Berbobot dibagi Total Bobot
+                    $studentAverages[$stuId] = $totalBobot > 0 ? round($totalWeightedScore / $totalBobot, 1) : 0;
                 }
 
                 // Urutkan collection $students dari rata-rata tertinggi ke terendah
