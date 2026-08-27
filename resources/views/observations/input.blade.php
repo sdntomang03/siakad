@@ -333,7 +333,11 @@
                 Gunakan bahasa Indonesia yang profesional, positif, memotivasi, dan mudah dipahami wali murid.
 
                 Kriteria Observasi (Skor Maksimal ${maxScale}):
-                ${criteriaData.map((c, i) => `K${i+1}: ${c.text}`).join('\n')}
+                ${criteriaData.map((c, i) => {
+                    const inputEl = document.querySelector(`input[name="criteria[${c.id}]"]`);
+                    const realText = inputEl ? inputEl.value : c.text;
+                    return `K${i+1}: ${realText}`;
+                }).join('\n')}
 
                 Data Siswa (Format JSON input):
                 ${JSON.stringify(studentsData)}
@@ -400,12 +404,16 @@
             let scoreDetails = [];
             let isAnyAssessed = false;
 
-            criteriaData.forEach((crit, index) => {
+criteriaData.forEach((crit, index) => {
                 const checkedRadio = document.querySelector(`input[name="scores[${studentId}][${crit.id}]"]:checked`);
                 const score = (checkedRadio && checkedRadio.value !== "") ? checkedRadio.value : "Belum dinilai";
                 if(score !== "Belum dinilai") isAnyAssessed = true;
 
-                scoreDetails.push(`- Kriteria ${index + 1} (${crit.text}): Skor ${score} dari maksimal ${maxScale}.`);
+                // Ambil teks kriteria terbaru langsung dari input form
+                const critInput = document.querySelector(`input[name="criteria[${crit.id}]"]`);
+                const currentCritText = critInput ? critInput.value : crit.text;
+
+                scoreDetails.push(`- Kriteria ${index + 1} (${currentCritText}): Skor ${score} dari maksimal ${maxScale}.`);
             });
 
             if (!isAnyAssessed && !rawNote) {
