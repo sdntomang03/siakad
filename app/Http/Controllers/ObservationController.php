@@ -265,4 +265,105 @@ class ObservationController extends Controller
 
         return view('observations.report', compact('assessment', 'students', 'reportData'));
     }
+
+    // TAHAP 5: EXPORT EXCEL (CSV FORMAT)
+    public function exportExcel(Assessment $assessment)
+    {
+        // Pastikan ini adalah format observasi[cite: 1]
+        if ($assessment->format !== 'non-tes') {
+            return redirect()->route('assessments.index')->with('error', 'Format tidak valid.');
+        }
+
+        $assessment->load(['classroom', 'subject', 'criteria']);
+
+        // Ambil daftar siswa di kelas tersebut[cite: 1]
+        $students = Student::whereHas('classrooms', function ($query) use ($assessment) {
+            $query->where('classrooms.id', $assessment->classroom_id);
+        })->orderBy('nama_lengkap', 'asc')->get();
+
+        // Ambil semua nilai dan catatan yang sudah diinput[cite: 1]
+        $rawScores = AssessmentCriteriaScore::where('assessment_id', $assessment->id)->get();
+        $rawNotes = AssessmentNote::where('assessment_id', $assessment->id)->get();
+        $existingNotes = $rawNotes->pluck('catatan', 'student_id')->toArray();
+
+        // Siapkan nama file
+        $fileName = 'Export_Observasi_'.str_replace(' ', '_', $assessment->classroom->nama_kelas).'_'.date('Y-m-d').'.csv';
+
+        // Header HTTP untuk memaksa download
+        $headers = [
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$fileName",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        // Buat baris header kolom Excel
+        $columns = ['No', 'Nama Siswa'];
+        foreach ($assessment->criteria as $index => $kriteria) {
+            $columns[] = 'K'.($index + 1).' ('.$kriteria->descriptor.')';
+        }
+        $columns[] = 'Rata-rata';
+        $columns[] = 'Predikat';
+        $columns[] = 'Catatan AI/Tambahan';
+
+        // Eksekusi penulisan ke output stream
+        $callback = function () use ($students, $assessment, $rawScores, $existingNotes, $columns) {
+            $file = fopen('php://output', 'w');
+
+            // Tulis UTF-8 BOM agar Excel bisa membaca karakter khusus/spasi dengan benar
+            fwrite($file, $bom = (chr(0xEF).chr(0xBB).chr(0xBF)));
+
+            fputcsv($file, $columns, ';'); // Gunakan separator ';' agar rapi di Excel format Indonesia
+
+            $no = 1;
+            foreach ($students as $siswa) {
+                $row = [
+                    $no++,
+                    $siswa->nama_lengkap,
+                ];
+
+                $siswaScores = $rawScores->where('student_id', $siswa->id);
+                $totalScore = 0;
+                $criteriaCount = 0;
+
+                // Hitung skor per kriteria[cite: 1]
+                foreach ($assessment->criteria as $kriteria) {
+                    $scoreRecord = $siswaScores->where('assessment_criterion_id', $kriteria->id)->first();
+                    $nilai = $scoreRecord ? $scoreRecord->score : '';
+                    $row[] = $nilai;
+
+                    if ($nilai !== '') {
+                        $totalScore += $nilai;
+                        $criteriaCount++;
+                    }
+                }
+
+                // Kalkulasi Rata-rata dan Predikat[cite: 1]
+                $average = $criteriaCount > 0 ? round($totalScore / $criteriaCount, 2) : 0;
+                $predikat = '-';
+                if ($criteriaCount > 0) {
+                    $persentase = ($average / $assessment->scale) * 100;
+                    if ($persentase >= 85) {
+                        $predikat = 'Sangat Baik';
+                    } elseif ($persentase >= 70) {
+                        $predikat = 'Baik';
+                    } elseif ($persentase >= 55) {
+                        $predikat = 'Cukup';
+                    } else {
+                        $predikat = 'Perlu Bimbingan';
+                    }
+                }
+
+                $row[] = $average;
+                $row[] = $predikat;
+                $row[] = $existingNotes[$siswa->id] ?? '-';
+
+                fputcsv($file, $row, ';');
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

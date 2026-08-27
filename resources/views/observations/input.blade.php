@@ -67,10 +67,21 @@
                         {{ \Carbon\Carbon::parse($assessment->tanggal)->format('d M Y') }}
                     </p>
                 </div>
-                <div>
+                <div class="flex items-center gap-4">
                     <a href="{{ route('assessments.index') }}"
                         class="inline-flex items-center gap-1 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition">
                         &larr; Kembali ke Riwayat
+                    </a>
+
+                    <!-- TOMBOL EXPORT EXCEL BARU -->
+                    <a href="{{ route('observations.export', $assessment->id) }}"
+                        class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-bold rounded-lg hover:bg-emerald-200 transition shadow-sm border border-emerald-200 dark:border-emerald-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        Export Excel
                     </a>
                 </div>
             </div>
