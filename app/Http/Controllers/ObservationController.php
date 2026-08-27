@@ -147,12 +147,24 @@ class ObservationController extends Controller
     }
 
     // TAHAP 4: SIMPAN HASIL PENILAIAN OBSERVASI
+    // TAHAP 4: SIMPAN HASIL PENILAIAN OBSERVASI
     public function updateScores(Request $request, Assessment $assessment)
     {
         $request->validate([
             'scores' => 'required|array',
-            'notes' => 'nullable|array', // Validasi input notes
+            'notes' => 'nullable|array',
+            'criteria' => 'nullable|array', // Validasi input kriteria baru
+            'criteria.*' => 'required|string|max:255',
         ]);
+
+        // 0. Update Teks Kriteria (Jika ada editan)
+        if ($request->has('criteria')) {
+            foreach ($request->criteria as $criterionId => $newDescriptor) {
+                AssessmentCriterion::where('id', $criterionId)
+                    ->where('assessment_id', $assessment->id)
+                    ->update(['descriptor' => $newDescriptor]);
+            }
+        }
 
         // 1. Simpan Skor Matriks (Kriteria)
         foreach ($request->scores as $studentId => $criteriaScores) {
@@ -182,7 +194,6 @@ class ObservationController extends Controller
                         ['catatan' => $noteText]
                     );
                 } else {
-                    // Hapus jika guru mengosongkan catatan yang sebelumnya ada
                     AssessmentNote::where('assessment_id', $assessment->id)
                         ->where('student_id', $studentId)
                         ->delete();
@@ -190,7 +201,7 @@ class ObservationController extends Controller
             }
         }
 
-        return redirect()->route('assessments.index')->with('success', 'Nilai dan Catatan observasi berhasil disimpan!');
+        return redirect()->route('assessments.index')->with('success', 'Nilai, Catatan, dan Kriteria observasi berhasil disimpan!');
     }
 
     public function showReport(Assessment $assessment)

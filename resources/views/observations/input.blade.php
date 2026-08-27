@@ -103,13 +103,16 @@
                     </svg>
                     Daftar Kriteria Observasi
                 </h4>
-                <ul class="space-y-1.5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3">
+                <ul class="space-y-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3">
                     @foreach($assessment->criteria as $index => $kriteria)
                     <li
-                        class="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300 bg-white/60 dark:bg-slate-900/40 px-2 py-1.5 rounded-md">
+                        class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 bg-white/60 dark:bg-slate-900/40 px-2 py-1.5 rounded-md border border-transparent focus-within:border-emerald-300 focus-within:ring-1 focus-within:ring-emerald-300 transition-all">
                         <span class="font-black text-emerald-600 dark:text-emerald-500 shrink-0">K{{ $index + 1
                             }}</span>
-                        <span class="font-medium leading-tight">{{ $kriteria->descriptor }}</span>
+                        <!-- Ubah text biasa menjadi input field -->
+                        <input type="text" name="criteria[{{ $kriteria->id }}]" value="{{ $kriteria->descriptor }}"
+                            class="w-full bg-transparent border-none p-0 focus:ring-0 text-xs font-medium text-slate-700 dark:text-slate-300 placeholder-slate-400"
+                            placeholder="Masukkan deskripsi kriteria..." required>
                     </li>
                     @endforeach
                 </ul>
