@@ -166,10 +166,11 @@ class ObservationController extends Controller
             }
         }
 
-        // 1. Simpan Skor Matriks (Kriteria)
+        // 1. Simpan dan Hapus Skor Matriks (Kriteria)
         foreach ($request->scores as $studentId => $criteriaScores) {
             foreach ($criteriaScores as $criterionId => $scoreValue) {
-                if ($scoreValue !== null) {
+                if ($scoreValue !== null && trim($scoreValue) !== '') {
+                    // Jika ada nilainya, update atau create[cite: 27]
                     AssessmentCriteriaScore::updateOrCreate(
                         [
                             'assessment_id' => $assessment->id,
@@ -178,6 +179,12 @@ class ObservationController extends Controller
                         ],
                         ['score' => $scoreValue]
                     );
+                } else {
+                    // JIKA NILAI DIKOSONGKAN/DIHAPUS, hapus record dari database
+                    AssessmentCriteriaScore::where('assessment_id', $assessment->id)
+                        ->where('student_id', $studentId)
+                        ->where('assessment_criterion_id', $criterionId)
+                        ->delete();
                 }
             }
         }
@@ -194,6 +201,7 @@ class ObservationController extends Controller
                         ['catatan' => $noteText]
                     );
                 } else {
+                    // Hapus record catatan jika dikosongkan[cite: 27]
                     AssessmentNote::where('assessment_id', $assessment->id)
                         ->where('student_id', $studentId)
                         ->delete();
