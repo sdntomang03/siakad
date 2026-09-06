@@ -26,7 +26,7 @@
                         <tr>
                             <th class="px-4 py-3 w-16 text-center">No</th>
                             <th class="px-4 py-3">Nama Siswa</th>
-                            <th class="px-4 py-3 text-center">Aksi</th>
+
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -34,10 +34,7 @@
                         <tr class="hover:bg-slate-50">
                             <td class="px-4 py-3 text-center font-bold">{{ $index + 1 }}</td>
                             <td class="px-4 py-3 font-semibold text-slate-800">{{ $siswa->nama_lengkap }}</td>
-                            <td class="px-4 py-3 text-center">
-                                <span
-                                    class="px-2 py-1 bg-rose-100 text-rose-600 rounded-md text-[10px] font-bold uppercase">Kosong</span>
-                            </td>
+
                         </tr>
                         @empty
                         <tr>
@@ -60,7 +57,7 @@
                         <tr>
                             <th class="px-4 py-3 w-16 text-center">No</th>
                             <th class="px-4 py-3">Nama Siswa</th>
-                            <th class="px-4 py-3 text-center">Status</th>
+
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -68,11 +65,7 @@
                         <tr class="hover:bg-slate-50">
                             <td class="px-4 py-3 text-center font-bold">{{ $index + 1 }}</td>
                             <td class="px-4 py-3 font-semibold text-slate-800">{{ $siswa->nama_lengkap }}</td>
-                            <td class="px-4 py-3 text-center">
-                                <span
-                                    class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-md text-[10px] font-bold uppercase"><i
-                                        class="fas fa-check"></i> Selesai</span>
-                            </td>
+
                         </tr>
                         @empty
                         <tr>
