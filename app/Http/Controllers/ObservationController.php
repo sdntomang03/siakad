@@ -385,4 +385,41 @@ class ObservationController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
+    public function status(Assessment $assessment)
+    {
+        $assessment->load(['classroom', 'subject', 'criteria']);
+
+        // Ambil semua siswa di kelas tersebut
+        $allStudents = Student::whereHas('classrooms', function ($query) use ($assessment) {
+            $query->where('classrooms.id', $assessment->classroom_id);
+        })->orderBy('nama_lengkap', 'asc')->get();
+
+        // Ambil data nilai dan catatan yang sudah ada
+        $rawScores = AssessmentCriteriaScore::where('assessment_id', $assessment->id)->get();
+        $existingScores = [];
+        foreach ($rawScores as $score) {
+            $existingScores[$score->student_id][$score->assessment_criterion_id] = $score->score;
+        }
+
+        $rawNotes = AssessmentNote::where('assessment_id', $assessment->id)->get();
+        $existingNotes = $rawNotes->pluck('catatan', 'student_id')->toArray();
+
+        // Pisahkan siswa
+        $sudahDinilai = collect();
+        $belumDinilai = collect();
+
+        foreach ($allStudents as $siswa) {
+            $hasScore = isset($existingScores[$siswa->id]) && count($existingScores[$siswa->id]) > 0;
+            $hasNote = isset($existingNotes[$siswa->id]) && trim($existingNotes[$siswa->id]) !== '';
+
+            if ($hasScore || $hasNote) {
+                $sudahDinilai->push($siswa);
+            } else {
+                $belumDinilai->push($siswa);
+            }
+        }
+
+        return view('observations.status', compact('assessment', 'sudahDinilai', 'belumDinilai'));
+    }
 }

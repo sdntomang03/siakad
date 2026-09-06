@@ -72,7 +72,10 @@
                         class="inline-flex items-center gap-1 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition">
                         &larr; Kembali ke Riwayat
                     </a>
-
+                    <a href="{{ route('observations.status', $assessment->id) }}"
+                        class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg hover:bg-indigo-200 transition shadow-sm border border-indigo-200">
+                        <i class="fas fa-users"></i> Status
+                    </a>
                     <!-- TOMBOL EXPORT EXCEL BARU -->
                     <a href="{{ route('observations.export', $assessment->id) }}"
                         class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-bold rounded-lg hover:bg-emerald-200 transition shadow-sm border border-emerald-200 dark:border-emerald-800">

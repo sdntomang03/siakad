@@ -226,6 +226,8 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::get('/observations/{assessment}/report', [ObservationController::class, 'showReport'])->name('observations.report');
     Route::get('/observations/{assessment}/export', [ObservationController::class, 'exportExcel'])
         ->name('observations.export');
+    Route::get('/observations/{assessment}/status', [ObservationController::class, 'status'])
+        ->name('observations.status');
     Route::get('/capaian-pembelajaran/import', [CapaianPembelajaranController::class, 'importForm'])->name('cp.import-form');
     Route::post('/capaian-pembelajaran/import', [CapaianPembelajaranController::class, 'importProcess'])->name('cp.import-process');
     // Rute CRUD Utama (Tambahkan ->parameters)
