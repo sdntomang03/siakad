@@ -8,7 +8,14 @@
     <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
 
         <!-- Tombol Navigasi -->
-        <div class="flex justify-start">
+        <div class="flex justify-start gap-3">
+            <!-- Tombol Kembali ke Daftar Riwayat Penilaian -->
+            <a href="{{ route('assessments.index') }}"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 text-sm font-bold transition-colors border border-slate-300">
+                <i class="fas fa-home"></i> Kembali ke Riwayat
+            </a>
+
+            <!-- Tombol Kembali ke Form Input -->
             <a href="{{ route('observations.input', $assessment->id) }}"
                 class="inline-flex items-center gap-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 text-sm font-bold transition-colors">
                 <i class="fas fa-arrow-left"></i> Kembali ke Form Input
