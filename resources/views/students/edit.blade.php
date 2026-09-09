@@ -294,12 +294,12 @@
                                             Siswa</h3>
                                     </div>
 
-                                    {{-- PERBAIKAN: Input Upload Foto dengan Live Preview --}}
+                                    {{-- PERBAIKAN: Input Upload Foto 4x6 dengan Live Preview --}}
                                     <div x-data="{ photoName: null, photoPreview: null }"
-                                        class="mb-8 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700">
-                                        <!-- Area Preview Avatar -->
+                                        class="mb-8 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700">
+                                        <!-- Area Preview Foto 4x6 -->
                                         <button type="button" @click="$refs.foto.click()"
-                                            class="relative h-24 w-24 sm:h-28 sm:w-28 rounded-full overflow-hidden border-4 border-white dark:border-slate-700 shadow-lg bg-slate-100 dark:bg-slate-800 flex-shrink-0 ring-1 ring-slate-200 dark:ring-slate-600 group">
+                                            class="relative w-28 sm:w-32 aspect-[2/3] rounded-lg overflow-hidden border-4 border-white dark:border-slate-700 shadow-lg bg-slate-100 dark:bg-slate-800 flex-shrink-0 ring-1 ring-slate-200 dark:ring-slate-600 group">
                                             <!-- Foto Lama -->
                                             <img x-show="!photoPreview"
                                                 src="{{ !empty($student->student->foto) ? asset('storage/' . $student->student->foto) : 'https://ui-avatars.com/api/?name='.urlencode($student->name).'&background=random' }}"
@@ -309,10 +309,13 @@
                                             <img x-show="photoPreview" :src="photoPreview"
                                                 class="object-cover w-full h-full transition group-hover:brightness-90"
                                                 style="display: none;" alt="Preview Photo">
+                                            <!-- Label ukuran -->
+                                            <span
+                                                class="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-black/50 text-white text-[9px] font-bold tracking-wide">4x6</span>
                                             <!-- Badge Kamera -->
                                             <span
-                                                class="absolute bottom-0 right-0 h-8 w-8 flex items-center justify-center rounded-full bg-indigo-600 text-white border-2 border-white dark:border-slate-800 shadow-md group-active:scale-90 transition">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                class="absolute bottom-1.5 right-1.5 h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center rounded-full bg-indigo-600 text-white border-2 border-white dark:border-slate-800 shadow-md group-active:scale-90 transition">
+                                                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2"
@@ -328,10 +331,11 @@
                                         <div class="flex-1 text-center sm:text-left w-full">
                                             <label
                                                 class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Foto
-                                                Profil Siswa</label>
-                                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Format
-                                                didukung: JPG, PNG, WebP (Maks: 2MB). Foto otomatis dioptimasi ke
-                                                WebP.</p>
+                                                Profil Siswa <span
+                                                    class="font-normal text-slate-400">(4x6)</span></label>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Gunakan foto
+                                                dengan rasio 4x6 (potret, latar bebas), format JPG/PNG/WebP maks. 2MB.
+                                                Foto otomatis dioptimasi ke WebP.</p>
 
                                             <!-- Input file tersembunyi -->
                                             <input type="file" name="foto" id="foto" class="hidden"
