@@ -243,13 +243,13 @@ class StudentController extends Controller
 
     public function show(Student $student)
     {
-        // Eager load semua relasi yang dibutuhkan oleh view show.blade.php
-        // untuk mencegah N+1 query problem
+        // Langsung panggil nama relasinya sesuai di model Student.php
         $student->load([
-            'student.address',
-            'student.family',
-            'student.health',
-            'student.financial',
+            'address',
+            'family',
+            'health',
+            'financial',
+            'user',
         ]);
 
         return view('students.show', compact('student'));
