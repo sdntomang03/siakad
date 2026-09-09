@@ -15,6 +15,7 @@ return new class extends Migration
 
             // Biodata Dasar
             $table->string('nama_lengkap');
+            $table->string('nama_panggilan')->nullable();
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->string('nisn')->unique()->nullable();
             $table->string('nipd')->nullable();

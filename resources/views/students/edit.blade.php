@@ -182,7 +182,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">NIS</label>
                                             <input type="text" name="nis"
-                                                value="{{ old('nis', $student->student->nis ?? '') }}"
+                                                value="{{ old('nis', $student->student->nipd ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
                                         <div>
