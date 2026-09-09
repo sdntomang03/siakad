@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "39c2fb83345eb6a8c0f545f0c381a5af",
+    "content-hash": "b61b66344c18d8a6f8d7679b1d58de3e",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1815,16 +1815,16 @@
         },
         {
             "name": "intervention/image",
-            "version": "4.0.4",
+            "version": "4.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "f58d379b1f13c036b2ef5c3c26eb4b0c88b647ed"
+                "reference": "bc15ed24bb88dc58f921daf78091a019ce42fe2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/f58d379b1f13c036b2ef5c3c26eb4b0c88b647ed",
-                "reference": "f58d379b1f13c036b2ef5c3c26eb4b0c88b647ed",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/bc15ed24bb88dc58f921daf78091a019ce42fe2c",
+                "reference": "bc15ed24bb88dc58f921daf78091a019ce42fe2c",
                 "shasum": ""
             },
             "require": {
@@ -1871,7 +1871,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Intervention/image/issues",
-                "source": "https://github.com/Intervention/image/tree/4.0.4"
+                "source": "https://github.com/Intervention/image/tree/4.3.2"
             },
             "funding": [
                 {
@@ -1887,7 +1887,7 @@
                     "type": "ko_fi"
                 }
             ],
-            "time": "2026-05-03T04:47:13+00:00"
+            "time": "2026-08-29T05:35:03+00:00"
         },
         {
             "name": "laravel/framework",

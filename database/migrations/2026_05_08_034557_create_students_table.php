@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('hobi')->nullable();
             $table->string('cita_cita')->nullable();
             $table->text('prestasi')->nullable();
-
+            $table->string('foto')->nullable();
             // Kontak & Akademik Lainnya
             $table->string('hp')->nullable();
             $table->string('telepon')->nullable();

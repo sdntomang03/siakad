@@ -148,7 +148,9 @@
     }" x-init="initWilayah()">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <form action="{{ route('students.update', $student->id ?? 0) }}" method="POST">
+            {{-- PERBAIKAN: Menambahkan enctype="multipart/form-data" --}}
+            <form action="{{ route('students.update', $student->id ?? 0) }}" method="POST"
+                enctype="multipart/form-data">
                 @csrf @method('PUT')
 
                 {{-- NOTIFIKASI ERROR GLOBAL --}}
@@ -256,6 +258,61 @@
                                         <h3 class="text-xl font-bold text-slate-800 dark:text-white">Identitas Pokok
                                             Siswa</h3>
                                     </div>
+
+                                    {{-- PERBAIKAN: Input Upload Foto dengan Live Preview --}}
+                                    <div x-data="{ photoName: null, photoPreview: null }"
+                                        class="mb-8 flex flex-col sm:flex-row gap-6 items-center">
+                                        <!-- Area Preview Avatar -->
+                                        <div
+                                            class="relative h-28 w-28 rounded-full overflow-hidden border-4 border-indigo-50 dark:border-slate-700 shadow-md bg-slate-100 dark:bg-slate-800 flex-shrink-0">
+                                            <!-- Foto Lama -->
+                                            <img x-show="!photoPreview"
+                                                src="{{ !empty($student->student->foto) ? asset('storage/' . $student->student->foto) : 'https://ui-avatars.com/api/?name='.urlencode($student->name).'&background=random' }}"
+                                                class="object-cover w-full h-full" alt="Current Photo">
+                                            <!-- Foto Baru (Preview) -->
+                                            <img x-show="photoPreview" :src="photoPreview"
+                                                class="object-cover w-full h-full" style="display: none;"
+                                                alt="Preview Photo">
+                                        </div>
+
+                                        <!-- Area Input File -->
+                                        <div class="flex-1 text-center sm:text-left">
+                                            <label
+                                                class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Foto
+                                                Profil Siswa</label>
+
+                                            <!-- Input file tersembunyi -->
+                                            <input type="file" name="foto" id="foto" class="hidden"
+                                                accept="image/jpeg, image/png, image/webp" @change="
+                                                    photoName = $refs.foto.files[0].name;
+                                                    const reader = new FileReader();
+                                                    reader.onload = (e) => { photoPreview = e.target.result; };
+                                                    reader.readAsDataURL($refs.foto.files[0]);
+                                                " x-ref="foto">
+
+                                            <!-- Tombol Trigger -->
+                                            <button type="button"
+                                                class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors"
+                                                @click="$refs.foto.click()">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
+                                                    </path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                                Pilih Foto
+                                            </button>
+
+                                            <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Format didukung:
+                                                JPG, PNG, WebP (Maks: 2MB). Foto otomatis dioptimasi ke WebP.</p>
+                                            @error('foto') <p class="mt-1 text-xs font-semibold text-rose-500">{{
+                                                $message }}</p> @enderror
+                                        </div>
+                                    </div>
+
                                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                                         <div class="sm:col-span-2">
                                             <label
