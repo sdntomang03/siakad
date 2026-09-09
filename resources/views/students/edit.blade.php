@@ -757,7 +757,7 @@
                                                 <div>
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Penghasilan</label>
-                                                    <input type="text" name="penghasilan_ayah"
+                                                    <input type="number" name="penghasilan_ayah"
                                                         value="{{ old('penghasilan_ayah', $student->student->family->penghasilan_ayah ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
