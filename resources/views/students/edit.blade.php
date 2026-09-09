@@ -623,9 +623,12 @@
                                 </div>
 
                                 {{-- 3. FORM KELUARGA --}}
+                                {{-- 3. FORM KELUARGA --}}
                                 <div x-show="tab === 'keluarga'" x-transition:enter="transition ease-out duration-300"
                                     x-transition:enter-start="opacity-0 translate-y-2"
-                                    x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+                                    x-transition:enter-end="opacity-100 translate-y-0" style="display: none;"
+                                    x-data="{ bersamaOrtu: '{{ old('tinggal_bersama_ortu', !empty($student->student->family->nama_wali) ? 'tidak' : 'ya') }}' }">
+
                                     @php
                                     $agamaOptions = ['Islam', 'Kristen', 'Katholik', 'Hindu', 'Buddha', 'Khonghucu'];
                                     $agamaAyahLama = old('agama_ayah', $student->student->family->agama_ayah ?? '');
@@ -640,10 +643,37 @@
                                     $pendidikanWaliLama = old('pendidikan_wali',
                                     $student->student->family->pendidikan_wali ?? '');
                                     @endphp
+
                                     <div class="mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
                                         <h3 class="text-xl font-bold text-slate-800 dark:text-white">Data Orang Tua /
                                             Wali</h3>
                                     </div>
+
+                                    {{-- OPSI TINGGAL BERSAMA ORANG TUA --}}
+                                    <div
+                                        class="mb-6 p-4 sm:p-5 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                                        <label class="block text-sm font-bold text-slate-800 dark:text-slate-200 mb-3">
+                                            Apakah peserta didik tinggal bersama orang tua? <span
+                                                class="text-rose-500">*</span>
+                                        </label>
+                                        <div class="flex items-center gap-6">
+                                            <label class="inline-flex items-center gap-2.5 cursor-pointer">
+                                                <input type="radio" name="tinggal_bersama_ortu" value="ya"
+                                                    x-model="bersamaOrtu"
+                                                    class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800">
+                                                <span
+                                                    class="text-sm font-semibold text-slate-700 dark:text-slate-300">Ya</span>
+                                            </label>
+                                            <label class="inline-flex items-center gap-2.5 cursor-pointer">
+                                                <input type="radio" name="tinggal_bersama_ortu" value="tidak"
+                                                    x-model="bersamaOrtu"
+                                                    class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800">
+                                                <span
+                                                    class="text-sm font-semibold text-slate-700 dark:text-slate-300">Tidak</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
                                     <div class="space-y-8">
 
                                         {{-- Ayah --}}
@@ -801,7 +831,7 @@
                                                         Lahir</label>
                                                     <input type="date" name="tanggal_lahir_ibu"
                                                         value="{{ old('tanggal_lahir_ibu', $student->student?->family?->tanggal_lahir_ibu?->format('Y-m-d') ?? '') }}"
-                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
                                                 <div>
                                                     <label
@@ -866,14 +896,20 @@
                                             </div>
                                         </div>
 
-                                        {{-- Wali --}}
-                                        <div
+                                        {{-- Wali (Tampil jika bersamarOrtu === 'tidak') --}}
+                                        <div x-show="bersamaOrtu === 'tidak'"
+                                            x-transition:enter="transition ease-out duration-300"
+                                            x-transition:enter-start="opacity-0 -translate-y-2"
+                                            x-transition:enter-end="opacity-100 translate-y-0"
                                             class="relative rounded-2xl border border-slate-200 bg-slate-50/50 p-5 sm:p-6 dark:border-slate-700 dark:bg-slate-800/50">
-                                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-slate-400 rounded-l-2xl">
+                                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-500 rounded-l-2xl">
                                             </div>
-                                            <h4 class="font-bold text-slate-700 dark:text-slate-300 mb-4">
-                                                Data Wali <span
-                                                    class="text-xs font-normal text-slate-400 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded ml-2">(Opsional)</span>
+                                            <h4
+                                                class="font-bold text-slate-700 dark:text-slate-300 mb-4 flex items-center gap-2">
+                                                Data Wali Siswa
+                                                <span
+                                                    class="text-xs font-normal text-amber-700 bg-amber-100 dark:bg-amber-900/40 dark:text-amber-300 px-2 py-0.5 rounded">Wajib
+                                                    diisi jika tidak tinggal bersama orang tua</span>
                                             </h4>
                                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                                 <div class="sm:col-span-2">
@@ -898,7 +934,7 @@
                                                         Lahir</label>
                                                     <input type="date" name="tanggal_lahir_wali"
                                                         value="{{ old('tanggal_lahir_wali', $student->student?->family?->tanggal_lahir_wali?->format('Y-m-d') ?? '') }}"
-                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
                                                 <div>
                                                     <label
@@ -962,6 +998,7 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
 
