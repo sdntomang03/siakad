@@ -82,7 +82,7 @@ class StudentController extends Controller
         $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'jenis_kelamin' => 'required|in:L,P',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // <-- Tambahan validasi foto
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5048', // <-- Tambahan validasi foto
         ]);
 
         DB::transaction(function () use ($request, $user, $imageUploadService) {

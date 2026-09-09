@@ -210,8 +210,8 @@
                                                 Profil Siswa <span
                                                     class="font-normal text-slate-400">(4x6)</span></label>
                                             <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Gunakan foto
-                                                dengan rasio 4x6 (potret, latar bebas), format JPG/PNG/WebP maks. 2MB.
-                                                Foto otomatis dioptimasi ke WebP.</p>
+                                                dengan rasio 4x6 (potret, latar bebas), format JPG/PNG/WebP maks. 5MB.
+                                            </p>
 
                                             <!-- Input file tersembunyi -->
                                             <input type="file" name="foto" id="foto" class="hidden"
