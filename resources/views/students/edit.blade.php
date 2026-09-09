@@ -753,7 +753,7 @@
                                     $agamaAyahLama = old('agama_ayah', $student->student->family->agama_ayah ?? '');
                                     $agamaIbuLama = old('agama_ibu', $student->student->family->agama_ibu ?? '');
                                     $agamaWaliLama = old('agama_wali', $student->student->family->agama_wali ?? '');
-                                    $pendidikanOptions = ['Tidak tamat', 'SD/MI', 'SMP/MTs', 'SMA//SMK/MA', 'S1', 'S2',
+                                    $pendidikanOptions = ['Tidak tamat', 'SD/MI', 'SMP/MTs', 'SMA/SMK/MA', 'S1', 'S2',
                                     'S3'];
                                     $pendidikanAyahLama = old('pendidikan_ayah',
                                     $student->student->family->pendidikan_ayah ?? '');
