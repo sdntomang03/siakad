@@ -534,29 +534,7 @@
                                                 value="{{ old('sekolah_asal', $student->student->sekolah_asal ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
-                                        <div>
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">SKHUN</label>
-                                            <input type="text" name="skhun"
-                                                value="{{ old('skhun', $student->student->skhun ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No.
-                                                Ujian Nasional</label>
-                                            <input type="text" name="no_peserta_ujian_nasional"
-                                                value="{{ old('no_peserta_ujian_nasional', $student->student->no_peserta_ujian_nasional ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No.
-                                                Seri Ijazah</label>
-                                            <input type="text" name="no_seri_ijazah"
-                                                value="{{ old('no_seri_ijazah', $student->student->no_seri_ijazah ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                        </div>
+
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Anak
@@ -677,27 +655,96 @@
                                                 <label
                                                     class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Jenis
                                                     Tinggal</label>
-                                                <input type="text" name="jenis_tinggal"
-                                                    value="{{ old('jenis_tinggal', $student->student->address->jenis_tinggal ?? '') }}"
-                                                    placeholder="Bersama Orang Tua"
+                                                <select name="jenis_tinggal"
                                                     class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                    <option value="">-- Pilih --</option>
+                                                    @php $jenisTinggalLama = old('jenis_tinggal',
+                                                    $student->student->address->jenis_tinggal ?? ''); @endphp
+                                                    <option value="Bersama Orang Tua" {{
+                                                        $jenisTinggalLama=='Bersama Orang Tua' ? 'selected' : '' }}>
+                                                        Bersama Orang Tua</option>
+                                                    <option value="Bersama Wali" {{ $jenisTinggalLama=='Bersama Wali'
+                                                        ? 'selected' : '' }}>
+                                                        Bersama Wali</option>
+                                                    <option value="Kost" {{ $jenisTinggalLama=='Kost' ? 'selected' : ''
+                                                        }}>
+                                                        Kost</option>
+                                                    <option value="Asrama" {{ $jenisTinggalLama=='Asrama' ? 'selected'
+                                                        : '' }}>
+                                                        Asrama</option>
+                                                    <option value="Panti Asuhan" {{ $jenisTinggalLama=='Panti Asuhan'
+                                                        ? 'selected' : '' }}>
+                                                        Panti Asuhan</option>
+                                                </select>
                                             </div>
                                             <div>
                                                 <label
                                                     class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Alat
                                                     Transportasi</label>
-                                                <input type="text" name="alat_transportasi"
-                                                    value="{{ old('alat_transportasi', $student->student->address->alat_transportasi ?? '') }}"
-                                                    placeholder="Jalan Kaki"
+                                                <select name="alat_transportasi" x-data="{ isLainnya: false }"
+                                                    x-init="isLainnya = !['', 'Jalan Kaki', 'Sepeda', 'Motor', 'Mobil', 'Angkutan Umum', 'Antar Jemput'].includes($el.value)"
+                                                    @change="isLainnya = ($event.target.value === 'Lainnya')"
+                                                    class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                    <option value="">-- Pilih --</option>
+                                                    @php $alatTransportasiLama = old('alat_transportasi',
+                                                    $student->student->address->alat_transportasi ?? ''); @endphp
+                                                    <option value="Jalan Kaki" {{ $alatTransportasiLama=='Jalan Kaki'
+                                                        ? 'selected' : '' }}>
+                                                        Jalan Kaki</option>
+                                                    <option value="Sepeda" {{ $alatTransportasiLama=='Sepeda'
+                                                        ? 'selected' : '' }}>
+                                                        Sepeda</option>
+                                                    <option value="Motor" {{ $alatTransportasiLama=='Motor' ? 'selected'
+                                                        : '' }}>
+                                                        Motor</option>
+                                                    <option value="Mobil" {{ $alatTransportasiLama=='Mobil' ? 'selected'
+                                                        : '' }}>
+                                                        Mobil</option>
+                                                    <option value="Angkutan Umum" {{
+                                                        $alatTransportasiLama=='Angkutan Umum' ? 'selected' : '' }}>
+                                                        Angkutan Umum</option>
+                                                    <option value="Antar Jemput" {{
+                                                        $alatTransportasiLama=='Antar Jemput' ? 'selected' : '' }}>
+                                                        Antar Jemput</option>
+                                                    <option value="Lainnya" {{ !in_array($alatTransportasiLama,
+                                                        ['', 'Jalan Kaki' , 'Sepeda' , 'Motor' , 'Mobil'
+                                                        , 'Angkutan Umum' , 'Antar Jemput' ]) ? 'selected' : '' }}>
+                                                        Lainnya</option>
+                                                </select>
+                                            </div>
+
+                                            <div x-data="{ isLainnya: {{ !in_array($alatTransportasiLama, ['', 'Jalan Kaki', 'Sepeda', 'Motor', 'Mobil', 'Angkutan Umum', 'Antar Jemput']) ? 'true' : 'false' }} }"
+                                                x-show="isLainnya" x-transition class="mt-3">
+                                                <label
+                                                    class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Sebutkan
+                                                    Alat Transportasi Lainnya</label>
+                                                <input type="text" name="alat_transportasi_lainnya"
+                                                    value="{{ !in_array($alatTransportasiLama, ['', 'Jalan Kaki', 'Sepeda', 'Motor', 'Mobil', 'Angkutan Umum', 'Antar Jemput']) ? $alatTransportasiLama : '' }}"
+                                                    placeholder="Contoh: Ojek Online, Kereta, dll"
                                                     class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                             </div>
                                             <div>
                                                 <label
                                                     class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Jarak
                                                     ke Sekolah (KM)</label>
-                                                <input type="number" step="0.01" name="jarak_ke_sekolah_km"
-                                                    value="{{ old('jarak_ke_sekolah_km', $student->student->address->jarak_ke_sekolah_km ?? '') }}"
+                                                <select name="jarak_ke_sekolah_km"
                                                     class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                    <option value="">-- Pilih --</option>
+                                                    @php $jarakLama = old('jarak_ke_sekolah_km',
+                                                    $student->student->address->jarak_ke_sekolah_km ?? ''); @endphp
+                                                    <option value="0-1 KM" {{ $jarakLama=='0-1 KM' ? 'selected' : '' }}>
+                                                        0-1 KM</option>
+                                                    <option value="1-3 KM" {{ $jarakLama=='1-3 KM' ? 'selected' : '' }}>
+                                                        1-3 KM</option>
+                                                    <option value="3-5 KM" {{ $jarakLama=='3-5 KM' ? 'selected' : '' }}>
+                                                        3-5 KM</option>
+                                                    <option value="5-10 KM" {{ $jarakLama=='5-10 KM' ? 'selected' : ''
+                                                        }}>
+                                                        5-10 KM</option>
+                                                    <option value="Lebih dari 10 KM" {{ $jarakLama=='Lebih dari 10 KM'
+                                                        ? 'selected' : '' }}>
+                                                        Lebih dari 10 KM</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -1056,10 +1103,47 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kebutuhan
                                                 Khusus</label>
-                                            <input type="text" name="kebutuhan_khusus"
-                                                value="{{ old('kebutuhan_khusus', $student->student->health->kebutuhan_khusus ?? '') }}"
-                                                placeholder="Contoh: Disleksia, Autisme, dll (Kosongkan jika tidak ada)"
+                                            <select name="kebutuhan_khusus"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                @php $kebutuhanKhususLama = old('kebutuhan_khusus',
+                                                $student->student->health->kebutuhan_khusus ?? 'Tidak'); @endphp
+                                                <option value="Tidak" {{ $kebutuhanKhususLama=='Tidak' ? 'selected' : ''
+                                                    }}>
+                                                    Tidak</option>
+                                                <option value="Rungu" {{ $kebutuhanKhususLama=='Rungu' ? 'selected' : ''
+                                                    }}>
+                                                    Rungu</option>
+                                                <option value="Grahita Sedang" {{ $kebutuhanKhususLama=='Grahita Sedang'
+                                                    ? 'selected' : '' }}>
+                                                    Grahita Sedang</option>
+                                                <option value="Grahita Ringan" {{ $kebutuhanKhususLama=='Grahita Ringan'
+                                                    ? 'selected' : '' }}>
+                                                    Grahita Ringan</option>
+                                                <option value="Daksa Sedang" {{ $kebutuhanKhususLama=='Daksa Sedang'
+                                                    ? 'selected' : '' }}>
+                                                    Daksa Sedang</option>
+                                                <option value="Daksa Ringan" {{ $kebutuhanKhususLama=='Daksa Ringan'
+                                                    ? 'selected' : '' }}>
+                                                    Daksa Ringan</option>
+                                                <option value="Laras" {{ $kebutuhanKhususLama=='Laras' ? 'selected' : ''
+                                                    }}>
+                                                    Laras</option>
+                                                <option value="Wicara" {{ $kebutuhanKhususLama=='Wicara' ? 'selected'
+                                                    : '' }}>
+                                                    Wicara</option>
+                                                <option value="Tuna Ganda" {{ $kebutuhanKhususLama=='Tuna Ganda'
+                                                    ? 'selected' : '' }}>
+                                                    Tuna Ganda</option>
+                                                <option value="Hiperaktif" {{ $kebutuhanKhususLama=='Hiperaktif'
+                                                    ? 'selected' : '' }}>
+                                                    Hiperaktif</option>
+                                                <option value="Cerdas Istimewa" {{
+                                                    $kebutuhanKhususLama=='Cerdas Istimewa' ? 'selected' : '' }}>
+                                                    Cerdas Istimewa</option>
+                                                <option value="Lainnya" {{ $kebutuhanKhususLama=='Lainnya' ? 'selected'
+                                                    : '' }}>
+                                                    Lainnya</option>
+                                            </select>
                                         </div>
                                         <div class="sm:col-span-2">
                                             <label
