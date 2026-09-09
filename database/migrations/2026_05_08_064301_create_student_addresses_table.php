@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('dusun')->nullable();
             $table->string('kelurahan')->nullable();
             $table->string('kecamatan')->nullable();
+            $table->string('kota')->nullable();
+            $table->string('provinsi')->nullable();
             $table->string('kode_pos', 10)->nullable();
-            $table->string('lintang')->nullable();
-            $table->string('bujur')->nullable();
 
             $table->string('jenis_tinggal')->nullable();
             $table->string('alat_transportasi')->nullable();

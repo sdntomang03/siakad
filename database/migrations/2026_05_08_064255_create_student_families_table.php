@@ -14,27 +14,37 @@ return new class extends Migration
 
             // Data Ayah
             $table->string('nama_ayah')->nullable();
-            $table->string('nik_ayah', 16)->nullable();
+            $table->boolean('is_ayah_hidup')->default(true);
+            $table->string('tempat_lahir_ayah')->nullable();
             $table->string('tahun_lahir_ayah', 4)->nullable();
             $table->string('pendidikan_ayah')->nullable();
             $table->string('pekerjaan_ayah')->nullable();
             $table->string('penghasilan_ayah')->nullable();
+            $table->string('hp_ayah')->nullable();
+            $table->string('email_ayah')->nullable();
+            $table->Text('alamat_ayah')->nullable();
 
             // Data Ibu
             $table->string('nama_ibu')->nullable();
-            $table->string('nik_ibu', 16)->nullable();
+            $table->boolean('is_ibu_hidup')->default(true);
+            $table->string('tempat_lahir_ibu')->nullable();
             $table->string('tahun_lahir_ibu', 4)->nullable();
             $table->string('pendidikan_ibu')->nullable();
             $table->string('pekerjaan_ibu')->nullable();
             $table->string('penghasilan_ibu')->nullable();
-
+            $table->string('hp_ibu')->nullable();
+            $table->string('email_ibu')->nullable();
+            $table->Text('alamat_ibu')->nullable();
             // Data Wali
             $table->string('nama_wali')->nullable();
-            $table->string('nik_wali', 16)->nullable();
+            $table->string('tempat_lahir_wali')->nullable();
             $table->string('tahun_lahir_wali', 4)->nullable();
             $table->string('pendidikan_wali')->nullable();
             $table->string('pekerjaan_wali')->nullable();
             $table->string('penghasilan_wali')->nullable();
+            $table->string('hp_wali')->nullable();
+            $table->string('email_wali')->nullable();
+            $table->Text('alamat_wali')->nullable();
 
             $table->timestamps();
         });

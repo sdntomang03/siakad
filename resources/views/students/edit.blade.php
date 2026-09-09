@@ -3,7 +3,8 @@
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="font-bold text-2xl text-slate-800 dark:text-white tracking-tight">
-                    Edit Profil: <span class="text-indigo-600 dark:text-indigo-400">{{ $student->name }}</span>
+                    Edit Profil: <span class="text-indigo-600 dark:text-indigo-400">{{ $student->name ?? 'Siswa'
+                        }}</span>
                 </h2>
                 <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Lengkapi data pokok peserta didik sesuai
                     dengan dokumen resmi.</p>
@@ -41,7 +42,7 @@
     }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <form action="{{ route('students.update', $student->id) }}" method="POST">
+            <form action="{{ route('students.update', $student->id ?? 0) }}" method="POST">
                 @csrf @method('PUT')
 
                 {{-- PROGRESS BAR AREA --}}
@@ -157,33 +158,79 @@
                                 <div x-show="tab === 'identitas'" x-transition:enter="transition ease-out duration-300"
                                     x-transition:enter-start="opacity-0 translate-y-2"
                                     x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+
                                     <div class="mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
-                                        <h3 class="text-xl font-bold text-slate-800 dark:text-white">Identitas Peserta
-                                            Didik</h3>
-                                        <p class="text-sm text-slate-500 mt-1">Data pokok siswa sesuai akta kelahiran.
-                                        </p>
+                                        <h3 class="text-xl font-bold text-slate-800 dark:text-white">Identitas Pokok
+                                            Siswa</h3>
                                     </div>
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-6">
+
+                                    {{-- Sub-bagian: Biodata Dasar --}}
+                                    <h4
+                                        class="font-bold text-indigo-700 dark:text-indigo-400 mb-4 flex items-center gap-2">
+                                        <i class="fas fa-user-circle"></i> Biodata Dasar</h4>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                                         <div class="sm:col-span-2">
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nama
                                                 Lengkap</label>
-                                            <input type="text" name="name" value="{{ old('name', $student->name) }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                            <input type="text" name="nama_lengkap"
+                                                value="{{ old('nama_lengkap', $student->student->nama_lengkap ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nama
+                                                Panggilan</label>
+                                            <input type="text" name="nama_panggilan"
+                                                value="{{ old('nama_panggilan', $student->student->nama_panggilan ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">NISN</label>
-                                            <input disabled type="text" name="nisn"
+                                            <input type="text" name="nisn"
                                                 value="{{ old('nisn', $student->student->nisn ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">NIS</label>
-                                            <input disabled type="text" name="nis"
-                                                value="{{ old('nis', $student->student->nipd ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">NIPD
+                                                / NIS</label>
+                                            <input type="text" name="nipd"
+                                                value="{{ old('nipd', $student->student->nipd ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kode
+                                                Kelas</label>
+                                            <input type="text" name="class_code"
+                                                value="{{ old('class_code', $student->student->class_code ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">NIK
+                                                Siswa</label>
+                                            <input type="text" name="nik"
+                                                value="{{ old('nik', $student->student->nik ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No.
+                                                KK</label>
+                                            <input type="text" name="no_kk"
+                                                value="{{ old('no_kk', $student->student->no_kk ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No.
+                                                Akta Lahir</label>
+                                            <input type="text" name="no_registrasi_akta_lahir"
+                                                value="{{ old('no_registrasi_akta_lahir', $student->student->no_registrasi_akta_lahir ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
@@ -191,23 +238,23 @@
                                                 Lahir</label>
                                             <input type="text" name="tempat_lahir"
                                                 value="{{ old('tempat_lahir', $student->student->tempat_lahir ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Tanggal
                                                 Lahir</label>
                                             <input type="date" name="tanggal_lahir"
-                                                value="{{ old('tanggal_lahir', $student->student->tanggal_lahir ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                value="{{ old('tanggal_lahir', optional($student->student->tanggal_lahir)->format('Y-m-d') ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
-                                        <div class="sm:col-span-2">
+                                        <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Jenis
                                                 Kelamin</label>
                                             <select name="jenis_kelamin"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
-                                                <option value="">-- Pilih Jenis Kelamin --</option>
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                <option value="">-- Pilih --</option>
                                                 <option value="L" {{ old('jenis_kelamin', $student->
                                                     student->jenis_kelamin ?? '') == 'L' ? 'selected' : '' }}>Laki-laki
                                                 </option>
@@ -215,6 +262,119 @@
                                                     student->jenis_kelamin ?? '') == 'P' ? 'selected' : '' }}>Perempuan
                                                 </option>
                                             </select>
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Agama</label>
+                                            <input type="text" name="agama"
+                                                value="{{ old('agama', $student->student->agama ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Hobi</label>
+                                            <input type="text" name="hobi"
+                                                value="{{ old('hobi', $student->student->hobi ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Cita-cita</label>
+                                            <input type="text" name="cita_cita"
+                                                value="{{ old('cita_cita', $student->student->cita_cita ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Prestasi</label>
+                                            <textarea name="prestasi" rows="2"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">{{ old('prestasi', $student->student->prestasi ?? '') }}</textarea>
+                                        </div>
+                                    </div>
+
+                                    {{-- Sub-bagian: Kontak & Akademik Lainnya --}}
+                                    <h4
+                                        class="font-bold text-indigo-700 dark:text-indigo-400 mb-4 pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center gap-2">
+                                        <i class="fas fa-address-book"></i> Kontak & Akademik Lainnya</h4>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No.
+                                                HP</label>
+                                            <input type="text" name="hp"
+                                                value="{{ old('hp', $student->student->hp ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Telepon
+                                                Rumah</label>
+                                            <input type="text" name="telepon"
+                                                value="{{ old('telepon', $student->student->telepon ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Email
+                                                Pribadi</label>
+                                            <input type="email" name="email"
+                                                value="{{ old('email', $student->student->email ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Asal
+                                                Sekolah</label>
+                                            <input type="text" name="sekolah_asal"
+                                                value="{{ old('sekolah_asal', $student->student->sekolah_asal ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">SKHUN</label>
+                                            <input type="text" name="skhun"
+                                                value="{{ old('skhun', $student->student->skhun ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No.
+                                                Ujian Nasional</label>
+                                            <input type="text" name="no_peserta_ujian_nasional"
+                                                value="{{ old('no_peserta_ujian_nasional', $student->student->no_peserta_ujian_nasional ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No.
+                                                Seri Ijazah</label>
+                                            <input type="text" name="no_seri_ijazah"
+                                                value="{{ old('no_seri_ijazah', $student->student->no_seri_ijazah ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Anak
+                                                Ke-</label>
+                                            <input type="number" name="anak_ke"
+                                                value="{{ old('anak_ke', $student->student->anak_ke ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Jml.
+                                                Saudara Kandung</label>
+                                            <input type="number" name="jml_saudara_kandung"
+                                                value="{{ old('jml_saudara_kandung', $student->student->jml_saudara_kandung ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kebutuhan
+                                                Khusus</label>
+                                            <input type="text" name="kebutuhan_khusus"
+                                                value="{{ old('kebutuhan_khusus', $student->student->kebutuhan_khusus ?? '') }}"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                     </div>
                                 </div>
@@ -225,6 +385,7 @@
                                     x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
                                     <div class="mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
                                         <h3 class="text-xl font-bold text-slate-800 dark:text-white">Alamat & Domisili
+                                            Siswa
                                         </h3>
                                     </div>
                                     <div class="grid grid-cols-1 sm:grid-cols-6 gap-y-6 gap-x-4">
@@ -280,16 +441,16 @@
                                         </div>
                                         <div class="sm:col-span-2">
                                             <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Lintang</label>
-                                            <input type="text" name="lintang"
-                                                value="{{ old('lintang', $student->student->address->lintang ?? '') }}"
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kota/Kabupaten</label>
+                                            <input type="text" name="kota"
+                                                value="{{ old('kota', $student->student->address->kota ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
                                         <div class="sm:col-span-2">
                                             <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Bujur</label>
-                                            <input type="text" name="bujur"
-                                                value="{{ old('bujur', $student->student->address->bujur ?? '') }}"
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Provinsi</label>
+                                            <input type="text" name="provinsi"
+                                                value="{{ old('provinsi', $student->student->address->provinsi ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
                                         <div
@@ -339,10 +500,25 @@
                                             class="relative rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50/50 to-transparent p-5 sm:p-6 dark:border-blue-900/50 dark:from-blue-900/10">
                                             <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 rounded-l-2xl">
                                             </div>
-                                            <h4 class="font-bold text-blue-800 dark:text-blue-400 mb-4">Data Ayah
-                                                Kandung</h4>
+                                            <div class="flex justify-between items-center mb-4">
+                                                <h4 class="font-bold text-blue-800 dark:text-blue-400">Data Ayah Kandung
+                                                </h4>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-xs font-bold text-slate-500">Status:</span>
+                                                    <select name="is_ayah_hidup"
+                                                        class="rounded-md border-slate-300 shadow-sm text-xs py-1 pl-2 pr-8 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600 dark:text-white">
+                                                        <option value="1" {{ old('is_ayah_hidup', $student->
+                                                            student->family->is_ayah_hidup ?? 1) == 1 ? 'selected' : ''
+                                                            }}>Masih Hidup</option>
+                                                        <option value="0" {{ old('is_ayah_hidup', $student->
+                                                            student->family->is_ayah_hidup ?? 1) == 0 ? 'selected' : ''
+                                                            }}>Meninggal</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
                                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                <div>
+                                                <div class="sm:col-span-2">
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nama
                                                         Ayah</label>
@@ -352,10 +528,10 @@
                                                 </div>
                                                 <div>
                                                     <label
-                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">NIK
-                                                        Ayah</label>
-                                                    <input type="text" name="nik_ayah"
-                                                        value="{{ old('nik_ayah', $student->student->family->nik_ayah ?? '') }}"
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tempat
+                                                        Lahir</label>
+                                                    <input type="text" name="tempat_lahir_ayah"
+                                                        value="{{ old('tempat_lahir_ayah', $student->student->family->tempat_lahir_ayah ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
                                                 <div>
@@ -387,6 +563,28 @@
                                                         value="{{ old('penghasilan_ayah', $student->student->family->penghasilan_ayah ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
+                                                <div>
+                                                    <label
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nomor
+                                                        HP</label>
+                                                    <input type="text" name="hp_ayah"
+                                                        value="{{ old('hp_ayah', $student->student->family->hp_ayah ?? '') }}"
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Email</label>
+                                                    <input type="email" name="email_ayah"
+                                                        value="{{ old('email_ayah', $student->student->family->email_ayah ?? '') }}"
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                </div>
+                                                <div class="sm:col-span-3">
+                                                    <label
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Alamat
+                                                        Tinggal Ayah</label>
+                                                    <textarea name="alamat_ayah" rows="2"
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">{{ old('alamat_ayah', $student->student->family->alamat_ayah ?? '') }}</textarea>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -395,10 +593,25 @@
                                             class="relative rounded-2xl border border-pink-100 bg-gradient-to-r from-pink-50/50 to-transparent p-5 sm:p-6 dark:border-pink-900/50 dark:from-pink-900/10">
                                             <div class="absolute left-0 top-0 bottom-0 w-1 bg-pink-400 rounded-l-2xl">
                                             </div>
-                                            <h4 class="font-bold text-pink-800 dark:text-pink-400 mb-4">Data Ibu Kandung
-                                            </h4>
+                                            <div class="flex justify-between items-center mb-4">
+                                                <h4 class="font-bold text-pink-800 dark:text-pink-400">Data Ibu Kandung
+                                                </h4>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-xs font-bold text-slate-500">Status:</span>
+                                                    <select name="is_ibu_hidup"
+                                                        class="rounded-md border-slate-300 shadow-sm text-xs py-1 pl-2 pr-8 focus:ring-pink-500 focus:border-pink-500 dark:bg-slate-800 dark:border-slate-600 dark:text-white">
+                                                        <option value="1" {{ old('is_ibu_hidup', $student->
+                                                            student->family->is_ibu_hidup ?? 1) == 1 ? 'selected' : ''
+                                                            }}>Masih Hidup</option>
+                                                        <option value="0" {{ old('is_ibu_hidup', $student->
+                                                            student->family->is_ibu_hidup ?? 1) == 0 ? 'selected' : ''
+                                                            }}>Meninggal</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
                                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                <div>
+                                                <div class="sm:col-span-2">
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nama
                                                         Ibu</label>
@@ -408,10 +621,10 @@
                                                 </div>
                                                 <div>
                                                     <label
-                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">NIK
-                                                        Ibu</label>
-                                                    <input type="text" name="nik_ibu"
-                                                        value="{{ old('nik_ibu', $student->student->family->nik_ibu ?? '') }}"
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tempat
+                                                        Lahir</label>
+                                                    <input type="text" name="tempat_lahir_ibu"
+                                                        value="{{ old('tempat_lahir_ibu', $student->student->family->tempat_lahir_ibu ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
                                                 <div>
@@ -443,6 +656,28 @@
                                                         value="{{ old('penghasilan_ibu', $student->student->family->penghasilan_ibu ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
+                                                <div>
+                                                    <label
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nomor
+                                                        HP</label>
+                                                    <input type="text" name="hp_ibu"
+                                                        value="{{ old('hp_ibu', $student->student->family->hp_ibu ?? '') }}"
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Email</label>
+                                                    <input type="email" name="email_ibu"
+                                                        value="{{ old('email_ibu', $student->student->family->email_ibu ?? '') }}"
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                </div>
+                                                <div class="sm:col-span-3">
+                                                    <label
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Alamat
+                                                        Tinggal Ibu</label>
+                                                    <textarea name="alamat_ibu" rows="2"
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">{{ old('alamat_ibu', $student->student->family->alamat_ibu ?? '') }}</textarea>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -455,8 +690,9 @@
                                                 Data Wali <span
                                                     class="text-xs font-normal text-slate-400 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded ml-2">(Opsional)</span>
                                             </h4>
+
                                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                <div>
+                                                <div class="sm:col-span-2">
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nama
                                                         Wali</label>
@@ -466,10 +702,10 @@
                                                 </div>
                                                 <div>
                                                     <label
-                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">NIK
-                                                        Wali</label>
-                                                    <input type="text" name="nik_wali"
-                                                        value="{{ old('nik_wali', $student->student->family->nik_wali ?? '') }}"
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tempat
+                                                        Lahir</label>
+                                                    <input type="text" name="tempat_lahir_wali"
+                                                        value="{{ old('tempat_lahir_wali', $student->student->family->tempat_lahir_wali ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
                                                 <div>
@@ -482,27 +718,46 @@
                                                 </div>
                                                 <div>
                                                     <label
-                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Pendidikan
-                                                        Wali</label>
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Pendidikan</label>
                                                     <input type="text" name="pendidikan_wali"
                                                         value="{{ old('pendidikan_wali', $student->student->family->pendidikan_wali ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
                                                 <div>
                                                     <label
-                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Pekerjaan
-                                                        Wali</label>
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Pekerjaan</label>
                                                     <input type="text" name="pekerjaan_wali"
                                                         value="{{ old('pekerjaan_wali', $student->student->family->pekerjaan_wali ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
                                                 <div>
                                                     <label
-                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Penghasilan
-                                                        Wali</label>
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Penghasilan</label>
                                                     <input type="text" name="penghasilan_wali"
                                                         value="{{ old('penghasilan_wali', $student->student->family->penghasilan_wali ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nomor
+                                                        HP</label>
+                                                    <input type="text" name="hp_wali"
+                                                        value="{{ old('hp_wali', $student->student->family->hp_wali ?? '') }}"
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Email</label>
+                                                    <input type="email" name="email_wali"
+                                                        value="{{ old('email_wali', $student->student->family->email_wali ?? '') }}"
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                </div>
+                                                <div class="sm:col-span-3">
+                                                    <label
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Alamat
+                                                        Tinggal Wali</label>
+                                                    <textarea name="alamat_wali" rows="2"
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">{{ old('alamat_wali', $student->student->family->alamat_wali ?? '') }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -674,7 +929,7 @@
                             <div
                                 class="px-6 py-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center rounded-b-2xl">
 
-                                {{-- Tombol Sebelumnya (Hanya muncul jika bukan tab pertama) --}}
+                                {{-- Tombol Sebelumnya --}}
                                 <div>
                                     <button type="button" x-show="currentIndex > 0" @click="prev()"
                                         class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
@@ -686,7 +941,7 @@
                                     </button>
                                 </div>
 
-                                {{-- Tombol Selanjutnya (Muncul di tab 1 sampai 4) --}}
+                                {{-- Tombol Selanjutnya --}}
                                 <div>
                                     <button type="button" x-show="currentIndex < tabsList.length - 1" @click="next()"
                                         class="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold shadow-md shadow-indigo-500/20 transition-colors">
@@ -697,7 +952,7 @@
                                         </svg>
                                     </button>
 
-                                    {{-- Tombol Simpan Utama (Hanya muncul di tab terakhir / Kesehatan) --}}
+                                    {{-- Tombol Simpan Utama --}}
                                     <button type="submit" x-show="currentIndex === tabsList.length - 1"
                                         class="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-bold shadow-md shadow-emerald-500/20 transition-colors"
                                         style="display: none;">
@@ -717,7 +972,7 @@
         </div>
     </div>
 
-    {{-- CSS Tambahan untuk menyembunyikan scrollbar bawaan browser tapi tetap bisa di-scroll --}}
+    {{-- CSS Tambahan --}}
     <style>
         .scrollbar-hide::-webkit-scrollbar {
             display: none;

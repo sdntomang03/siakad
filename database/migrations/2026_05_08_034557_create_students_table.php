@@ -26,6 +26,9 @@ return new class extends Migration
             $table->string('tempat_lahir')->nullable();
             $table->date('tanggal_lahir')->nullable();
             $table->string('agama')->nullable();
+            $table->string('hobi')->nullable();
+            $table->string('cita_cita')->nullable();
+            $table->text('prestasi')->nullable();
 
             // Kontak & Akademik Lainnya
             $table->string('hp')->nullable();
