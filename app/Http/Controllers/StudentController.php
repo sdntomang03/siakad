@@ -77,49 +77,63 @@ class StudentController extends Controller
             abort(403, 'Akses Ditolak: Anda tidak berhak mengubah data siswa ini.');
         }
 
-        // Validasi dasar
+        // Validasi dasar disesuaikan dengan input baru
         $request->validate([
-            'name' => 'required|string|max:255',
+            'nama_lengkap' => 'required|string|max:255',
             'jenis_kelamin' => 'required|in:L,P',
         ]);
 
         DB::transaction(function () use ($request, $user) {
             // 1. Update User (Akun Login)
-            $user->update(['name' => $request->name]);
+            $user->update(['name' => $request->nama_lengkap]);
 
             // 2. Update Student (Tabel Utama Dapodik)
             $user->student()->update([
-                'nama_lengkap' => $request->name,
+                'nama_lengkap' => $request->nama_lengkap,
+                'nama_panggilan' => $request->nama_panggilan,
+                'jenis_kelamin' => $request->jenis_kelamin,
                 'nisn' => $request->nisn,
                 'nipd' => $request->nipd,
+                'class_code' => $request->class_code,
                 'nik' => $request->nik,
                 'no_kk' => $request->no_kk,
                 'no_registrasi_akta_lahir' => $request->no_registrasi_akta_lahir,
                 'tempat_lahir' => $request->tempat_lahir,
                 'tanggal_lahir' => $request->tanggal_lahir,
-                'jenis_kelamin' => $request->jenis_kelamin,
                 'agama' => $request->agama,
+                'hobi' => $request->hobi,
+                'cita_cita' => $request->cita_cita,
+                'prestasi' => $request->prestasi,
+                'hp' => $request->hp,
+                'telepon' => $request->telepon,
+                'email' => $request->email,
+                'skhun' => $request->skhun,
+                'no_peserta_ujian_nasional' => $request->no_peserta_ujian_nasional,
+                'no_seri_ijazah' => $request->no_seri_ijazah,
+                'sekolah_asal' => $request->sekolah_asal,
                 'anak_ke' => $request->anak_ke,
                 'jml_saudara_kandung' => $request->jml_saudara_kandung,
-                'hp' => $request->hp,
             ]);
 
-            // 3. Update Alamat
+            // 3. Update Alamat (Menghapus dusun/lintang/bujur, menambahkan kota/provinsi)
             $user->student->address()->updateOrCreate(
                 ['student_id' => $user->student->id],
                 $request->only([
-                    'alamat', 'rt', 'rw', 'dusun', 'kelurahan', 'kecamatan', 'kode_pos',
-                    'lintang', 'bujur', 'jenis_tinggal', 'alat_transportasi', 'jarak_ke_sekolah_km',
+                    'alamat', 'rt', 'rw', 'kelurahan', 'kecamatan', 'kota', 'provinsi', 'kode_pos',
+                    'jenis_tinggal', 'alat_transportasi', 'jarak_ke_sekolah_km',
                 ])
             );
 
-            // 4. Update Keluarga
+            // 4. Update Keluarga (Menghapus NIK, menambahkan status hidup, hp, email, dan alamat)
             $user->student->family()->updateOrCreate(
                 ['student_id' => $user->student->id],
                 $request->only([
-                    'nama_ayah', 'nik_ayah', 'tahun_lahir_ayah', 'pendidikan_ayah', 'pekerjaan_ayah', 'penghasilan_ayah',
-                    'nama_ibu', 'nik_ibu', 'tahun_lahir_ibu', 'pendidikan_ibu', 'pekerjaan_ibu', 'penghasilan_ibu',
-                    'nama_wali', 'nik_wali', 'tahun_lahir_wali', 'pendidikan_wali', 'pekerjaan_wali', 'penghasilan_wali',
+                    // Data Ayah
+                    'nama_ayah', 'is_ayah_hidup', 'tempat_lahir_ayah', 'tahun_lahir_ayah', 'pendidikan_ayah', 'pekerjaan_ayah', 'penghasilan_ayah', 'hp_ayah', 'email_ayah', 'alamat_ayah',
+                    // Data Ibu
+                    'nama_ibu', 'is_ibu_hidup', 'tempat_lahir_ibu', 'tahun_lahir_ibu', 'pendidikan_ibu', 'pekerjaan_ibu', 'penghasilan_ibu', 'hp_ibu', 'email_ibu', 'alamat_ibu',
+                    // Data Wali
+                    'nama_wali', 'tempat_lahir_wali', 'tahun_lahir_wali', 'pendidikan_wali', 'pekerjaan_wali', 'penghasilan_wali', 'hp_wali', 'email_wali', 'alamat_wali',
                 ])
             );
 
@@ -141,13 +155,13 @@ class StudentController extends Controller
                 ]
             );
 
-            // 6. Update Kesehatan
+            // 6. Update Kesehatan (Menambahkan kebutuhan khusus dan penyakit)
             $user->student->health()->updateOrCreate(
                 ['student_id' => $user->student->id],
-                $request->only(['berat_badan', 'tinggi_badan', 'lingkar_kepala'])
+                $request->only(['berat_badan', 'tinggi_badan', 'kebutuhan_khusus', 'penyakit'])
             );
         });
 
-        return back()->with('success', 'Data Dapodik siswa berhasil diperbarui.');
+        return back()->with('success', 'Data Profil Siswa berhasil diperbarui.');
     }
 }

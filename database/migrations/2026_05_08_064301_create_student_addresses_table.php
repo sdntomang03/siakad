@@ -15,7 +15,6 @@ return new class extends Migration
             $table->text('alamat')->nullable();
             $table->string('rt', 3)->nullable();
             $table->string('rw', 3)->nullable();
-            $table->string('dusun')->nullable();
             $table->string('kelurahan')->nullable();
             $table->string('kecamatan')->nullable();
             $table->string('kota')->nullable();

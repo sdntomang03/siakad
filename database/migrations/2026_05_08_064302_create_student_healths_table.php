@@ -14,7 +14,8 @@ return new class extends Migration
 
             $table->decimal('berat_badan', 5, 2)->nullable(); // kg
             $table->decimal('tinggi_badan', 5, 2)->nullable(); // cm
-            $table->decimal('lingkar_kepala', 5, 2)->nullable(); // cm
+            $table->string('kebutuhan_khusus')->nullable();
+            $table->string('penyakit')->nullable();
 
             $table->timestamps();
         });

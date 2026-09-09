@@ -38,7 +38,6 @@ return new class extends Migration
             $table->string('no_peserta_ujian_nasional')->nullable();
             $table->string('no_seri_ijazah')->nullable();
             $table->string('sekolah_asal')->nullable();
-            $table->string('kebutuhan_khusus')->nullable();
             $table->integer('anak_ke')->nullable();
             $table->integer('jml_saudara_kandung')->nullable();
 

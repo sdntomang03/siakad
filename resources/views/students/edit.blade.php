@@ -429,14 +429,6 @@
                                                 value="{{ old('jml_saudara_kandung', $student->student->jml_saudara_kandung ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
-                                        <div class="sm:col-span-3">
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kebutuhan
-                                                Khusus</label>
-                                            <input type="text" name="kebutuhan_khusus"
-                                                value="{{ old('kebutuhan_khusus', $student->student->kebutuhan_khusus ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                        </div>
                                     </div>
                                 </div>
 
@@ -521,7 +513,7 @@
                                             <input type="hidden" name="kecamatan" :value="distName">
                                         </div>
 
-                                        <div class="sm:col-span-3">
+                                        <div class="sm:col-span-6">
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kelurahan/Desa</label>
                                             <select x-model="selectedVillId" @change="setVillage()"
@@ -533,14 +525,6 @@
                                                 </template>
                                             </select>
                                             <input type="hidden" name="kelurahan" :value="villName">
-                                        </div>
-
-                                        <div class="sm:col-span-3">
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Dusun</label>
-                                            <input type="text" name="dusun"
-                                                value="{{ old('dusun', $student->student->address->dusun ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
 
                                         <div
@@ -975,7 +959,7 @@
                                     <div class="mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
                                         <h3 class="text-xl font-bold text-slate-800 dark:text-white">Data Kesehatan</h3>
                                     </div>
-                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Tinggi
@@ -994,13 +978,22 @@
                                                 value="{{ old('berat_badan', $student->student->health->berat_badan ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
-                                        <div>
+                                        <div class="sm:col-span-2">
                                             <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Lingkar
-                                                Kepala <span
-                                                    class="text-xs text-slate-400 font-normal">(cm)</span></label>
-                                            <input type="number" step="0.1" name="lingkar_kepala"
-                                                value="{{ old('lingkar_kepala', $student->student->health->lingkar_kepala ?? '') }}"
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kebutuhan
+                                                Khusus</label>
+                                            <input type="text" name="kebutuhan_khusus"
+                                                value="{{ old('kebutuhan_khusus', $student->student->health->kebutuhan_khusus ?? '') }}"
+                                                placeholder="Contoh: Disleksia, Autisme, dll (Kosongkan jika tidak ada)"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                        </div>
+                                        <div class="sm:col-span-2">
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Riwayat
+                                                Penyakit</label>
+                                            <input type="text" name="penyakit"
+                                                value="{{ old('penyakit', $student->student->health->penyakit ?? '') }}"
+                                                placeholder="Contoh: Asma, Alergi Debu, dll (Kosongkan jika tidak ada)"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                     </div>
