@@ -113,7 +113,7 @@ class StudentController extends Controller
                 'nik' => $request->nik,
                 'no_kk' => $request->no_kk,
                 'no_registrasi_akta_lahir' => $request->no_registrasi_akta_lahir,
-                'tempat_lahir' => $request->tempat_lahir,
+                'tempat_lahir' => ucwords($request->tempat_lahir),
                 'tanggal_lahir' => $request->tanggal_lahir,
                 'agama' => $request->agama,
                 'hobi' => $request->hobi,
