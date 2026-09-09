@@ -198,10 +198,10 @@
                     <div class="flex justify-between items-end mb-2 gap-2">
                         <span class="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 truncate">
                             <span x-text="progressText"></span>:
-                            <span x-show="tab === 'identitas'">Identitas Pokok</span>
+                            <span x-show="tab === 'identitas'">Identitas</span>
                             <span x-show="tab === 'alamat'">Data Domisili</span>
                             <span x-show="tab === 'keluarga'">Data Keluarga</span>
-                            <span x-show="tab === 'finansial'">Kesejahteraan & Finansial</span>
+                            <span x-show="tab === 'finansial'">Data Finansial</span>
                             <span x-show="tab === 'kesehatan'">Data Kesehatan</span>
                         </span>
                         <span
@@ -472,9 +472,24 @@
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Agama</label>
-                                            <input type="text" name="agama"
-                                                value="{{ old('agama', $student->student->agama ?? '') }}"
+                                            <select name="agama"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                <option value="">-- Pilih --</option>
+                                                @php $agamaLama = old('agama', $student->student->agama ?? ''); @endphp
+                                                <option value="Islam" {{ $agamaLama=='Islam' ? 'selected' : '' }}>
+                                                    Islam</option>
+                                                <option value="Kristen" {{ $agamaLama=='Kristen' ? 'selected' : '' }}>
+                                                    Kristen</option>
+                                                <option value="Katholik" {{ $agamaLama=='Katholik' ? 'selected' : '' }}>
+                                                    Katholik</option>
+                                                <option value="Hindu" {{ $agamaLama=='Hindu' ? 'selected' : '' }}>
+                                                    Hindu</option>
+                                                <option value="Buddha" {{ $agamaLama=='Buddha' ? 'selected' : '' }}>
+                                                    Buddha</option>
+                                                <option value="Khonghucu" {{ $agamaLama=='Khonghucu' ? 'selected' : ''
+                                                    }}>
+                                                    Khonghucu</option>
+                                            </select>
                                         </div>
                                         <div>
                                             <label
@@ -534,29 +549,7 @@
                                                 value="{{ old('sekolah_asal', $student->student->sekolah_asal ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
-                                        <div>
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">SKHUN</label>
-                                            <input type="text" name="skhun"
-                                                value="{{ old('skhun', $student->student->skhun ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No.
-                                                Ujian Nasional</label>
-                                            <input type="text" name="no_peserta_ujian_nasional"
-                                                value="{{ old('no_peserta_ujian_nasional', $student->student->no_peserta_ujian_nasional ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No.
-                                                Seri Ijazah</label>
-                                            <input type="text" name="no_seri_ijazah"
-                                                value="{{ old('no_seri_ijazah', $student->student->no_seri_ijazah ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                        </div>
+
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Anak
@@ -677,27 +670,75 @@
                                                 <label
                                                     class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Jenis
                                                     Tinggal</label>
-                                                <input type="text" name="jenis_tinggal"
-                                                    value="{{ old('jenis_tinggal', $student->student->address->jenis_tinggal ?? '') }}"
-                                                    placeholder="Bersama Orang Tua"
+                                                <select name="jenis_tinggal"
                                                     class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                    <option value="">-- Pilih --</option>
+                                                    @php $jenisTinggalLama = old('jenis_tinggal',
+                                                    $student->student->address->jenis_tinggal ?? ''); @endphp
+                                                    <option value="Bersama Orang Tua" {{
+                                                        $jenisTinggalLama=='Bersama Orang Tua' ? 'selected' : '' }}>
+                                                        Bersama Orang Tua</option>
+                                                    <option value="Bersama Wali" {{ $jenisTinggalLama=='Bersama Wali'
+                                                        ? 'selected' : '' }}>
+                                                        Bersama Wali</option>
+                                                    <option value="Kost" {{ $jenisTinggalLama=='Kost' ? 'selected' : ''
+                                                        }}>
+                                                        Kost</option>
+                                                    <option value="Asrama" {{ $jenisTinggalLama=='Asrama' ? 'selected'
+                                                        : '' }}>
+                                                        Asrama</option>
+                                                    <option value="Panti Asuhan" {{ $jenisTinggalLama=='Panti Asuhan'
+                                                        ? 'selected' : '' }}>
+                                                        Panti Asuhan</option>
+                                                </select>
                                             </div>
                                             <div>
                                                 <label
                                                     class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Alat
                                                     Transportasi</label>
-                                                <input type="text" name="alat_transportasi"
-                                                    value="{{ old('alat_transportasi', $student->student->address->alat_transportasi ?? '') }}"
-                                                    placeholder="Jalan Kaki"
+                                                <select name="alat_transportasi"
                                                     class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                    <option value="">-- Pilih --</option>
+                                                    @php $alatTransportasiLama = old('alat_transportasi',
+                                                    $student->student->address->alat_transportasi ?? ''); @endphp
+                                                    <option value="Jalan Kaki" {{ $alatTransportasiLama=='Jalan Kaki'
+                                                        ? 'selected' : '' }}>Jalan Kaki</option>
+                                                    <option value="Sepeda" {{ $alatTransportasiLama=='Sepeda'
+                                                        ? 'selected' : '' }}>Sepeda</option>
+                                                    <option value="Motor" {{ $alatTransportasiLama=='Motor' ? 'selected'
+                                                        : '' }}>Motor</option>
+                                                    <option value="Mobil" {{ $alatTransportasiLama=='Mobil' ? 'selected'
+                                                        : '' }}>Mobil</option>
+                                                    <option value="Angkutan Umum" {{
+                                                        $alatTransportasiLama=='Angkutan Umum' ? 'selected' : '' }}>
+                                                        Angkutan Umum</option>
+                                                    <option value="Antar Jemput" {{
+                                                        $alatTransportasiLama=='Antar Jemput' ? 'selected' : '' }}>Antar
+                                                        Jemput</option>
+                                                    <option value="Lainnya" {{ $alatTransportasiLama=='Lainnya'
+                                                        ? 'selected' : '' }}>Lainnya</option>
+                                                </select>
                                             </div>
                                             <div>
                                                 <label
                                                     class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Jarak
                                                     ke Sekolah (KM)</label>
-                                                <input type="number" step="0.01" name="jarak_ke_sekolah_km"
-                                                    value="{{ old('jarak_ke_sekolah_km', $student->student->address->jarak_ke_sekolah_km ?? '') }}"
+                                                <select name="jarak_ke_sekolah_km"
                                                     class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                    <option value="">-- Pilih --</option>
+                                                    @php $jarakLama = old('jarak_ke_sekolah_km',
+                                                    $student->student->address->jarak_ke_sekolah_km ?? ''); @endphp
+                                                    <option value="0-1 KM" {{ $jarakLama=='0-1 KM' ? 'selected' : '' }}>
+                                                        0-1 KM</option>
+                                                    <option value="1-3 KM" {{ $jarakLama=='1-3 KM' ? 'selected' : '' }}>
+                                                        1-3 KM</option>
+                                                    <option value="3-5 KM" {{ $jarakLama=='3-5 KM' ? 'selected' : '' }}>
+                                                        3-5 KM</option>
+                                                    <option value="5-10 KM" {{ $jarakLama=='5-10 KM' ? 'selected' : ''
+                                                        }}>5-10 KM</option>
+                                                    <option value="Lebih dari 10 KM" {{ $jarakLama=='Lebih dari 10 KM'
+                                                        ? 'selected' : '' }}>Lebih dari 10 KM</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -707,6 +748,13 @@
                                 <div x-show="tab === 'keluarga'" x-transition:enter="transition ease-out duration-300"
                                     x-transition:enter-start="opacity-0 translate-y-2"
                                     x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+                                    @php
+                                    $agamaOptions = ['Islam', 'Kristen', 'Katholik', 'Hindu', 'Buddha', 'Khonghucu',
+                                    'Kepercayaan Terhadap Tuhan YME', 'Lainnya'];
+                                    $agamaAyahLama = old('agama_ayah', $student->student->family->agama_ayah ?? '');
+                                    $agamaIbuLama = old('agama_ibu', $student->student->family->agama_ibu ?? '');
+                                    $agamaWaliLama = old('agama_wali', $student->student->family->agama_wali ?? '');
+                                    @endphp
                                     <div class="mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
                                         <h3 class="text-xl font-bold text-slate-800 dark:text-white">Data Orang Tua /
                                             Wali</h3>
@@ -759,6 +807,18 @@
                                                     <input type="date" name="tanggal_lahir_ayah"
                                                         value="{{ old('tanggal_lahir_ayah', optional($student->student->family->tanggal_lahir_ayah)->format('Y-m-d') ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Agama</label>
+                                                    <select name="agama_ayah"
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                        <option value="">-- Pilih --</option>
+                                                        @foreach ($agamaOptions as $opt)
+                                                        <option value="{{ $opt }}" {{ $agamaAyahLama==$opt ? 'selected'
+                                                            : '' }}>{{ $opt }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                                 <div>
                                                     <label
@@ -855,6 +915,18 @@
                                                 </div>
                                                 <div>
                                                     <label
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Agama</label>
+                                                    <select name="agama_ibu"
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                        <option value="">-- Pilih --</option>
+                                                        @foreach ($agamaOptions as $opt)
+                                                        <option value="{{ $opt }}" {{ $agamaIbuLama==$opt ? 'selected'
+                                                            : '' }}>{{ $opt }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Pendidikan</label>
                                                     <input type="text" name="pendidikan_ibu"
                                                         value="{{ old('pendidikan_ibu', $student->student->family->pendidikan_ibu ?? '') }}"
@@ -932,6 +1004,18 @@
                                                     <input type="date" name="tanggal_lahir_wali"
                                                         value="{{ old('tanggal_lahir_wali', optional($student->student->family->tanggal_lahir_wali)->format('Y-m-d') ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Agama</label>
+                                                    <select name="agama_wali"
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                        <option value="">-- Pilih --</option>
+                                                        @foreach ($agamaOptions as $opt)
+                                                        <option value="{{ $opt }}" {{ $agamaWaliLama==$opt ? 'selected'
+                                                            : '' }}>{{ $opt }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                                 <div>
                                                     <label
@@ -1056,10 +1140,47 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kebutuhan
                                                 Khusus</label>
-                                            <input type="text" name="kebutuhan_khusus"
-                                                value="{{ old('kebutuhan_khusus', $student->student->health->kebutuhan_khusus ?? '') }}"
-                                                placeholder="Contoh: Disleksia, Autisme, dll (Kosongkan jika tidak ada)"
+                                            <select name="kebutuhan_khusus"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                @php $kebutuhanKhususLama = old('kebutuhan_khusus',
+                                                $student->student->health->kebutuhan_khusus ?? 'Tidak'); @endphp
+                                                <option value="Tidak" {{ $kebutuhanKhususLama=='Tidak' ? 'selected' : ''
+                                                    }}>
+                                                    Tidak</option>
+                                                <option value="Rungu" {{ $kebutuhanKhususLama=='Rungu' ? 'selected' : ''
+                                                    }}>
+                                                    Rungu</option>
+                                                <option value="Grahita Sedang" {{ $kebutuhanKhususLama=='Grahita Sedang'
+                                                    ? 'selected' : '' }}>
+                                                    Grahita Sedang</option>
+                                                <option value="Grahita Ringan" {{ $kebutuhanKhususLama=='Grahita Ringan'
+                                                    ? 'selected' : '' }}>
+                                                    Grahita Ringan</option>
+                                                <option value="Daksa Sedang" {{ $kebutuhanKhususLama=='Daksa Sedang'
+                                                    ? 'selected' : '' }}>
+                                                    Daksa Sedang</option>
+                                                <option value="Daksa Ringan" {{ $kebutuhanKhususLama=='Daksa Ringan'
+                                                    ? 'selected' : '' }}>
+                                                    Daksa Ringan</option>
+                                                <option value="Laras" {{ $kebutuhanKhususLama=='Laras' ? 'selected' : ''
+                                                    }}>
+                                                    Laras</option>
+                                                <option value="Wicara" {{ $kebutuhanKhususLama=='Wicara' ? 'selected'
+                                                    : '' }}>
+                                                    Wicara</option>
+                                                <option value="Tuna Ganda" {{ $kebutuhanKhususLama=='Tuna Ganda'
+                                                    ? 'selected' : '' }}>
+                                                    Tuna Ganda</option>
+                                                <option value="Hiperaktif" {{ $kebutuhanKhususLama=='Hiperaktif'
+                                                    ? 'selected' : '' }}>
+                                                    Hiperaktif</option>
+                                                <option value="Cerdas Istimewa" {{
+                                                    $kebutuhanKhususLama=='Cerdas Istimewa' ? 'selected' : '' }}>
+                                                    Cerdas Istimewa</option>
+                                                <option value="Lainnya" {{ $kebutuhanKhususLama=='Lainnya' ? 'selected'
+                                                    : '' }}>
+                                                    Lainnya</option>
+                                            </select>
                                         </div>
                                         <div class="sm:col-span-2">
                                             <label
@@ -1137,7 +1258,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M5 13l4 4L19 7"></path>
                             </svg>
-                            Selesai & Simpan
+                            Simpan
                         </button>
                     </div>
                 </div>
