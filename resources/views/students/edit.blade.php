@@ -1022,7 +1022,7 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Tinggi
                                                 Badan <span
                                                     class="text-xs text-slate-400 font-normal">(cm)</span></label>
-                                            <input type="number" step="0.1" name="tinggi_badan"
+                                            <input type="number" step="1" name="tinggi_badan"
                                                 value="{{ old('tinggi_badan', $student->student->health->tinggi_badan ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -1031,7 +1031,7 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Berat
                                                 Badan <span
                                                     class="text-xs text-slate-400 font-normal">(kg)</span></label>
-                                            <input type="number" step="0.1" name="berat_badan"
+                                            <input type="number" step="1" name="berat_badan"
                                                 value="{{ old('berat_badan', $student->student->health->berat_badan ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
