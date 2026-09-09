@@ -198,10 +198,10 @@
                     <div class="flex justify-between items-end mb-2 gap-2">
                         <span class="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 truncate">
                             <span x-text="progressText"></span>:
-                            <span x-show="tab === 'identitas'">Identitas Pokok</span>
+                            <span x-show="tab === 'identitas'">Identitas</span>
                             <span x-show="tab === 'alamat'">Data Domisili</span>
                             <span x-show="tab === 'keluarga'">Data Keluarga</span>
-                            <span x-show="tab === 'finansial'">Kesejahteraan & Finansial</span>
+                            <span x-show="tab === 'finansial'">Data Finansial</span>
                             <span x-show="tab === 'kesehatan'">Data Kesehatan</span>
                         </span>
                         <span
@@ -1137,7 +1137,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M5 13l4 4L19 7"></path>
                             </svg>
-                            Selesai & Simpan
+                            Simpan
                         </button>
                     </div>
                 </div>
