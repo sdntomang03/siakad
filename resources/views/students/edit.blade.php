@@ -174,14 +174,14 @@
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">NISN</label>
-                                            <input readonly type="text" name="nisn"
+                                            <input disabled type="text" name="nisn"
                                                 value="{{ old('nisn', $student->student->nisn ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">NIS</label>
-                                            <input readonly type="text" name="nis"
+                                            <input disabled type="text" name="nis"
                                                 value="{{ old('nis', $student->student->nipd ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
