@@ -4,7 +4,9 @@ namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Image;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Format;
+use Intervention\Image\ImageManager;
 
 class ImageUploadService
 {
@@ -13,19 +15,29 @@ class ImageUploadService
      */
     public function uploadAndConvertToWebp(UploadedFile $file, string $directory, ?string $oldFilePath = null): string
     {
-        // Hapus foto lama jika ada
+        // 1. Hapus foto lama jika ada
         if ($oldFilePath && Storage::disk('public')->exists($oldFilePath)) {
             Storage::disk('public')->delete($oldFilePath);
         }
 
-        // Buat nama file unik dengan ekstensi .webp
-        $filename = uniqid('foto_').'.webp';
-        $path = $directory.'/'.$filename;
+        // 2. Pastikan direktori tujuan sudah ada
+        if (! Storage::disk('public')->exists($directory)) {
+            Storage::disk('public')->makeDirectory($directory);
+        }
 
-        // Konversi dan simpan gambar menggunakan Intervention
-        // Kualitas diatur ke 80% untuk kompresi yang optimal
-        $image = Image::make($file)->encode('webp', 80);
-        Storage::disk('public')->put($path, $image);
+        // 3. Buat nama file unik dengan ekstensi .webp
+        $filename = uniqid('foto_').'.webp';
+        $path = trim($directory, '/').'/'.$filename;
+
+        // 4. Inisialisasi ImageManager menggunakan GD Driver (API Intervention Image v4)
+        $manager = ImageManager::usingDriver(Driver::class);
+        $img = $manager->decode($file);
+
+        // 5. Simpan gambar ke storage dengan konversi ke WebP (kualitas 80)
+        Storage::disk('public')->put(
+            $path,
+            $img->encodeUsingFormat(Format::WEBP, quality: 80)
+        );
 
         return $path;
     }
