@@ -867,7 +867,7 @@
                                                 <div>
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Penghasilan</label>
-                                                    <input type="text" name="penghasilan_ibu"
+                                                    <input type="number" name="penghasilan_ibu"
                                                         value="{{ old('penghasilan_ibu', $student->student->family->penghasilan_ibu ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -970,7 +970,7 @@
                                                 <div>
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Penghasilan</label>
-                                                    <input type="text" name="penghasilan_wali"
+                                                    <input type="number" name="penghasilan_wali"
                                                         value="{{ old('penghasilan_wali', $student->student->family->penghasilan_wali ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
