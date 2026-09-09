@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Student;
 use App\Models\User;
 use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
@@ -238,5 +239,19 @@ class StudentController extends Controller
         });
 
         return response()->json(['status' => 'success', 'message' => 'Data berhasil disimpan otomatis.']);
+    }
+
+    public function show(Student $student)
+    {
+        // Eager load semua relasi yang dibutuhkan oleh view show.blade.php
+        // untuk mencegah N+1 query problem
+        $student->load([
+            'student.address',
+            'student.family',
+            'student.health',
+            'student.financial',
+        ]);
+
+        return view('students.show', compact('student'));
     }
 }
