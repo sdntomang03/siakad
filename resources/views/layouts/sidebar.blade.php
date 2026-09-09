@@ -153,6 +153,10 @@
                 @endhasanyrole
 
                 @role('guru')
+                <x-sidebar-link :href="route('classrooms.index')" :active="request()->routeIs('classrooms.*')"
+                    icon="M9 5l7 7-7 7">
+                    Daftar Siswa
+                </x-sidebar-link>
                 <x-sidebar-link :href="route('assessments.index')" :active="request()->routeIs('assessments.*')"
                     icon="M9 5l7 7-7 7">
                     Penilaian
