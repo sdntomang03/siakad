@@ -753,6 +753,13 @@
                                     $agamaAyahLama = old('agama_ayah', $student->student->family->agama_ayah ?? '');
                                     $agamaIbuLama = old('agama_ibu', $student->student->family->agama_ibu ?? '');
                                     $agamaWaliLama = old('agama_wali', $student->student->family->agama_wali ?? '');
+                                    $pendidikanOptions = ['Tidak tamat', 'SD', 'SMP', 'SMA', 'S1', 'S2', 'S3'];
+                                    $pendidikanAyahLama = old('pendidikan_ayah',
+                                    $student->student->family->pendidikan_ayah ?? '');
+                                    $pendidikanIbuLama = old('pendidikan_ibu', $student->student->family->pendidikan_ibu
+                                    ?? '');
+                                    $pendidikanWaliLama = old('pendidikan_wali',
+                                    $student->student->family->pendidikan_wali ?? '');
                                     @endphp
                                     <div class="mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
                                         <h3 class="text-xl font-bold text-slate-800 dark:text-white">Data Orang Tua /
@@ -822,9 +829,14 @@
                                                 <div>
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Pendidikan</label>
-                                                    <input type="text" name="pendidikan_ayah"
-                                                        value="{{ old('pendidikan_ayah', $student->student->family->pendidikan_ayah ?? '') }}"
+                                                    <select name="pendidikan_ayah"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                        <option value="">-- Pilih --</option>
+                                                        @foreach ($pendidikanOptions as $opt)
+                                                        <option value="{{ $opt }}" {{ $pendidikanAyahLama==$opt
+                                                            ? 'selected' : '' }}>{{ $opt }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                                 <div>
                                                     <label
@@ -927,9 +939,14 @@
                                                 <div>
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Pendidikan</label>
-                                                    <input type="text" name="pendidikan_ibu"
-                                                        value="{{ old('pendidikan_ibu', $student->student->family->pendidikan_ibu ?? '') }}"
+                                                    <select name="pendidikan_ibu"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                        <option value="">-- Pilih --</option>
+                                                        @foreach ($pendidikanOptions as $opt)
+                                                        <option value="{{ $opt }}" {{ $pendidikanIbuLama==$opt
+                                                            ? 'selected' : '' }}>{{ $opt }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                                 <div>
                                                     <label
@@ -1019,9 +1036,14 @@
                                                 <div>
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Pendidikan</label>
-                                                    <input type="text" name="pendidikan_wali"
-                                                        value="{{ old('pendidikan_wali', $student->student->family->pendidikan_wali ?? '') }}"
+                                                    <select name="pendidikan_wali"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                        <option value="">-- Pilih --</option>
+                                                        @foreach ($pendidikanOptions as $opt)
+                                                        <option value="{{ $opt }}" {{ $pendidikanWaliLama==$opt
+                                                            ? 'selected' : '' }}>{{ $opt }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                                 <div>
                                                     <label
