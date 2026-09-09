@@ -472,9 +472,24 @@
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Agama</label>
-                                            <input type="text" name="agama"
-                                                value="{{ old('agama', $student->student->agama ?? '') }}"
+                                            <select name="agama"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                <option value="">-- Pilih --</option>
+                                                @php $agamaLama = old('agama', $student->student->agama ?? ''); @endphp
+                                                <option value="Islam" {{ $agamaLama=='Islam' ? 'selected' : '' }}>
+                                                    Islam</option>
+                                                <option value="Kristen" {{ $agamaLama=='Kristen' ? 'selected' : '' }}>
+                                                    Kristen</option>
+                                                <option value="Katholik" {{ $agamaLama=='Katholik' ? 'selected' : '' }}>
+                                                    Katholik</option>
+                                                <option value="Hindu" {{ $agamaLama=='Hindu' ? 'selected' : '' }}>
+                                                    Hindu</option>
+                                                <option value="Buddha" {{ $agamaLama=='Buddha' ? 'selected' : '' }}>
+                                                    Buddha</option>
+                                                <option value="Khonghucu" {{ $agamaLama=='Khonghucu' ? 'selected' : ''
+                                                    }}>
+                                                    Khonghucu</option>
+                                            </select>
                                         </div>
                                         <div>
                                             <label
