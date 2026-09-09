@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\School;
+use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 
@@ -193,5 +194,19 @@ class SubjectController extends Controller
             'success' => true,
             'message' => 'Urutan mata pelajaran berhasil diperbarui!',
         ]);
+    }
+
+    public function show(Student $student)
+    {
+        // Eager load semua relasi yang dibutuhkan oleh view show.blade.php
+        // untuk mencegah N+1 query problem
+        $student->load([
+            'student.address',
+            'student.family',
+            'student.health',
+            'student.financial',
+        ]);
+
+        return view('students.show', compact('student'));
     }
 }

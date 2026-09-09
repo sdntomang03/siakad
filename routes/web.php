@@ -65,7 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
+    Route::get('/students/{student}', [StudentController::class, 'show'])->name('students.show');
     Route::resource('students', StudentController::class)->only(['edit', 'update']);
     Route::resource('employees', EmployeeController::class)->only(['edit', 'update']);
     Route::put('/students/{id}/ajax-update', [StudentController::class, 'updateAjax'])->name('students.ajax-update');
