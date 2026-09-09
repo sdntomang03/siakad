@@ -398,7 +398,7 @@
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No.
-                                                HP</label>
+                                                HP (WA Grup Kelas)</label>
                                             <input type="text" name="hp"
                                                 value="{{ old('hp', $student->student->hp ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
