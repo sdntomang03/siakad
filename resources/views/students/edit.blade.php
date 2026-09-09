@@ -20,7 +20,7 @@
         </div>
     </x-slot>
 
-    {{-- ALPINE.JS CONTAINER: Dilengkapi logika Navigasi Next/Prev --}}
+    {{-- ALPINE.JS CONTAINER: Navigasi Tab & Fetch API Wilayah --}}
     <div class="py-6 sm:py-8" x-data="{
         tab: 'identitas',
         tabsList: ['identitas', 'alamat', 'keluarga', 'finansial', 'kesehatan'],
@@ -33,19 +33,125 @@
             if(this.currentIndex > 0) this.tab = this.tabsList[this.currentIndex - 1];
             window.scrollTo({ top: 0, behavior: 'smooth' });
         },
-        get progress() {
-            return ((this.currentIndex + 1) / this.tabsList.length * 100) + '%';
+        get progress() { return ((this.currentIndex + 1) / this.tabsList.length * 100) + '%'; },
+        get progressText() { return 'Langkah ' + (this.currentIndex + 1) + ' dari ' + this.tabsList.length; },
+
+        /* --- LOGIKA API WILAYAH INDONESIA --- */
+        apiBase: 'https://www.emsifa.com/api-wilayah-indonesia/v2',
+
+        // Data lama dari database
+        savedProvinsi: '{{ old('provinsi', $student->student->address->provinsi ?? '') }}',
+        savedKota: '{{ old('kota', $student->student->address->kota ?? '') }}',
+        savedKecamatan: '{{ old('kecamatan', $student->student->address->kecamatan ?? '') }}',
+        savedKelurahan: '{{ old('kelurahan', $student->student->address->kelurahan ?? '') }}',
+
+        // Wadah data API
+        provinces: [], cities: [], districts: [], villages: [],
+
+        // State Pilihan
+        selectedProvId: '', selectedCityId: '', selectedDistId: '', selectedVillId: '',
+        provName: '{{ old('provinsi', $student->student->address->provinsi ?? '') }}',
+        cityName: '{{ old('kota', $student->student->address->kota ?? '') }}',
+        distName: '{{ old('kecamatan', $student->student->address->kecamatan ?? '') }}',
+        villName: '{{ old('kelurahan', $student->student->address->kelurahan ?? '') }}',
+
+        async initWilayah() {
+            try {
+                let res = await fetch(this.apiBase + '/provinces.json');
+                let json = await res.json();
+                this.provinces = json.data;
+
+                if(this.savedProvinsi) {
+                    let p = this.provinces.find(x => x.name.toUpperCase() === this.savedProvinsi.toUpperCase());
+                    if(p) {
+                        this.selectedProvId = p.id;
+                        await this.fetchCities(p.id, true);
+                    }
+                }
+            } catch(e) { console.error('Gagal memuat provinsi', e); }
         },
-        get progressText() {
-            return 'Langkah ' + (this.currentIndex + 1) + ' dari ' + this.tabsList.length;
+
+        async fetchCities(provId, isInit = false) {
+            if(!isInit) {
+                this.selectedCityId = ''; this.selectedDistId = ''; this.selectedVillId = '';
+                this.cityName = ''; this.distName = ''; this.villName = '';
+                this.cities = []; this.districts = []; this.villages = [];
+                let p = this.provinces.find(x => x.id === provId);
+                this.provName = p ? p.name : '';
+            }
+            if(!provId) return;
+
+            let res = await fetch(this.apiBase + '/regencies/' + provId + '.json');
+            let json = await res.json();
+            this.cities = json.data;
+
+            if(isInit && this.savedKota) {
+                let c = this.cities.find(x => x.name.toUpperCase() === this.savedKota.toUpperCase());
+                if(c) {
+                    this.selectedCityId = c.id;
+                    await this.fetchDistricts(c.id, true);
+                }
+            }
+        },
+
+        async fetchDistricts(cityId, isInit = false) {
+            if(!isInit) {
+                this.selectedDistId = ''; this.selectedVillId = '';
+                this.distName = ''; this.villName = '';
+                this.districts = []; this.villages = [];
+                let c = this.cities.find(x => x.id === cityId);
+                this.cityName = c ? c.name : '';
+            }
+            if(!cityId) return;
+
+            let res = await fetch(this.apiBase + '/districts/' + cityId + '.json');
+            let json = await res.json();
+            this.districts = json.data;
+
+            if(isInit && this.savedKecamatan) {
+                let d = this.districts.find(x => x.name.toUpperCase() === this.savedKecamatan.toUpperCase());
+                if(d) {
+                    this.selectedDistId = d.id;
+                    await this.fetchVillages(d.id, true);
+                }
+            }
+        },
+
+        async fetchVillages(distId, isInit = false) {
+            if(!isInit) {
+                this.selectedVillId = ''; this.villName = '';
+                this.villages = [];
+                let d = this.districts.find(x => x.id === distId);
+                this.distName = d ? d.name : '';
+            }
+            if(!distId) return;
+
+            let res = await fetch(this.apiBase + '/villages/' + distId + '.json');
+            let json = await res.json();
+            this.villages = json.data;
+
+            if(isInit && this.savedKelurahan) {
+                let v = this.villages.find(x => x.name.toUpperCase() === this.savedKelurahan.toUpperCase());
+                if(v) {
+                    this.selectedVillId = v.id;
+                }
+            }
+        },
+
+        setVillage() {
+            let v = this.villages.find(x => x.id === this.selectedVillId);
+            this.villName = v ? v.name : '';
+            if (v && v.postal_code) {
+                document.getElementById('kode_pos_input').value = v.postal_code;
+            }
         }
-    }">
+    }" x-init="initWilayah()">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             <form action="{{ route('students.update', $student->id ?? 0) }}" method="POST">
                 @csrf @method('PUT')
 
-                {{-- PROGRESS BAR AREA --}}
+                {{-- PROGRESS BAR --}}
                 <div class="mb-8 px-4 sm:px-0">
                     <div class="flex justify-between items-end mb-2">
                         <span class="text-sm font-bold text-slate-700 dark:text-slate-300">
@@ -67,67 +173,35 @@
                 </div>
 
                 <div class="flex flex-col lg:flex-row gap-6 lg:gap-8">
-
                     {{-- SIDEBAR TABS --}}
                     <div class="w-full lg:w-72 flex-shrink-0 px-4 sm:px-0">
                         <div
                             class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-2 sm:p-3 sticky top-6">
-
                             <nav class="flex overflow-x-auto lg:flex-col gap-2 pb-2 lg:pb-0 scrollbar-hide">
                                 <button type="button" @click="tab = 'identitas'"
                                     :class="tab === 'identitas' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 font-bold ring-1 ring-indigo-600/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200 whitespace-nowrap lg:whitespace-normal">
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2">
-                                        </path>
-                                    </svg>
-                                    Identitas Pokok
+                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200">
+                                    <i class="fas fa-user-circle w-4 sm:w-5"></i> Identitas Pokok
                                 </button>
                                 <button type="button" @click="tab = 'alamat'"
                                     :class="tab === 'alamat' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 font-bold ring-1 ring-indigo-600/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200 whitespace-nowrap lg:whitespace-normal">
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
-                                        </path>
-                                    </svg>
-                                    Alamat & Domisili
+                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200">
+                                    <i class="fas fa-map-marker-alt w-4 sm:w-5"></i> Alamat & Domisili
                                 </button>
                                 <button type="button" @click="tab = 'keluarga'"
                                     :class="tab === 'keluarga' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 font-bold ring-1 ring-indigo-600/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200 whitespace-nowrap lg:whitespace-normal">
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                                        </path>
-                                    </svg>
-                                    Data Keluarga
+                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200">
+                                    <i class="fas fa-users w-4 sm:w-5"></i> Data Keluarga
                                 </button>
                                 <button type="button" @click="tab = 'finansial'"
                                     :class="tab === 'finansial' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 font-bold ring-1 ring-indigo-600/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200 whitespace-nowrap lg:whitespace-normal">
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
-                                        </path>
-                                    </svg>
-                                    Finansial & Bantuan
+                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200">
+                                    <i class="fas fa-wallet w-4 sm:w-5"></i> Finansial & Bantuan
                                 </button>
                                 <button type="button" @click="tab = 'kesehatan'"
                                     :class="tab === 'kesehatan' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 font-bold ring-1 ring-indigo-600/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200 whitespace-nowrap lg:whitespace-normal">
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
-                                        </path>
-                                    </svg>
-                                    Data Kesehatan
+                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200">
+                                    <i class="fas fa-heartbeat w-4 sm:w-5"></i> Data Kesehatan
                                 </button>
                             </nav>
 
@@ -135,12 +209,7 @@
                                 class="pt-3 lg:pt-4 border-t border-slate-100 dark:border-slate-700 mt-2 lg:mt-4 hidden lg:block">
                                 <button type="submit"
                                     class="w-full flex justify-center items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-xl text-sm font-bold shadow-lg shadow-emerald-500/30 transition-all focus:ring-4 focus:ring-emerald-500/20">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4">
-                                        </path>
-                                    </svg>
-                                    Simpan Cepat
+                                    <i class="fas fa-save"></i> Simpan Cepat
                                 </button>
                             </div>
                         </div>
@@ -151,23 +220,16 @@
                         <div
                             class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col">
 
-                            {{-- TAB KONTEN (Area ini yang berubah-ubah) --}}
                             <div class="p-6 sm:p-8 flex-1">
 
                                 {{-- 1. FORM IDENTITAS --}}
                                 <div x-show="tab === 'identitas'" x-transition:enter="transition ease-out duration-300"
                                     x-transition:enter-start="opacity-0 translate-y-2"
                                     x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
-
                                     <div class="mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
                                         <h3 class="text-xl font-bold text-slate-800 dark:text-white">Identitas Pokok
                                             Siswa</h3>
                                     </div>
-
-                                    {{-- Sub-bagian: Biodata Dasar --}}
-                                    <h4
-                                        class="font-bold text-indigo-700 dark:text-indigo-400 mb-4 flex items-center gap-2">
-                                        <i class="fas fa-user-circle"></i> Biodata Dasar</h4>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                                         <div class="sm:col-span-2">
                                             <label
@@ -292,10 +354,9 @@
                                         </div>
                                     </div>
 
-                                    {{-- Sub-bagian: Kontak & Akademik Lainnya --}}
                                     <h4
-                                        class="font-bold text-indigo-700 dark:text-indigo-400 mb-4 pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center gap-2">
-                                        <i class="fas fa-address-book"></i> Kontak & Akademik Lainnya</h4>
+                                        class="font-bold text-indigo-700 dark:text-indigo-400 mb-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+                                        Kontak & Akademik Lainnya</h4>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                         <div>
                                             <label
@@ -379,14 +440,13 @@
                                     </div>
                                 </div>
 
-                                {{-- 2. FORM ALAMAT --}}
+                                {{-- 2. FORM ALAMAT (Terintegrasi API) --}}
                                 <div x-show="tab === 'alamat'" x-transition:enter="transition ease-out duration-300"
                                     x-transition:enter-start="opacity-0 translate-y-2"
                                     x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
                                     <div class="mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
                                         <h3 class="text-xl font-bold text-slate-800 dark:text-white">Alamat & Domisili
-                                            Siswa
-                                        </h3>
+                                            Siswa</h3>
                                     </div>
                                     <div class="grid grid-cols-1 sm:grid-cols-6 gap-y-6 gap-x-4">
                                         <div class="sm:col-span-6">
@@ -414,10 +474,67 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kode
                                                 Pos</label>
-                                            <input type="text" name="kode_pos"
+                                            <input type="text" name="kode_pos" id="kode_pos_input"
                                                 value="{{ old('kode_pos', $student->student->address->kode_pos ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
+
+                                        {{-- DROPDOWN API --}}
+                                        <div class="sm:col-span-2">
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Provinsi</label>
+                                            <select x-model="selectedProvId" @change="fetchCities(selectedProvId)"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                <option value="">-- Pilih Provinsi --</option>
+                                                <template x-for="prov in provinces" :key="prov.id">
+                                                    <option :value="prov.id" x-text="prov.name"></option>
+                                                </template>
+                                            </select>
+                                            <input type="hidden" name="provinsi" :value="provName">
+                                        </div>
+
+                                        <div class="sm:col-span-2">
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kota/Kabupaten</label>
+                                            <select x-model="selectedCityId" @change="fetchDistricts(selectedCityId)"
+                                                :disabled="cities.length === 0"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800">
+                                                <option value="">-- Pilih Kota/Kabupaten --</option>
+                                                <template x-for="city in cities" :key="city.id">
+                                                    <option :value="city.id" x-text="city.name"></option>
+                                                </template>
+                                            </select>
+                                            <input type="hidden" name="kota" :value="cityName">
+                                        </div>
+
+                                        <div class="sm:col-span-2">
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kecamatan</label>
+                                            <select x-model="selectedDistId" @change="fetchVillages(selectedDistId)"
+                                                :disabled="districts.length === 0"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800">
+                                                <option value="">-- Pilih Kecamatan --</option>
+                                                <template x-for="dist in districts" :key="dist.id">
+                                                    <option :value="dist.id" x-text="dist.name"></option>
+                                                </template>
+                                            </select>
+                                            <input type="hidden" name="kecamatan" :value="distName">
+                                        </div>
+
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kelurahan/Desa</label>
+                                            <select x-model="selectedVillId" @change="setVillage()"
+                                                :disabled="villages.length === 0"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800">
+                                                <option value="">-- Pilih Kelurahan/Desa --</option>
+                                                <template x-for="vill in villages" :key="vill.id">
+                                                    <option :value="vill.id" x-text="vill.name"></option>
+                                                </template>
+                                            </select>
+                                            <input type="hidden" name="kelurahan" :value="villName">
+                                        </div>
+
                                         <div class="sm:col-span-3">
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Dusun</label>
@@ -425,34 +542,7 @@
                                                 value="{{ old('dusun', $student->student->address->dusun ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
-                                        <div class="sm:col-span-3">
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kelurahan/Desa</label>
-                                            <input type="text" name="kelurahan"
-                                                value="{{ old('kelurahan', $student->student->address->kelurahan ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
-                                        </div>
-                                        <div class="sm:col-span-2">
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kecamatan</label>
-                                            <input type="text" name="kecamatan"
-                                                value="{{ old('kecamatan', $student->student->address->kecamatan ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
-                                        </div>
-                                        <div class="sm:col-span-2">
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kota/Kabupaten</label>
-                                            <input type="text" name="kota"
-                                                value="{{ old('kota', $student->student->address->kota ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
-                                        </div>
-                                        <div class="sm:col-span-2">
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Provinsi</label>
-                                            <input type="text" name="provinsi"
-                                                value="{{ old('provinsi', $student->student->address->provinsi ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
-                                        </div>
+
                                         <div
                                             class="sm:col-span-6 mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 grid grid-cols-1 sm:grid-cols-3 gap-4">
                                             <div>
@@ -500,13 +590,14 @@
                                             class="relative rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50/50 to-transparent p-5 sm:p-6 dark:border-blue-900/50 dark:from-blue-900/10">
                                             <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 rounded-l-2xl">
                                             </div>
-                                            <div class="flex justify-between items-center mb-4">
+                                            <div
+                                                class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
                                                 <h4 class="font-bold text-blue-800 dark:text-blue-400">Data Ayah Kandung
                                                 </h4>
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-xs font-bold text-slate-500">Status:</span>
                                                     <select name="is_ayah_hidup"
-                                                        class="rounded-md border-slate-300 shadow-sm text-xs py-1 pl-2 pr-8 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600 dark:text-white">
+                                                        class="rounded-md border-slate-300 shadow-sm text-xs py-1.5 pl-3 pr-8 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600 dark:text-white font-semibold">
                                                         <option value="1" {{ old('is_ayah_hidup', $student->
                                                             student->family->is_ayah_hidup ?? 1) == 1 ? 'selected' : ''
                                                             }}>Masih Hidup</option>
@@ -516,7 +607,6 @@
                                                     </select>
                                                 </div>
                                             </div>
-
                                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                                 <div class="sm:col-span-2">
                                                     <label
@@ -593,13 +683,14 @@
                                             class="relative rounded-2xl border border-pink-100 bg-gradient-to-r from-pink-50/50 to-transparent p-5 sm:p-6 dark:border-pink-900/50 dark:from-pink-900/10">
                                             <div class="absolute left-0 top-0 bottom-0 w-1 bg-pink-400 rounded-l-2xl">
                                             </div>
-                                            <div class="flex justify-between items-center mb-4">
+                                            <div
+                                                class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
                                                 <h4 class="font-bold text-pink-800 dark:text-pink-400">Data Ibu Kandung
                                                 </h4>
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-xs font-bold text-slate-500">Status:</span>
                                                     <select name="is_ibu_hidup"
-                                                        class="rounded-md border-slate-300 shadow-sm text-xs py-1 pl-2 pr-8 focus:ring-pink-500 focus:border-pink-500 dark:bg-slate-800 dark:border-slate-600 dark:text-white">
+                                                        class="rounded-md border-slate-300 shadow-sm text-xs py-1.5 pl-3 pr-8 focus:ring-pink-500 focus:border-pink-500 dark:bg-slate-800 dark:border-slate-600 dark:text-white font-semibold">
                                                         <option value="1" {{ old('is_ibu_hidup', $student->
                                                             student->family->is_ibu_hidup ?? 1) == 1 ? 'selected' : ''
                                                             }}>Masih Hidup</option>
@@ -609,7 +700,6 @@
                                                     </select>
                                                 </div>
                                             </div>
-
                                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                                 <div class="sm:col-span-2">
                                                     <label
@@ -690,7 +780,6 @@
                                                 Data Wali <span
                                                     class="text-xs font-normal text-slate-400 bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded ml-2">(Opsional)</span>
                                             </h4>
-
                                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                                 <div class="sm:col-span-2">
                                                     <label
@@ -772,9 +861,7 @@
                                         <h3 class="text-xl font-bold text-slate-800 dark:text-white">Kesejahteraan &
                                             Finansial</h3>
                                     </div>
-
                                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                        {{-- KPS / PKH --}}
                                         <div
                                             class="space-y-4 bg-slate-50 dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                                             <div
@@ -802,8 +889,6 @@
                                                     class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                             </div>
                                         </div>
-
-                                        {{-- KIP / PIP --}}
                                         <div
                                             class="space-y-4 bg-slate-50 dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                                             <div
@@ -832,7 +917,6 @@
                                                     value="{{ old('nama_di_kip', $student->student->financial->nama_di_kip ?? '') }}"
                                                     class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                             </div>
-
                                             <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                                                 <div class="flex items-center mb-3">
                                                     <input type="checkbox" name="layak_pip" id="pip" value="1" {{
@@ -849,8 +933,6 @@
                                                     class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                             </div>
                                         </div>
-
-                                        {{-- Info Rekening --}}
                                         <div
                                             class="lg:col-span-2 space-y-4 bg-emerald-50/50 dark:bg-emerald-900/10 p-5 rounded-2xl border border-emerald-100 dark:border-emerald-900/50">
                                             <h4 class="font-bold text-emerald-800 dark:text-emerald-400">Informasi
@@ -925,11 +1007,9 @@
                                 </div>
                             </div>
 
-                            {{-- NAVIGASI FOOTER (PREV & NEXT) --}}
+                            {{-- NAVIGASI FOOTER --}}
                             <div
                                 class="px-6 py-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center rounded-b-2xl">
-
-                                {{-- Tombol Sebelumnya --}}
                                 <div>
                                     <button type="button" x-show="currentIndex > 0" @click="prev()"
                                         class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
@@ -940,8 +1020,6 @@
                                         Sebelumnya
                                     </button>
                                 </div>
-
-                                {{-- Tombol Selanjutnya --}}
                                 <div>
                                     <button type="button" x-show="currentIndex < tabsList.length - 1" @click="next()"
                                         class="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold shadow-md shadow-indigo-500/20 transition-colors">
@@ -951,8 +1029,6 @@
                                                 d="M9 5l7 7-7 7"></path>
                                         </svg>
                                     </button>
-
-                                    {{-- Tombol Simpan Utama --}}
                                     <button type="submit" x-show="currentIndex === tabsList.length - 1"
                                         class="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-bold shadow-md shadow-emerald-500/20 transition-colors"
                                         style="display: none;">
@@ -963,7 +1039,6 @@
                                         Selesai & Simpan Data
                                     </button>
                                 </div>
-
                             </div>
                         </div>
                     </div>
