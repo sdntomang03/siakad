@@ -17,6 +17,7 @@ return new class extends Migration
             $table->boolean('is_ayah_hidup')->default(true);
             $table->string('tempat_lahir_ayah')->nullable();
             $table->date('tanggal_lahir_ayah')->nullable();
+            $table->string('agama_ayah')->nullable();
             $table->string('pendidikan_ayah')->nullable();
             $table->string('pekerjaan_ayah')->nullable();
             $table->string('penghasilan_ayah')->nullable();
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->boolean('is_ibu_hidup')->default(true);
             $table->string('tempat_lahir_ibu')->nullable();
             $table->date('tanggal_lahir_ibu')->nullable();
+            $table->string('agama_ibu')->nullable();
             $table->string('pendidikan_ibu')->nullable();
             $table->string('pekerjaan_ibu')->nullable();
             $table->string('penghasilan_ibu')->nullable();
@@ -39,6 +41,7 @@ return new class extends Migration
             $table->string('nama_wali')->nullable();
             $table->string('tempat_lahir_wali')->nullable();
             $table->date('tanggal_lahir_wali')->nullable();
+            $table->string('agama_wali')->nullable();
             $table->string('pendidikan_wali')->nullable();
             $table->string('pekerjaan_wali')->nullable();
             $table->string('penghasilan_wali')->nullable();

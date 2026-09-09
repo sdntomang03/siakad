@@ -145,11 +145,11 @@ class StudentController extends Controller
                 ['student_id' => $user->student->id], // [cite: 2]
                 $request->only([ // [cite: 2]
                     // Data Ayah
-                    'nama_ayah', 'is_ayah_hidup', 'tempat_lahir_ayah', 'tanggal_lahir_ayah', 'pendidikan_ayah', 'pekerjaan_ayah', 'penghasilan_ayah', 'hp_ayah', 'email_ayah', 'alamat_ayah', // [cite: 2]
+                    'nama_ayah', 'is_ayah_hidup', 'tempat_lahir_ayah', 'tanggal_lahir_ayah', 'agama_ayah', 'pendidikan_ayah', 'pekerjaan_ayah', 'penghasilan_ayah', 'hp_ayah', 'email_ayah', 'alamat_ayah', // [cite: 2]
                     // Data Ibu
-                    'nama_ibu', 'is_ibu_hidup', 'tempat_lahir_ibu', 'tanggal_lahir_ibu', 'pendidikan_ibu', 'pekerjaan_ibu', 'penghasilan_ibu', 'hp_ibu', 'email_ibu', 'alamat_ibu', // [cite: 2]
+                    'nama_ibu', 'is_ibu_hidup', 'tempat_lahir_ibu', 'tanggal_lahir_ibu', 'agama_ibu', 'pendidikan_ibu', 'pekerjaan_ibu', 'penghasilan_ibu', 'hp_ibu', 'email_ibu', 'alamat_ibu', // [cite: 2]
                     // Data Wali
-                    'nama_wali', 'tempat_lahir_wali', 'tanggal_lahir_wali', 'pendidikan_wali', 'pekerjaan_wali', 'penghasilan_wali', 'hp_wali', 'email_wali', 'alamat_wali', // [cite: 2]
+                    'nama_wali', 'tempat_lahir_wali', 'tanggal_lahir_wali', 'agama_wali', 'pendidikan_wali', 'pekerjaan_wali', 'penghasilan_wali', 'hp_wali', 'email_wali', 'alamat_wali', // [cite: 2]
                 ]) // [cite: 2]
             );
 
