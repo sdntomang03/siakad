@@ -109,8 +109,23 @@
                                             $siswa->nisn ?? '-' }}</span>
                                         <span class="block text-xs text-slate-500">{{ $siswa->nipd ?? '-' }}</span>
                                     </td>
-                                    <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">{{
-                                        $siswa->nama_lengkap }}</td>
+
+                                    {{-- PERUBAHAN DISINI: Membuat Nama Menjadi Link yang bisa diklik --}}
+                                    <td class="px-6 py-4 font-bold">
+                                        <a href="{{ route('students.show', $siswa->id) }}"
+                                            class="text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline transition-colors flex items-center gap-2"
+                                            title="Lihat Biodata Siswa">
+                                            {{ $siswa->nama_lengkap }}
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
+                                                </path>
+                                            </svg>
+                                        </a>
+                                    </td>
+                                    {{-- AKHIR PERUBAHAN --}}
+
                                     <td class="px-6 py-4">{{ $siswa->jenis_kelamin }}</td>
                                 </tr>
                                 @empty
