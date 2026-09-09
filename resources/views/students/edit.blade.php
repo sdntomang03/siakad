@@ -1,16 +1,30 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="font-bold text-2xl text-slate-800 dark:text-white tracking-tight">
+        <div class="flex items-center gap-3 sm:gap-4">
+            <a href="{{ route('dashboard') }}"
+                class="sm:hidden flex-shrink-0 inline-flex items-center justify-center h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 active:scale-95 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </a>
+
+            <div
+                class="hidden sm:flex flex-shrink-0 h-11 w-11 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 items-center justify-center shadow-md shadow-indigo-500/20">
+                <i class="fas fa-user-edit text-white text-lg"></i>
+            </div>
+
+            <div class="min-w-0 flex-1">
+                <h2 class="font-bold text-lg sm:text-2xl text-slate-800 dark:text-white tracking-tight truncate">
                     Edit Profil: <span class="text-indigo-600 dark:text-indigo-400">{{ $student->name ?? 'Siswa'
                         }}</span>
                 </h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Lengkapi data pokok peserta didik sesuai
-                    dengan dokumen resmi.</p>
+                <p class="hidden sm:block text-sm text-slate-500 dark:text-slate-400 mt-1">Lengkapi data pokok peserta
+                    didik sesuai dengan dokumen resmi.</p>
             </div>
+
             <a href="{{ route('dashboard') }}"
-                class="hidden md:inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                class="hidden sm:inline-flex flex-shrink-0 items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -21,7 +35,7 @@
     </x-slot>
 
     {{-- ALPINE.JS CONTAINER: Navigasi Tab & Fetch API Wilayah --}}
-    <div class="py-6 sm:py-8" x-data="{
+    <div class="py-4 sm:py-8 pb-28 lg:pb-8" x-data="{
         tab: 'identitas',
         tabsList: ['identitas', 'alamat', 'keluarga', 'finansial', 'kesehatan'],
         get currentIndex() { return this.tabsList.indexOf(this.tab); },
@@ -180,9 +194,9 @@
                 @endif
 
                 {{-- PROGRESS BAR --}}
-                <div class="mb-8 px-4 sm:px-0">
-                    <div class="flex justify-between items-end mb-2">
-                        <span class="text-sm font-bold text-slate-700 dark:text-slate-300">
+                <div class="mb-6 sm:mb-8 px-4 sm:px-0">
+                    <div class="flex justify-between items-end mb-2 gap-2">
+                        <span class="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 truncate">
                             <span x-text="progressText"></span>:
                             <span x-show="tab === 'identitas'">Identitas Pokok</span>
                             <span x-show="tab === 'alamat'">Data Domisili</span>
@@ -191,45 +205,66 @@
                             <span x-show="tab === 'kesehatan'">Data Kesehatan</span>
                         </span>
                         <span
-                            class="text-xs font-extrabold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-1 rounded-md"
+                            class="flex-shrink-0 text-xs font-extrabold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-1 rounded-md"
                             x-text="progress"></span>
                     </div>
-                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden shadow-inner">
-                        <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 h-2.5 rounded-full transition-all duration-500 ease-out"
+                    <div
+                        class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 sm:h-2.5 overflow-hidden shadow-inner">
+                        <div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 h-full rounded-full transition-all duration-500 ease-out"
                             :style="'width: ' + progress"></div>
+                    </div>
+                    {{-- Step dots (desktop) --}}
+                    <div class="hidden sm:flex justify-between mt-2">
+                        <template x-for="(t, i) in tabsList" :key="t">
+                            <div class="flex items-center gap-1.5"
+                                :class="i <= currentIndex ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-300 dark:text-slate-600'">
+                                <span class="h-1.5 w-1.5 rounded-full"
+                                    :class="i <= currentIndex ? 'bg-indigo-600 dark:bg-indigo-400' : 'bg-slate-300 dark:bg-slate-600'"></span>
+                            </div>
+                        </template>
                     </div>
                 </div>
 
                 <div class="flex flex-col lg:flex-row gap-6 lg:gap-8">
                     {{-- SIDEBAR TABS --}}
-                    <div class="w-full lg:w-72 flex-shrink-0 px-4 sm:px-0">
+                    <div class="w-full lg:w-72 flex-shrink-0 px-0 sm:px-0">
                         <div
-                            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-2 sm:p-3 sticky top-6">
-                            <nav class="flex overflow-x-auto lg:flex-col gap-2 pb-2 lg:pb-0 scrollbar-hide">
+                            class="sticky top-0 lg:top-6 z-20 bg-white/95 dark:bg-slate-800/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:supports-[backdrop-filter]:bg-slate-800/80 rounded-none sm:rounded-2xl shadow-sm sm:border border-y sm:border-y-0 border-slate-200 dark:border-slate-700 p-2 sm:p-3">
+                            <nav
+                                class="flex overflow-x-auto snap-x snap-mandatory lg:flex-col gap-2 pb-1 lg:pb-0 px-4 sm:px-0 scrollbar-hide">
                                 <button type="button" @click="tab = 'identitas'"
-                                    :class="tab === 'identitas' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 font-bold ring-1 ring-indigo-600/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200">
-                                    <i class="fas fa-user-circle w-4 sm:w-5"></i> Identitas Pokok
+                                    :class="tab === 'identitas' ? 'bg-gradient-to-br from-indigo-600 to-indigo-500 text-white shadow-md shadow-indigo-500/30 font-bold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
+                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl text-[11px] sm:text-sm transition-all duration-200">
+                                    <i class="fas fa-user-circle text-base lg:w-5"></i>
+                                    <span class="leading-tight text-center lg:text-left">Identitas<span
+                                            class="hidden lg:inline"> Pokok</span></span>
                                 </button>
                                 <button type="button" @click="tab = 'alamat'"
-                                    :class="tab === 'alamat' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 font-bold ring-1 ring-indigo-600/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200">
-                                    <i class="fas fa-map-marker-alt w-4 sm:w-5"></i> Alamat & Domisili
+                                    :class="tab === 'alamat' ? 'bg-gradient-to-br from-indigo-600 to-indigo-500 text-white shadow-md shadow-indigo-500/30 font-bold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
+                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl text-[11px] sm:text-sm transition-all duration-200">
+                                    <i class="fas fa-map-marker-alt text-base lg:w-5"></i>
+                                    <span class="leading-tight text-center lg:text-left">Alamat<span
+                                            class="hidden lg:inline"> & Domisili</span></span>
                                 </button>
                                 <button type="button" @click="tab = 'keluarga'"
-                                    :class="tab === 'keluarga' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 font-bold ring-1 ring-indigo-600/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200">
-                                    <i class="fas fa-users w-4 sm:w-5"></i> Data Keluarga
+                                    :class="tab === 'keluarga' ? 'bg-gradient-to-br from-indigo-600 to-indigo-500 text-white shadow-md shadow-indigo-500/30 font-bold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
+                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl text-[11px] sm:text-sm transition-all duration-200">
+                                    <i class="fas fa-users text-base lg:w-5"></i>
+                                    <span class="leading-tight text-center lg:text-left">Keluarga<span
+                                            class="hidden lg:inline"> Data</span></span>
                                 </button>
                                 <button type="button" @click="tab = 'finansial'"
-                                    :class="tab === 'finansial' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 font-bold ring-1 ring-indigo-600/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200">
-                                    <i class="fas fa-wallet w-4 sm:w-5"></i> Finansial & Bantuan
+                                    :class="tab === 'finansial' ? 'bg-gradient-to-br from-indigo-600 to-indigo-500 text-white shadow-md shadow-indigo-500/30 font-bold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
+                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl text-[11px] sm:text-sm transition-all duration-200">
+                                    <i class="fas fa-wallet text-base lg:w-5"></i>
+                                    <span class="leading-tight text-center lg:text-left">Finansial<span
+                                            class="hidden lg:inline"> & Bantuan</span></span>
                                 </button>
                                 <button type="button" @click="tab = 'kesehatan'"
-                                    :class="tab === 'kesehatan' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 font-bold ring-1 ring-indigo-600/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="flex-shrink-0 lg:w-full flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-xl text-xs sm:text-sm transition-all duration-200">
-                                    <i class="fas fa-heartbeat w-4 sm:w-5"></i> Data Kesehatan
+                                    :class="tab === 'kesehatan' ? 'bg-gradient-to-br from-indigo-600 to-indigo-500 text-white shadow-md shadow-indigo-500/30 font-bold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
+                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl text-[11px] sm:text-sm transition-all duration-200">
+                                    <i class="fas fa-heartbeat text-base lg:w-5"></i>
+                                    <span class="leading-tight text-center lg:text-left">Kesehatan</span>
                                 </button>
                             </nav>
 
@@ -261,25 +296,42 @@
 
                                     {{-- PERBAIKAN: Input Upload Foto dengan Live Preview --}}
                                     <div x-data="{ photoName: null, photoPreview: null }"
-                                        class="mb-8 flex flex-col sm:flex-row gap-6 items-center">
+                                        class="mb-8 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700">
                                         <!-- Area Preview Avatar -->
-                                        <div
-                                            class="relative h-28 w-28 rounded-full overflow-hidden border-4 border-indigo-50 dark:border-slate-700 shadow-md bg-slate-100 dark:bg-slate-800 flex-shrink-0">
+                                        <button type="button" @click="$refs.foto.click()"
+                                            class="relative h-24 w-24 sm:h-28 sm:w-28 rounded-full overflow-hidden border-4 border-white dark:border-slate-700 shadow-lg bg-slate-100 dark:bg-slate-800 flex-shrink-0 ring-1 ring-slate-200 dark:ring-slate-600 group">
                                             <!-- Foto Lama -->
                                             <img x-show="!photoPreview"
                                                 src="{{ !empty($student->student->foto) ? asset('storage/' . $student->student->foto) : 'https://ui-avatars.com/api/?name='.urlencode($student->name).'&background=random' }}"
-                                                class="object-cover w-full h-full" alt="Current Photo">
+                                                class="object-cover w-full h-full transition group-hover:brightness-90"
+                                                alt="Current Photo">
                                             <!-- Foto Baru (Preview) -->
                                             <img x-show="photoPreview" :src="photoPreview"
-                                                class="object-cover w-full h-full" style="display: none;"
-                                                alt="Preview Photo">
-                                        </div>
+                                                class="object-cover w-full h-full transition group-hover:brightness-90"
+                                                style="display: none;" alt="Preview Photo">
+                                            <!-- Badge Kamera -->
+                                            <span
+                                                class="absolute bottom-0 right-0 h-8 w-8 flex items-center justify-center rounded-full bg-indigo-600 text-white border-2 border-white dark:border-slate-800 shadow-md group-active:scale-90 transition">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
+                                                    </path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                            </span>
+                                        </button>
 
                                         <!-- Area Input File -->
-                                        <div class="flex-1 text-center sm:text-left">
+                                        <div class="flex-1 text-center sm:text-left w-full">
                                             <label
-                                                class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Foto
+                                                class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Foto
                                                 Profil Siswa</label>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Format
+                                                didukung: JPG, PNG, WebP (Maks: 2MB). Foto otomatis dioptimasi ke
+                                                WebP.</p>
 
                                             <!-- Input file tersembunyi -->
                                             <input type="file" name="foto" id="foto" class="hidden"
@@ -292,7 +344,7 @@
 
                                             <!-- Tombol Trigger -->
                                             <button type="button"
-                                                class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors"
+                                                class="w-full sm:w-auto inline-flex justify-center items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 active:scale-[0.98] transition"
                                                 @click="$refs.foto.click()">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
@@ -303,12 +355,11 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 </svg>
-                                                Pilih Foto
+                                                <span x-text="photoName ? photoName : 'Pilih Foto'"
+                                                    class="truncate max-w-[10rem]"></span>
                                             </button>
 
-                                            <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Format didukung:
-                                                JPG, PNG, WebP (Maks: 2MB). Foto otomatis dioptimasi ke WebP.</p>
-                                            @error('foto') <p class="mt-1 text-xs font-semibold text-rose-500">{{
+                                            @error('foto') <p class="mt-2 text-xs font-semibold text-rose-500">{{
                                                 $message }}</p> @enderror
                                         </div>
                                     </div>
@@ -1019,9 +1070,9 @@
                                 </div>
                             </div>
 
-                            {{-- NAVIGASI FOOTER --}}
+                            {{-- NAVIGASI FOOTER (desktop) --}}
                             <div
-                                class="px-6 py-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center rounded-b-2xl">
+                                class="hidden lg:flex px-6 py-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 justify-between items-center rounded-b-2xl">
                                 <div>
                                     <button type="button" x-show="currentIndex > 0" @click="prev()"
                                         class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
@@ -1053,6 +1104,37 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                {{-- NAVIGASI FOOTER (mobile, mengambang) --}}
+                <div class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 dark:bg-slate-800/95 backdrop-blur supports-[backdrop-filter]:bg-white/90 dark:supports-[backdrop-filter]:bg-slate-800/90 border-t border-slate-200 dark:border-slate-700 px-4 pt-3 shadow-[0_-4px_16px_-4px_rgba(0,0,0,0.08)]"
+                    style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));">
+                    <div class="flex items-center gap-3 max-w-7xl mx-auto">
+                        <button type="button" x-show="currentIndex > 0" @click="prev()"
+                            class="flex-shrink-0 flex items-center justify-center h-11 w-11 text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded-xl active:scale-95 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        <button type="button" x-show="currentIndex < tabsList.length - 1" @click="next()"
+                            class="flex-1 flex items-center justify-center gap-2 h-11 bg-indigo-600 active:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-md shadow-indigo-500/20 transition-colors">
+                            Selanjutnya
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </button>
+                        <button type="submit" x-show="currentIndex === tabsList.length - 1"
+                            class="flex-1 flex items-center justify-center gap-2 h-11 bg-emerald-600 active:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-500/20 transition-colors"
+                            style="display: none;">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Selesai & Simpan
+                        </button>
                     </div>
                 </div>
             </form>
