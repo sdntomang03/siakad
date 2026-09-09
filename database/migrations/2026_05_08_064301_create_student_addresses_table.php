@@ -23,7 +23,7 @@ return new class extends Migration
 
             $table->string('jenis_tinggal')->nullable();
             $table->string('alat_transportasi')->nullable();
-            $table->decimal('jarak_ke_sekolah_km', 5, 2)->nullable();
+            $table->string('jarak_ke_sekolah_km')->nullable();
 
             $table->timestamps();
         });
