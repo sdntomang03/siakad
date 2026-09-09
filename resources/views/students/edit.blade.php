@@ -162,7 +162,6 @@
     }" x-init="initWilayah()">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            {{-- PERBAIKAN: Menambahkan enctype="multipart/form-data" --}}
             <form action="{{ route('students.update', $student->id ?? 0) }}" method="POST"
                 enctype="multipart/form-data">
                 @csrf @method('PUT')
@@ -294,7 +293,6 @@
                                             Siswa</h3>
                                     </div>
 
-                                    {{-- PERBAIKAN: Input Upload Foto 4x6 dengan Live Preview --}}
                                     <div x-data="{ photoName: null, photoPreview: null }"
                                         class="mb-8 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700">
                                         <!-- Area Preview Foto 4x6 -->
@@ -702,21 +700,27 @@
                                                     @php $alatTransportasiLama = old('alat_transportasi',
                                                     $student->student->address->alat_transportasi ?? ''); @endphp
                                                     <option value="Jalan Kaki" {{ $alatTransportasiLama=='Jalan Kaki'
-                                                        ? 'selected' : '' }}>Jalan Kaki</option>
+                                                        ? 'selected' : '' }}>
+                                                        Jalan Kaki</option>
                                                     <option value="Sepeda" {{ $alatTransportasiLama=='Sepeda'
-                                                        ? 'selected' : '' }}>Sepeda</option>
+                                                        ? 'selected' : '' }}>
+                                                        Sepeda</option>
                                                     <option value="Motor" {{ $alatTransportasiLama=='Motor' ? 'selected'
-                                                        : '' }}>Motor</option>
+                                                        : '' }}>
+                                                        Motor</option>
                                                     <option value="Mobil" {{ $alatTransportasiLama=='Mobil' ? 'selected'
-                                                        : '' }}>Mobil</option>
+                                                        : '' }}>
+                                                        Mobil</option>
                                                     <option value="Angkutan Umum" {{
                                                         $alatTransportasiLama=='Angkutan Umum' ? 'selected' : '' }}>
                                                         Angkutan Umum</option>
                                                     <option value="Antar Jemput" {{
-                                                        $alatTransportasiLama=='Antar Jemput' ? 'selected' : '' }}>Antar
-                                                        Jemput</option>
-                                                    <option value="Lainnya" {{ $alatTransportasiLama=='Lainnya'
-                                                        ? 'selected' : '' }}>Lainnya</option>
+                                                        $alatTransportasiLama=='Antar Jemput' ? 'selected' : '' }}>
+                                                        Antar Jemput</option>
+                                                    <option value="Lainnya" {{ !in_array($alatTransportasiLama,
+                                                        ['', 'Jalan Kaki' , 'Sepeda' , 'Motor' , 'Mobil'
+                                                        , 'Angkutan Umum' , 'Antar Jemput' ]) ? 'selected' : '' }}>
+                                                        Lainnya</option>
                                                 </select>
                                             </div>
                                             <div>
@@ -735,9 +739,11 @@
                                                     <option value="3-5 KM" {{ $jarakLama=='3-5 KM' ? 'selected' : '' }}>
                                                         3-5 KM</option>
                                                     <option value="5-10 KM" {{ $jarakLama=='5-10 KM' ? 'selected' : ''
-                                                        }}>5-10 KM</option>
+                                                        }}>
+                                                        5-10 KM</option>
                                                     <option value="Lebih dari 10 KM" {{ $jarakLama=='Lebih dari 10 KM'
-                                                        ? 'selected' : '' }}>Lebih dari 10 KM</option>
+                                                        ? 'selected' : '' }}>
+                                                        Lebih dari 10 KM</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -748,13 +754,6 @@
                                 <div x-show="tab === 'keluarga'" x-transition:enter="transition ease-out duration-300"
                                     x-transition:enter-start="opacity-0 translate-y-2"
                                     x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
-                                    @php
-                                    $agamaOptions = ['Islam', 'Kristen', 'Katholik', 'Hindu', 'Buddha', 'Khonghucu',
-                                    'Kepercayaan Terhadap Tuhan YME', 'Lainnya'];
-                                    $agamaAyahLama = old('agama_ayah', $student->student->family->agama_ayah ?? '');
-                                    $agamaIbuLama = old('agama_ibu', $student->student->family->agama_ibu ?? '');
-                                    $agamaWaliLama = old('agama_wali', $student->student->family->agama_wali ?? '');
-                                    @endphp
                                     <div class="mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
                                         <h3 class="text-xl font-bold text-slate-800 dark:text-white">Data Orang Tua /
                                             Wali</h3>
@@ -814,10 +813,20 @@
                                                     <select name="agama_ayah"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                         <option value="">-- Pilih --</option>
-                                                        @foreach ($agamaOptions as $opt)
-                                                        <option value="{{ $opt }}" {{ $agamaAyahLama==$opt ? 'selected'
-                                                            : '' }}>{{ $opt }}</option>
-                                                        @endforeach
+                                                        @php $agamaAyah = old('agama_ayah',
+                                                        $student->student->family->agama_ayah ?? ''); @endphp
+                                                        <option value="Islam" {{ $agamaAyah=='Islam' ? 'selected' : ''
+                                                            }}>Islam</option>
+                                                        <option value="Kristen" {{ $agamaAyah=='Kristen' ? 'selected'
+                                                            : '' }}>Kristen</option>
+                                                        <option value="Katholik" {{ $agamaAyah=='Katholik' ? 'selected'
+                                                            : '' }}>Katholik</option>
+                                                        <option value="Hindu" {{ $agamaAyah=='Hindu' ? 'selected' : ''
+                                                            }}>Hindu</option>
+                                                        <option value="Buddha" {{ $agamaAyah=='Buddha' ? 'selected' : ''
+                                                            }}>Buddha</option>
+                                                        <option value="Khonghucu" {{ $agamaAyah=='Khonghucu'
+                                                            ? 'selected' : '' }}>Khonghucu</option>
                                                     </select>
                                                 </div>
                                                 <div>
@@ -919,10 +928,20 @@
                                                     <select name="agama_ibu"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                         <option value="">-- Pilih --</option>
-                                                        @foreach ($agamaOptions as $opt)
-                                                        <option value="{{ $opt }}" {{ $agamaIbuLama==$opt ? 'selected'
-                                                            : '' }}>{{ $opt }}</option>
-                                                        @endforeach
+                                                        @php $agamaIbu = old('agama_ibu',
+                                                        $student->student->family->agama_ibu ?? ''); @endphp
+                                                        <option value="Islam" {{ $agamaIbu=='Islam' ? 'selected' : ''
+                                                            }}>Islam</option>
+                                                        <option value="Kristen" {{ $agamaIbu=='Kristen' ? 'selected'
+                                                            : '' }}>Kristen</option>
+                                                        <option value="Katholik" {{ $agamaIbu=='Katholik' ? 'selected'
+                                                            : '' }}>Katholik</option>
+                                                        <option value="Hindu" {{ $agamaIbu=='Hindu' ? 'selected' : ''
+                                                            }}>Hindu</option>
+                                                        <option value="Buddha" {{ $agamaIbu=='Buddha' ? 'selected' : ''
+                                                            }}>Buddha</option>
+                                                        <option value="Khonghucu" {{ $agamaIbu=='Khonghucu' ? 'selected'
+                                                            : '' }}>Khonghucu</option>
                                                     </select>
                                                 </div>
                                                 <div>
@@ -1011,10 +1030,20 @@
                                                     <select name="agama_wali"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                         <option value="">-- Pilih --</option>
-                                                        @foreach ($agamaOptions as $opt)
-                                                        <option value="{{ $opt }}" {{ $agamaWaliLama==$opt ? 'selected'
-                                                            : '' }}>{{ $opt }}</option>
-                                                        @endforeach
+                                                        @php $agamaWali = old('agama_wali',
+                                                        $student->student->family->agama_wali ?? ''); @endphp
+                                                        <option value="Islam" {{ $agamaWali=='Islam' ? 'selected' : ''
+                                                            }}>Islam</option>
+                                                        <option value="Kristen" {{ $agamaWali=='Kristen' ? 'selected'
+                                                            : '' }}>Kristen</option>
+                                                        <option value="Katholik" {{ $agamaWali=='Katholik' ? 'selected'
+                                                            : '' }}>Katholik</option>
+                                                        <option value="Hindu" {{ $agamaWali=='Hindu' ? 'selected' : ''
+                                                            }}>Hindu</option>
+                                                        <option value="Buddha" {{ $agamaWali=='Buddha' ? 'selected' : ''
+                                                            }}>Buddha</option>
+                                                        <option value="Khonghucu" {{ $agamaWali=='Khonghucu'
+                                                            ? 'selected' : '' }}>Khonghucu</option>
                                                     </select>
                                                 </div>
                                                 <div>
@@ -1090,191 +1119,3 @@
                                                 <input type="checkbox" name="penerima_pip" id="pip" value="1" {{
                                                     old('penerima_pip', $student->student->financial->penerima_pip ??
                                                 false) ? 'checked' : '' }} class="w-5 h-5 rounded border-slate-300
-                                                text-indigo-600 focus:ring-indigo-500 cursor-pointer">
-                                                <label for="pip"
-                                                    class="ml-3 font-bold text-slate-800 dark:text-slate-200 cursor-pointer">Siswa
-                                                    Penerima PIP (Program Indonesia Pintar)</label>
-                                            </div>
-                                            <div
-                                                class="flex items-center pt-4 border-t border-slate-200 dark:border-slate-700">
-                                                <input type="checkbox" name="penerima_bantuan_lain" id="bantuan_lain"
-                                                    value="1" {{ old('penerima_bantuan_lain',
-                                                    $student->student->financial->penerima_bantuan_lain ?? false) ?
-                                                'checked' : '' }} class="w-5 h-5 rounded border-slate-300
-                                                text-indigo-600 focus:ring-indigo-500 cursor-pointer">
-                                                <label for="bantuan_lain"
-                                                    class="ml-3 font-bold text-slate-800 dark:text-slate-200 cursor-pointer">Siswa
-                                                    Penerima Bantuan Lainnya</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {{-- 5. FORM KESEHATAN --}}
-                                <div x-show="tab === 'kesehatan'" x-transition:enter="transition ease-out duration-300"
-                                    x-transition:enter-start="opacity-0 translate-y-2"
-                                    x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
-                                    <div class="mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
-                                        <h3 class="text-xl font-bold text-slate-800 dark:text-white">Data Kesehatan</h3>
-                                    </div>
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                        <div>
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Tinggi
-                                                Badan <span
-                                                    class="text-xs text-slate-400 font-normal">(cm)</span></label>
-                                            <input type="number" step="0.1" name="tinggi_badan"
-                                                value="{{ old('tinggi_badan', $student->student->health->tinggi_badan ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Berat
-                                                Badan <span
-                                                    class="text-xs text-slate-400 font-normal">(kg)</span></label>
-                                            <input type="number" step="0.1" name="berat_badan"
-                                                value="{{ old('berat_badan', $student->student->health->berat_badan ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                        </div>
-                                        <div class="sm:col-span-2">
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kebutuhan
-                                                Khusus</label>
-                                            <select name="kebutuhan_khusus"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                                @php $kebutuhanKhususLama = old('kebutuhan_khusus',
-                                                $student->student->health->kebutuhan_khusus ?? 'Tidak'); @endphp
-                                                <option value="Tidak" {{ $kebutuhanKhususLama=='Tidak' ? 'selected' : ''
-                                                    }}>
-                                                    Tidak</option>
-                                                <option value="Rungu" {{ $kebutuhanKhususLama=='Rungu' ? 'selected' : ''
-                                                    }}>
-                                                    Rungu</option>
-                                                <option value="Grahita Sedang" {{ $kebutuhanKhususLama=='Grahita Sedang'
-                                                    ? 'selected' : '' }}>
-                                                    Grahita Sedang</option>
-                                                <option value="Grahita Ringan" {{ $kebutuhanKhususLama=='Grahita Ringan'
-                                                    ? 'selected' : '' }}>
-                                                    Grahita Ringan</option>
-                                                <option value="Daksa Sedang" {{ $kebutuhanKhususLama=='Daksa Sedang'
-                                                    ? 'selected' : '' }}>
-                                                    Daksa Sedang</option>
-                                                <option value="Daksa Ringan" {{ $kebutuhanKhususLama=='Daksa Ringan'
-                                                    ? 'selected' : '' }}>
-                                                    Daksa Ringan</option>
-                                                <option value="Laras" {{ $kebutuhanKhususLama=='Laras' ? 'selected' : ''
-                                                    }}>
-                                                    Laras</option>
-                                                <option value="Wicara" {{ $kebutuhanKhususLama=='Wicara' ? 'selected'
-                                                    : '' }}>
-                                                    Wicara</option>
-                                                <option value="Tuna Ganda" {{ $kebutuhanKhususLama=='Tuna Ganda'
-                                                    ? 'selected' : '' }}>
-                                                    Tuna Ganda</option>
-                                                <option value="Hiperaktif" {{ $kebutuhanKhususLama=='Hiperaktif'
-                                                    ? 'selected' : '' }}>
-                                                    Hiperaktif</option>
-                                                <option value="Cerdas Istimewa" {{
-                                                    $kebutuhanKhususLama=='Cerdas Istimewa' ? 'selected' : '' }}>
-                                                    Cerdas Istimewa</option>
-                                                <option value="Lainnya" {{ $kebutuhanKhususLama=='Lainnya' ? 'selected'
-                                                    : '' }}>
-                                                    Lainnya</option>
-                                            </select>
-                                        </div>
-                                        <div class="sm:col-span-2">
-                                            <label
-                                                class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Riwayat
-                                                Penyakit</label>
-                                            <input type="text" name="penyakit"
-                                                value="{{ old('penyakit', $student->student->health->penyakit ?? '') }}"
-                                                placeholder="Contoh: Asma, Alergi Debu, dll (Kosongkan jika tidak ada)"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- NAVIGASI FOOTER (desktop) --}}
-                            <div
-                                class="hidden lg:flex px-6 py-4 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 justify-between items-center rounded-b-2xl">
-                                <div>
-                                    <button type="button" x-show="currentIndex > 0" @click="prev()"
-                                        class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M15 19l-7-7 7-7"></path>
-                                        </svg>
-                                        Sebelumnya
-                                    </button>
-                                </div>
-                                <div>
-                                    <button type="button" x-show="currentIndex < tabsList.length - 1" @click="next()"
-                                        class="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold shadow-md shadow-indigo-500/20 transition-colors">
-                                        Selanjutnya
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 5l7 7-7 7"></path>
-                                        </svg>
-                                    </button>
-                                    <button type="submit" x-show="currentIndex === tabsList.length - 1"
-                                        class="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-bold shadow-md shadow-emerald-500/20 transition-colors"
-                                        style="display: none;">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                        Selesai & Simpan Data
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- NAVIGASI FOOTER (mobile, mengambang) --}}
-                <div class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 dark:bg-slate-800/95 backdrop-blur supports-[backdrop-filter]:bg-white/90 dark:supports-[backdrop-filter]:bg-slate-800/90 border-t border-slate-200 dark:border-slate-700 px-4 pt-3 shadow-[0_-4px_16px_-4px_rgba(0,0,0,0.08)]"
-                    style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));">
-                    <div class="flex items-center gap-3 max-w-7xl mx-auto">
-                        <button type="button" x-show="currentIndex > 0" @click="prev()"
-                            class="flex-shrink-0 flex items-center justify-center h-11 w-11 text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded-xl active:scale-95 transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 19l-7-7 7-7"></path>
-                            </svg>
-                        </button>
-                        <button type="button" x-show="currentIndex < tabsList.length - 1" @click="next()"
-                            class="flex-1 flex items-center justify-center gap-2 h-11 bg-indigo-600 active:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-md shadow-indigo-500/20 transition-colors">
-                            Selanjutnya
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
-                                </path>
-                            </svg>
-                        </button>
-                        <button type="submit" x-show="currentIndex === tabsList.length - 1"
-                            class="flex-1 flex items-center justify-center gap-2 h-11 bg-emerald-600 active:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-500/20 transition-colors"
-                            style="display: none;">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            Simpan
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    {{-- CSS Tambahan --}}
-    <style>
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    </style>
-</x-app-layout>
