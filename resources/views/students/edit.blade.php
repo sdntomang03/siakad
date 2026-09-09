@@ -749,8 +749,7 @@
                                     x-transition:enter-start="opacity-0 translate-y-2"
                                     x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
                                     @php
-                                    $agamaOptions = ['Islam', 'Kristen', 'Katholik', 'Hindu', 'Buddha', 'Khonghucu',
-                                    'Kepercayaan Terhadap Tuhan YME', 'Lainnya'];
+                                    $agamaOptions = ['Islam', 'Kristen', 'Katholik', 'Hindu', 'Buddha', 'Khonghucu'];
                                     $agamaAyahLama = old('agama_ayah', $student->student->family->agama_ayah ?? '');
                                     $agamaIbuLama = old('agama_ibu', $student->student->family->agama_ibu ?? '');
                                     $agamaWaliLama = old('agama_wali', $student->student->family->agama_wali ?? '');
