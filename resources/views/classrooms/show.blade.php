@@ -58,7 +58,7 @@
                     }
                 }
             }">
-                <form action="{{ route('classrooms.remove-multiple', $classroom->id) }}" method="POST">
+                <form action="{{ route('classrooms.remove-multiple', $classroom->hashid) }}" method="POST">
                     @csrf @method('DELETE')
 
                     <div
