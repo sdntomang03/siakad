@@ -151,6 +151,32 @@
             <form action="{{ route('students.update', $student->id ?? 0) }}" method="POST">
                 @csrf @method('PUT')
 
+                {{-- NOTIFIKASI ERROR GLOBAL --}}
+                @if ($errors->any())
+                <div
+                    class="mb-6 p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-xl shadow-sm dark:bg-rose-900/30 dark:border-rose-600">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-rose-500 dark:text-rose-400" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-bold text-rose-800 dark:text-rose-300">Gagal menyimpan! Terdapat {{
+                                $errors->count() }} kesalahan:</h3>
+                            <ul class="mt-1 text-xs text-rose-700 dark:text-rose-400 list-disc list-inside">
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
                 {{-- PROGRESS BAR --}}
                 <div class="mb-8 px-4 sm:px-0">
                     <div class="flex justify-between items-end mb-2">
@@ -234,10 +260,12 @@
                                         <div class="sm:col-span-2">
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nama
-                                                Lengkap</label>
+                                                Lengkap <span class="text-rose-500">*</span></label>
                                             <input type="text" name="nama_lengkap"
                                                 value="{{ old('nama_lengkap', $student->student->nama_lengkap ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg shadow-sm sm:text-sm dark:bg-slate-900 dark:text-white transition-colors {{ $errors->has('nama_lengkap') ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 dark:border-slate-600' }}">
+                                            @error('nama_lengkap') <p class="mt-1 text-xs font-semibold text-rose-500">
+                                                {{ $message }}</p> @enderror
                                         </div>
                                         <div>
                                             <label
@@ -252,7 +280,9 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">NISN</label>
                                             <input type="text" name="nisn"
                                                 value="{{ old('nisn', $student->student->nisn ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg shadow-sm sm:text-sm dark:bg-slate-900 dark:text-white transition-colors {{ $errors->has('nisn') ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 dark:border-slate-600' }}">
+                                            @error('nisn') <p class="mt-1 text-xs font-semibold text-rose-500">{{
+                                                $message }}</p> @enderror
                                         </div>
                                         <div>
                                             <label
@@ -313,9 +343,9 @@
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Jenis
-                                                Kelamin</label>
+                                                Kelamin <span class="text-rose-500">*</span></label>
                                             <select name="jenis_kelamin"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg shadow-sm sm:text-sm dark:bg-slate-900 dark:text-white transition-colors {{ $errors->has('jenis_kelamin') ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 dark:border-slate-600' }}">
                                                 <option value="">-- Pilih --</option>
                                                 <option value="L" {{ old('jenis_kelamin', $student->
                                                     student->jenis_kelamin ?? '') == 'L' ? 'selected' : '' }}>Laki-laki
@@ -324,6 +354,8 @@
                                                     student->jenis_kelamin ?? '') == 'P' ? 'selected' : '' }}>Perempuan
                                                 </option>
                                             </select>
+                                            @error('jenis_kelamin') <p class="mt-1 text-xs font-semibold text-rose-500">
+                                                {{ $message }}</p> @enderror
                                         </div>
                                         <div>
                                             <label
