@@ -89,6 +89,7 @@
                                     <th class="px-6 py-4">No</th>
                                     <th class="px-6 py-4">NISN / NIPD</th>
                                     <th class="px-6 py-4">Nama Lengkap Siswa</th>
+                                    <th class="px-6 py-4 text-center">Status Data</th> <!-- KOLOM BARU -->
                                     <th class="px-6 py-4">L/P</th>
                                 </tr>
                             </thead>
@@ -124,7 +125,24 @@
                                             </svg>
                                         </a>
                                     </td>
-                                    {{-- AKHIR PERUBAHAN --}}
+
+                                    <td class="px-6 py-4 text-center">
+                                        {{-- Logika: Anggap sudah update jika NIK tidak kosong ATAU data relasi alamat
+                                        sudah ada --}}
+                                        @if(!empty($siswa->nik) || $siswa->address)
+                                        <span
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
+                                            title="Data siswa telah dilengkapi">
+                                            <i class="fas fa-check-circle"></i> Selesai
+                                        </span>
+                                        @else
+                                        <span
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400 border border-rose-200 dark:border-rose-800"
+                                            title="Siswa belum melengkapi profilnya">
+                                            <i class="fas fa-exclamation-circle"></i> Belum
+                                        </span>
+                                        @endif
+                                    </td>
 
                                     <td class="px-6 py-4">{{ $siswa->jenis_kelamin }}</td>
                                 </tr>
