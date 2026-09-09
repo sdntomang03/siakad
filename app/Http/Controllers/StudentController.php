@@ -104,7 +104,7 @@ class StudentController extends Controller
 
             // 2. Update Student (Tabel Utama Dapodik)[cite: 2]
             $user->student()->update([
-                'nama_lengkap' => $request->nama_lengkap,
+                'nama_lengkap' => strtoupper($request->nama_lengkap),
                 'nama_panggilan' => $request->nama_panggilan,
                 'jenis_kelamin' => $request->jenis_kelamin,
                 'nisn' => $request->nisn,
