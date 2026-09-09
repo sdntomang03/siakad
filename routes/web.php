@@ -68,6 +68,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('students', StudentController::class)->only(['edit', 'update']);
     Route::resource('employees', EmployeeController::class)->only(['edit', 'update']);
+    Route::put('/students/{id}/ajax-update', [StudentController::class, 'updateAjax'])->name('students.ajax-update');
 });
 
 Route::middleware(['auth', 'role:superadmin'])->prefix('admin')->name('superadmin.')->group(function () {

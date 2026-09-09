@@ -172,4 +172,71 @@ class StudentController extends Controller
 
         return back()->with('success', 'Data Profil Siswa berhasil diperbarui.');
     }
+
+    public function updateAjax(Request $request, $id, ImageUploadService $imageUploadService)
+    {
+        $currentUser = auth()->user();
+        $user = User::findOrFail($id);
+
+        // Validasi atau logika keamanan Anda di sini...
+
+        DB::transaction(function () use ($request, $user, $imageUploadService) {
+            $fotoPath = $user->student->foto ?? null;
+            if ($request->hasFile('foto')) {
+                $fotoPath = $imageUploadService->uploadAndConvertToWebp(
+                    $request->file('foto'), 'students/photos', $fotoPath
+                );
+                $user->student()->update(['foto' => $fotoPath]);
+            }
+
+            // Update bagian data sesuai field yang dikirim dari tab aktif
+            if ($request->has('nama_lengkap')) {
+                $user->update(['name' => $request->nama_lengkap]);
+                $user->student()->update($request->only([
+                    'nama_lengkap', 'nama_panggilan', 'jenis_kelamin', 'nisn', 'nipd',
+                    'class_code', 'nik', 'no_kk', 'no_registrasi_akta_lahir', 'tempat_lahir',
+                    'tanggal_lahir', 'agama', 'hobi', 'cita_cita', 'prestasi', 'hp',
+                    'telepon', 'email', 'sekolah_asal', 'anak_ke', 'jml_saudara_kandung',
+                ]));
+            }
+
+            if ($request->has('alamat')) {
+                $user->student->address()->updateOrCreate(
+                    ['student_id' => $user->student->id],
+                    $request->only(['alamat', 'rt', 'rw', 'kelurahan', 'kecamatan', 'kota', 'provinsi', 'kode_pos', 'jenis_tinggal', 'alat_transportasi', 'jarak_ke_sekolah_km'])
+                );
+            }
+
+            if ($request->has('nama_ayah') || $request->has('nama_ibu')) {
+                $user->student->family()->updateOrCreate(
+                    ['student_id' => $user->student->id],
+                    $request->only([
+                        'nama_ayah', 'is_ayah_hidup', 'tempat_lahir_ayah', 'tanggal_lahir_ayah', 'agama_ayah', 'pendidikan_ayah', 'pekerjaan_ayah', 'penghasilan_ayah', 'hp_ayah', 'email_ayah', 'alamat_ayah',
+                        'nama_ibu', 'is_ibu_hidup', 'tempat_lahir_ibu', 'tanggal_lahir_ibu', 'agama_ibu', 'pendidikan_ibu', 'pekerjaan_ibu', 'penghasilan_ibu', 'hp_ibu', 'email_ibu', 'alamat_ibu',
+                        'nama_wali', 'tempat_lahir_wali', 'tanggal_lahir_wali', 'agama_wali', 'pendidikan_wali', 'pekerjaan_wali', 'penghasilan_wali', 'hp_wali', 'email_wali', 'alamat_wali',
+                    ])
+                );
+            }
+
+            if ($request->has('penerima_kjp') || $request->has('penerima_pip') || $request->has('penerima_bantuan_lain') || $request->isMethod('put')) {
+                $user->student->financial()->updateOrCreate(
+                    ['student_id' => $user->student->id],
+                    [
+                        'penerima_kjp' => $request->has('penerima_kjp'),
+                        'penerima_pip' => $request->has('penerima_pip'),
+                        'penerima_bantuan_lain' => $request->has('penerima_bantuan_lain'),
+                    ]
+                );
+            }
+
+            if ($request->has('tinggi_badan') || $request->has('berat_badan')) {
+                $user->student->health()->updateOrCreate(
+                    ['student_id' => $user->student->id],
+                    $request->only(['berat_badan', 'tinggi_badan', 'kebutuhan_khusus', 'penyakit'])
+                );
+            }
+        });
+
+        return response()->json(['status' => 'success', 'message' => 'Data berhasil disimpan otomatis.']);
+    }
 }
