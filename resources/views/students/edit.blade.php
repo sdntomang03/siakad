@@ -896,8 +896,8 @@
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tanggal
                                                         Lahir</label>
                                                     <input type="date" name="tanggal_lahir_wali"
-                                                        value="{{ old('tanggal_lahir_wali', optional($student->student->family->tanggal_lahir_wali)->format('Y-m-d') ?? '') }}"
-                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                        value="{{ old('tanggal_lahir_wali', $student->student?->family?->tanggal_lahir_wali?->format('Y-m-d') ?? '') }}"
+                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
                                                 <div>
                                                     <label
