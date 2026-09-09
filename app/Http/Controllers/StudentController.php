@@ -77,7 +77,7 @@ class StudentController extends Controller
             abort(403, 'Akses Ditolak: Anda tidak berhak mengubah data siswa ini.');
         }
 
-        // Validasi dasar disesuaikan dengan input baru
+        // Validasi dasar
         $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'jenis_kelamin' => 'required|in:L,P',
@@ -115,7 +115,7 @@ class StudentController extends Controller
                 'jml_saudara_kandung' => $request->jml_saudara_kandung,
             ]);
 
-            // 3. Update Alamat (Menghapus dusun/lintang/bujur, menambahkan kota/provinsi)
+            // 3. Update Alamat
             $user->student->address()->updateOrCreate(
                 ['student_id' => $user->student->id],
                 $request->only([
@@ -124,38 +124,30 @@ class StudentController extends Controller
                 ])
             );
 
-            // 4. Update Keluarga (Menghapus NIK, menambahkan status hidup, hp, email, dan alamat)
+            // 4. Update Keluarga (Tahun lahir menjadi tanggal lahir)
             $user->student->family()->updateOrCreate(
                 ['student_id' => $user->student->id],
                 $request->only([
                     // Data Ayah
-                    'nama_ayah', 'is_ayah_hidup', 'tempat_lahir_ayah', 'tahun_lahir_ayah', 'pendidikan_ayah', 'pekerjaan_ayah', 'penghasilan_ayah', 'hp_ayah', 'email_ayah', 'alamat_ayah',
+                    'nama_ayah', 'is_ayah_hidup', 'tempat_lahir_ayah', 'tanggal_lahir_ayah', 'pendidikan_ayah', 'pekerjaan_ayah', 'penghasilan_ayah', 'hp_ayah', 'email_ayah', 'alamat_ayah',
                     // Data Ibu
-                    'nama_ibu', 'is_ibu_hidup', 'tempat_lahir_ibu', 'tahun_lahir_ibu', 'pendidikan_ibu', 'pekerjaan_ibu', 'penghasilan_ibu', 'hp_ibu', 'email_ibu', 'alamat_ibu',
+                    'nama_ibu', 'is_ibu_hidup', 'tempat_lahir_ibu', 'tanggal_lahir_ibu', 'pendidikan_ibu', 'pekerjaan_ibu', 'penghasilan_ibu', 'hp_ibu', 'email_ibu', 'alamat_ibu',
                     // Data Wali
-                    'nama_wali', 'tempat_lahir_wali', 'tahun_lahir_wali', 'pendidikan_wali', 'pekerjaan_wali', 'penghasilan_wali', 'hp_wali', 'email_wali', 'alamat_wali',
+                    'nama_wali', 'tempat_lahir_wali', 'tanggal_lahir_wali', 'pendidikan_wali', 'pekerjaan_wali', 'penghasilan_wali', 'hp_wali', 'email_wali', 'alamat_wali',
                 ])
             );
 
-            // 5. Update Finansial
+            // 5. Update Finansial (Hanya menyimpan boolean KJP, PIP, dan Lainnya)
             $user->student->financial()->updateOrCreate(
                 ['student_id' => $user->student->id],
                 [
-                    'penerima_kps' => $request->has('penerima_kps'),
-                    'no_kps' => $request->no_kps,
-                    'penerima_kip' => $request->has('penerima_kip'),
-                    'nomor_kip' => $request->nomor_kip,
-                    'nama_di_kip' => $request->nama_di_kip,
-                    'nomor_kks' => $request->nomor_kks,
-                    'layak_pip' => $request->has('layak_pip'),
-                    'alasan_layak_pip' => $request->alasan_layak_pip,
-                    'bank' => $request->bank,
-                    'nomor_rekening_bank' => $request->nomor_rekening_bank,
-                    'rekening_atas_nama' => $request->rekening_atas_nama,
+                    'penerima_kjp' => $request->has('penerima_kjp'),
+                    'penerima_pip' => $request->has('penerima_pip'),
+                    'penerima_bantuan_lain' => $request->has('penerima_bantuan_lain'),
                 ]
             );
 
-            // 6. Update Kesehatan (Menambahkan kebutuhan khusus dan penyakit)
+            // 6. Update Kesehatan
             $user->student->health()->updateOrCreate(
                 ['student_id' => $user->student->id],
                 $request->only(['berat_badan', 'tinggi_badan', 'kebutuhan_khusus', 'penyakit'])

@@ -12,21 +12,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
 
-            $table->boolean('penerima_kps')->default(false);
-            $table->string('no_kps')->nullable();
+            // 1. Data KJP (Kartu Jakarta Pintar)
+            $table->boolean('penerima_kjp')->default(false);
 
-            $table->boolean('penerima_kip')->default(false);
-            $table->string('nomor_kip')->nullable();
-            $table->string('nama_di_kip')->nullable();
+            // 2. Data PIP (Program Indonesia Pintar)
+            $table->boolean('penerima_pip')->default(false);
 
-            $table->string('nomor_kks')->nullable();
-
-            $table->boolean('layak_pip')->default(false);
-            $table->string('alasan_layak_pip')->nullable();
-
-            $table->string('bank')->nullable();
-            $table->string('nomor_rekening_bank')->nullable();
-            $table->string('rekening_atas_nama')->nullable();
+            // 3. Data Bantuan Lainnya
+            $table->boolean('penerima_bantuan_lain')->default(false);
 
             $table->timestamps();
         });

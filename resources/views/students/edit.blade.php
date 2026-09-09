@@ -642,10 +642,10 @@
                                                 </div>
                                                 <div>
                                                     <label
-                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tahun
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tanggal
                                                         Lahir</label>
-                                                    <input type="text" name="tahun_lahir_ayah"
-                                                        value="{{ old('tahun_lahir_ayah', $student->student->family->tahun_lahir_ayah ?? '') }}"
+                                                    <input type="date" name="tanggal_lahir_ayah"
+                                                        value="{{ old('tanggal_lahir_ayah', optional($student->student->family->tanggal_lahir_ayah)->format('Y-m-d') ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
                                                 <div>
@@ -735,10 +735,10 @@
                                                 </div>
                                                 <div>
                                                     <label
-                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tahun
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tanggal
                                                         Lahir</label>
-                                                    <input type="text" name="tahun_lahir_ibu"
-                                                        value="{{ old('tahun_lahir_ibu', $student->student->family->tahun_lahir_ibu ?? '') }}"
+                                                    <input type="date" name="tanggal_lahir_ibu"
+                                                        value="{{ old('tanggal_lahir_ibu', optional($student->student->family->tanggal_lahir_ibu)->format('Y-m-d') ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
                                                 <div>
@@ -815,10 +815,10 @@
                                                 </div>
                                                 <div>
                                                     <label
-                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tahun
+                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tanggal
                                                         Lahir</label>
-                                                    <input type="text" name="tahun_lahir_wali"
-                                                        value="{{ old('tahun_lahir_wali', $student->student->family->tahun_lahir_wali ?? '') }}"
+                                                    <input type="date" name="tanggal_lahir_wali"
+                                                        value="{{ old('tanggal_lahir_wali', optional($student->student->family->tanggal_lahir_wali)->format('Y-m-d') ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
                                                 <div>
@@ -877,108 +877,38 @@
                                         <h3 class="text-xl font-bold text-slate-800 dark:text-white">Kesejahteraan &
                                             Finansial</h3>
                                     </div>
-                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div class="max-w-3xl">
                                         <div
                                             class="space-y-4 bg-slate-50 dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                                            <div
-                                                class="flex items-center pb-3 border-b border-slate-200 dark:border-slate-700">
-                                                <input type="checkbox" name="penerima_kps" id="kps" value="1" {{
-                                                    old('penerima_kps', $student->student->financial->penerima_kps ??
+                                            <div class="flex items-center">
+                                                <input type="checkbox" name="penerima_kjp" id="kjp" value="1" {{
+                                                    old('penerima_kjp', $student->student->financial->penerima_kjp ??
                                                 false) ? 'checked' : '' }} class="w-5 h-5 rounded border-slate-300
                                                 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
-                                                <label for="kps"
+                                                <label for="kjp"
                                                     class="ml-3 font-bold text-slate-800 dark:text-slate-200 cursor-pointer">Siswa
-                                                    Penerima KPS / PKH</label>
+                                                    Penerima KJP (Kartu Jakarta Pintar)</label>
                                             </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">No.
-                                                    KPS / PKH</label>
-                                                <input type="text" name="no_kps"
-                                                    value="{{ old('no_kps', $student->student->financial->no_kps ?? '') }}"
-                                                    class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">No.
-                                                    KKS</label>
-                                                <input type="text" name="nomor_kks"
-                                                    value="{{ old('nomor_kks', $student->student->financial->nomor_kks ?? '') }}"
-                                                    class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="space-y-4 bg-slate-50 dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                                             <div
-                                                class="flex items-center pb-3 border-b border-slate-200 dark:border-slate-700">
-                                                <input type="checkbox" name="penerima_kip" id="kip" value="1" {{
-                                                    old('penerima_kip', $student->student->financial->penerima_kip ??
+                                                class="flex items-center pt-4 border-t border-slate-200 dark:border-slate-700">
+                                                <input type="checkbox" name="penerima_pip" id="pip" value="1" {{
+                                                    old('penerima_pip', $student->student->financial->penerima_pip ??
                                                 false) ? 'checked' : '' }} class="w-5 h-5 rounded border-slate-300
                                                 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
-                                                <label for="kip"
+                                                <label for="pip"
                                                     class="ml-3 font-bold text-slate-800 dark:text-slate-200 cursor-pointer">Siswa
-                                                    Penerima KIP</label>
+                                                    Penerima PIP (Program Indonesia Pintar)</label>
                                             </div>
-                                            <div>
-                                                <label
-                                                    class="block text-xs font-bold text-slate-500 uppercase mb-1">Nomor
-                                                    KIP</label>
-                                                <input type="text" name="nomor_kip"
-                                                    value="{{ old('nomor_kip', $student->student->financial->nomor_kip ?? '') }}"
-                                                    class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                            </div>
-                                            <div>
-                                                <label
-                                                    class="block text-xs font-bold text-slate-500 uppercase mb-1">Nama
-                                                    Tertera di KIP</label>
-                                                <input type="text" name="nama_di_kip"
-                                                    value="{{ old('nama_di_kip', $student->student->financial->nama_di_kip ?? '') }}"
-                                                    class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                            </div>
-                                            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                                                <div class="flex items-center mb-3">
-                                                    <input type="checkbox" name="layak_pip" id="pip" value="1" {{
-                                                        old('layak_pip', $student->student->financial->layak_pip ??
-                                                    false) ? 'checked' : '' }} class="rounded border-slate-300
-                                                    text-indigo-600 focus:ring-indigo-500 cursor-pointer">
-                                                    <label for="pip"
-                                                        class="ml-2 font-bold text-sm text-slate-700 dark:text-slate-300 cursor-pointer">Layak
-                                                        Menerima PIP</label>
-                                                </div>
-                                                <input type="text" name="alasan_layak_pip"
-                                                    placeholder="Sebutkan alasannya..."
-                                                    value="{{ old('alasan_layak_pip', $student->student->financial->alasan_layak_pip ?? '') }}"
-                                                    class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="lg:col-span-2 space-y-4 bg-emerald-50/50 dark:bg-emerald-900/10 p-5 rounded-2xl border border-emerald-100 dark:border-emerald-900/50">
-                                            <h4 class="font-bold text-emerald-800 dark:text-emerald-400">Informasi
-                                                Rekening Bank</h4>
-                                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
-                                                <div>
-                                                    <label
-                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nama
-                                                        Bank</label>
-                                                    <input type="text" name="bank"
-                                                        value="{{ old('bank', $student->student->financial->bank ?? '') }}"
-                                                        placeholder="Contoh: BRI / BNI"
-                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                                </div>
-                                                <div>
-                                                    <label
-                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nomor
-                                                        Rekening</label>
-                                                    <input type="text" name="nomor_rekening_bank"
-                                                        value="{{ old('nomor_rekening_bank', $student->student->financial->nomor_rekening_bank ?? '') }}"
-                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                                </div>
-                                                <div>
-                                                    <label
-                                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Atas
-                                                        Nama</label>
-                                                    <input type="text" name="rekening_atas_nama"
-                                                        value="{{ old('rekening_atas_nama', $student->student->financial->rekening_atas_nama ?? '') }}"
-                                                        class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
-                                                </div>
+                                            <div
+                                                class="flex items-center pt-4 border-t border-slate-200 dark:border-slate-700">
+                                                <input type="checkbox" name="penerima_bantuan_lain" id="bantuan_lain"
+                                                    value="1" {{ old('penerima_bantuan_lain',
+                                                    $student->student->financial->penerima_bantuan_lain ?? false) ?
+                                                'checked' : '' }} class="w-5 h-5 rounded border-slate-300
+                                                text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                                                <label for="bantuan_lain"
+                                                    class="ml-3 font-bold text-slate-800 dark:text-slate-200 cursor-pointer">Siswa
+                                                    Penerima Bantuan Lainnya</label>
                                             </div>
                                         </div>
                                     </div>
