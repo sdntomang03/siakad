@@ -241,17 +241,33 @@ class StudentController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Data berhasil disimpan otomatis.']);
     }
 
-    public function show(Student $student)
+    /**
+     * Menampilkan detail biodata siswa.
+     */
+    public function show($id)
     {
-        // Langsung panggil nama relasinya sesuai di model Student.php
-        $student->load([
+        // 1. Ambil data siswa beserta relasinya
+        $student = Student::with([
             'address',
             'family',
             'health',
             'financial',
             'user',
-        ]);
+        ])->findOrFail($id);
 
+        $currentUser = auth()->user();
+
+        // 2. Cek apakah user saat ini memiliki role staff (Guru, Admin, Superadmin, Operator)
+        // Sesuaikan nama role di bawah ini dengan yang ada di database Anda
+        $isStaff = $currentUser->hasAnyRole(['guru', 'superadmin', 'operator']);
+
+        // 3. Logika Pembatasan:
+        // Jika user BUKAN staff, DAN user_id pada data siswa TIDAK SAMA dengan id user yang sedang login, maka tolak aksesnya!
+        if (! $isStaff && $student->user_id !== $currentUser->id) {
+            abort(403, 'Akses Ditolak! Anda hanya diizinkan untuk melihat profil Anda sendiri.');
+        }
+
+        // 4. Jika lolos pengecekan, tampilkan halaman view
         return view('students.show', compact('student'));
     }
 }
