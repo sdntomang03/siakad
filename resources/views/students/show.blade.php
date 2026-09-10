@@ -13,7 +13,7 @@
                 <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Informasi pokok peserta didik berdasarkan
                     dokumen resmi.</p>
             </div>
-            <a href="{{ route('students.edit', $student->id) }}"
+            <a href="{{ route('students.edit', $student->user->id) }}"
                 class="inline-flex flex-shrink-0 items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold shadow-md transition">
                 <i class="fas fa-edit"></i> Edit Data
             </a>
