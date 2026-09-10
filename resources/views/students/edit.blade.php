@@ -37,7 +37,10 @@
     {{-- ALPINE.JS CONTAINER: Navigasi Tab & Fetch API Wilayah --}}
     <div class="py-4 sm:py-8 pb-28 lg:pb-8" x-data="studentForm()" x-init="initWilayah()">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
+            @php
+            // Cek apakah user adalah guru, admin, atau operator
+            $isStaff = auth()->user()->hasAnyRole(['guru', 'superadmin', 'operator']);
+            @endphp
             {{-- PERBAIKAN: Menambahkan enctype="multipart/form-data" --}}
             <form id="studentForm" action="{{ route('students.update', $student->id ?? 0) }}" method="POST"
                 enctype="multipart/form-data">
@@ -268,7 +271,7 @@
                                             <input type="text" name="nisn"
                                                 value="{{ old('nisn', $student->student->nisn ?? '') }}"
                                                 class="block w-full rounded-lg shadow-sm sm:text-sm dark:bg-slate-900 dark:text-white transition-colors {{ $errors->has('nisn') ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 dark:border-slate-600' }}"
-                                                readonly>
+                                                {{ $isStaff ? '' : 'readonly' }}>
                                             @error('nisn') <p class="mt-1 text-xs font-semibold text-rose-500">{{
                                                 $message }}</p> @enderror
                                         </div>
@@ -278,7 +281,7 @@
                                             <input type="text" name="nipd"
                                                 value="{{ old('nipd', $student->student->nipd ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white"
-                                                readonly>
+                                                {{ $isStaff ? '' : 'readonly' }}>
                                         </div>
                                         <div>
                                             <label
@@ -287,7 +290,7 @@
                                             <input type="text" name="class_code"
                                                 value="{{ old('class_code', $student->student->class_code ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white"
-                                                readonly>
+                                                {{ $isStaff ? '' : 'readonly' }}>
                                         </div>
                                         <div>
                                             <label
