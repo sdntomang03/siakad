@@ -195,7 +195,7 @@
                         @if(empty($student->financial->penerima_kjp) && empty($student->financial->penerima_pip) &&
                         empty($student->financial->penerima_bantuan_lain))
                         <div class="text-sm text-slate-500 dark:text-slate-400 italic">
-                            Bukan penerima bantuan finansial.
+                            Tidak ada catatan.
                         </div>
                         @endif
 
