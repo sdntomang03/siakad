@@ -18,7 +18,12 @@ class ClassroomController extends Controller
         $user = auth()->user();
         abort_if(! $user->hasPermissionTo('view-classes'), 403, 'Akses Ditolak');
 
-        $query = Classroom::with(['homeroomTeacher', 'academicYear'])->withCount('students');
+        // Tambahkan whereHas untuk memfilter kelas berdasarkan tahun ajaran yang aktif
+        $query = Classroom::with(['homeroomTeacher', 'academicYear'])
+            ->withCount('students')
+            ->whereHas('academicYear', function ($q) {
+                $q->where('is_active', true);
+            });
 
         // Variabel tambahan untuk Filter Superadmin
         $schools = [];
