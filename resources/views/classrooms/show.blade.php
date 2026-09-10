@@ -10,6 +10,10 @@
                 &larr; Kembali ke Daftar Kelas
             </a>
             @endcan
+            <a href="{{ route('students.export_excel') }}"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-lg shadow-md transition-colors">
+                <i class="fas fa-file-excel"></i> Download Excel
+            </a>
         </div>
     </x-slot>
 
