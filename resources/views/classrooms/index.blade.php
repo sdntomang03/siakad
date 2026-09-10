@@ -125,7 +125,7 @@
                     <div class="p-4 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700">
                         <a href="{{ route('classrooms.show', $kelas->hashid) }}"
                             class="block w-full text-center py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-600 transition">
-                            Atur Anggota Rombel &rarr;
+                            Daftar Siswa &rarr;
                         </a>
                     </div>
                 </div>
