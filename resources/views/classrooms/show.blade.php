@@ -62,7 +62,7 @@
                     @csrf @method('DELETE')
 
                     <div
-                        class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                        class="overflow-x-auto w-full bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
 
                         <div
                             class="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
@@ -113,7 +113,7 @@
 
                                     {{-- PERUBAHAN DISINI: Membuat Nama Menjadi Link yang bisa diklik --}}
                                     <td class="px-6 py-4 font-bold">
-                                        <a href="{{ route('students.show', $siswa->id) }}"
+                                        <a href="{{ route('students.show', $siswa->id) }}" target="_blank"
                                             class="text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline transition-colors flex items-center gap-2"
                                             title="Lihat Biodata Siswa">
                                             {{ $siswa->nama_lengkap }}
