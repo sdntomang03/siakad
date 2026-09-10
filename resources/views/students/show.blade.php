@@ -167,23 +167,38 @@
                         <h3 class="text-lg font-bold text-slate-800 dark:text-white">Bantuan Finansial</h3>
                     </div>
                     <div class="p-6 space-y-4">
+
+                        @if(!empty($student->financial->penerima_kjp))
                         <div class="flex items-center gap-3">
-                            <i
-                                class="fas {{ !empty($student->financial->penerima_kjp) ? 'fa-check-circle text-emerald-500' : 'fa-times-circle text-rose-500' }} text-xl"></i>
+                            <i class="fas fa-check-circle text-emerald-500 text-xl"></i>
                             <span class="font-medium text-slate-700 dark:text-slate-300">Penerima KJP (Kartu Jakarta
                                 Pintar)</span>
                         </div>
+                        @endif
+
+                        @if(!empty($student->financial->penerima_pip))
                         <div class="flex items-center gap-3">
-                            <i
-                                class="fas {{ !empty($student->financial->penerima_pip) ? 'fa-check-circle text-emerald-500' : 'fa-times-circle text-rose-500' }} text-xl"></i>
+                            <i class="fas fa-check-circle text-emerald-500 text-xl"></i>
                             <span class="font-medium text-slate-700 dark:text-slate-300">Penerima PIP (Program Indonesia
                                 Pintar)</span>
                         </div>
+                        @endif
+
+                        @if(!empty($student->financial->penerima_bantuan_lain))
                         <div class="flex items-center gap-3">
-                            <i
-                                class="fas {{ !empty($student->financial->penerima_bantuan_lain) ? 'fa-check-circle text-emerald-500' : 'fa-times-circle text-rose-500' }} text-xl"></i>
+                            <i class="fas fa-check-circle text-emerald-500 text-xl"></i>
                             <span class="font-medium text-slate-700 dark:text-slate-300">Penerima Bantuan Lainnya</span>
                         </div>
+                        @endif
+
+                        {{-- Pesan default jika siswa tidak menerima bantuan apa pun --}}
+                        @if(empty($student->financial->penerima_kjp) && empty($student->financial->penerima_pip) &&
+                        empty($student->financial->penerima_bantuan_lain))
+                        <div class="text-sm text-slate-500 dark:text-slate-400 italic">
+                            Bukan penerima bantuan finansial.
+                        </div>
+                        @endif
+
                     </div>
                 </div>
             </div>
