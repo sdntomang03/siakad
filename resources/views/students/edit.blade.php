@@ -252,6 +252,7 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nama
                                                 Lengkap <span class="text-rose-500">*</span></label>
                                             <input type="text" name="nama_lengkap"
+                                                placeholder="Masukkan nama lengkap sesuai ijazah/akta"
                                                 value="{{ old('nama_lengkap', $student->student->nama_lengkap ?? '') }}"
                                                 class="block w-full rounded-lg shadow-sm sm:text-sm dark:bg-slate-900 dark:text-white transition-colors {{ $errors->has('nama_lengkap') ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 dark:border-slate-600' }}">
                                             @error('nama_lengkap') <p class="mt-1 text-xs font-semibold text-rose-500">
@@ -262,13 +263,14 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nama
                                                 Panggilan</label>
                                             <input type="text" name="nama_panggilan"
+                                                placeholder="Masukkan nama panggilan"
                                                 value="{{ old('nama_panggilan', $student->student->nama_panggilan ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">NISN</label>
-                                            <input type="text" name="nisn"
+                                            <input type="text" name="nisn" placeholder="Masukkan 10 digit NISN"
                                                 value="{{ old('nisn', $student->student->nisn ?? '') }}"
                                                 class="block w-full rounded-lg shadow-sm sm:text-sm dark:bg-slate-900 dark:text-white transition-colors {{ $errors->has('nisn') ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 dark:border-slate-600' }}"
                                                 {{ $isStaff ? '' : 'readonly' }}>
@@ -278,7 +280,7 @@
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">NIPD</label>
-                                            <input type="text" name="nipd"
+                                            <input type="text" name="nipd" placeholder="Masukkan NIPD/NIS"
                                                 value="{{ old('nipd', $student->student->nipd ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white"
                                                 {{ $isStaff ? '' : 'readonly' }}>
@@ -287,7 +289,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kode
                                                 Kelas</label>
-                                            <input type="text" name="class_code"
+                                            <input type="text" name="class_code" placeholder="Misal: 4A"
                                                 value="{{ old('class_code', $student->student->class_code ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white"
                                                 {{ $isStaff ? '' : 'readonly' }}>
@@ -296,7 +298,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">NIK
                                                 Siswa</label>
-                                            <input type="text" name="nik"
+                                            <input type="text" name="nik" placeholder="Masukkan 16 digit NIK"
                                                 value="{{ old('nik', $student->student->nik ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -304,7 +306,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No.
                                                 KK</label>
-                                            <input type="text" name="no_kk"
+                                            <input type="text" name="no_kk" placeholder="Masukkan 16 digit No. KK"
                                                 value="{{ old('no_kk', $student->student->no_kk ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -313,6 +315,7 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No.
                                                 Akta Lahir</label>
                                             <input type="text" name="no_registrasi_akta_lahir"
+                                                placeholder="Misal: 3173-LT-12345678"
                                                 value="{{ old('no_registrasi_akta_lahir', $student->student->no_registrasi_akta_lahir ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -321,6 +324,7 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Tempat
                                                 Lahir</label>
                                             <input type="text" name="tempat_lahir"
+                                                placeholder="Masukkan kota tempat lahir"
                                                 value="{{ old('tempat_lahir', $student->student->tempat_lahir ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -374,14 +378,14 @@
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Hobi</label>
-                                            <input type="text" name="hobi"
+                                            <input type="text" name="hobi" placeholder="Misal: Membaca, Sepak Bola"
                                                 value="{{ old('hobi', $student->student->hobi ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Cita-cita</label>
-                                            <input type="text" name="cita_cita"
+                                            <input type="text" name="cita_cita" placeholder="Misal: Dokter, Polisi"
                                                 value="{{ old('cita_cita', $student->student->cita_cita ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -389,6 +393,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Prestasi</label>
                                             <textarea name="prestasi" rows="2"
+                                                placeholder="Tuliskan prestasi yang pernah diraih (jika ada)"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">{{ old('prestasi', $student->student->prestasi ?? '') }}</textarea>
                                         </div>
                                     </div>
@@ -401,7 +406,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">No.
                                                 HP (WA Grup Kelas)</label>
-                                            <input type="text" name="hp"
+                                            <input type="text" name="hp" placeholder="Misal: 081234567890"
                                                 value="{{ old('hp', $student->student->hp ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -409,7 +414,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Telepon
                                                 Rumah</label>
-                                            <input type="text" name="telepon"
+                                            <input type="text" name="telepon" placeholder="Misal: 021-1234567"
                                                 value="{{ old('telepon', $student->student->telepon ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -417,7 +422,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Email
                                                 Pribadi</label>
-                                            <input type="email" name="email"
+                                            <input type="email" name="email" placeholder="Misal: siswa@sekolah.com"
                                                 value="{{ old('email', $student->student->email ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -425,7 +430,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Asal
                                                 Sekolah</label>
-                                            <input type="text" name="sekolah_asal"
+                                            <input type="text" name="sekolah_asal" placeholder="Misal: TK Negeri 01"
                                                 value="{{ old('sekolah_asal', $student->student->sekolah_asal ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -434,7 +439,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Anak
                                                 Ke-</label>
-                                            <input type="number" name="anak_ke"
+                                            <input type="number" name="anak_ke" placeholder="Misal: 1"
                                                 value="{{ old('anak_ke', $student->student->anak_ke ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -442,7 +447,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Jml.
                                                 Saudara Kandung</label>
-                                            <input type="number" name="jml_saudara_kandung"
+                                            <input type="number" name="jml_saudara_kandung" placeholder="Misal: 2"
                                                 value="{{ old('jml_saudara_kandung', $student->student->jml_saudara_kandung ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -463,19 +468,20 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Alamat
                                                 Jalan</label>
                                             <textarea name="alamat" rows="2"
+                                                placeholder="Masukkan nama jalan, gang, perumahan, atau patokan"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">{{ old('alamat', $student->student->address->alamat ?? '') }}</textarea>
                                         </div>
                                         <div class="sm:col-span-2">
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">RT</label>
-                                            <input type="text" name="rt"
+                                            <input type="text" name="rt" placeholder="Misal: 001"
                                                 value="{{ old('rt', $student->student->address->rt ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
                                         <div class="sm:col-span-2">
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">RW</label>
-                                            <input type="text" name="rw"
+                                            <input type="text" name="rw" placeholder="Misal: 002"
                                                 value="{{ old('rw', $student->student->address->rw ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
@@ -484,6 +490,7 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kode
                                                 Pos</label>
                                             <input type="text" name="kode_pos" id="kode_pos_input"
+                                                placeholder="Misal: 11440"
                                                 value="{{ old('kode_pos', $student->student->address->kode_pos ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
@@ -706,6 +713,7 @@
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nama
                                                         Ayah</label>
                                                     <input type="text" name="nama_ayah"
+                                                        placeholder="Masukkan nama lengkap ayah"
                                                         value="{{ old('nama_ayah', $student->student->family->nama_ayah ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -714,6 +722,7 @@
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tempat
                                                         Lahir</label>
                                                     <input type="text" name="tempat_lahir_ayah"
+                                                        placeholder="Kota lahir ayah"
                                                         value="{{ old('tempat_lahir_ayah', $student->student->family->tempat_lahir_ayah ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -753,6 +762,7 @@
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Pekerjaan</label>
                                                     <input type="text" name="pekerjaan_ayah"
+                                                        placeholder="Misal: Karyawan Swasta"
                                                         value="{{ old('pekerjaan_ayah', $student->student->family->pekerjaan_ayah ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -760,6 +770,7 @@
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Penghasilan</label>
                                                     <input type="number" name="penghasilan_ayah"
+                                                        placeholder="Misal: 5000000"
                                                         value="{{ old('penghasilan_ayah', $student->student->family->penghasilan_ayah ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -767,7 +778,7 @@
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nomor
                                                         HP</label>
-                                                    <input type="text" name="hp_ayah"
+                                                    <input type="text" name="hp_ayah" placeholder="Misal: 081234567890"
                                                         value="{{ old('hp_ayah', $student->student->family->hp_ayah ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -775,6 +786,7 @@
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Email</label>
                                                     <input type="email" name="email_ayah"
+                                                        placeholder="Misal: ayah@email.com"
                                                         value="{{ old('email_ayah', $student->student->family->email_ayah ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -783,6 +795,7 @@
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Alamat
                                                         Tinggal Ayah</label>
                                                     <textarea name="alamat_ayah" rows="2"
+                                                        placeholder="Masukkan alamat tinggal ayah"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">{{ old('alamat_ayah', $student->student->family->alamat_ayah ?? '') }}</textarea>
                                                 </div>
                                             </div>
@@ -816,6 +829,7 @@
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nama
                                                         Ibu</label>
                                                     <input type="text" name="nama_ibu"
+                                                        placeholder="Masukkan nama lengkap ibu"
                                                         value="{{ old('nama_ibu', $student->student->family->nama_ibu ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -824,6 +838,7 @@
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tempat
                                                         Lahir</label>
                                                     <input type="text" name="tempat_lahir_ibu"
+                                                        placeholder="Kota lahir ibu"
                                                         value="{{ old('tempat_lahir_ibu', $student->student->family->tempat_lahir_ibu ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -863,13 +878,14 @@
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Pekerjaan</label>
                                                     <input type="text" name="pekerjaan_ibu"
+                                                        placeholder="Misal: Ibu Rumah Tangga"
                                                         value="{{ old('pekerjaan_ibu', $student->student->family->pekerjaan_ibu ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
                                                 <div>
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Penghasilan</label>
-                                                    <input type="number" name="penghasilan_ibu"
+                                                    <input type="number" name="penghasilan_ibu" placeholder="Misal: 0"
                                                         value="{{ old('penghasilan_ibu', $student->student->family->penghasilan_ibu ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -877,7 +893,7 @@
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nomor
                                                         HP</label>
-                                                    <input type="text" name="hp_ibu"
+                                                    <input type="text" name="hp_ibu" placeholder="Misal: 081234567890"
                                                         value="{{ old('hp_ibu', $student->student->family->hp_ibu ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -885,6 +901,7 @@
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Email</label>
                                                     <input type="email" name="email_ibu"
+                                                        placeholder="Misal: ibu@email.com"
                                                         value="{{ old('email_ibu', $student->student->family->email_ibu ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -893,6 +910,7 @@
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Alamat
                                                         Tinggal Ibu</label>
                                                     <textarea name="alamat_ibu" rows="2"
+                                                        placeholder="Masukkan alamat tinggal ibu"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">{{ old('alamat_ibu', $student->student->family->alamat_ibu ?? '') }}</textarea>
                                                 </div>
                                             </div>
@@ -919,6 +937,7 @@
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nama
                                                         Wali</label>
                                                     <input type="text" name="nama_wali"
+                                                        placeholder="Masukkan nama lengkap wali"
                                                         value="{{ old('nama_wali', $student->student->family->nama_wali ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -927,6 +946,7 @@
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tempat
                                                         Lahir</label>
                                                     <input type="text" name="tempat_lahir_wali"
+                                                        placeholder="Kota lahir wali"
                                                         value="{{ old('tempat_lahir_wali', $student->student->family->tempat_lahir_wali ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -966,6 +986,7 @@
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Pekerjaan</label>
                                                     <input type="text" name="pekerjaan_wali"
+                                                        placeholder="Misal: Wiraswasta"
                                                         value="{{ old('pekerjaan_wali', $student->student->family->pekerjaan_wali ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -973,6 +994,7 @@
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Penghasilan</label>
                                                     <input type="number" name="penghasilan_wali"
+                                                        placeholder="Misal: 3000000"
                                                         value="{{ old('penghasilan_wali', $student->student->family->penghasilan_wali ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -980,7 +1002,7 @@
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Nomor
                                                         HP</label>
-                                                    <input type="text" name="hp_wali"
+                                                    <input type="text" name="hp_wali" placeholder="Misal: 081234567890"
                                                         value="{{ old('hp_wali', $student->student->family->hp_wali ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -988,6 +1010,7 @@
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Email</label>
                                                     <input type="email" name="email_wali"
+                                                        placeholder="Misal: wali@email.com"
                                                         value="{{ old('email_wali', $student->student->family->email_wali ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 </div>
@@ -996,6 +1019,7 @@
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Alamat
                                                         Tinggal Wali</label>
                                                     <textarea name="alamat_wali" rows="2"
+                                                        placeholder="Masukkan alamat tinggal wali"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">{{ old('alamat_wali', $student->student->family->alamat_wali ?? '') }}</textarea>
                                                 </div>
                                             </div>
@@ -1061,7 +1085,7 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Tinggi
                                                 Badan <span
                                                     class="text-xs text-slate-400 font-normal">(cm)</span></label>
-                                            <input type="number" step="1" name="tinggi_badan"
+                                            <input type="number" step="1" name="tinggi_badan" placeholder="Misal: 125"
                                                 value="{{ old('tinggi_badan', $student->student->health->tinggi_badan ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -1070,7 +1094,7 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Berat
                                                 Badan <span
                                                     class="text-xs text-slate-400 font-normal">(kg)</span></label>
-                                            <input type="number" step="1" name="berat_badan"
+                                            <input type="number" step="1" name="berat_badan" placeholder="Misal: 30"
                                                 value="{{ old('berat_badan', $student->student->health->berat_badan ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
