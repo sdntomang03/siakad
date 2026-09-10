@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\StudentsExport;
 use App\Models\AcademicYear;
 use App\Models\Classroom;
 use App\Models\ClassroomSubject;
@@ -10,6 +11,7 @@ use App\Models\School;
 use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ClassroomController extends Controller
 {
@@ -258,5 +260,31 @@ class ClassroomController extends Controller
         }
 
         return back()->with('success', 'Penugasan Guru Mata Pelajaran berhasil diperbarui.');
+    }
+
+    public function exportExcel(Classroom $classroom)
+    {
+        $user = auth()->user();
+
+        // 1. Role-Based Access Control
+        abort_if(! $user->hasAnyRole(['superadmin', 'operator', 'guru', 'kepsek']), 403, 'Akses Ditolak');
+
+        // 2. Pengecekan Wilayah Sekolah
+        if (! $user->hasRole('superadmin') && $classroom->school_id !== $user->school_id) {
+            abort(403, 'Akses ditolak: Kelas ini berada di sekolah lain.');
+        }
+
+        // 3. Pengecekan Khusus Guru Wali Kelas
+        if ($user->hasRole('guru')) {
+            $employeeId = $user->employee->id ?? 0;
+            if ($classroom->homeroom_teacher_id !== $employeeId) {
+                abort(403, 'Akses ditolak: Anda bukan wali kelas untuk rombel ini.');
+            }
+        }
+
+        $namaFile = 'Data_Siswa_Kelas_'.str_replace(' ', '_', $classroom->nama_kelas).'.xlsx';
+
+        // Panggil StudentsExport dengan mengirim (school_id, classroom_id)
+        return Excel::download(new StudentsExport($classroom->school_id, $classroom->id), $namaFile);
     }
 }

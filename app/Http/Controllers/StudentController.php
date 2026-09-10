@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\StudentsExport;
 use App\Models\Student;
 use App\Models\User;
 use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
@@ -271,19 +269,5 @@ class StudentController extends Controller
 
         // 4. Jika lolos pengecekan, tampilkan halaman view
         return view('students.show', compact('student'));
-
-        public function exportExcel()
-    {
-        $user = auth()->user();
-
-        // Pastikan hanya staff/admin yang bisa mengunduh data
-        abort_if(!$user->hasAnyRole(['guru', 'superadmin', 'operator']), 403, 'Akses Ditolak');
-
-        $schoolId = $user->hasRole('superadmin') ? request('school_id') : $user->school_id;
-
-        $namaFile = 'Data_Biodata_Siswa_' . date('Y-m-d') . '.xlsx';
-
-        return Excel::download(new StudentsExport($schoolId), $namaFile);
     }
-
 }

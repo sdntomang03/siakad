@@ -67,7 +67,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/students/{student}', [StudentController::class, 'show'])->name('students.show');
     Route::resource('students', StudentController::class)->only(['edit', 'update']);
-    Route::get('/students/export/excel', [StudentController::class, 'exportExcel'])->name('students.export_excel');
     Route::resource('employees', EmployeeController::class)->only(['edit', 'update']);
     Route::put('/students/{id}/ajax-update', [StudentController::class, 'updateAjax'])->name('students.ajax-update');
 });
@@ -106,6 +105,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('academic-years', AcademicYearController::class)
         ->only(['index', 'store', 'update', 'destroy']);
     Route::resource('classrooms', ClassroomController::class);
+    Route::get('/classrooms/{classroom}/export', [ClassroomController::class, 'exportExcel'])->name('classrooms.export_excel');
     Route::post('classrooms/{classroom}/assign-subjects', [ClassroomController::class, 'assignSubjectTeacher'])
         ->name('classrooms.assign-subjects');
     Route::post('classrooms/{classroom}/assign', [ClassroomController::class, 'assignStudent'])->name('classrooms.assign');

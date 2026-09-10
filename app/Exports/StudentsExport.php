@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\Classroom;
 use App\Models\Student;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -13,14 +14,32 @@ class StudentsExport implements FromCollection, ShouldAutoSize, WithHeadings, Wi
 {
     protected $schoolId;
 
-    public function __construct($schoolId)
+    protected $classroomId;
+
+    /**
+     * Parameter $classroomId bersifat opsional.
+     * Jika diisi, Excel hanya menarik data siswa di kelas tersebut.
+     * Jika dikosongkan, Excel menarik data seluruh siswa di sekolah.
+     */
+    public function __construct($schoolId, $classroomId = null)
     {
         $this->schoolId = $schoolId;
+        $this->classroomId = $classroomId;
     }
 
     public function collection()
     {
-        // Gunakan Eager Loading agar query tidak berat saat ditarik ke Excel
+        // 1. Jika ada ID Kelas yang dikirim, tarik siswa HANYA dari kelas tersebut
+        if ($this->classroomId) {
+            $classroom = Classroom::findOrFail($this->classroomId);
+
+            return $classroom->students()
+                ->with(['address', 'family', 'financial', 'health'])
+                ->orderBy('nama_lengkap', 'asc')
+                ->get();
+        }
+
+        // 2. Jika ID Kelas kosong, tarik SEMUA siswa di sekolah tersebut (Fungsi Default)
         return Student::with(['address', 'family', 'financial', 'health'])
             ->where('school_id', $this->schoolId)
             ->orderBy('nama_lengkap', 'asc')
@@ -44,6 +63,8 @@ class StudentsExport implements FromCollection, ShouldAutoSize, WithHeadings, Wi
             'Kelurahan',
             'Kecamatan',
             'Kota',
+            'Provinsi',
+            'Kode Pos',
             'Nama Ayah',
             'Pekerjaan Ayah',
             'Nama Ibu',
@@ -57,6 +78,7 @@ class StudentsExport implements FromCollection, ShouldAutoSize, WithHeadings, Wi
 
     public function map($student): array
     {
+        // Penomoran baris otomatis
         static $row = 0;
         $row++;
 
@@ -77,6 +99,8 @@ class StudentsExport implements FromCollection, ShouldAutoSize, WithHeadings, Wi
             $student->address->kelurahan ?? '',
             $student->address->kecamatan ?? '',
             $student->address->kota ?? '',
+            $student->address->provinsi ?? '',
+            $student->address->kode_pos ?? '',
 
             // Relasi Keluarga
             $student->family->nama_ayah ?? '',
