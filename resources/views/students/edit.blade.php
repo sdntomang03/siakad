@@ -789,6 +789,10 @@
                                                         placeholder="Misal: ayah@email.com"
                                                         value="{{ old('email_ayah', $student->student->family->email_ayah ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                    @error('email_ayah')
+                                                    <p class="mt-1 text-xs font-semibold text-rose-500">{{ $message }}
+                                                    </p>
+                                                    @enderror
                                                 </div>
                                                 <div class="sm:col-span-3">
                                                     <label
@@ -904,6 +908,10 @@
                                                         placeholder="Misal: ibu@email.com"
                                                         value="{{ old('email_ibu', $student->student->family->email_ibu ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                    @error('email_ibu')
+                                                    <p class="mt-1 text-xs font-semibold text-rose-500">{{ $message }}
+                                                    </p>
+                                                    @enderror
                                                 </div>
                                                 <div class="sm:col-span-3">
                                                     <label
@@ -1013,6 +1021,10 @@
                                                         placeholder="Misal: wali@email.com"
                                                         value="{{ old('email_wali', $student->student->family->email_wali ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                    @error('email_wali')
+                                                    <p class="mt-1 text-xs font-semibold text-rose-500">{{ $message }}
+                                                    </p>
+                                                    @enderror
                                                 </div>
                                                 <div class="sm:col-span-3">
                                                     <label

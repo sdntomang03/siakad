@@ -83,7 +83,19 @@ class StudentController extends Controller
         $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'jenis_kelamin' => 'required|in:L,P',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5048', // <-- Tambahan validasi foto
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5048',
+
+            // TAMBAHKAN VALIDASI EMAIL DI SINI
+            'email' => 'nullable|email|max:255',
+            'email_ayah' => 'nullable|email|max:255',
+            'email_ibu' => 'nullable|email|max:255',
+            'email_wali' => 'nullable|email|max:255',
+        ], [
+            // Tambahkan pesan error kustom (opsional, agar lebih ramah dibaca)
+            'email.email' => 'Format email pribadi siswa tidak valid (harus mengandung @).',
+            'email_ayah.email' => 'Format email ayah tidak valid.',
+            'email_ibu.email' => 'Format email ibu tidak valid.',
+            'email_wali.email' => 'Format email wali tidak valid.',
         ]);
 
         DB::transaction(function () use ($request, $user, $imageUploadService) {
