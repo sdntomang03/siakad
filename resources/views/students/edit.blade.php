@@ -429,7 +429,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Email
                                                 Pribadi</label>
-                                            <input type="email" name="email" placeholder="Misal: siswa@sekolah.com"
+                                            <input type="text" name="email" placeholder="Misal: siswa@sekolah.com"
                                                 value="{{ old('email', $student->student->email ?? '') }}"
                                                 class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
@@ -792,7 +792,7 @@
                                                 <div>
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Email</label>
-                                                    <input type="email" name="email_ayah"
+                                                    <input type="text" name="email_ayah"
                                                         placeholder="Misal: ayah@email.com"
                                                         value="{{ old('email_ayah', $student->student->family->email_ayah ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
@@ -911,7 +911,7 @@
                                                 <div>
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Email</label>
-                                                    <input type="email" name="email_ibu"
+                                                    <input type="text" name="email_ibu"
                                                         placeholder="Misal: ibu@email.com"
                                                         value="{{ old('email_ibu', $student->student->family->email_ibu ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
@@ -1024,7 +1024,7 @@
                                                 <div>
                                                     <label
                                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Email</label>
-                                                    <input type="email" name="email_wali"
+                                                    <input type="text" name="email_wali"
                                                         placeholder="Misal: wali@email.com"
                                                         value="{{ old('email_wali', $student->student->family->email_wali ?? '') }}"
                                                         class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
