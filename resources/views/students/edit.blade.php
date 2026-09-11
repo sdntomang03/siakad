@@ -48,7 +48,7 @@
 
                 {{-- NOTIFIKASI ERROR GLOBAL --}}
                 @if ($errors->any())
-                <div
+                <div id="error-alert"
                     class="mb-6 p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-xl shadow-sm dark:bg-rose-900/30 dark:border-rose-600">
                     <div class="flex items-start">
                         <div class="flex-shrink-0">
@@ -70,6 +70,13 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- Script agar layar langsung naik ke arah peringatan error --}}
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        document.getElementById('error-alert').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    });
+                </script>
                 @endif
 
                 {{-- PROGRESS BAR --}}
@@ -1254,7 +1261,8 @@
     <script>
         document.addEventListener('alpine:init', () => {
         Alpine.data('studentForm', () => ({
-            tab: 'identitas',
+            // LOGIKA BARU: Buka tab secara otomatis berdasarkan letak input yang error
+            tab: '{!! $errors->hasAny(['nama_ayah', 'email_ayah', 'email_ibu', 'email_wali', 'hp_ayah', 'hp_ibu', 'hp_wali']) ? 'keluarga' : ($errors->hasAny(['alamat', 'rt', 'rw', 'kode_pos', 'provinsi', 'kota', 'kecamatan', 'kelurahan']) ? 'alamat' : ($errors->hasAny(['tinggi_badan', 'berat_badan', 'penyakit']) ? 'kesehatan' : 'identitas')) !!}',
             tabsList: ['identitas', 'alamat', 'keluarga', 'finansial', 'kesehatan'],
 
             get currentIndex() {
