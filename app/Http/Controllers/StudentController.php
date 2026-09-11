@@ -93,9 +93,9 @@ class StudentController extends Controller
         ], [
             // Tambahkan pesan error kustom (opsional, agar lebih ramah dibaca)
             'email.email' => 'Format email pribadi siswa tidak valid (harus mengandung @).',
-            'email_ayah.email' => 'Format email ayah tidak valid.',
-            'email_ibu.email' => 'Format email ibu tidak valid.',
-            'email_wali.email' => 'Format email wali tidak valid.',
+            'email_ayah.email' => 'Format email ayah tidak valid. Tulis sesuai format email (contoh: ayah@example.com) atau kosongkan jika tidak ada.',
+            'email_ibu.email' => 'Format email ibu tidak valid. Tulis sesuai format email (contoh: ibu@example.com) atau kosongkan jika tidak ada.',
+            'email_wali.email' => 'Format email wali tidak valid. Tulis sesuai format email (contoh: wali@example.com) atau kosongkan jika tidak ada.',
         ]);
 
         DB::transaction(function () use ($request, $user, $imageUploadService) {
