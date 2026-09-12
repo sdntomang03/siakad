@@ -826,7 +826,7 @@
 
             // Gabungkan menjadi prompt utuh
             const textPrompt = `Bertindaklah sebagai Konsultan Kurikulum Merdeka Kemendikbud.
-Susunlah Modul Ajar dalam format HTML (hanya <div> dan <table>). JANGAN gunakan raw Markdown (seperti * atau -). TULISKAN FULL SCRIPT HTML-NYA.
+Susunlah Modul Ajar dalam format HTML (hanya <div> dan <table>). JANGAN gunakan raw Markdown (seperti * atau -). TULISKAN FULL SCRIPT HTML-NYA. HASIL JANGAN DIRENDER.
 
 DATA INPUT:
 - Mapel: ${mapel}, Topik: ${topik}
