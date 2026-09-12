@@ -313,6 +313,50 @@
                                 </svg>
                                 <span id="btnText">Generate Modul Sekarang</span>
                             </button>
+                            <!-- (BARU) Garis Pemisah -->
+                            <div class="relative flex py-2 items-center">
+                                <div class="flex-grow border-t border-slate-300 dark:border-slate-600"></div>
+                                <span class="flex-shrink-0 mx-4 text-slate-400 text-xs font-bold uppercase">ATAU
+                                    MANUAL</span>
+                                <div class="flex-grow border-t border-slate-300 dark:border-slate-600"></div>
+                            </div>
+
+                            <!-- (BARU) Tombol Buat Prompt Copy-Paste -->
+                            <button type="button" onclick="showPromptModal()"
+                                class="w-full py-3 px-6 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                                Buat Prompt untuk Gemini Web
+                            </button>
+
+                            <!-- (BARU) Area Textarea Prompt (Sembunyi by default) -->
+                            <div id="promptArea"
+                                class="hidden mt-4 p-4 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-slate-700 dark:text-slate-300">1. Copy Prompt
+                                        Ini:</span>
+                                    <button type="button" onclick="copyPromptText()"
+                                        class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded shadow">Copy
+                                        Prompt</button>
+                                </div>
+                                <textarea id="generatedPromptText" rows="6"
+                                    class="w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg outline-none custom-scroll"
+                                    readonly></textarea>
+
+                                <div class="mt-4 flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-slate-700 dark:text-slate-300">2. Paste HTML
+                                        dari Gemini:</span>
+                                    <button type="button" onclick="previewManualHtml()"
+                                        class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded shadow">Preview
+                                        & Simpan</button>
+                                </div>
+                                <textarea id="manualHtmlInput" rows="4"
+                                    placeholder="Paste kode HTML hasil dari website Gemini di sini..."
+                                    class="w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg outline-none custom-scroll focus:ring-2 focus:ring-emerald-500"></textarea>
+                            </div>
                         </div>
                     </div>
                 </aside>
@@ -701,6 +745,183 @@
                 btnSaveDb.disabled = false;
                 btnSaveDb.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg> Simpan ke Database`;
             });
+        }
+        // ==========================================
+        // FUNGSI UNTUK JALUR MANUAL (GEMINI WEB)
+        // ==========================================
+        function showPromptModal() {
+            // Ambil semua data input
+            const namaSekolah = document.getElementById('namaSekolah').value;
+            const namaKS = document.getElementById('namaKS').value;
+            const nipKS = document.getElementById('nipKS').value || "-";
+            const namaGuru = document.getElementById('namaGuru').value;
+            const nipGuru = document.getElementById('nipGuru').value || "-";
+
+            const jenjang = document.getElementById('jenjang').value;
+            const fase = document.getElementById('fase').value;
+            const kelas = document.getElementById('kelas').value;
+            const tanggal = document.getElementById('tanggal') ? document.getElementById('tanggal').value : '-';
+            const alokasi = document.getElementById('alokasiWaktu').value || '-';
+            const mapel = document.getElementById('mapel').value;
+            const topik = document.getElementById('topik').value;
+            const cakupan = document.getElementById('cakupan').value;
+            const jumlahPertemuan = parseInt(document.getElementById('jumlahPertemuan').value) || 1;
+
+            const selectedProfiles = Array.from(document.querySelectorAll('input[name="profilLulusan"]:checked')).map(cb => cb.value).join(', ');
+
+            // Validasi
+            if (!mapel || !topik) return alert("Mata Pelajaran dan Topik Materi harus diisi terlebih dahulu!");
+            if (!selectedProfiles) return alert("Pilih setidaknya satu Dimensi Profil Lulusan!");
+
+            // Bangun struktur baris pertemuan (Sama dengan format API)
+            let strukturPertemuan = '';
+            let strukturLampiran = '';
+
+            for (let i = 1; i <= jumlahPertemuan; i++) {
+                strukturPertemuan += `
+                        <tr class="border border-black bg-emerald-100">
+                            <td colspan="6" class="p-2 font-bold text-center uppercase text-emerald-800">PERTEMUAN ${i}</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold align-top bg-emerald-50">Kegiatan Awal</td>
+                            <td colspan="4" class="p-2 bg-white">
+                                <div class="mb-2">(AI: Tuliskan 3-4 poin kegiatan pendahuluan pertemuan ${i} (mis. salam & doa, presensi, apersepsi, motivasi/tujuan). WAJIB pakai <ol class="list-decimal list-inside space-y-1"> dengan satu <li> per poin, JANGAN teks biasa.)</div>
+                            </td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold align-top bg-emerald-50">Kegiatan Inti</td>
+                            <td colspan="4" class="p-2 space-y-4 bg-white">
+                                <div>
+                                    <strong class="text-blue-700 block">Langkah Pembelajaran:</strong>
+                                    <div class="mt-1">(AI: Tuliskan langkah-langkah aktivitas inti pertemuan ${i} secara mendetail dan berurutan. WAJIB pakai <ol class="list-decimal list-inside space-y-1"> dengan satu <li> per langkah agar nomornya muncul otomatis.)</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold align-top bg-emerald-50">Kegiatan Penutup</td>
+                            <td colspan="4" class="p-2 bg-white">(AI: Tuliskan 2-3 poin refleksi, kesimpulan, dan doa penutup pertemuan ${i}. WAJIB pakai <ol class="list-decimal list-inside space-y-1"> dengan satu <li> per poin.)</td>
+                        </tr>`;
+
+                strukturLampiran += `
+                        <tr class="border border-black bg-amber-200">
+                            <td colspan="6" class="p-2 font-bold text-center uppercase text-amber-900">LAMPIRAN PERTEMUAN ${i}</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50">LKPD Pertemuan ${i}</td>
+                            <td colspan="4" class="p-2 bg-white">(AI: Buatkan instruksi LKPD spesifik Pertemuan ${i})</td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50">Soal Evaluasi Pertemuan ${i}</td>
+                            <td colspan="4" class="p-2 bg-white">
+                                (AI: Buatkan TEPAT 5 soal latihan/evaluasi Pertemuan ${i}. <strong>WAJIB</strong> gunakan <code>&lt;ol class="list-decimal list-inside space-y-2"&gt;</code>)
+                            </td>
+                        </tr>
+                        <tr class="border border-black">
+                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50">Kunci Jawaban Pertemuan ${i}</td>
+                            <td colspan="4" class="p-2 bg-white">
+                                (AI: Tuliskan kunci jawaban ke-5 soal Pertemuan ${i}. <strong>WAJIB</strong> gunakan <code>&lt;ol class="list-decimal list-inside space-y-1"&gt;</code>)
+                            </td>
+                        </tr>`;
+            }
+
+            // Gabungkan menjadi prompt utuh
+            const textPrompt = `Bertindaklah sebagai Konsultan Kurikulum Merdeka Kemendikbud.
+Susunlah Modul Ajar dalam format HTML (hanya <div> dan <table>). JANGAN gunakan raw Markdown (seperti * atau -). TULISKAN FULL SCRIPT HTML-NYA.
+
+DATA INPUT:
+- Mapel: ${mapel}, Topik: ${topik}
+- Cakupan Materi: ${cakupan} (Bagi materi ini ke dalam ${jumlahPertemuan} pertemuan).
+- Identitas: Kelas ${kelas} ${jenjang}, Sekolah: ${namaSekolah}.
+- Tanggal Dokumen: ${tanggal}, Alokasi Waktu: ${alokasi}
+- Dimensi Profil Lulusan: ${selectedProfiles}
+- Kepala Sekolah: ${namaKS} (NIP: ${nipKS})
+- Guru: ${namaGuru} (NIP: ${nipGuru})
+
+Instruksi Tambahan (SANGAT PENTING):
+1. SEMUA daftar/poin WAJIB dibungkus tag <ul> atau <ol>. Selalu tambahkan class Tailwind (list-disc list-inside untuk <ul>, list-decimal list-inside untuk <ol>). JANGAN pernah menuliskan poin sebagai teks biasa dengan tanda "-" manual.
+2. Setiap pertemuan harus lengkap. Jangan ada yang terlewat.
+
+GUNAKAN KERANGKA HTML BERIKUT (Ganti bagian (AI: ...) dengan konten yang sesuai):
+
+<div class="max-w-[210mm] mx-auto p-4 bg-white text-black font-serif">
+    <h1 class="text-center text-2xl font-bold mb-4 uppercase text-blue-800">MODUL AJAR ${mapel.toUpperCase()}</h1>
+    <table class="w-full border border-black border-collapse mb-6 text-sm">
+        <tr class="bg-blue-600 text-white border border-black"><td colspan="6" class="p-2 font-bold uppercase text-center">A. INFORMASI UMUM</td></tr>
+        <tr class="border border-black"><td colspan="2" class="p-2 font-bold bg-blue-50">Nama Penyusun</td><td colspan="4" class="p-2 bg-white">${namaGuru}</td></tr>
+        <tr class="border border-black"><td colspan="2" class="p-2 font-bold bg-blue-50">Satuan Pendidikan</td><td colspan="4" class="p-2 bg-white">${namaSekolah}</td></tr>
+        <tr class="border border-black"><td colspan="2" class="p-2 font-bold bg-blue-50">Fase / Kelas</td><td colspan="4" class="p-2 bg-white">${fase} / ${kelas}</td></tr>
+        <tr class="border border-black"><td colspan="2" class="p-2 font-bold bg-blue-50">Topik Utama</td><td colspan="4" class="p-2 bg-white">${topik}</td></tr>
+        <tr class="border border-black"><td colspan="2" class="p-2 font-bold bg-blue-50">Alokasi Waktu</td><td colspan="4" class="p-2 bg-white">${alokasi} (${jumlahPertemuan} Pertemuan)</td></tr>
+    </table>
+
+    <table class="w-full border border-black border-collapse mb-6 text-sm">
+        <tr class="bg-emerald-600 text-white border border-black"><td colspan="6" class="p-2 font-bold uppercase text-center">B. KOMPONEN INTI</td></tr>
+        <tr class="border border-black"><td colspan="6" class="p-2 bg-emerald-100 font-bold text-emerald-900">1. Tujuan Pembelajaran</td></tr>
+        <tr class="border border-black"><td colspan="6" class="p-2 bg-white">(AI: Isi Tujuan Pembelajaran)</td></tr>
+        <tr class="border border-black"><td colspan="6" class="p-2 bg-emerald-100 font-bold text-emerald-900">2. Langkah Pembelajaran</td></tr>
+        ${strukturPertemuan}
+    </table>
+
+    <table class="w-full border border-black border-collapse mb-10 text-sm">
+        <tr class="bg-amber-500 text-white border border-black"><td colspan="6" class="p-2 font-bold uppercase text-center">C. LAMPIRAN</td></tr>
+        ${strukturLampiran}
+    </table>
+
+    <table class="w-full border border-black border-collapse text-sm mb-10 break-inside-avoid">
+        <tr>
+            <td colspan="3" class="p-4 text-center align-top border border-black w-1/2 bg-white">
+                <p class="mb-20">Mengetahui,<br>Kepala Sekolah</p>
+                <p class="font-bold underline">${namaKS}</p><p>NIP. ${nipKS}</p>
+            </td>
+            <td colspan="3" class="p-4 text-center align-top border border-black w-1/2 bg-white">
+                <p class="mb-20">Jakarta, ${tanggal}<br>Guru Kelas ${kelas}</p>
+                <p class="font-bold underline">${namaGuru}</p><p>NIP. ${nipGuru}</p>
+            </td>
+        </tr>
+    </table>
+</div>`;
+
+            // Tampilkan textarea
+            const promptArea = document.getElementById('promptArea');
+            const textArea = document.getElementById('generatedPromptText');
+
+            textArea.value = textPrompt;
+            promptArea.classList.remove('hidden');
+        }
+
+        function copyPromptText() {
+            const textArea = document.getElementById('generatedPromptText');
+            textArea.select();
+            textArea.setSelectionRange(0, 99999); // Untuk mobile
+            navigator.clipboard.writeText(textArea.value).then(() => {
+                alert("Prompt berhasil disalin! Silakan buka chat.google.com/gemini dan paste teks tersebut.");
+            }).catch(err => {
+                alert("Gagal menyalin text: " + err);
+            });
+        }
+
+        function previewManualHtml() {
+            let htmlInput = document.getElementById('manualHtmlInput').value;
+
+            if (!htmlInput.trim()) {
+                alert("Silakan paste kode HTML dari Gemini terlebih dahulu!");
+                return;
+            }
+
+            // Bersihkan format markdown jika AI Gemini masih membungkus dengan ```html ... ```
+            htmlInput = htmlInput.replace(/```html/g, '').replace(/```/g, '');
+
+            // Tampilkan ke area preview
+            document.getElementById('empty').classList.add('hidden');
+            const outputArea = document.getElementById('output');
+            outputArea.innerHTML = htmlInput;
+            outputArea.classList.remove('hidden');
+
+            // Tampilkan tombol simpan & print
+            document.getElementById('btnSaveDb').classList.remove('hidden');
+            document.getElementById('btnPrint').classList.remove('hidden');
+
+            alert("Hasil manual berhasil dirender! Anda bisa periksa preview di sebelah kanan, lalu klik 'Simpan ke Database'.");
         }
     </script>
 </x-app-layout>
