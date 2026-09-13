@@ -13,20 +13,21 @@ class ModulAjarController extends Controller
     public function index()
     {
         $user = auth()->user();
-
-        // Mengambil data sekolah tempat guru tersebut bernaung
         $sekolah = School::find($user->school_id);
 
-        // Mengambil tahun ajaran aktif
         $activeYear = AcademicYear::where('school_id', $user->school_id)
             ->where('is_active', true)
             ->first();
 
-        // Mengambil data guru (Asumsi relasi user ke tabel employee/karyawan)
         $namaGuru = $user->employee->nama_lengkap ?? 'Guru Tidak Ditemukan';
         $nipGuru = $user->employee->nip ?? '-';
 
-        return view('modul-ajar.generator', compact('sekolah', 'activeYear', 'namaGuru', 'nipGuru'));
+        // BARU: Ambil riwayat modul ajar milik user yang login untuk ditampilkan di dropdown
+        $savedModuls = ModulAjar::where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('modul-ajar.generator', compact('sekolah', 'activeYear', 'namaGuru', 'nipGuru', 'savedModuls'));
     }
 
     // Menyimpan Modul ke Database (Menerima AJAX POST dari View)
