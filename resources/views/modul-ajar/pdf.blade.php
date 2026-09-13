@@ -17,6 +17,8 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            table-layout: fixed;
+            /* BARU: Kunci tata letak tabel secara kaku */
         }
 
         table,
@@ -28,6 +30,21 @@
         td {
             padding: 6px;
             vertical-align: top;
+            /* Tambahkan word-wrap agar teks panjang tidak menjebol tabel */
+            word-wrap: break-word;
+        }
+
+        /* BARU: Paksa ukuran rasio kolom (30% Kiri : 70% Kanan) secara global */
+        td[colspan="2"] {
+            width: 30%;
+        }
+
+        td[colspan="4"] {
+            width: 70%;
+        }
+
+        td[colspan="6"] {
+            width: 100%;
         }
 
         .text-center {
