@@ -141,7 +141,7 @@
         ol {
             margin-top: 2px;
             margin-bottom: 2px;
-            padding-left: 15px;
+            padding-left: 30px;
         }
 
         li {
