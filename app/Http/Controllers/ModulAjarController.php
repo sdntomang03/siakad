@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AcademicYear;
 use App\Models\ModulAjar;
 use App\Models\School;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class ModulAjarController extends Controller
@@ -85,5 +86,19 @@ class ModulAjarController extends Controller
             'status' => 'success',
             'message' => 'Modul berhasil diperbarui!',
         ]);
+    }
+
+    public function downloadPdf($id)
+    {
+        $modul = ModulAjar::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
+
+        // Load view khusus PDF (kita buat di langkah 4)
+        $pdf = Pdf::loadView('modul-ajar.pdf', compact('modul'));
+
+        // Atur ukuran kertas ke A4 Portrait
+        $pdf->setPaper('a4', 'portrait');
+
+        // Unduh otomatis
+        return $pdf->download('Modul_Ajar_'.str_replace(' ', '_', $modul->mata_pelajaran).'.pdf');
     }
 }

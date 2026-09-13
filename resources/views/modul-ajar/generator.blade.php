@@ -1167,56 +1167,17 @@ GUNAKAN KERANGKA HTML BERIKUT (Ganti bagian (AI: ...) dengan konten yang sesuai)
                 }
             }
         }
-        // FUNGSI UNTUK MENGUNDUH PDF
+
+        // FUNGSI UNTUK MENGUNDUH PDF (VIA PHP DOMPDF)
         function downloadPDF() {
-            const btnDownload = document.getElementById('btnDownloadPdf');
-            const originalText = btnDownload.innerHTML;
-
-            // Ubah tombol jadi status loading
-            btnDownload.disabled = true;
-            btnDownload.innerHTML = `<svg class="w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Memproses...`;
-
-            // Matikan mode edit sementara agar kotak outline tidak ikut tercetak
-            const outputArea = document.getElementById('output');
-            const wasEditable = outputArea.getAttribute('contenteditable') === 'true';
-            if (wasEditable) {
-                outputArea.setAttribute('contenteditable', 'false');
-                outputArea.classList.remove('ring-4', 'ring-amber-400', 'shadow-2xl');
+            // Pastikan modul sudah disave ke database (memiliki ID)
+            if (!currentLoadedModulId) {
+                alert("Anda harus mengklik 'Simpan ke Database' terlebih dahulu sebelum mengunduh PDF!");
+                return;
             }
 
-            // Ambil elemen yang mau di-convert
-            const element = outputArea;
-
-            // Tentukan nama file yang dinamis (Mapel + Topik)
-            const mapel = document.getElementById('mapel').value || 'Modul';
-            const topik = document.getElementById('topik').value || 'Ajar';
-            const cleanFilename = `Modul_${mapel}_${topik}`.replace(/[^a-zA-Z0-9]/g, '_') + '.pdf';
-
-            // Opsi konfigurasi PDF
-     // Opsi konfigurasi PDF yang diperbarui
-            const opt = {
-                margin:       [10, 10, 15, 10],
-                filename:     cleanFilename,
-                image:        { type: 'jpeg', quality: 0.98 },
-                // Hapus windowWidth agar html2canvas patuh pada ukuran div (max-w-[210mm])
-                html2canvas:  { scale: 2, useCORS: true },
-                // Gunakan 'p' alih-alih 'portrait' untuk mengunci format A4 tegak
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'p' },
-                pagebreak:    { mode: ['css', 'legacy'] }
-            };
-
-            // Proses Generate PDF
-            html2pdf().set(opt).from(element).save().then(() => {
-                // Kembalikan status tombol
-                btnDownload.disabled = false;
-                btnDownload.innerHTML = originalText;
-
-                // Nyalakan kembali mode edit jika sebelumnya aktif
-                if (wasEditable) {
-                    outputArea.setAttribute('contenteditable', 'true');
-                    outputArea.classList.add('ring-4', 'ring-amber-400', 'shadow-2xl');
-                }
-            });
+            // Buka tab baru yang mengarah ke route PHP pembuat PDF
+            window.open(`/modul-ajar/pdf/${currentLoadedModulId}`, '_blank');
         }
     </script>
 </x-app-layout>

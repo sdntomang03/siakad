@@ -99,6 +99,7 @@ Route::middleware(['auth'])->group(function () {
     // Tambahkan di dalam group route yang sudah ada
     Route::get('/modul-ajar/get/{id}', [ModulAjarController::class, 'show'])->name('modul.show');
     Route::put('/modul-ajar/update/{id}', [ModulAjarController::class, 'update'])->name('modul.update');
+    Route::get('/modul-ajar/pdf/{id}', [ModulAjarController::class, 'downloadPdf'])->name('modul.pdf');
     // Rute Khusus Aktifkan Semester
     Route::patch('/academic-years/{academicYear}/aktifkan', [AcademicYearController::class, 'aktifkan'])
         ->name('academic-years.aktifkan')
