@@ -404,6 +404,16 @@
                                     </svg>
                                     Cetak PDF
                                 </button>
+                                <!-- BARU: Tombol Download PDF -->
+                                <button onclick="downloadPDF()" id="btnDownloadPdf"
+                                    class="hidden px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                    Unduh PDF
+                                </button>
                                 <!-- BARU: Tombol Edit -->
                                 <button onclick="toggleEditMode()" id="btnEdit"
                                     class="hidden px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-bold flex items-center gap-2">
@@ -455,7 +465,8 @@
             </div>
         </div>
     </div>
-
+    <!-- Library untuk Convert HTML ke PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Script Generasi Modul -->
     <script>
         // Logika Dropdown Dinamis
@@ -1099,14 +1110,103 @@ GUNAKAN KERANGKA HTML BERIKUT (Ganti bagian (AI: ...) dengan konten yang sesuai)
         }
 
         // Sedikit perbaikan di toggleLoading agar memunculkan tombol Edit
-        function toggleLoading(isLoading, hasData = false) {
-             // ... [Kode Anda yang lama] ...
-             if (!isLoading) {
-                 if (hasData) {
-                    // Pastikan tombol edit ikut dimunculkan jika data sukses dimuat/dibuat
-                    document.getElementById('btnEdit').classList.remove('hidden');
-                 }
-             }
+  function toggleLoading(isLoading, hasData = false) {
+            const btn = document.getElementById('btnGenerate');
+            const txt = document.getElementById('btnText');
+            const loading = document.getElementById('loading');
+            const empty = document.getElementById('empty');
+            const output = document.getElementById('output');
+
+            // Ambil elemen semua tombol aksi
+            const btnPrint = document.getElementById('btnPrint');
+            const btnSaveDb = document.getElementById('btnSaveDb');
+            const btnEdit = document.getElementById('btnEdit');
+            const btnDownloadPdf = document.getElementById('btnDownloadPdf');
+
+            if (isLoading) {
+                // Saat proses loading berjalan
+                btn.disabled = true;
+                txt.innerText = "Menyusun Modul...";
+
+                empty.classList.add('hidden');
+                output.classList.add('hidden');
+                loading.classList.remove('hidden');
+
+                // Sembunyikan semua tombol aksi di panel kanan
+                btnPrint.classList.add('hidden');
+                btnSaveDb.classList.add('hidden');
+
+                // Pastikan tombol tidak error jika belum ditambahkan ke HTML
+                if (btnEdit) btnEdit.classList.add('hidden');
+                if (btnDownloadPdf) btnDownloadPdf.classList.add('hidden');
+            } else {
+                // Saat proses loading selesai
+                btn.disabled = false;
+                txt.innerText = "Generate Modul Sekarang";
+                loading.classList.add('hidden');
+
+                if (hasData) {
+                    // Munculkan hasil HTML
+                    output.classList.remove('hidden');
+
+                    // Munculkan semua tombol aksi
+                    btnPrint.classList.remove('hidden');
+                    btnSaveDb.classList.remove('hidden');
+                    if (btnEdit) btnEdit.classList.remove('hidden');
+                    if (btnDownloadPdf) btnDownloadPdf.classList.remove('hidden');
+                } else {
+                    // Tampilkan ilustrasi/ikon kosong jika tidak ada data
+                    empty.classList.remove('hidden');
+                }
+            }
+        }
+        // FUNGSI UNTUK MENGUNDUH PDF
+        function downloadPDF() {
+            const btnDownload = document.getElementById('btnDownloadPdf');
+            const originalText = btnDownload.innerHTML;
+
+            // Ubah tombol jadi status loading
+            btnDownload.disabled = true;
+            btnDownload.innerHTML = `<svg class="w-4 h-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Memproses...`;
+
+            // Matikan mode edit sementara agar kotak outline tidak ikut tercetak
+            const outputArea = document.getElementById('output');
+            const wasEditable = outputArea.getAttribute('contenteditable') === 'true';
+            if (wasEditable) {
+                outputArea.setAttribute('contenteditable', 'false');
+                outputArea.classList.remove('ring-4', 'ring-amber-400', 'shadow-2xl');
+            }
+
+            // Ambil elemen yang mau di-convert
+            const element = outputArea;
+
+            // Tentukan nama file yang dinamis (Mapel + Topik)
+            const mapel = document.getElementById('mapel').value || 'Modul';
+            const topik = document.getElementById('topik').value || 'Ajar';
+            const cleanFilename = `Modul_${mapel}_${topik}`.replace(/[^a-zA-Z0-9]/g, '_') + '.pdf';
+
+            // Opsi konfigurasi PDF
+            const opt = {
+                margin:       [15, 10, 15, 10], // Margin atas, kanan, bawah, kiri (mm)
+                filename:     cleanFilename,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, windowWidth: element.scrollWidth },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['css', 'legacy'] }
+            };
+
+            // Proses Generate PDF
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Kembalikan status tombol
+                btnDownload.disabled = false;
+                btnDownload.innerHTML = originalText;
+
+                // Nyalakan kembali mode edit jika sebelumnya aktif
+                if (wasEditable) {
+                    outputArea.setAttribute('contenteditable', 'true');
+                    outputArea.classList.add('ring-4', 'ring-amber-400', 'shadow-2xl');
+                }
+            });
         }
     </script>
 </x-app-layout>
