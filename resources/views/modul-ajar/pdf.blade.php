@@ -8,9 +8,9 @@
         /* CSS Murni untuk menerjemahkan class Tailwind agar dikenali DomPDF */
         body {
             font-family: "Times New Roman", Times, serif;
-            font-size: 11pt;
+            font-size: 12pt;
             color: #000;
-            line-height: 1.3;
+            line-height: 1.5;
         }
 
         table {
