@@ -559,17 +559,17 @@
                             <td colspan="6" class="p-2 font-bold text-center uppercase text-amber-900">LAMPIRAN PERTEMUAN ${i}</td>
                         </tr>
                         <tr class="border border-black">
-                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50">LKPD Pertemuan ${i}</td>
+                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50" style="width: 35%;">LKPD Pertemuan ${i}</td>
                             <td colspan="4" class="p-2 bg-white">(AI: Buatkan instruksi LKPD spesifik Pertemuan ${i})</td>
                         </tr>
                         <tr class="border border-black">
-                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50">Soal Evaluasi Pertemuan ${i}</td>
+                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50" style="width: 35%;">Soal Evaluasi Pertemuan ${i}</td>
                             <td colspan="4" class="p-2 bg-white">
-                                (AI: Buatkan TEPAT 5 soal latihan/evaluasi Pertemuan ${i}, nomor 1 sampai 5. <strong>WAJIB</strong> gunakan <code>&lt;ol class="list-decimal list-inside space-y-2"&gt;</code> dengan satu <code>&lt;li&gt;</code> per soal, JANGAN gabung ke satu paragraf, agar nomornya muncul otomatis.)
+                                (AI: Buatkan TEPAT 5 soal latihan/evaluasi Pertemuan ${i}. <strong>WAJIB</strong> gunakan <code>&lt;ol class="list-decimal list-inside space-y-2"&gt;</code> dengan satu <code>&lt;li&gt;</code> per soal, JANGAN gabung ke satu paragraf, agar nomornya muncul otomatis.)
                             </td>
                         </tr>
                         <tr class="border border-black">
-                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50">Kunci Jawaban Pertemuan ${i}</td>
+                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50" style="width: 35%;">Kunci Jawaban Pertemuan ${i}</td>
                             <td colspan="4" class="p-2 bg-white">
                                 (AI: Tuliskan kunci jawaban dari ke-5 soal Pertemuan ${i}, urut nomor 1 sampai 5 sesuai nomor soalnya. <strong>WAJIB</strong> gunakan <code>&lt;ol class="list-decimal list-inside space-y-1"&gt;</code> dengan satu <code>&lt;li&gt;</code> per jawaban agar nomornya muncul otomatis.)
                             </td>
@@ -851,21 +851,22 @@
                             <td colspan="6" class="p-2 font-bold text-center uppercase text-amber-900">LAMPIRAN PERTEMUAN ${i}</td>
                         </tr>
                         <tr class="border border-black">
-                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50">LKPD Pertemuan ${i}</td>
+                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50" style="width: 35%;">LKPD Pertemuan ${i}</td>
                             <td colspan="4" class="p-2 bg-white">(AI: Buatkan instruksi LKPD spesifik Pertemuan ${i})</td>
                         </tr>
                         <tr class="border border-black">
-                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50">Soal Evaluasi Pertemuan ${i}</td>
+                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50" style="width: 35%;">Soal Evaluasi Pertemuan ${i}</td>
                             <td colspan="4" class="p-2 bg-white">
-                                (AI: Buatkan TEPAT 5 soal latihan/evaluasi Pertemuan ${i}. <strong>WAJIB</strong> gunakan <code>&lt;ol class="list-decimal list-inside space-y-2"&gt;</code>)
+                                (AI: Buatkan TEPAT 5 soal latihan/evaluasi Pertemuan ${i}. <strong>WAJIB</strong> gunakan <code>&lt;ol class="list-decimal list-inside space-y-2"&gt;</code> dengan satu <code>&lt;li&gt;</code> per soal, JANGAN gabung ke satu paragraf, agar nomornya muncul otomatis.)
                             </td>
                         </tr>
                         <tr class="border border-black">
-                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50">Kunci Jawaban Pertemuan ${i}</td>
+                            <td colspan="2" class="p-2 font-bold align-top bg-amber-50" style="width: 35%;">Kunci Jawaban Pertemuan ${i}</td>
                             <td colspan="4" class="p-2 bg-white">
-                                (AI: Tuliskan kunci jawaban ke-5 soal Pertemuan ${i}. <strong>WAJIB</strong> gunakan <code>&lt;ol class="list-decimal list-inside space-y-1"&gt;</code>)
+                                (AI: Tuliskan kunci jawaban dari ke-5 soal Pertemuan ${i}, urut nomor 1 sampai 5 sesuai nomor soalnya. <strong>WAJIB</strong> gunakan <code>&lt;ol class="list-decimal list-inside space-y-1"&gt;</code> dengan satu <code>&lt;li&gt;</code> per jawaban agar nomornya muncul otomatis.)
                             </td>
-                        </tr>`;
+                        </tr>
+                `;
             }
 
             // Gabungkan menjadi prompt utuh
