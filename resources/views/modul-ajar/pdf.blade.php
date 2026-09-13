@@ -36,11 +36,11 @@
 
         /* BARU: Paksa ukuran rasio kolom (30% Kiri : 70% Kanan) secara global */
         td[colspan="2"] {
-            width: 30%;
+            width: 25%;
         }
 
         td[colspan="4"] {
-            width: 70%;
+            width: 75%;
         }
 
         td[colspan="6"] {
