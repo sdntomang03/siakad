@@ -96,6 +96,9 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('admin')->name('superadmi
 Route::middleware(['auth'])->group(function () {
     Route::get('/modul-generator', [ModulAjarController::class, 'index'])->name('modul.generator');
     Route::post('/modul-generator/store', [ModulAjarController::class, 'store'])->name('modul.store');
+    // Tambahkan di dalam group route yang sudah ada
+    Route::get('/modul-ajar/get/{id}', [ModulAjarController::class, 'show'])->name('modul.show');
+    Route::put('/modul-ajar/update/{id}', [ModulAjarController::class, 'update'])->name('modul.update');
     // Rute Khusus Aktifkan Semester
     Route::patch('/academic-years/{academicYear}/aktifkan', [AcademicYearController::class, 'aktifkan'])
         ->name('academic-years.aktifkan')

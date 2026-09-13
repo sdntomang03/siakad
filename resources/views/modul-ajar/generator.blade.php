@@ -147,7 +147,23 @@
 
                         <!-- Hidden Inputs untuk Database -->
                         <input type="hidden" id="academicYearId" value="{{ $activeYear->id ?? '' }}">
-
+                        <!-- BARU: Dropdown Load Modul -->
+                        <div
+                            class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-xl border border-indigo-200 dark:border-indigo-800">
+                            <label
+                                class="block text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider mb-2">
+                                Muat Modul Tersimpan (Database)
+                            </label>
+                            <select id="loadModulSelect" onchange="loadModulFromDb(this.value)"
+                                class="w-full p-2 bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                                <option value="">-- Buat Modul Baru --</option>
+                                @foreach($savedModuls as $mod)
+                                <option value="{{ $mod->id }}">{{ $mod->mata_pelajaran }} - {{ $mod->topik }} ({{
+                                    \Carbon\Carbon::parse($mod->created_at)->format('d/m/Y') }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <hr class="border-slate-200 dark:border-slate-700 my-4">
                         <div class="space-y-4">
                             <!-- Identitas (Otomatis dari Database) -->
                             <div
@@ -387,6 +403,16 @@
                                             d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                                     </svg>
                                     Cetak PDF
+                                </button>
+                                <!-- BARU: Tombol Edit -->
+                                <button onclick="toggleEditMode()" id="btnEdit"
+                                    class="hidden px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-bold flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                    <span id="textEditBtn">Edit Visual</span>
                                 </button>
                             </div>
                         </div>
@@ -922,6 +948,165 @@ GUNAKAN KERANGKA HTML BERIKUT (Ganti bagian (AI: ...) dengan konten yang sesuai)
             document.getElementById('btnPrint').classList.remove('hidden');
 
             alert("Hasil manual berhasil dirender! Anda bisa periksa preview di sebelah kanan, lalu klik 'Simpan ke Database'.");
+        }
+        // BARU: Variabel global untuk mendeteksi apakah sedang mode edit modul lama atau buat baru
+        let currentLoadedModulId = null;
+
+        // FUNGSI UNTUK MENGAMBIL MODUL DARI DATABASE
+        function loadModulFromDb(id) {
+            if (!id) {
+                currentLoadedModulId = null;
+                document.getElementById('empty').classList.remove('hidden');
+                document.getElementById('output').classList.add('hidden');
+                document.getElementById('output').innerHTML = '';
+                document.getElementById('btnSaveDb').classList.add('hidden');
+                document.getElementById('btnPrint').classList.add('hidden');
+                document.getElementById('btnEdit').classList.add('hidden');
+                return;
+            }
+
+            // Memunculkan efek loading
+            toggleLoading(true);
+
+            fetch(`/modul-ajar/get/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        currentLoadedModulId = id; // Set ID
+
+                        // Tampilkan HTML
+                        const output = document.getElementById('output');
+                        output.innerHTML = data.data.html_content;
+
+                        // UI Toggles
+                        document.getElementById('empty').classList.add('hidden');
+                        output.classList.remove('hidden');
+                        document.getElementById('btnSaveDb').classList.remove('hidden');
+                        document.getElementById('btnPrint').classList.remove('hidden');
+                        document.getElementById('btnEdit').classList.remove('hidden');
+                    } else {
+                        alert("Gagal memuat modul.");
+                    }
+                })
+                .catch(err => alert("Error: " + err))
+                .finally(() => toggleLoading(false, true));
+        }
+
+        // FUNGSI UNTUK MENGEDIT HTML SECARA VISUAL (Content Editable)
+        function toggleEditMode() {
+            const output = document.getElementById('output');
+            const btnEdit = document.getElementById('btnEdit');
+            const textEditBtn = document.getElementById('textEditBtn');
+            const isEditable = output.getAttribute('contenteditable') === 'true';
+
+            if (isEditable) {
+                // Matikan mode edit
+                output.setAttribute('contenteditable', 'false');
+                output.classList.remove('ring-4', 'ring-amber-400', 'shadow-2xl');
+                textEditBtn.innerText = "Edit Visual";
+                btnEdit.classList.remove('bg-rose-500', 'hover:bg-rose-600');
+                btnEdit.classList.add('bg-amber-500', 'hover:bg-amber-600');
+            } else {
+                // Nyalakan mode edit (Bisa langsung ketik/hapus di preview)
+                output.setAttribute('contenteditable', 'true');
+                output.classList.add('ring-4', 'ring-amber-400', 'shadow-2xl', 'outline-none');
+                textEditBtn.innerText = "Selesai Edit";
+                btnEdit.classList.remove('bg-amber-500', 'hover:bg-amber-600');
+                btnEdit.classList.add('bg-rose-500', 'hover:bg-rose-600');
+                output.focus();
+                alert("Mode Edit Aktif! Silakan klik pada teks di dalam pratinjau dokumen untuk mengubahnya secara langsung.");
+            }
+        }
+
+        // PERBARUI FUNGSI SAVE UNTUK HANDLE CREATE & UPDATE
+        function saveToDatabase() {
+            // Pastikan mode edit dimatikan dulu sebelum disave agar atribut contenteditable tidak ikut tersave
+            document.getElementById('output').setAttribute('contenteditable', 'false');
+
+            const htmlContent = document.getElementById('output').innerHTML;
+            const btnSaveDb = document.getElementById('btnSaveDb');
+            const originalText = btnSaveDb.innerHTML;
+
+            btnSaveDb.disabled = true;
+            btnSaveDb.innerText = "Menyimpan...";
+
+            // Tentukan URL dan Method (POST untuk baru, PUT untuk update)
+            let fetchUrl = "{{ route('modul.store') }}";
+            let fetchMethod = "POST";
+            let payload = {
+                html_content: htmlContent,
+            };
+
+            if (currentLoadedModulId) {
+                // Mode Update Modul Lama
+                fetchUrl = `/modul-ajar/update/${currentLoadedModulId}`;
+                fetchMethod = "PUT";
+            } else {
+                // Mode Simpan Modul Baru (Ambil form data)
+                const tingkat = document.getElementById('jenjang').value + " Kelas " + document.getElementById('kelas').value;
+                const mapel = document.getElementById('mapel').value;
+                const topik = document.getElementById('topik').value;
+                const academicYearId = document.getElementById('academicYearId').value;
+
+                if (!academicYearId) {
+                    alert("Tahun Pelajaran belum diatur di database!");
+                    btnSaveDb.disabled = false;
+                    btnSaveDb.innerHTML = originalText;
+                    return;
+                }
+
+                payload.tingkat = tingkat;
+                payload.mata_pelajaran = mapel;
+                payload.topik = topik;
+                payload.academic_year_id = academicYearId;
+            }
+
+            fetch(fetchUrl, {
+                method: fetchMethod,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(async response => {
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.message || "Terjadi kesalahan (Status " + response.status + ")");
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data.status === 'success') {
+                    alert(data.message);
+                    // Jika baru pertama kali disave, set ID-nya agar save berikutnya menjadi Update
+                    if (!currentLoadedModulId && data.modul_id) {
+                        currentLoadedModulId = data.modul_id;
+                    }
+                } else {
+                    alert("Gagal: " + (data.message || "Kesalahan Server"));
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Gagal menyimpan: " + err.message);
+            })
+            .finally(() => {
+                btnSaveDb.disabled = false;
+                btnSaveDb.innerHTML = originalText;
+            });
+        }
+
+        // Sedikit perbaikan di toggleLoading agar memunculkan tombol Edit
+        function toggleLoading(isLoading, hasData = false) {
+             // ... [Kode Anda yang lama] ...
+             if (!isLoading) {
+                 if (hasData) {
+                    // Pastikan tombol edit ikut dimunculkan jika data sukses dimuat/dibuat
+                    document.getElementById('btnEdit').classList.remove('hidden');
+                 }
+             }
         }
     </script>
 </x-app-layout>

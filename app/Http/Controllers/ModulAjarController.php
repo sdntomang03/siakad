@@ -56,4 +56,33 @@ class ModulAjarController extends Controller
             'modul_id' => $modul->id,
         ]);
     }
+
+    // BARU: Fungsi untuk mengambil 1 modul via AJAX
+    public function show($id)
+    {
+        $modul = ModulAjar::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $modul,
+        ]);
+    }
+
+    // BARU: Fungsi untuk Update HTML modul via AJAX
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'html_content' => 'required',
+        ]);
+
+        $modul = ModulAjar::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
+        $modul->update([
+            'html_content' => $request->html_content,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Modul berhasil diperbarui!',
+        ]);
+    }
 }
