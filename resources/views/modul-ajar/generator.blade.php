@@ -8,6 +8,13 @@
     <!-- CSS Khusus Print & Scrollbar -->
     <style>
         @media print {
+
+            /* BARU: Memaksa pengaturan default browser ke A4 Portrait */
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+
             body * {
                 visibility: hidden;
             }
@@ -1186,12 +1193,15 @@ GUNAKAN KERANGKA HTML BERIKUT (Ganti bagian (AI: ...) dengan konten yang sesuai)
             const cleanFilename = `Modul_${mapel}_${topik}`.replace(/[^a-zA-Z0-9]/g, '_') + '.pdf';
 
             // Opsi konfigurasi PDF
+     // Opsi konfigurasi PDF yang diperbarui
             const opt = {
-                margin:       [15, 10, 15, 10], // Margin atas, kanan, bawah, kiri (mm)
+                margin:       [10, 10, 15, 10],
                 filename:     cleanFilename,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, windowWidth: element.scrollWidth },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                // Hapus windowWidth agar html2canvas patuh pada ukuran div (max-w-[210mm])
+                html2canvas:  { scale: 2, useCORS: true },
+                // Gunakan 'p' alih-alih 'portrait' untuk mengunci format A4 tegak
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'p' },
                 pagebreak:    { mode: ['css', 'legacy'] }
             };
 
