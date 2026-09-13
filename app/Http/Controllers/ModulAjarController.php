@@ -92,13 +92,13 @@ class ModulAjarController extends Controller
     {
         $modul = ModulAjar::where('id', $id)->where('user_id', auth()->id())->firstOrFail();
 
-        // Load view khusus PDF (kita buat di langkah 4)
         $pdf = Pdf::loadView('modul-ajar.pdf', compact('modul'));
 
-        // Atur ukuran kertas ke A4 Portrait
-        $pdf->setPaper('a4', 'portrait');
+        // Atur ukuran kertas ke F4 (Folio) Portrait
+        // Lebar: 215mm = 609.45 pt, Tinggi: 330mm = 935.43 pt
+        $f4Paper = [0, 0, 609.45, 935.43];
+        $pdf->setPaper($f4Paper, 'portrait');
 
-        // Unduh otomatis
         return $pdf->download('Modul_Ajar_'.str_replace(' ', '_', $modul->mata_pelajaran).'.pdf');
     }
 }
