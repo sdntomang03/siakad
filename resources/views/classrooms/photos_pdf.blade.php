@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Galeri Foto Kelas {{ $classroom->nama_kelas }}</title>
+    <title>Galeri Foto Siswa</title>
     <style>
         @page {
             size: A4 portrait;
@@ -29,11 +29,6 @@
             text-transform: uppercase;
         }
 
-        .header p {
-            margin: 0;
-            font-size: 14px;
-        }
-
         .gallery {
             text-align: center;
             width: 100%;
@@ -46,6 +41,7 @@
             text-align: center;
             vertical-align: top;
             page-break-inside: avoid;
+            /* Penting: Mencegah foto terbelah di antar halaman */
         }
 
         .photo-img {
@@ -55,7 +51,6 @@
             border: 1px solid #333;
         }
 
-        /* CSS Khusus untuk kotak jika belum ada foto */
         .placeholder {
             width: 4cm;
             height: 6cm;
@@ -81,43 +76,49 @@
             word-wrap: break-word;
             line-height: 1.2;
         }
+
+        .class-badge {
+            font-size: 9px;
+            color: #555;
+            margin-top: 2px;
+        }
     </style>
 </head>
 
 <body>
     <div class="header">
-        <h2>Galeri Foto Kelas {{ $classroom->nama_kelas }}</h2>
-        <p>Tahun Ajaran: {{ $classroom->academicYear->tahun_ajaran ?? '-' }}</p>
+        <h2>Galeri Foto Siswa</h2>
+        <p style="margin:0; font-size:12px;">Berdasarkan Data Profil Peserta Didik</p>
     </div>
 
     <div class="gallery">
-        @foreach($classroom->students as $student)
+        @foreach($students as $student)
         <div class="photo-item">
 
             @php
-            // Logika Base64 untuk mencegah DomPDF loading selamanya
+            // STRATEGI 3: Konversi ke Base64 agar DOMPDF tidak hang saat membaca gambar
             $imagePath = $student->foto ? public_path('storage/' . $student->foto) : null;
             $imageBase64 = null;
 
             if ($imagePath && file_exists($imagePath)) {
             $type = pathinfo($imagePath, PATHINFO_EXTENSION);
-            // Ambil isi file dan ubah ke base64
             $data = file_get_contents($imagePath);
             $imageBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
             }
             @endphp
 
             @if($imageBase64)
-            <!-- Tampilkan gambar dari string Base64 -->
             <img src="{{ $imageBase64 }}" class="photo-img">
             @else
-            <!-- Tampilan jika tidak ada foto / file fisik tidak ditemukan -->
             <div class="placeholder">
                 <span>BELUM ADA FOTO</span>
             </div>
             @endif
 
             <div class="student-name">{{ $student->nama_lengkap }}</div>
+            @if($student->class_code)
+            <div class="class-badge">Kelas: {{ $student->class_code }}</div>
+            @endif
         </div>
         @endforeach
     </div>
