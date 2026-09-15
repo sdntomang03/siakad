@@ -37,10 +37,16 @@
         .photo-item {
             display: inline-block;
             width: 4cm;
-            margin: 0.4cm;
+            height: 8cm;
+            /* TAMBAHAN: Kunci tinggi keseluruhan kotak (6cm foto + 2cm area teks) */
+            margin: 0.4cm 0.25cm;
+            /* Sedikit mengatur jarak agar pas 4 kolom di kertas A4 */
             text-align: center;
             vertical-align: top;
+            /* TAMBAHAN: Memaksa semua kotak rata dari atas */
             page-break-inside: avoid;
+            overflow: hidden;
+            /* TAMBAHAN: Mencegah nama yang terlalu panjang merusak layout kotak */
         }
 
         .photo-img {
@@ -72,8 +78,11 @@
             margin-top: 5px;
             font-weight: bold;
             text-transform: uppercase;
-            word-wrap: break-word;
             line-height: 1.2;
+
+            /* Membatasi teks maksimal 2 baris agar seragam */
+            height: 26px;
+            overflow: hidden;
         }
     </style>
 </head>
