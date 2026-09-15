@@ -10,6 +10,7 @@ use App\Models\Employee;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\Subject;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -286,5 +287,39 @@ class ClassroomController extends Controller
 
         // Panggil StudentsExport dengan mengirim (school_id, classroom_id)
         return Excel::download(new StudentsExport($classroom->school_id, $classroom->id), $namaFile);
+    }
+
+    public function downloadPhotosPdf(Classroom $classroom)
+    {
+        $user = auth()->user();
+
+        // 1. Role-Based Access Control[cite: 2]
+        abort_if(! $user->hasAnyRole(['superadmin', 'operator', 'guru', 'kepsek']), 403, 'Akses Ditolak');
+
+        // 2. Pengecekan Wilayah Sekolah (Multi-Tenant)[cite: 2]
+        if (! $user->hasRole('superadmin') && $classroom->school_id !== $user->school_id) {
+            abort(403, 'Akses ditolak: Kelas ini berada di sekolah lain.');
+        }
+
+        // 3. Pengecekan Khusus Guru Wali Kelas[cite: 2]
+        if ($user->hasRole('guru')) {
+            $employeeId = $user->employee->id ?? 0;
+            if ($classroom->homeroom_teacher_id !== $employeeId) {
+                abort(403, 'Akses ditolak: Anda bukan wali kelas untuk rombel ini.');
+            }
+        }
+
+        // Load data siswa diurutkan berdasarkan nama beserta tahun ajarannya[cite: 2]
+        $classroom->load(['students' => function ($query) {
+            $query->orderBy('nama_lengkap', 'asc');
+        }, 'academicYear']);
+
+        // Generate PDF
+        $pdf = Pdf::loadView('classrooms.photos_pdf', compact('classroom'))
+            ->setPaper('a4', 'portrait');
+
+        $namaFile = 'Galeri_Foto_Kelas_'.str_replace(' ', '_', $classroom->nama_kelas).'.pdf';
+
+        return $pdf->download($namaFile);
     }
 }

@@ -114,6 +114,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('classrooms.assign-subjects');
     Route::post('classrooms/{classroom}/assign', [ClassroomController::class, 'assignStudent'])->name('classrooms.assign');
     Route::delete('classrooms/{classroom}/remove-multiple', [ClassroomController::class, 'removeMultipleStudents'])->name('classrooms.remove-multiple');
+    Route::get('/classrooms/{classroom}/download-photos', [ClassroomController::class, 'downloadPhotosPdf'])->name('classrooms.download_photos');
     Route::get('classrooms/{classroom}/attendances', [AttendanceController::class, 'show'])->name('attendances.show');
     Route::post('classrooms/{classroom}/attendances', [AttendanceController::class, 'store'])->name('attendances.store');
     Route::get('students/{student}/attendance-report', [AttendanceController::class, 'studentReport'])->name('attendances.student-report');

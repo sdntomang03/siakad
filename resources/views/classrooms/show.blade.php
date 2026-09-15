@@ -14,6 +14,10 @@
                 class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold shadow-lg hover:bg-emerald-700 transition flex items-center gap-2">
                 <i class="fas fa-file-excel"></i> Download Excel
             </a>
+            <a href="{{ route('classrooms.download_photos', $classroom->hashid) }}"
+                class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold shadow-lg hover:bg-emerald-700 transition flex items-center gap-2">
+                <i class="fas fa-file-pdf"></i> Download Foto
+            </a>
         </div>
     </x-slot>
 
