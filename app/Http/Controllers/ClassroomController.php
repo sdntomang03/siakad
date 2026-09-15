@@ -291,11 +291,14 @@ class ClassroomController extends Controller
 
     public function downloadPhotosPdf(Classroom $classroom)
     {
+        // 1. TAMBAHKAN DUA BARIS INI
+        ini_set('max_execution_time', '300'); // Tambah waktu loading maksimal jadi 5 menit (300 detik)
+        ini_set('memory_limit', '1024M');     // Izinkan PHP menggunakan RAM hingga 1 GB untuk proses PDF ini
+
         $user = auth()->user();
 
-        // 1. Role-Based Access Control[cite: 2]
+        // 1. Role-Based Access Control
         abort_if(! $user->hasAnyRole(['superadmin', 'operator', 'guru', 'kepsek']), 403, 'Akses Ditolak');
-
         // 2. Pengecekan Wilayah Sekolah (Multi-Tenant)[cite: 2]
         if (! $user->hasRole('superadmin') && $classroom->school_id !== $user->school_id) {
             abort(403, 'Akses ditolak: Kelas ini berada di sekolah lain.');
