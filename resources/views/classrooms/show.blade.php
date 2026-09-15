@@ -1,23 +1,51 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+            <!-- Judul -->
             <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
-                Anggota Rombel: <span class="text-indigo-600">{{ $classroom->tingkat }} - {{ $classroom->nama_kelas
-                    }}</span>
+                Anggota Rombel:
+                <span class="text-indigo-600">
+                    {{ $classroom->tingkat }} - {{ $classroom->nama_kelas }}
+                </span>
             </h2>
-            @can('edit-classes')
-            <a href="{{ route('classrooms.index') }}" class="text-sm font-bold text-slate-500 hover:text-slate-700">
-                &larr; Kembali ke Daftar Kelas
-            </a>
-            @endcan
-            <a href="{{ route('classrooms.export_excel', $classroom->hashid) }}"
-                class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold shadow-lg hover:bg-emerald-700 transition flex items-center gap-2">
-                <i class="fas fa-file-excel"></i> Download Excel
-            </a>
-            <a href="{{ route('classrooms.download_photos', $classroom->hashid) }}"
-                class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold shadow-lg hover:bg-emerald-700 transition flex items-center gap-2">
-                <i class="fas fa-file-pdf"></i> Download Foto
-            </a>
+
+            <!-- Tombol Aksi -->
+            <div class="flex flex-wrap items-center gap-2">
+
+                @can('edit-classes')
+                <a href="{{ route('classrooms.index') }}" class="inline-flex items-center gap-2 px-4 py-2
+                       bg-slate-100 text-slate-700
+                       border border-slate-200
+                       rounded-lg text-sm font-semibold
+                       hover:bg-slate-200 hover:text-slate-900
+                       transition duration-200">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Kembali</span>
+                </a>
+                @endcan
+
+                <a href="{{ route('classrooms.export_excel', $classroom->hashid) }}" class="inline-flex items-center gap-2 px-4 py-2
+                   bg-emerald-600 text-white
+                   rounded-lg text-sm font-semibold
+                   shadow-sm hover:bg-emerald-700
+                   focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2
+                   transition duration-200">
+                    <i class="fas fa-file-excel"></i>
+                    <span>Download Excel</span>
+                </a>
+
+                <a href="{{ route('classrooms.download_photos', $classroom->hashid) }}" class="inline-flex items-center gap-2 px-4 py-2
+                   bg-indigo-600 text-white
+                   rounded-lg text-sm font-semibold
+                   shadow-sm hover:bg-indigo-700
+                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+                   transition duration-200">
+                    <i class="fas fa-images"></i>
+                    <span>Download Foto</span>
+                </a>
+
+            </div>
         </div>
     </x-slot>
 
