@@ -291,37 +291,43 @@ class ClassroomController extends Controller
 
     public function downloadPhotosPdf(Classroom $classroom)
     {
-        // STRATEGI 1: Mencegah Timeout & Kehabisan RAM
+        // 1. STRATEGI 1: Mencegah Timeout & Kehabisan RAM
         ini_set('max_execution_time', '300'); // Beri waktu maksimal 5 menit
         ini_set('memory_limit', '1024M');     // Izinkan penggunaan memori hingga 1GB
 
-        $currentUser = auth()->user();
+        $user = auth()->user();
 
-        // Mulai Query Dasar Siswa
-        $query = Student::query();
+        // 2. Role-Based Access Control
+        abort_if(! $user->hasAnyRole(['superadmin', 'operator', 'guru', 'kepsek']), 403, 'Akses Ditolak');
 
-        // Keamanan Multi-Tenant: Hanya ambil siswa dari sekolah yang sama (kecuali superadmin)
-        if (! $currentUser->hasRole('superadmin')) {
-            $query->where('school_id', $currentUser->school_id);
+        // 3. Pengecekan Wilayah Sekolah (Multi-Tenant)
+        if (! $user->hasRole('superadmin') && $classroom->school_id !== $user->school_id) {
+            abort(403, 'Akses ditolak: Kelas ini berada di sekolah lain.');
         }
 
-        // Fitur Opsional: Filter berdasarkan request kode kelas (contoh: ?class_code=4 C)
-        if ($request->filled('class_code')) {
-            $query->where('class_code', $request->class_code);
-            $namaFile = 'Galeri_Foto_Kelas_'.str_replace(' ', '_', $request->class_code).'.pdf';
-        } else {
-            $namaFile = 'Galeri_Foto_Semua_Siswa.pdf';
+        // 4. Pengecekan Khusus Guru Wali Kelas
+        if ($user->hasRole('guru')) {
+            $employeeId = $user->employee->id ?? 0;
+            if ($classroom->homeroom_teacher_id !== $employeeId) {
+                abort(403, 'Akses ditolak: Anda bukan wali kelas untuk rombel ini.');
+            }
         }
 
-        // STRATEGI 2: Hemat Memori!
-        // JANGAN gunakan get() biasa. Gunakan select() agar data keluarga, alamat, dll tidak ikut termuat ke RAM.
-        $students = $query->select('id', 'nama_lengkap', 'foto', 'class_code')
-            ->orderBy('class_code', 'asc')
-            ->orderBy('nama_lengkap', 'asc')
-            ->get();
+        // 5. STRATEGI 2: Hemat Memori!
+        // Hanya panggil relasi students, dan batasi HANYA kolom yang diperlukan untuk view galeri
+        $classroom->load(['students' => function ($query) {
+            $query->select('students.id', 'nama_lengkap', 'foto') // Batasi kolom agar hemat RAM
+                ->orderBy('nama_lengkap', 'asc');
+        }, 'academicYear']);
 
-        // Hasilkan PDF
-        $pdf = Pdf::loadView('students.photos_pdf', compact('students'))
+        $students = $classroom->students;
+
+        // Generate penamaan file yang rapi
+        $namaFile = 'Galeri_Foto_Kelas_'.str_replace(' ', '_', $classroom->nama_kelas).'.pdf';
+
+        // 6. Hasilkan PDF
+        // Pastikan nama view ('classrooms.photos_pdf') mengarah ke file Blade yang tepat
+        $pdf = Pdf::loadView('classrooms.photos_pdf', compact('classroom', 'students'))
             ->setPaper('a4', 'portrait');
 
         return $pdf->download($namaFile);

@@ -87,8 +87,9 @@
 
 <body>
     <div class="header">
-        <h2>Galeri Foto Siswa</h2>
-        <p style="margin:0; font-size:12px;">Berdasarkan Data Profil Peserta Didik</p>
+        <!-- PERUBAHAN: Tampilkan nama kelas secara dinamis -->
+        <h2>Galeri Foto Kelas {{ $classroom->nama_kelas }}</h2>
+        <p style="margin:0; font-size:12px;">Tahun Ajaran: {{ $classroom->academicYear->tahun_ajaran ?? '-' }}</p>
     </div>
 
     <div class="gallery">
@@ -96,7 +97,7 @@
         <div class="photo-item">
 
             @php
-            // STRATEGI 3: Konversi ke Base64 agar DOMPDF tidak hang saat membaca gambar
+            // STRATEGI 3: Konversi ke Base64 agar DOMPDF tidak hang
             $imagePath = $student->foto ? public_path('storage/' . $student->foto) : null;
             $imageBase64 = null;
 
@@ -116,9 +117,8 @@
             @endif
 
             <div class="student-name">{{ $student->nama_lengkap }}</div>
-            @if($student->class_code)
-            <div class="class-badge">Kelas: {{ $student->class_code }}</div>
-            @endif
+
+            <!-- (Opsional) Class Code tidak terlalu dibutuhkan lagi karena ini sudah pasti 1 kelas -->
         </div>
         @endforeach
     </div>
