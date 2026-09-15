@@ -41,7 +41,6 @@
             text-align: center;
             vertical-align: top;
             page-break-inside: avoid;
-            /* Penting: Mencegah foto terbelah di antar halaman */
         }
 
         .photo-img {
@@ -76,18 +75,11 @@
             word-wrap: break-word;
             line-height: 1.2;
         }
-
-        .class-badge {
-            font-size: 9px;
-            color: #555;
-            margin-top: 2px;
-        }
     </style>
 </head>
 
 <body>
     <div class="header">
-        <!-- PERUBAHAN: Tampilkan nama kelas secara dinamis -->
         <h2>Galeri Foto Kelas {{ $classroom->nama_kelas }}</h2>
         <p style="margin:0; font-size:12px;">Tahun Ajaran: {{ $classroom->academicYear->tahun_ajaran ?? '-' }}</p>
     </div>
@@ -97,14 +89,46 @@
         <div class="photo-item">
 
             @php
-            // STRATEGI 3: Konversi ke Base64 agar DOMPDF tidak hang
             $imagePath = $student->foto ? public_path('storage/' . $student->foto) : null;
             $imageBase64 = null;
 
             if ($imagePath && file_exists($imagePath)) {
-            $type = pathinfo($imagePath, PATHINFO_EXTENSION);
-            $data = file_get_contents($imagePath);
-            $imageBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            try {
+            // Baca file gambar asli (WebP/PNG/JPG)
+            $imageString = file_get_contents($imagePath);
+            $im = @imagecreatefromstring($imageString);
+
+            if ($im !== false) {
+            $width = imagesx($im);
+            $height = imagesy($im);
+
+            // RESIZE: Perkecil resolusi menjadi lebar 200px (Sangat cukup tajam untuk cetak 4x6 cm)
+            // Ini akan memangkas beban DomPDF hingga 90%
+            $newWidth = 200;
+            $newHeight = floor($height * ($newWidth / $width));
+
+            $thumb = imagecreatetruecolor($newWidth, $newHeight);
+
+            // Beri background putih (mencegah error hitam jika gambar asli transparan)
+            $white = imagecolorallocate($thumb, 255, 255, 255);
+            imagefill($thumb, 0, 0, $white);
+
+            // Proses kompresi gambar
+            imagecopyresampled($thumb, $im, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+            // Output paksa ke format JPEG agar DomPDF tidak perlu memproses WebP
+            ob_start();
+            imagejpeg($thumb, null, 75); // Kualitas 75%
+            $resizedData = ob_get_clean();
+
+            $imageBase64 = 'data:image/jpeg;base64,' . base64_encode($resizedData);
+
+            imagedestroy($im);
+            imagedestroy($thumb);
+            }
+            } catch (\Exception $e) {
+            $imageBase64 = null;
+            }
             }
             @endphp
 
@@ -117,8 +141,6 @@
             @endif
 
             <div class="student-name">{{ $student->nama_lengkap }}</div>
-
-            <!-- (Opsional) Class Code tidak terlalu dibutuhkan lagi karena ini sudah pasti 1 kelas -->
         </div>
         @endforeach
     </div>
