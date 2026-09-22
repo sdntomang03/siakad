@@ -10,7 +10,7 @@
                     <div><label class="form-label">Mata pelajaran</label><select name="subject_id" class="form-input"><option value="">-- Pilih mapel --</option>@foreach($subjects as $subject)<option value="{{ $subject->id }}" @selected(old('subject_id', $assignment->subject_id) == $subject->id)>{{ $subject->nama_mapel }}</option>@endforeach</select></div>
                     <div><label class="form-label">Batas waktu</label><input type="datetime-local" name="due_at" value="{{ old('due_at', optional($assignment->due_at)->format('Y-m-d\TH:i')) }}" class="form-input"></div>
                 </div>
-                <div><label class="form-label">Petunjuk umum</label><div class="editor-toolbar"><button type="button" @mousedown.prevent="richTextCommand('bold')"><b>B</b></button><button type="button" @mousedown.prevent="richTextCommand('italic')"><i>I</i></button><button type="button" @mousedown.prevent="richTextCommand('insertUnorderedList')">• List</button><button type="button" @mousedown.prevent="richTextCommand('insertOrderedList')">1. List</button></div><div contenteditable="true" x-init="$el.innerHTML = description" @input="description = $event.target.innerHTML" class="rich-editor" data-placeholder="Tulis petunjuk tugas..."></div><input type="hidden" name="description" :value="description"></div>
+                <div><label class="form-label">Petunjuk umum</label><div class="flex justify-end mb-2"><button type="button" @click="toggleDescriptionSource()" class="source-toggle" x-text="descriptionSource ? 'Visual Editor' : 'Edit Source HTML'"></button></div><div x-show="!descriptionSource" x-init="initDescriptionEditor($el)" class="quill-editor" data-placeholder="Tulis petunjuk tugas..."></div><textarea x-show="descriptionSource" x-model="description" class="source-editor" rows="7" spellcheck="false"></textarea><input type="hidden" name="description" :value="description"></div>
 
                 <div class="border-t dark:border-slate-700 pt-5">
                     <div class="flex justify-between items-center mb-3"><div><h3 class="font-bold">Daftar item tugas</h3><p class="text-xs text-slate-500">Item yang sudah dipilih kelompok tidak dapat dihapus.</p></div><button type="button" @click="tasks.push({id: null, title: '', description: ''})" class="btn-secondary">+ Tambah tugas</button></div>
@@ -20,7 +20,7 @@
                                 <input type="hidden" :name="`task_ids[${index}]`" x-model="task.id">
                                 <div class="flex justify-between"><span class="text-xs font-bold text-slate-500">TUGAS <span x-text="index + 1"></span></span><button type="button" @click="tasks.splice(index, 1)" class="text-xs text-red-600">Hapus dari daftar</button></div>
                                 <input :name="`task_titles[${index}]`" x-model="task.title" class="form-input mt-2" required>
-                                <div class="editor-toolbar mt-2"><button type="button" @mousedown.prevent="richTextCommand('bold')"><b>B</b></button><button type="button" @mousedown.prevent="richTextCommand('italic')"><i>I</i></button><button type="button" @mousedown.prevent="richTextCommand('insertUnorderedList')">• List</button><button type="button" @mousedown.prevent="richTextCommand('insertOrderedList')">1. List</button></div><div contenteditable="true" x-init="$el.innerHTML = task.description" @input="task.description = $event.target.innerHTML" class="rich-editor" data-placeholder="Tulis instruksi tugas..." ></div>
+                                <div class="flex justify-end mt-2 mb-2"><button type="button" @click="toggleTaskSource(task)" class="source-toggle" x-text="task.sourceMode ? 'Visual Editor' : 'Edit Source HTML'"></button></div><div x-show="!task.sourceMode" x-init="initTaskEditor($el, task)" class="quill-editor" data-placeholder="Tulis instruksi tugas..." ></div><textarea x-show="task.sourceMode" x-model="task.description" class="source-editor" rows="7" spellcheck="false"></textarea>
                                 <input type="hidden" :name="`task_descriptions[${index}]`" :value="task.description">
                             </div>
                         </template>
@@ -50,17 +50,37 @@
         </div>
     </div>
     <style>.form-label{display:block;font-size:.75rem;font-weight:700;color:#64748b;margin-bottom:.4rem}.form-input{width:100%;border-radius:.75rem;border-color:#cbd5e1;background:transparent;padding:.65rem .8rem;font-size:.875rem}.rich-editor{min-height:7rem;width:100%;border:1px solid #cbd5e1;border-radius:.75rem;padding:.65rem .8rem;font-size:.875rem;background:transparent}.rich-editor:focus{outline:2px solid #818cf8;outline-offset:1px}.rich-editor:empty:before{content:attr(data-placeholder);color:#94a3b8}.rich-editor ol{list-style:decimal;padding-left:1.5rem}.rich-editor ul{list-style:disc;padding-left:1.5rem}.btn-secondary{padding:.55rem .8rem;border-radius:.65rem;background:#e2e8f0;color:#334155;font-size:.75rem;font-weight:700}</style>
-    <style>.editor-toolbar{display:flex;gap:.25rem;padding:.35rem;border:1px solid #cbd5e1;border-bottom:0;border-radius:.75rem .75rem 0 0;background:#f8fafc}.editor-toolbar button{padding:.15rem .45rem;border-radius:.35rem;color:#475569;font-size:.75rem}.rich-editor{border-radius:0 0 .75rem .75rem}</style>
+    <style>.editor-toolbar{display:flex;gap:.25rem;padding:.35rem;border:1px solid #cbd5e1;border-bottom:0;border-radius:.75rem .75rem 0 0;background:#f8fafc}.editor-toolbar button{padding:.15rem .45rem;border-radius:.35rem;color:#475569;font-size:.75rem}.source-toggle{margin-left:auto;font-weight:700;color:#4f46e5!important}.rich-editor{border-radius:0 0 .75rem .75rem}.source-editor{width:100%;border:1px solid #cbd5e1;border-radius:0 0 .75rem .75rem;padding:.65rem .8rem;font:.8rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;background:#0f172a;color:#e2e8f0}</style>
     <script>
         function assignmentEdit(data) {
             return {
                 type: data.type,
                 description: @json(old('description', $assignment->description)),
-                richTextCommand(command) {
-                    document.execCommand(command, false);
+                descriptionSource: false,
+                initDescriptionEditor(element) {
+                    this.descriptionQuill = window.createAssignmentQuill(element, this.description, value => this.description = value);
+                },
+                initTaskEditor(element, task) {
+                    task.quill = window.createAssignmentQuill(element, task.description, value => task.description = value);
+                },
+                toggleDescriptionSource() {
+                    if (!this.descriptionSource) {
+                        this.description = this.descriptionQuill.root.innerHTML;
+                    } else {
+                        this.descriptionQuill.root.innerHTML = this.description || '';
+                    }
+                    this.descriptionSource = !this.descriptionSource;
+                },
+                toggleTaskSource(task) {
+                    if (!task.sourceMode) {
+                        task.description = task.quill.root.innerHTML;
+                    } else {
+                        task.quill.root.innerHTML = task.description || '';
+                    }
+                    task.sourceMode = !task.sourceMode;
                 },
                 students: (data.classroom && data.classroom.students) || [],
-                tasks: (data.tasks || []).map(task => ({id: task.id, title: task.title, description: task.description})),
+                tasks: (data.tasks || []).map(task => ({id: task.id, title: task.title, description: task.description, sourceMode: false})),
                 groups: (data.groups || []).map(group => ({id: group.id, name: group.name, leader_student_id: String(group.leader_student_id), student_ids: group.students.map(student => String(student.id))})),
                 availableStudents(groupIndex) {
                     const used = this.groups.filter((group, index) => index !== groupIndex).flatMap(group => group.student_ids || []).map(id => String(id));

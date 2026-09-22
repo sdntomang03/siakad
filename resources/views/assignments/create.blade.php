@@ -38,8 +38,9 @@
                 </div>
                 <div>
                     <label class="form-label">Petunjuk umum</label>
-                    <div class="editor-toolbar"><button type="button" @mousedown.prevent="richTextCommand('bold')"><b>B</b></button><button type="button" @mousedown.prevent="richTextCommand('italic')"><i>I</i></button><button type="button" @mousedown.prevent="richTextCommand('insertUnorderedList')">• List</button><button type="button" @mousedown.prevent="richTextCommand('insertOrderedList')">1. List</button></div>
-                    <div contenteditable="true" @input="description = $event.target.innerHTML" class="rich-editor" data-placeholder="Tulis petunjuk tugas..."></div>
+                    <div class="flex justify-end mb-2"><button type="button" @click="toggleDescriptionSource()" class="source-toggle" x-text="descriptionSource ? 'Visual Editor' : 'Edit Source HTML'"></button></div>
+                    <div x-show="!descriptionSource" x-init="initDescriptionEditor($el)" class="quill-editor" data-placeholder="Tulis petunjuk tugas..."></div>
+                    <textarea x-show="descriptionSource" x-model="description" class="source-editor" rows="7" spellcheck="false" placeholder="<p>Tulis HTML petunjuk tugas...</p>"></textarea>
                     <input type="hidden" name="description" :value="description">
                 </div>
                 <div>
@@ -56,7 +57,7 @@
                             <h3 class="font-bold text-slate-800 dark:text-white">Daftar tugas yang tersedia</h3>
                             <p class="text-xs text-slate-500">Untuk tugas kelompok, setiap kelompok akan mengambil satu tugas yang belum pernah dipilih.</p>
                         </div>
-                        <button type="button" @click="tasks.push({title: '', description: ''})" class="btn-secondary">+ Tambah tugas</button>
+                        <button type="button" @click="tasks.push({title: '', description: '', sourceMode: false})" class="btn-secondary">+ Tambah tugas</button>
                     </div>
                     <div class="space-y-4">
                         <template x-for="(task, index) in tasks" :key="index">
@@ -66,7 +67,7 @@
                                     <button type="button" x-show="tasks.length > 1" @click="tasks.splice(index, 1)" class="text-xs text-red-600">Hapus</button>
                                 </div>
                                 <input :name="`task_titles[${index}]`" x-model="task.title" class="form-input mt-2" placeholder="Judul tugas" required>
-                                <div class="editor-toolbar mt-2"><button type="button" @mousedown.prevent="richTextCommand('bold')"><b>B</b></button><button type="button" @mousedown.prevent="richTextCommand('italic')"><i>I</i></button><button type="button" @mousedown.prevent="richTextCommand('insertUnorderedList')">• List</button><button type="button" @mousedown.prevent="richTextCommand('insertOrderedList')">1. List</button></div><div contenteditable="true" @input="task.description = $event.target.innerHTML" class="rich-editor" data-placeholder="Tulis instruksi tugas..."></div>
+                                <div class="flex justify-end mt-2 mb-2"><button type="button" @click="toggleTaskSource(task)" class="source-toggle" x-text="task.sourceMode ? 'Visual Editor' : 'Edit Source HTML'"></button></div><div x-show="!task.sourceMode" x-init="initTaskEditor($el, task)" class="quill-editor" data-placeholder="Tulis instruksi tugas..."></div><textarea x-show="task.sourceMode" x-model="task.description" class="source-editor" rows="7" spellcheck="false" placeholder="<p>Tulis HTML instruksi tugas...</p>"></textarea>
                                 <input type="hidden" :name="`task_descriptions[${index}]`" :value="task.description">
                             </div>
                         </template>
@@ -118,9 +119,9 @@
     </div>
     <style>
         .form-label { display:block; font-size:.75rem; font-weight:700; color:#64748b; margin-bottom:.4rem; text-transform:uppercase; }
-        .editor-toolbar { display:flex; gap:.25rem; padding:.35rem; border:1px solid #cbd5e1; border-bottom:0; border-radius:.75rem .75rem 0 0; background:#f8fafc; }
-        .editor-toolbar button { padding:.15rem .45rem; border-radius:.35rem; color:#475569; font-size:.75rem; }
-        .editor-toolbar button:hover { background:#e2e8f0; }
+        .source-toggle { font-size:.75rem; font-weight:700; color:#4f46e5; }
+        .source-editor { width:100%; border:1px solid #cbd5e1; border-radius:.75rem; padding:.65rem .8rem; font: .8rem/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; background:#0f172a; color:#e2e8f0; }
+        .quill-editor { min-height:8rem; }
         .form-input { width:100%; border-radius:.75rem; border-color:#cbd5e1; background:transparent; padding:.65rem .8rem; font-size:.875rem; }
         .btn-secondary { padding:.55rem .8rem; border-radius:.65rem; background:#e2e8f0; color:#334155; font-size:.75rem; font-weight:700; }
     </style>
@@ -131,10 +132,30 @@
                 classroomId: '',
                 type: 'individual',
                 description: '',
-                richTextCommand(command) {
-                    document.execCommand(command, false);
+                descriptionSource: false,
+                initDescriptionEditor(element) {
+                    this.descriptionQuill = window.createAssignmentQuill(element, this.description, value => this.description = value);
                 },
-                tasks: [{title: '', description: ''}],
+                initTaskEditor(element, task) {
+                    task.quill = window.createAssignmentQuill(element, task.description, value => task.description = value);
+                },
+                toggleDescriptionSource() {
+                    if (!this.descriptionSource) {
+                        this.description = this.descriptionQuill.root.innerHTML;
+                    } else {
+                        this.descriptionQuill.root.innerHTML = this.description || '';
+                    }
+                    this.descriptionSource = !this.descriptionSource;
+                },
+                toggleTaskSource(task) {
+                    if (!task.sourceMode) {
+                        task.description = task.quill.root.innerHTML;
+                    } else {
+                        task.quill.root.innerHTML = task.description || '';
+                    }
+                    task.sourceMode = !task.sourceMode;
+                },
+                tasks: [{title: '', description: '', sourceMode: false}],
                 groups: [{name: 'Kelompok 1', leader_student_id: '', student_ids: []}],
                 get classroomStudents() {
                     return (this.classrooms.find(item => String(item.id) === String(this.classroomId)) || {}).students || [];

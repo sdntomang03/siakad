@@ -1,4 +1,5 @@
 import './bootstrap';
+import './assignment-editor';
 
 import Alpine from 'alpinejs';
 
