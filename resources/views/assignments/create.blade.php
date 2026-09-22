@@ -38,7 +38,9 @@
                 </div>
                 <div>
                     <label class="form-label">Petunjuk umum</label>
-                    <textarea name="description" rows="3" class="form-input"></textarea>
+                    <div class="editor-toolbar"><button type="button" @mousedown.prevent="richTextCommand('bold')"><b>B</b></button><button type="button" @mousedown.prevent="richTextCommand('italic')"><i>I</i></button><button type="button" @mousedown.prevent="richTextCommand('insertUnorderedList')">• List</button><button type="button" @mousedown.prevent="richTextCommand('insertOrderedList')">1. List</button></div>
+                    <div contenteditable="true" @input="description = $event.target.innerHTML" class="rich-editor" data-placeholder="Tulis petunjuk tugas..."></div>
+                    <input type="hidden" name="description" :value="description">
                 </div>
                 <div>
                     <label class="form-label">Jenis tugas</label>
@@ -64,7 +66,8 @@
                                     <button type="button" x-show="tasks.length > 1" @click="tasks.splice(index, 1)" class="text-xs text-red-600">Hapus</button>
                                 </div>
                                 <input :name="`task_titles[${index}]`" x-model="task.title" class="form-input mt-2" placeholder="Judul tugas" required>
-                                <textarea :name="`task_descriptions[${index}]`" x-model="task.description" class="form-input mt-2" rows="2" placeholder="Instruksi tugas" required></textarea>
+                                <div class="editor-toolbar mt-2"><button type="button" @mousedown.prevent="richTextCommand('bold')"><b>B</b></button><button type="button" @mousedown.prevent="richTextCommand('italic')"><i>I</i></button><button type="button" @mousedown.prevent="richTextCommand('insertUnorderedList')">• List</button><button type="button" @mousedown.prevent="richTextCommand('insertOrderedList')">1. List</button></div><div contenteditable="true" @input="task.description = $event.target.innerHTML" class="rich-editor" data-placeholder="Tulis instruksi tugas..."></div>
+                                <input type="hidden" :name="`task_descriptions[${index}]`" :value="task.description">
                             </div>
                         </template>
                     </div>
@@ -115,6 +118,9 @@
     </div>
     <style>
         .form-label { display:block; font-size:.75rem; font-weight:700; color:#64748b; margin-bottom:.4rem; text-transform:uppercase; }
+        .editor-toolbar { display:flex; gap:.25rem; padding:.35rem; border:1px solid #cbd5e1; border-bottom:0; border-radius:.75rem .75rem 0 0; background:#f8fafc; }
+        .editor-toolbar button { padding:.15rem .45rem; border-radius:.35rem; color:#475569; font-size:.75rem; }
+        .editor-toolbar button:hover { background:#e2e8f0; }
         .form-input { width:100%; border-radius:.75rem; border-color:#cbd5e1; background:transparent; padding:.65rem .8rem; font-size:.875rem; }
         .btn-secondary { padding:.55rem .8rem; border-radius:.65rem; background:#e2e8f0; color:#334155; font-size:.75rem; font-weight:700; }
     </style>
@@ -124,6 +130,10 @@
                 classrooms,
                 classroomId: '',
                 type: 'individual',
+                description: '',
+                richTextCommand(command) {
+                    document.execCommand(command, false);
+                },
                 tasks: [{title: '', description: ''}],
                 groups: [{name: 'Kelompok 1', leader_student_id: '', student_ids: []}],
                 get classroomStudents() {

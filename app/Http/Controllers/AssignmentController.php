@@ -9,6 +9,8 @@ use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use HTMLPurifier;
+use HTMLPurifier_Config;
 
 class AssignmentController extends Controller
 {
@@ -97,7 +99,7 @@ class AssignmentController extends Controller
                 'subject_id' => $validated['subject_id'] ?? null,
                 'employee_id' => $user->employee->id,
                 'title' => $validated['title'],
-                'description' => $validated['description'] ?? null,
+                'description' => $this->cleanHtml($validated['description'] ?? null),
                 'type' => $validated['type'],
                 'due_at' => $validated['due_at'] ?? null,
             ]);
@@ -105,7 +107,7 @@ class AssignmentController extends Controller
             foreach ($validated['task_titles'] as $index => $title) {
                 $assignment->tasks()->create([
                     'title' => $title,
-                    'description' => $validated['task_descriptions'][$index] ?? '',
+                    'description' => $this->cleanHtml($validated['task_descriptions'][$index] ?? ''),
                 ]);
             }
 
@@ -210,7 +212,7 @@ class AssignmentController extends Controller
             $assignment->update([
                 'subject_id' => $validated['subject_id'] ?? null,
                 'title' => $validated['title'],
-                'description' => $validated['description'] ?? null,
+                'description' => $this->cleanHtml($validated['description'] ?? null),
                 'due_at' => $validated['due_at'] ?? null,
             ]);
 
@@ -222,7 +224,7 @@ class AssignmentController extends Controller
                     : $assignment->tasks()->create([]);
                 $task->update([
                     'title' => $title,
-                    'description' => $validated['task_descriptions'][$index] ?? '',
+                    'description' => $this->cleanHtml($validated['task_descriptions'][$index] ?? ''),
                 ]);
                 $submittedTaskIds[] = $task->id;
             }
@@ -294,6 +296,20 @@ class AssignmentController extends Controller
     {
         abort_unless($user->hasRole('guru'), 403);
         abort_unless($assignment->school_id === $user->school_id && $assignment->employee_id === $user->employee?->id, 403);
+    }
+
+    private function cleanHtml(?string $html): ?string
+    {
+        if ($html === null || trim($html) === '') {
+            return null;
+        }
+
+        $config = HTMLPurifier_Config::createDefault();
+        $config->set('HTML.Allowed', 'p,br,strong,b,em,i,u,ol,ul,li,h2,h3,h4,blockquote,a[href|title|target]');
+        $config->set('URI.DisableExternalResources', true);
+        $config->set('Attr.AllowedFrameTargets', ['_blank']);
+
+        return (new HTMLPurifier($config))->purify($html);
     }
 
     public function selectTask(Assignment $assignment)

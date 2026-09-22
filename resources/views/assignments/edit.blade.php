@@ -10,7 +10,7 @@
                     <div><label class="form-label">Mata pelajaran</label><select name="subject_id" class="form-input"><option value="">-- Pilih mapel --</option>@foreach($subjects as $subject)<option value="{{ $subject->id }}" @selected(old('subject_id', $assignment->subject_id) == $subject->id)>{{ $subject->nama_mapel }}</option>@endforeach</select></div>
                     <div><label class="form-label">Batas waktu</label><input type="datetime-local" name="due_at" value="{{ old('due_at', optional($assignment->due_at)->format('Y-m-d\TH:i')) }}" class="form-input"></div>
                 </div>
-                <div><label class="form-label">Petunjuk umum</label><textarea name="description" rows="3" class="form-input">{{ old('description', $assignment->description) }}</textarea></div>
+                <div><label class="form-label">Petunjuk umum</label><div class="editor-toolbar"><button type="button" @mousedown.prevent="richTextCommand('bold')"><b>B</b></button><button type="button" @mousedown.prevent="richTextCommand('italic')"><i>I</i></button><button type="button" @mousedown.prevent="richTextCommand('insertUnorderedList')">• List</button><button type="button" @mousedown.prevent="richTextCommand('insertOrderedList')">1. List</button></div><div contenteditable="true" x-init="$el.innerHTML = description" @input="description = $event.target.innerHTML" class="rich-editor" data-placeholder="Tulis petunjuk tugas..."></div><input type="hidden" name="description" :value="description"></div>
 
                 <div class="border-t dark:border-slate-700 pt-5">
                     <div class="flex justify-between items-center mb-3"><div><h3 class="font-bold">Daftar item tugas</h3><p class="text-xs text-slate-500">Item yang sudah dipilih kelompok tidak dapat dihapus.</p></div><button type="button" @click="tasks.push({id: null, title: '', description: ''})" class="btn-secondary">+ Tambah tugas</button></div>
@@ -20,7 +20,8 @@
                                 <input type="hidden" :name="`task_ids[${index}]`" x-model="task.id">
                                 <div class="flex justify-between"><span class="text-xs font-bold text-slate-500">TUGAS <span x-text="index + 1"></span></span><button type="button" @click="tasks.splice(index, 1)" class="text-xs text-red-600">Hapus dari daftar</button></div>
                                 <input :name="`task_titles[${index}]`" x-model="task.title" class="form-input mt-2" required>
-                                <textarea :name="`task_descriptions[${index}]`" x-model="task.description" class="form-input mt-2" rows="2" required></textarea>
+                                <div class="editor-toolbar mt-2"><button type="button" @mousedown.prevent="richTextCommand('bold')"><b>B</b></button><button type="button" @mousedown.prevent="richTextCommand('italic')"><i>I</i></button><button type="button" @mousedown.prevent="richTextCommand('insertUnorderedList')">• List</button><button type="button" @mousedown.prevent="richTextCommand('insertOrderedList')">1. List</button></div><div contenteditable="true" x-init="$el.innerHTML = task.description" @input="task.description = $event.target.innerHTML" class="rich-editor" data-placeholder="Tulis instruksi tugas..." ></div>
+                                <input type="hidden" :name="`task_descriptions[${index}]`" :value="task.description">
                             </div>
                         </template>
                     </div>
@@ -48,11 +49,16 @@
             </form>
         </div>
     </div>
-    <style>.form-label{display:block;font-size:.75rem;font-weight:700;color:#64748b;margin-bottom:.4rem;text-transform:uppercase}.form-input{width:100%;border-radius:.75rem;border-color:#cbd5e1;background:transparent;padding:.65rem .8rem;font-size:.875rem}.btn-secondary{padding:.55rem .8rem;border-radius:.65rem;background:#e2e8f0;color:#334155;font-size:.75rem;font-weight:700}</style>
+    <style>.form-label{display:block;font-size:.75rem;font-weight:700;color:#64748b;margin-bottom:.4rem}.form-input{width:100%;border-radius:.75rem;border-color:#cbd5e1;background:transparent;padding:.65rem .8rem;font-size:.875rem}.rich-editor{min-height:7rem;width:100%;border:1px solid #cbd5e1;border-radius:.75rem;padding:.65rem .8rem;font-size:.875rem;background:transparent}.rich-editor:focus{outline:2px solid #818cf8;outline-offset:1px}.rich-editor:empty:before{content:attr(data-placeholder);color:#94a3b8}.rich-editor ol{list-style:decimal;padding-left:1.5rem}.rich-editor ul{list-style:disc;padding-left:1.5rem}.btn-secondary{padding:.55rem .8rem;border-radius:.65rem;background:#e2e8f0;color:#334155;font-size:.75rem;font-weight:700}</style>
+    <style>.editor-toolbar{display:flex;gap:.25rem;padding:.35rem;border:1px solid #cbd5e1;border-bottom:0;border-radius:.75rem .75rem 0 0;background:#f8fafc}.editor-toolbar button{padding:.15rem .45rem;border-radius:.35rem;color:#475569;font-size:.75rem}.rich-editor{border-radius:0 0 .75rem .75rem}</style>
     <script>
         function assignmentEdit(data) {
             return {
                 type: data.type,
+                description: @json(old('description', $assignment->description)),
+                richTextCommand(command) {
+                    document.execCommand(command, false);
+                },
                 students: (data.classroom && data.classroom.students) || [],
                 tasks: (data.tasks || []).map(task => ({id: task.id, title: task.title, description: task.description})),
                 groups: (data.groups || []).map(group => ({id: group.id, name: group.name, leader_student_id: String(group.leader_student_id), student_ids: group.students.map(student => String(student.id))})),
