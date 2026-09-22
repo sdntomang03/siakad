@@ -12,14 +12,18 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'login' => 'required',
+            'login' => 'sometimes|required_without:email',
+            'email' => 'sometimes|required_without:login|email',
+            'username' => 'sometimes|required_without:login|string',
             'password' => 'required',
         ]);
 
-        // Cek apakah input berupa email atau username (NISN/NIP)
-        $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $loginIdentifier = $request->input('login') ?? $request->input('email') ?? $request->input('username');
 
-        $user = User::where($loginField, $request->login)->first();
+        // Cek apakah input berupa email atau username (NISN/NIP)
+        $loginField = filter_var($loginIdentifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        $user = User::where($loginField, $loginIdentifier)->first();
 
         // Jika user tidak ditemukan atau password salah
         if (! $user || ! Hash::check($request->password, $user->password)) {

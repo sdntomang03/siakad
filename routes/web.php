@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AcademicYearController;
+use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\AssetController;
@@ -94,6 +95,16 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('admin')->name('superadmi
 });
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('assignments', [AssignmentController::class, 'index'])->name('assignments.index');
+    Route::get('assignments/create', [AssignmentController::class, 'create'])->name('assignments.create');
+    Route::get('assignments/{assignment}/edit', [AssignmentController::class, 'edit'])->name('assignments.edit');
+    Route::put('assignments/{assignment}', [AssignmentController::class, 'update'])->name('assignments.update');
+    Route::delete('assignments/{assignment}', [AssignmentController::class, 'destroy'])->name('assignments.destroy');
+    Route::delete('assignments/{assignment}/tasks/{task}', [AssignmentController::class, 'destroyTask'])->name('assignments.tasks.destroy');
+    Route::get('assignments/{assignment}', [AssignmentController::class, 'show'])->name('assignments.show');
+    Route::post('assignments/{assignment}/select-task', [AssignmentController::class, 'selectTask'])
+        ->name('assignments.select-task');
+
     Route::get('/modul-generator', [ModulAjarController::class, 'index'])->name('modul.generator');
     Route::post('/modul-generator/store', [ModulAjarController::class, 'store'])->name('modul.store');
     // Tambahkan di dalam group route yang sudah ada
@@ -204,6 +215,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'role:guru'])->group(function () {
 
+    Route::post('assignments', [AssignmentController::class, 'store'])->name('assignments.store');
     Route::get('/katrol-nilai', [GradeCurveController::class, 'index'])->name('katrol.index');
     Route::post('/katrol-nilai/process', [GradeCurveController::class, 'process'])->name('katrol.process');
     // 1. Halaman Riwayat Penilaian (Daftar penilaian yang pernah dibuat)

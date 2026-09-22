@@ -172,7 +172,7 @@ class ExamGradeController extends Controller
         $classroomId = $request->classroom_id;
         $subjectId = $request->subject_id;
         $kategoriUjian = $request->kategori_ujian;
-        $semester = 2j;
+        $semester = 2;
 
         $students = collect();
         $existingGrades = [];

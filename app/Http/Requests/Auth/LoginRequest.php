@@ -28,9 +28,16 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'login' => ['required', 'string'],
+            'login' => ['sometimes', 'required_without:email', 'string'],
+            'email' => ['sometimes', 'nullable', 'email'],
+            'username' => ['sometimes', 'nullable', 'string'],
             'password' => ['required', 'string'],
         ];
+    }
+
+    public function resolveLoginIdentifier(): string
+    {
+        return trim((string) ($this->input('login') ?? $this->input('email') ?? $this->input('username') ?? ''));
     }
 
     /**
@@ -42,12 +49,11 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        // Cek apakah inputan menggunakan format email atau bukan
-        $loginField = filter_var($this->input('login'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $loginIdentifier = $this->resolveLoginIdentifier();
+        $loginField = filter_var($loginIdentifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        // Susun kredensial berdasarkan hasil cek di atas
         $credentials = [
-            $loginField => $this->input('login'),
+            $loginField => $loginIdentifier,
             'password' => $this->input('password'),
         ];
 
@@ -55,7 +61,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'login' => trans('auth.failed'), // Ubah pesan error ke 'login'
+                'login' => trans('auth.failed'),
             ]);
         }
 
@@ -90,6 +96,9 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        $identifier = $this->resolveLoginIdentifier();
+        $fallback = $this->input('email') ?? $this->input('username') ?? 'guest';
+
+        return Str::transliterate(Str::lower($identifier ?: $fallback).'|'.$this->ip());
     }
 }
