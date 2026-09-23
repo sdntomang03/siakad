@@ -381,15 +381,12 @@
     <div class="document-header">
 
         <h1 class="document-title">
-            DIALOG KINERJA
+            KEMAJUAN TARGET RENCANA AKSI<br>
+            MELALUI PELAPORAN DIALOG KINERJA - GURU KELAS SD
         </h1>
 
         <div class="document-period">
-            {{ \Carbon\Carbon::createFromDate(
-            $validated['tahun'],
-            $validated['bulan'],
-            1
-            )->locale('id')->isoFormat('MMMM YYYY') }}
+            Periode {{ $periode }} - {{ $namaBulan }} {{ $validated['tahun'] }} - {{ $triwulan }}
         </div>
 
     </div>
@@ -405,7 +402,7 @@
 
             <tr>
                 <td class="identity-label">
-                    Nama
+                    NAMA
                 </td>
 
                 <td class="identity-colon">
@@ -420,7 +417,7 @@
 
             <tr>
                 <td class="identity-label">
-                    NIP
+                    NIP/NRK
                 </td>
 
                 <td class="identity-colon">
@@ -428,14 +425,14 @@
                 </td>
 
                 <td class="identity-value">
-                    {{ $employee?->nip ?? '-' }}
+                    {{ $employee?->nip ?? '-' }}/{{ $employee?->nrk ?? '-' }}
                 </td>
             </tr>
 
 
             <tr>
                 <td class="identity-label">
-                    Sekolah
+                    SEKOLAH
                 </td>
 
                 <td class="identity-colon">

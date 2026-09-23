@@ -533,6 +533,11 @@ class EtppController extends Controller
         $user = $request->user();
         $employee = $user->employee;
         $school = $user->school;
+        $triwulan = 'TW '.(int) ceil($validated['bulan'] / 3);
+        $periode = (($validated['bulan'] - 1) % 3) + 1;
+        $namaBulan = \Carbon\Carbon::createFromDate($validated['tahun'], $validated['bulan'], 1)
+            ->locale('id')
+            ->isoFormat('MMMM');
         $dialogKinerja = DialogKinerja::where('user_id', $user->id)
             ->where('tahun', $validated['tahun'])
             ->where('bulan', $validated['bulan'])
@@ -540,7 +545,10 @@ class EtppController extends Controller
             ->first();
 
         $recapUrl = route('etpp.dialog-kinerja.recap', ['user' => $user->id, 'tahun' => $validated['tahun'], 'bulan' => $validated['bulan']]);
-        $pdf = Pdf::loadView('etpp.pdf-dialog-kinerja', compact('user', 'employee', 'school', 'dialogKinerja', 'validated', 'recapUrl'))
+        $pdf = Pdf::loadView('etpp.pdf-dialog-kinerja', compact(
+            'user', 'employee', 'school', 'dialogKinerja', 'validated', 'recapUrl',
+            'triwulan', 'periode', 'namaBulan'
+        ))
             ->setPaper('a4', 'portrait');
 
         return $pdf->download("Dialog_Kinerja_{$validated['tahun']}_".str_pad((string) $validated['bulan'], 2, '0', STR_PAD_LEFT).'.pdf');
