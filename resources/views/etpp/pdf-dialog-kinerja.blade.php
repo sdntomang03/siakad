@@ -418,7 +418,7 @@
 
             <tr>
                 <td class="identity-label">
-                    NIP/NRK
+                    NIP
                 </td>
 
                 <td class="identity-colon">
@@ -426,7 +426,7 @@
                 </td>
 
                 <td class="identity-value">
-                    {{ $employee?->nip ?? '-' }}/{{ $employee?->nrk ?? '-' }}
+                    {{ $employee?->nip ?? '-' }}
                 </td>
             </tr>
 
