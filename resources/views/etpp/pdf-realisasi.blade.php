@@ -52,7 +52,7 @@
 
 <body>
     <h1>REALISASI RENKIN {{ $validated['triwulan'] }} - GURU KELAS SD</h1>
-    <h2>Tahun {{ $validated['tahun'] }}</h2>
+    <h1>Tahun {{ $validated['tahun'] }}</h1>
     <h3>{{ $employee?->nama_lengkap ?? $user->name }}</h3>
     <h3>NIP: {{ $employee?->nip ?? '-' }}</h3>
     <h3>{{ $school?->nama_sekolah ?? config('app.name') }}</h3>
