@@ -8,6 +8,14 @@ class OutputTarget extends Model
 {
     protected $table = 'output_target';
 
+    protected $fillable = [
+        'user_id',
+        'rencana_aksi_id',
+        'deskripsi_output',
+        'target_waktu',
+        'tahun',
+    ];
+
     public function buktiDukung()
     {
         return $this->hasMany(BuktiDukung::class, 'output_target_id');

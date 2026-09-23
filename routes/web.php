@@ -306,8 +306,16 @@ Route::middleware('auth')->group(function () {
 
     // Rute e-Kinerja Saya
     Route::get('/etpp/ku', [EtppController::class, 'myEkinerja'])->name('etpp.ku');
+    Route::get('/etpp/realisasi', [EtppController::class, 'realisasiIndex'])->name('etpp.realisasi.index');
+    Route::post('/etpp/realisasi/batch', [EtppController::class, 'saveRealisasiBatch'])->name('etpp.realisasi.batch');
+    Route::get('/etpp/dialog-kinerja', [EtppController::class, 'dialogKinerjaIndex'])->name('etpp.dialog-kinerja.index');
+    Route::post('/etpp/dialog-kinerja/batch', [EtppController::class, 'saveDialogKinerjaBatch'])->name('etpp.dialog-kinerja.batch');
     Route::post('/etpp/realisasi', [EtppController::class, 'storeRealisasi'])->name('etpp.realisasi.store');
+    Route::put('/etpp/realisasi/{realisasi}', [EtppController::class, 'updateRealisasi'])->name('etpp.realisasi.update');
+    Route::delete('/etpp/realisasi/{realisasi}', [EtppController::class, 'destroyRealisasi'])->name('etpp.realisasi.destroy');
     Route::post('/etpp/dialog-kinerja', [EtppController::class, 'storeDialogKinerja'])->name('etpp.dialog-kinerja.store');
+    Route::put('/etpp/dialog-kinerja/{dialogKinerja}', [EtppController::class, 'updateDialogKinerja'])->name('etpp.dialog-kinerja.update');
+    Route::delete('/etpp/dialog-kinerja/{dialogKinerja}', [EtppController::class, 'destroyDialogKinerja'])->name('etpp.dialog-kinerja.destroy');
     Route::get('/etpp/realisasi/pdf', [EtppController::class, 'downloadRealisasiPdf'])->name('etpp.realisasi.pdf');
     Route::get('/etpp/dialog-kinerja/pdf', [EtppController::class, 'downloadDialogKinerjaPdf'])->name('etpp.dialog-kinerja.pdf');
 
@@ -321,6 +329,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/etpp/import', [EtppController::class, 'importJson'])->name('etpp.import.process');
 
 });
+Route::get('/rekap-etpp/realisasi/{user}/{tahun}/{bulan}', [EtppController::class, 'realisasiRecap'])->name('etpp.realisasi.recap');
+Route::get('/rekap-etpp/dialog-kinerja/{user}/{tahun}/{bulan}', [EtppController::class, 'dialogKinerjaRecap'])->name('etpp.dialog-kinerja.recap');
 Route::get('/renkin', [RenkinController::class, 'index'])->name('renkin.index');
 
 // Rute Pencarian dan Lihat e-Kinerja berdasarkan NIP

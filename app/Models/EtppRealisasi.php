@@ -11,9 +11,12 @@ class EtppRealisasi extends Model
     protected $fillable = [
         'user_id',
         'output_target_id',
+        'nama_output',
         'triwulan',
         'tahun',
+        'bulan',
         'realisasi',
+        'link_referensi',
     ];
 
     public function outputTarget()

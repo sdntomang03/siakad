@@ -160,6 +160,13 @@
                                 class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm"
                                 placeholder="Jelaskan hasil atau capaian realisasi...">{{ old('realisasi') }}</textarea>
                         </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1" for="realisasi_link_referensi">Link Profil Realisasi</label>
+                            <input id="realisasi_link_referensi" name="link_referensi" type="url" value="{{ old('link_referensi') }}"
+                                maxlength="2048" placeholder="https://contoh.go.id/profil-realisasi"
+                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Opsional. Link akan muncul di bawah daftar realisasi dan pada PDF.</p>
+                        </div>
                         <button type="submit" class="w-full px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition">
                             Simpan Realisasi
                         </button>
@@ -167,12 +174,40 @@
 
                     @if($realisasiList->isNotEmpty())
                     <div class="mt-5 pt-4 border-t border-gray-100 dark:border-gray-700 space-y-2">
-                        <p class="text-xs font-bold text-gray-500 uppercase">Realisasi tersimpan tahun {{ $tahun }}</p>
+                        <p class="text-xs font-bold text-gray-500 uppercase">
+                            Daftar Realisasi {{ $filter_tw === 'semua' ? 'Semua Triwulan' : $filter_tw }} Tahun {{ $tahun }}
+                        </p>
                         @foreach($realisasiList as $realisasiItem)
-                        <div class="text-sm p-3 rounded-lg bg-gray-50 dark:bg-gray-900/50">
-                            <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ $realisasiItem->triwulan }}</span>
-                            <span class="text-gray-700 dark:text-gray-200">— {{ $realisasiItem->outputTarget->deskripsi_output }}</span>
-                        </div>
+                        <details class="text-sm p-3 rounded-lg bg-gray-50 dark:bg-gray-900/50">
+                            <summary class="cursor-pointer">
+                                <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ $realisasiItem->triwulan }}</span>
+                                <span class="text-gray-700 dark:text-gray-200">— {{ $realisasiItem->outputTarget->deskripsi_output }}</span>
+                            </summary>
+                            <form action="{{ route('etpp.realisasi.update', $realisasiItem) }}" method="POST" class="mt-3 space-y-2">
+                                @csrf
+                                @method('PUT')
+                                <textarea name="realisasi" rows="3" required maxlength="10000"
+                                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm">{{ $realisasiItem->realisasi }}</textarea>
+                                <input name="link_referensi" type="url" value="{{ $realisasiItem->link_referensi }}" maxlength="2048"
+                                    placeholder="https://contoh.go.id/profil-realisasi"
+                                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm">
+                                <div class="flex flex-wrap items-center gap-3">
+                                    <button type="submit" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">Perbarui</button>
+                                    @if($realisasiItem->link_referensi)
+                                    <a href="{{ $realisasiItem->link_referensi }}" target="_blank" rel="noopener noreferrer"
+                                        class="text-xs font-bold text-emerald-600 hover:text-emerald-800 dark:text-emerald-400">
+                                        Buka Profil Realisasi
+                                    </a>
+                                    @endif
+                                </div>
+                            </form>
+                            <form action="{{ route('etpp.realisasi.destroy', $realisasiItem) }}" method="POST" class="mt-2"
+                                onsubmit="return confirm('Hapus realisasi ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-xs font-bold text-red-600 hover:text-red-800 dark:text-red-400">Hapus</button>
+                            </form>
+                        </details>
                         @endforeach
                     </div>
                     @endif
@@ -218,10 +253,39 @@
                                 class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm"
                                 placeholder="Tuliskan pokok pembahasan, arahan, dan tindak lanjut...">{{ old('uraian', $dialogKinerja?->uraian) }}</textarea>
                         </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1" for="dialog_link_referensi">Link Profil Dialog Kinerja</label>
+                            <input id="dialog_link_referensi" name="link_referensi" type="url" value="{{ old('link_referensi', $dialogKinerja?->link_referensi) }}"
+                                maxlength="2048" placeholder="https://contoh.go.id/profil-dialog-kinerja"
+                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Opsional. Link akan dapat dibuka dari profil dialog dan PDF.</p>
+                        </div>
                         <button type="submit" class="w-full px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition">
                             Simpan Dialog Kinerja
                         </button>
                     </form>
+
+                    @if($dialogKinerja)
+                    <div class="mt-5 pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <p class="text-xs font-bold text-gray-500 uppercase">Profil Dialog Kinerja Terpilih</p>
+                        <div class="mt-2 flex flex-wrap items-center gap-3">
+                            @if($dialogKinerja->link_referensi)
+                            <a href="{{ $dialogKinerja->link_referensi }}" target="_blank" rel="noopener noreferrer"
+                                class="text-sm font-bold text-emerald-600 hover:text-emerald-800 dark:text-emerald-400">
+                                Buka Profil Dialog Kinerja
+                            </a>
+                            @else
+                            <span class="text-sm text-gray-500 dark:text-gray-400">Belum ada link profil.</span>
+                            @endif
+                            <form action="{{ route('etpp.dialog-kinerja.destroy', $dialogKinerja) }}" method="POST"
+                                onsubmit="return confirm('Hapus dialog kinerja bulan ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-xs font-bold text-red-600 hover:text-red-800 dark:text-red-400">Hapus Dialog</button>
+                            </form>
+                        </div>
+                    </div>
+                    @endif
                 </section>
             </div>
 

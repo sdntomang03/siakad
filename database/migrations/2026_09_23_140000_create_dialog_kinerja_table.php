@@ -14,6 +14,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('tahun');
             $table->unsignedTinyInteger('bulan');
             $table->text('uraian');
+            $table->string('link_referensi', 2048)->nullable();
             $table->timestamps();
 
             $table->unique(['user_id', 'tahun', 'bulan'], 'dialog_kinerja_periode_unique');

@@ -193,6 +193,35 @@
             </div>
         </div>
 
+        @hasanyrole('superadmin|operator|guru|kepsek')
+        <div x-data="{ open: {{ request()->routeIs('etpp.*') ? 'true' : 'false' }} }" class="space-y-1">
+            <button @click="open = !open; if(!sidebarOpen) sidebarOpen = true"
+                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-700 hover:text-white"
+                :class="open ? 'bg-slate-800 text-white' : 'text-slate-300'">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 002 2h2"></path>
+                    </svg>
+                    <span x-show="sidebarOpen" class="truncate">e-TPP</span>
+                </div>
+                <svg x-show="sidebarOpen" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            <div x-show="open && sidebarOpen" x-collapse class="pl-4 pr-2 space-y-1">
+                <x-sidebar-link :href="route('etpp.realisasi.index')" :active="request()->routeIs('etpp.realisasi.*')"
+                    icon="M9 5l7 7-7 7">
+                    Realisasi Triwulan
+                </x-sidebar-link>
+                <x-sidebar-link :href="route('etpp.dialog-kinerja.index')" :active="request()->routeIs('etpp.dialog-kinerja.*')"
+                    icon="M9 5l7 7-7 7">
+                    Dialog Kinerja
+                </x-sidebar-link>
+            </div>
+        </div>
+        @endhasanyrole
+
         <div x-data="{ open: {{ request()->routeIs('book-loans.*', 'report-submissions.*', 'admin.asset-tracking.*', 'kelulusan.*') ? 'true' : 'false' }} }"
             class="space-y-1">
             <button @click="open = !open; if(!sidebarOpen) sidebarOpen = true"

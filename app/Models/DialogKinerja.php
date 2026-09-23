@@ -13,5 +13,11 @@ class DialogKinerja extends Model
         'tahun',
         'bulan',
         'uraian',
+        'link_referensi',
     ];
+
+    public function items()
+    {
+        return $this->hasMany(DialogKinerjaItem::class);
+    }
 }
