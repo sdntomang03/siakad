@@ -12,4 +12,9 @@ class RencanaAksi extends Model
     {
         return $this->hasMany(OutputTarget::class, 'rencana_aksi_id');
     }
+
+    public function rhk()
+    {
+        return $this->belongsTo(Rhk::class, 'rhk_id');
+    }
 }

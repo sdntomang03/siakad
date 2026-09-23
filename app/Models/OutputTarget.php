@@ -12,4 +12,14 @@ class OutputTarget extends Model
     {
         return $this->hasMany(BuktiDukung::class, 'output_target_id');
     }
+
+    public function rencanaAksi()
+    {
+        return $this->belongsTo(RencanaAksi::class, 'rencana_aksi_id');
+    }
+
+    public function realisasi()
+    {
+        return $this->hasMany(EtppRealisasi::class, 'output_target_id');
+    }
 }

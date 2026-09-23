@@ -53,7 +53,7 @@
             </div>
             @endif
 
-            {{-- Card Filter TW (Tanpa Input NIP) --}}
+            {{-- Filter periode dokumen --}}
             <div
                 class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
                 <form action="{{ route('etpp.ku') }}" method="GET"
@@ -74,6 +74,24 @@
                             <option value="TW 4" {{ $filter_tw=='TW 4' ? 'selected' : '' }}>Triwulan 4 (TW 4)</option>
                         </select>
                     </div>
+                    <div class="w-full sm:w-1/4">
+                        <label for="tahun"
+                            class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Tahun</label>
+                        <input id="tahun" name="tahun" type="number" min="2000" max="2100" value="{{ $tahun }}"
+                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-base sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
+                    </div>
+                    <div class="w-full sm:w-1/4">
+                        <label for="bulan"
+                            class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Bulan Dialog</label>
+                        <select id="bulan" name="bulan"
+                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-base sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
+                            @foreach(range(1, 12) as $nomorBulan)
+                            <option value="{{ $nomorBulan }}" {{ $bulan === $nomorBulan ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::createFromDate($tahun, $nomorBulan, 1)->locale('id')->isoFormat('MMMM') }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     {{-- Tombol Aksi --}}
                     <div class="w-full sm:w-auto">
@@ -83,6 +101,128 @@
                         </button>
                     </div>
                 </form>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <section class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <div class="flex items-start justify-between gap-4 mb-5">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Realisasi Triwulan</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Simpan realisasi untuk setiap output e-Kinerja.</p>
+                        </div>
+                        <form action="{{ route('etpp.realisasi.pdf') }}" method="GET" class="shrink-0">
+                            <input type="hidden" name="tahun" value="{{ $tahun }}">
+                            <div class="flex items-center gap-2">
+                                <select name="triwulan" aria-label="Triwulan PDF realisasi"
+                                    class="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-xs py-1">
+                                    @foreach(['TW 1', 'TW 2', 'TW 3', 'TW 4'] as $triwulan)
+                                    <option value="{{ $triwulan }}" {{ $filter_tw === $triwulan ? 'selected' : '' }}>{{ $triwulan }}</option>
+                                    @endforeach
+                                </select>
+                                <button type="submit" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">
+                                    Unduh PDF
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <form action="{{ route('etpp.realisasi.store') }}" method="POST" class="space-y-3">
+                        @csrf
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1" for="realisasi_tahun">Tahun</label>
+                                <input id="realisasi_tahun" name="tahun" type="number" min="2000" max="2100" value="{{ old('tahun', $tahun) }}" required
+                                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1" for="triwulan">Triwulan</label>
+                                <select id="triwulan" name="triwulan" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm">
+                                    @foreach(['TW 1', 'TW 2', 'TW 3', 'TW 4'] as $triwulan)
+                                    <option value="{{ $triwulan }}" {{ old('triwulan', $filter_tw === 'semua' ? '' : $filter_tw) === $triwulan ? 'selected' : '' }}>{{ $triwulan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1" for="output_target_id">Output e-Kinerja</label>
+                            <select id="output_target_id" name="output_target_id" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm">
+                                <option value="">Pilih output</option>
+                                @foreach($outputTargets as $outputTarget)
+                                <option value="{{ $outputTarget->id }}" {{ old('output_target_id') == $outputTarget->id ? 'selected' : '' }}>
+                                    {{ $outputTarget->target_waktu }} - {{ \Illuminate\Support\Str::limit($outputTarget->deskripsi_output, 90) }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1" for="realisasi">Uraian Realisasi</label>
+                            <textarea id="realisasi" name="realisasi" rows="4" required maxlength="10000"
+                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm"
+                                placeholder="Jelaskan hasil atau capaian realisasi...">{{ old('realisasi') }}</textarea>
+                        </div>
+                        <button type="submit" class="w-full px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition">
+                            Simpan Realisasi
+                        </button>
+                    </form>
+
+                    @if($realisasiList->isNotEmpty())
+                    <div class="mt-5 pt-4 border-t border-gray-100 dark:border-gray-700 space-y-2">
+                        <p class="text-xs font-bold text-gray-500 uppercase">Realisasi tersimpan tahun {{ $tahun }}</p>
+                        @foreach($realisasiList as $realisasiItem)
+                        <div class="text-sm p-3 rounded-lg bg-gray-50 dark:bg-gray-900/50">
+                            <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ $realisasiItem->triwulan }}</span>
+                            <span class="text-gray-700 dark:text-gray-200">— {{ $realisasiItem->outputTarget->deskripsi_output }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                    @endif
+                </section>
+
+                <section class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <div class="flex items-start justify-between gap-4 mb-5">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Dialog Kinerja Bulanan</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Catat hasil dialog kinerja untuk setiap bulan.</p>
+                        </div>
+                        <form action="{{ route('etpp.dialog-kinerja.pdf') }}" method="GET" class="shrink-0">
+                            <input type="hidden" name="tahun" value="{{ $tahun }}">
+                            <input type="hidden" name="bulan" value="{{ $bulan }}">
+                            <button type="submit" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">
+                                Unduh PDF
+                            </button>
+                        </form>
+                    </div>
+
+                    <form action="{{ route('etpp.dialog-kinerja.store') }}" method="POST" class="space-y-3">
+                        @csrf
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1" for="dialog_tahun">Tahun</label>
+                                <input id="dialog_tahun" name="tahun" type="number" min="2000" max="2100" value="{{ old('tahun', $tahun) }}" required
+                                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1" for="dialog_bulan">Bulan</label>
+                                <select id="dialog_bulan" name="bulan" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm">
+                                    @foreach(range(1, 12) as $nomorBulan)
+                                    <option value="{{ $nomorBulan }}" {{ (int) old('bulan', $bulan) === $nomorBulan ? 'selected' : '' }}>
+                                        {{ \Carbon\Carbon::createFromDate($tahun, $nomorBulan, 1)->locale('id')->isoFormat('MMMM') }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1" for="uraian">Hasil Dialog Kinerja</label>
+                            <textarea id="uraian" name="uraian" rows="7" required maxlength="10000"
+                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm"
+                                placeholder="Tuliskan pokok pembahasan, arahan, dan tindak lanjut...">{{ old('uraian', $dialogKinerja?->uraian) }}</textarea>
+                        </div>
+                        <button type="submit" class="w-full px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition">
+                            Simpan Dialog Kinerja
+                        </button>
+                    </form>
+                </section>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">

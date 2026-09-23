@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DialogKinerja;
 use App\Models\Employee;
+use App\Models\EtppRealisasi;
 use App\Models\Kategori; // Pastikan model Kategori di-import untuk fungsi search
+use App\Models\OutputTarget;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -210,6 +214,17 @@ class EtppController extends Controller
 
         $employee = $user->employee ?? null;
         $filter_tw = $request->input('tw', 'semua');
+        $tahun = (int) $request->input('tahun', now()->year);
+        $bulan = (int) $request->input('bulan', now()->month);
+
+        if ($tahun < 2000 || $tahun > 2100) {
+            abort(422, 'Tahun harus berada antara 2000 dan 2100.');
+        }
+
+        if ($bulan < 1 || $bulan > 12) {
+            abort(422, 'Bulan tidak valid.');
+        }
+
         $data_kategori = collect();
 
         // Tarik data e-Kinerja & tambahkan eager loading untuk buktiDukung
@@ -231,8 +246,122 @@ class EtppController extends Controller
         }
 
         $data_kategori = $query->get();
+        $outputTargets = OutputTarget::where('user_id', $user->id)
+            ->when($filter_tw !== 'semua', function ($query) use ($filter_tw) {
+                $query->where('target_waktu', $filter_tw);
+            })
+            ->orderBy('target_waktu')
+            ->orderBy('deskripsi_output')
+            ->get();
+        $realisasiList = EtppRealisasi::with('outputTarget')
+            ->where('user_id', $user->id)
+            ->where('tahun', $tahun)
+            ->orderBy('triwulan')
+            ->latest('updated_at')
+            ->get();
+        $dialogKinerja = DialogKinerja::where('user_id', $user->id)
+            ->where('tahun', $tahun)
+            ->where('bulan', $bulan)
+            ->first();
 
-        return view('etpp.my-ekinerja', compact('employee', 'filter_tw', 'data_kategori'));
+        return view('etpp.my-ekinerja', compact(
+            'employee',
+            'filter_tw',
+            'data_kategori',
+            'tahun',
+            'bulan',
+            'outputTargets',
+            'realisasiList',
+            'dialogKinerja'
+        ));
+    }
+
+    public function storeRealisasi(Request $request)
+    {
+        $validated = $request->validate([
+            'output_target_id' => ['required', 'integer'],
+            'triwulan' => ['required', 'in:TW 1,TW 2,TW 3,TW 4'],
+            'tahun' => ['required', 'integer', 'between:2000,2100'],
+            'realisasi' => ['required', 'string', 'max:10000'],
+        ]);
+
+        $outputTarget = OutputTarget::where('id', $validated['output_target_id'])
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        EtppRealisasi::updateOrCreate(
+            [
+                'user_id' => auth()->id(),
+                'output_target_id' => $outputTarget->id,
+                'triwulan' => $validated['triwulan'],
+                'tahun' => $validated['tahun'],
+            ],
+            ['realisasi' => $validated['realisasi']]
+        );
+
+        return back()->with('success', 'Realisasi triwulan berhasil disimpan.');
+    }
+
+    public function storeDialogKinerja(Request $request)
+    {
+        $validated = $request->validate([
+            'tahun' => ['required', 'integer', 'between:2000,2100'],
+            'bulan' => ['required', 'integer', 'between:1,12'],
+            'uraian' => ['required', 'string', 'max:10000'],
+        ]);
+
+        DialogKinerja::updateOrCreate(
+            [
+                'user_id' => auth()->id(),
+                'tahun' => $validated['tahun'],
+                'bulan' => $validated['bulan'],
+            ],
+            ['uraian' => $validated['uraian']]
+        );
+
+        return back()->with('success', 'Dialog kinerja bulanan berhasil disimpan.');
+    }
+
+    public function downloadRealisasiPdf(Request $request)
+    {
+        $validated = $request->validate([
+            'triwulan' => ['required', 'in:TW 1,TW 2,TW 3,TW 4'],
+            'tahun' => ['required', 'integer', 'between:2000,2100'],
+        ]);
+
+        $user = $request->user();
+        $employee = $user->employee;
+        $realisasiList = EtppRealisasi::with('outputTarget.rencanaAksi.rhk.kategori')
+            ->where('user_id', $user->id)
+            ->where('triwulan', $validated['triwulan'])
+            ->where('tahun', $validated['tahun'])
+            ->orderBy('output_target_id')
+            ->get();
+
+        $pdf = Pdf::loadView('etpp.pdf-realisasi', compact('user', 'employee', 'realisasiList', 'validated'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download("Realisasi_{$validated['triwulan']}_{$validated['tahun']}.pdf");
+    }
+
+    public function downloadDialogKinerjaPdf(Request $request)
+    {
+        $validated = $request->validate([
+            'tahun' => ['required', 'integer', 'between:2000,2100'],
+            'bulan' => ['required', 'integer', 'between:1,12'],
+        ]);
+
+        $user = $request->user();
+        $employee = $user->employee;
+        $dialogKinerja = DialogKinerja::where('user_id', $user->id)
+            ->where('tahun', $validated['tahun'])
+            ->where('bulan', $validated['bulan'])
+            ->first();
+
+        $pdf = Pdf::loadView('etpp.pdf-dialog-kinerja', compact('user', 'employee', 'dialogKinerja', 'validated'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download("Dialog_Kinerja_{$validated['tahun']}_".str_pad((string) $validated['bulan'], 2, '0', STR_PAD_LEFT).'.pdf');
     }
 
     /**

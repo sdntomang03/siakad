@@ -306,6 +306,10 @@ Route::middleware('auth')->group(function () {
 
     // Rute e-Kinerja Saya
     Route::get('/etpp/ku', [EtppController::class, 'myEkinerja'])->name('etpp.ku');
+    Route::post('/etpp/realisasi', [EtppController::class, 'storeRealisasi'])->name('etpp.realisasi.store');
+    Route::post('/etpp/dialog-kinerja', [EtppController::class, 'storeDialogKinerja'])->name('etpp.dialog-kinerja.store');
+    Route::get('/etpp/realisasi/pdf', [EtppController::class, 'downloadRealisasiPdf'])->name('etpp.realisasi.pdf');
+    Route::get('/etpp/dialog-kinerja/pdf', [EtppController::class, 'downloadDialogKinerjaPdf'])->name('etpp.dialog-kinerja.pdf');
 
     // Rute Kelola Bukti Dukung
     Route::post('/etpp/upload-bukti', [EtppController::class, 'uploadBukti'])->name('etpp.upload_bukti');

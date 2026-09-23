@@ -1,0 +1,27 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('dialog_kinerja', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->unsignedSmallInteger('tahun');
+            $table->unsignedTinyInteger('bulan');
+            $table->text('uraian');
+            $table->timestamps();
+
+            $table->unique(['user_id', 'tahun', 'bulan'], 'dialog_kinerja_periode_unique');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('dialog_kinerja');
+    }
+};

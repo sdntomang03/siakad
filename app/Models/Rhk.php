@@ -12,4 +12,9 @@ class Rhk extends Model
     {
         return $this->hasMany(RencanaAksi::class, 'rhk_id');
     }
+
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class, 'kategori_id');
+    }
 }
