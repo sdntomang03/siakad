@@ -534,7 +534,7 @@ class EtppController extends Controller
         $employee = $user->employee;
         $school = $user->school;
         $triwulan = 'TW '.(int) ceil($validated['bulan'] / 3);
-        $periode = (($validated['bulan'] - 1) % 3) + 1;
+        $periode = now()->day <= 15 ? 1 : 2;
         $namaBulan = \Carbon\Carbon::createFromDate($validated['tahun'], $validated['bulan'], 1)
             ->locale('id')
             ->isoFormat('MMMM');
