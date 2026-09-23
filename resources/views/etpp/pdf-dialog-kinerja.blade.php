@@ -386,7 +386,7 @@
         </h1>
 
         <div class="document-period">
-            Periode {{ $periode }} - {{ $namaBulan }} {{ $validated['tahun'] }} - {{ $triwulan }}
+            Periode {{ $periode }} - {{ $namaBulan }} {{ $validated['tahun'] }} - {{ str_replace('TW ', 'Triwulan ', $triwulan) }}
         </div>
 
     </div>

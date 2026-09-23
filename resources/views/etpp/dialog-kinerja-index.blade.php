@@ -44,8 +44,15 @@
                     </select>
                 </div>
                 <div class="w-full sm:w-40"><label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tahun</label><input name="tahun" type="number" min="2000" max="2100" value="{{ $tahun }}" class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white"></div>
+                <div class="w-full sm:w-48">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Periode</label>
+                    <select name="periode" class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                        <option value="1" {{ $periode === 1 ? 'selected' : '' }}>Periode 1 (Tanggal 1–15)</option>
+                        <option value="2" {{ $periode === 2 ? 'selected' : '' }}>Periode 2 (Tanggal 16–akhir bulan)</option>
+                    </select>
+                </div>
                 <button class="px-5 py-2.5 bg-slate-700 text-white rounded-lg font-bold text-sm">Pilih Periode</button>
-                <a href="{{ route('etpp.dialog-kinerja.pdf', ['tahun' => $tahun, 'bulan' => $bulan]) }}" class="px-5 py-2.5 text-indigo-700 bg-indigo-50 rounded-lg font-bold text-sm">Unduh PDF</a>
+                <a href="{{ route('etpp.dialog-kinerja.pdf', ['tahun' => $tahun, 'bulan' => $bulan, 'periode' => $periode]) }}" class="px-5 py-2.5 text-indigo-700 bg-indigo-50 rounded-lg font-bold text-sm">Unduh PDF</a>
             </form>
             <form action="{{ route('etpp.dialog-kinerja.batch') }}" method="POST" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
                 @csrf <input type="hidden" name="tahun" value="{{ $tahun }}"><input type="hidden" name="bulan" value="{{ $bulan }}">

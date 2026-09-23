@@ -3,7 +3,7 @@
         <header class="rounded-2xl bg-gradient-to-r from-indigo-700 to-violet-700 px-6 py-8 text-center text-white shadow-lg">
             <p class="text-xs font-semibold uppercase tracking-[0.25em] text-indigo-200">Dokumen Publik</p>
             <h1 class="mt-2 text-2xl font-black">Rekap Dialog Kinerja</h1>
-            <p class="mt-2 text-sm font-semibold">{{ $triwulan }} &middot; {{ \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->locale('id')->isoFormat('MMMM YYYY') }}</p>
+            <p class="mt-2 text-sm font-semibold">{{ \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->locale('id')->isoFormat('MMMM YYYY') }} &middot; {{ str_replace('TW ', 'Triwulan ', $triwulan) }}</p>
         </header>
 
         <section class="grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:grid-cols-3">

@@ -261,8 +261,9 @@ class EtppController extends Controller
     {
         $tahun = (int) $request->input('tahun', now()->year);
         $bulan = (int) $request->input('bulan', now()->month);
+        $periode = (int) $request->input('periode', 1);
 
-        if ($tahun < 2000 || $tahun > 2100 || $bulan < 1 || $bulan > 12) {
+        if ($tahun < 2000 || $tahun > 2100 || $bulan < 1 || $bulan > 12 || ! in_array($periode, [1, 2], true)) {
             abort(422, 'Periode dialog kinerja tidak valid.');
         }
 
@@ -285,7 +286,7 @@ class EtppController extends Controller
             ->keyBy('output_target_id');
 
         return view('etpp.dialog-kinerja-index', compact(
-            'tahun', 'bulan', 'triwulan', 'outputTargets', 'dialogKinerja', 'realisasiByOutput'
+            'tahun', 'bulan', 'periode', 'triwulan', 'outputTargets', 'dialogKinerja', 'realisasiByOutput'
         ));
     }
 
@@ -528,13 +529,15 @@ class EtppController extends Controller
         $validated = $request->validate([
             'tahun' => ['required', 'integer', 'between:2000,2100'],
             'bulan' => ['required', 'integer', 'between:1,12'],
+            'periode' => ['required', 'integer', 'in:1,2'],
         ]);
 
         $user = $request->user();
         $employee = $user->employee;
         $school = $user->school;
         $triwulan = 'TW '.(int) ceil($validated['bulan'] / 3);
-        $periode = now()->day <= 15 ? 1 : 2;
+        $periode = (int) $request->input('periode', 1);
+        abort_unless(in_array($periode, [1, 2], true), 422);
         $namaBulan = \Carbon\Carbon::createFromDate($validated['tahun'], $validated['bulan'], 1)
             ->locale('id')
             ->isoFormat('MMMM');
@@ -551,7 +554,7 @@ class EtppController extends Controller
         ))
             ->setPaper('a4', 'portrait');
 
-        return $pdf->download("Dialog_Kinerja_{$validated['tahun']}_".str_pad((string) $validated['bulan'], 2, '0', STR_PAD_LEFT).'.pdf');
+        return $pdf->download("Dialog_Kinerja_{$validated['tahun']}_".str_pad((string) $validated['bulan'], 2, '0', STR_PAD_LEFT)."_Periode_{$periode}.pdf");
     }
 
     public function realisasiRecap(User $user, int $tahun, int $bulan)
