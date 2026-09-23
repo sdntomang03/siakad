@@ -528,7 +528,7 @@
     <div class="document-footer">
 
         <span class="footer-label">
-            Rekap publik:
+            Rekap:
         </span>
 
         <a class="footer-link" href="{{ $recapUrl }}">

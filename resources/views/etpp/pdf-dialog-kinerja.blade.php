@@ -386,7 +386,8 @@
         </h1>
 
         <div class="document-period">
-            Periode {{ $periode }} - {{ $namaBulan }} {{ $validated['tahun'] }} - {{ str_replace('TW ', 'Triwulan ', $triwulan) }}
+            Periode {{ $periode }} - {{ $namaBulan }} {{ $validated['tahun'] }} - {{ str_replace('TW ', 'Triwulan ',
+            $triwulan) }}
         </div>
 
     </div>
@@ -559,7 +560,7 @@
     <div class="document-footer">
 
         <span class="footer-label">
-            Rekap publik:
+            Rekap:
         </span>
 
         <a class="footer-link" href="{{ $recapUrl }}">
