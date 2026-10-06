@@ -97,7 +97,7 @@
         </div>
 
         @if(request('classroom_id') && request('subject_id'))
-        <div x-data="{ modalOpen: false, modalNama: '', modalItems: [] }"
+        <div x-data="{ modalOpen: false, modalNama: '', modalGroups: [], modalTotal: 0 }"
             class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
 
             <div
@@ -112,35 +112,52 @@
             <div x-show="modalOpen" x-cloak style="display: none;"
                 class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                 @keydown.escape.window="modalOpen = false" @click.self="modalOpen = false">
-                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-lg max-h-[80vh] flex flex-col">
-                    <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-start">
-                        <div>
-                            <h3 class="font-black text-slate-800 dark:text-white" x-text="modalNama"></h3>
-                            <p class="text-xs text-slate-500">Ulangan yang belum dilaksanakan / bernilai 0</p>
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden">
+                    <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-start gap-4 shrink-0">
+                        <div class="min-w-0">
+                            <h3 class="font-black text-slate-800 dark:text-white truncate" x-text="modalNama"></h3>
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                Penilaian belum dilaksanakan / bernilai 0:
+                                <span class="font-bold text-rose-500" x-text="modalTotal"></span>
+                            </p>
                         </div>
                         <button type="button" @click="modalOpen = false"
-                            class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+                            class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
                     </div>
-                    <div class="p-4 overflow-y-auto">
-                        <template x-if="modalItems.length === 0">
-                            <p class="text-sm text-emerald-600 font-bold">Semua ulangan sudah dilaksanakan.</p>
+
+                    <div class="px-5 py-4 overflow-y-auto flex-1 min-h-0 space-y-4">
+                        <p x-show="modalTotal === 0" class="text-sm text-emerald-600 font-bold">
+                            Semua penilaian sudah dilaksanakan.
+                        </p>
+                        <template x-for="(group, gi) in modalGroups" :key="gi">
+                            <div>
+                                <h4 class="text-xs font-black uppercase tracking-wide text-indigo-700 dark:text-indigo-300 mb-2"
+                                    x-text="group.mapel"></h4>
+                                <ul class="divide-y divide-slate-100 dark:divide-slate-700 rounded-xl border border-slate-100 dark:border-slate-700">
+                                    <template x-for="(item, i) in group.items" :key="i">
+                                        <li class="flex items-center justify-between gap-3 px-3 py-2.5 text-sm">
+                                            <div class="min-w-0">
+                                                <div class="font-bold text-slate-800 dark:text-slate-200 truncate"
+                                                    x-text="item.ket ? item.jenis + ' - ' + item.ket : item.jenis"></div>
+                                                <div class="text-xs text-slate-500" x-text="item.tanggal"></div>
+                                            </div>
+                                            <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-bold"
+                                                :class="item.kosong ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700'"
+                                                x-text="item.kosong ? 'Belum ada nilai' : 'Nilai 0'"></span>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
                         </template>
-                        <ul class="space-y-2">
-                            <template x-for="(item, i) in modalItems" :key="i">
-                                <li class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 text-sm">
-                                    <div class="font-bold text-slate-800 dark:text-slate-200" x-text="item.mapel"></div>
-                                    <div class="text-xs text-slate-500">
-                                        <span x-text="item.jenis"></span>
-                                        <span x-show="item.ket"> - <span x-text="item.ket"></span></span>
-                                        &middot; <span x-text="item.tanggal"></span>
-                                    </div>
-                                    <div class="text-xs font-bold text-rose-500" x-text="item.status"></div>
-                                </li>
-                            </template>
-                        </ul>
+                    </div>
+
+                    <div class="px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-right shrink-0">
+                        <button type="button" @click="modalOpen = false"
+                            class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200">Tutup</button>
                     </div>
                 </div>
             </div>
+
             @if($assessments->count() > 0)
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
@@ -229,16 +246,19 @@
                                     if ($v === null || (float) $v == 0) {
                                         $belumList[] = [
                                             'mapel' => $u->subject->nama_mapel ?? '-',
-                                            'jenis' => $u->assessmentType->nama ?? ($u->assessmentType->singkatan ?? '-'),
+                                            'jenis' => $u->assessmentType->nama ?? ($u->assessmentType->singkatan ?? 'Penilaian'),
                                             'ket' => $u->keterangan,
-                                            'tanggal' => $u->tanggal ? $u->tanggal->format('d/m/Y') : '-',
-                                            'status' => $v === null ? 'Belum ada nilai' : 'Nilai 0',
+                                            'tanggal' => $u->tanggal ? $u->tanggal->format('d M Y') : '-',
+                                            'kosong' => $v === null,
                                         ];
                                     }
                                 }
+                                $belumGroups = collect($belumList)->groupBy('mapel')
+                                    ->map(fn ($items, $mapel) => ['mapel' => $mapel, 'items' => $items->values()])
+                                    ->values()->all();
                                 @endphp
                                 <button type="button"
-                                    @click="modalNama = @js($siswa->nama_lengkap); modalItems = @js($belumList); modalOpen = true"
+                                    @click="modalNama = @js($siswa->nama_lengkap); modalGroups = @js($belumGroups); modalTotal = {{ count($belumList) }}; modalOpen = true"
                                     class="block text-left font-bold text-indigo-600 dark:text-indigo-400 hover:underline truncate max-w-[200px]"
                                     title="Lihat ulangan yang belum dilaksanakan">{{ $siswa->nama_lengkap }}
                                     @if(count($belumList) > 0)<span class="text-[10px] text-rose-500">({{ count($belumList) }})</span>@endif
