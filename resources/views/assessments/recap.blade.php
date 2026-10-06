@@ -97,7 +97,7 @@
         </div>
 
         @if(request('classroom_id') && request('subject_id'))
-        <div
+        <div x-data="{ modalOpen: false, modalNama: '', modalItems: [] }"
             class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
 
             <div
@@ -109,6 +109,38 @@
                 </div>
             </div>
 
+            <div x-show="modalOpen" x-cloak style="display: none;"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+                @keydown.escape.window="modalOpen = false" @click.self="modalOpen = false">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-lg max-h-[80vh] flex flex-col">
+                    <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-start">
+                        <div>
+                            <h3 class="font-black text-slate-800 dark:text-white" x-text="modalNama"></h3>
+                            <p class="text-xs text-slate-500">Ulangan yang belum dilaksanakan / bernilai 0</p>
+                        </div>
+                        <button type="button" @click="modalOpen = false"
+                            class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+                    </div>
+                    <div class="p-4 overflow-y-auto">
+                        <template x-if="modalItems.length === 0">
+                            <p class="text-sm text-emerald-600 font-bold">Semua ulangan sudah dilaksanakan.</p>
+                        </template>
+                        <ul class="space-y-2">
+                            <template x-for="(item, i) in modalItems" :key="i">
+                                <li class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 text-sm">
+                                    <div class="font-bold text-slate-800 dark:text-slate-200" x-text="item.mapel"></div>
+                                    <div class="text-xs text-slate-500">
+                                        <span x-text="item.jenis"></span>
+                                        <span x-show="item.ket"> - <span x-text="item.ket"></span></span>
+                                        &middot; <span x-text="item.tanggal"></span>
+                                    </div>
+                                    <div class="text-xs font-bold text-rose-500" x-text="item.status"></div>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+            </div>
             @if($assessments->count() > 0)
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
@@ -190,8 +222,27 @@
                                 {{ $index + 1 }}</td>
                             <td
                                 class="px-4 py-3 sticky left-10 bg-white dark:bg-slate-800 group-hover:bg-slate-50 dark:group-hover:bg-slate-700/50 border-r border-slate-100 dark:border-slate-700">
-                                <span class="block font-bold text-slate-800 dark:text-slate-200 truncate max-w-[200px]"
-                                    title="{{ $siswa->nama_lengkap }}">{{ $siswa->nama_lengkap }}</span>
+                                @php
+                                $belumList = [];
+                                foreach ($assessments as $u) {
+                                    $v = $matrixScores[$siswa->id][$u->id] ?? null;
+                                    if ($v === null || (float) $v == 0) {
+                                        $belumList[] = [
+                                            'mapel' => $u->subject->nama_mapel ?? '-',
+                                            'jenis' => $u->assessmentType->nama ?? ($u->assessmentType->singkatan ?? '-'),
+                                            'ket' => $u->keterangan,
+                                            'tanggal' => $u->tanggal ? $u->tanggal->format('d/m/Y') : '-',
+                                            'status' => $v === null ? 'Belum ada nilai' : 'Nilai 0',
+                                        ];
+                                    }
+                                }
+                                @endphp
+                                <button type="button"
+                                    @click="modalNama = @js($siswa->nama_lengkap); modalItems = @js($belumList); modalOpen = true"
+                                    class="block text-left font-bold text-indigo-600 dark:text-indigo-400 hover:underline truncate max-w-[200px]"
+                                    title="Lihat ulangan yang belum dilaksanakan">{{ $siswa->nama_lengkap }}
+                                    @if(count($belumList) > 0)<span class="text-[10px] text-rose-500">({{ count($belumList) }})</span>@endif
+                                </button>
                             </td>
 
                             @if(request('subject_id') === 'all')
