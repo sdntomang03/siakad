@@ -14,7 +14,12 @@
                 selectedSubjectId: '{{ request('subject_id') }}',
                 availableSubjects: [],
                 init() {
+                    const savedClass = this.selectedClassId;
+                    const savedSubject = this.selectedSubjectId;
                     this.updateSubjects();
+                    this.selectedClassId = '';
+                    this.selectedSubjectId = '';
+                    this.$nextTick(() => { this.selectedClassId = savedClass; this.selectedSubjectId = savedSubject; });
                 },
                 updateSubjects() {
                     this.availableSubjects = this.selectedClassId && this.classesData[this.selectedClassId]

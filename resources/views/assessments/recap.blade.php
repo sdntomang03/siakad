@@ -13,7 +13,12 @@
                 selectedSubjectId: '{{ request('subject_id') }}',
                 availableSubjects: [],
                 init() {
+                    const savedClass = this.selectedClassId;
+                    const savedSubject = this.selectedSubjectId;
                     this.updateSubjects();
+                    this.selectedClassId = '';
+                    this.selectedSubjectId = '';
+                    this.$nextTick(() => { this.selectedClassId = savedClass; this.selectedSubjectId = savedSubject; });
                 },
                 updateSubjects() {
                     this.availableSubjects = this.selectedClassId && this.classesData[this.selectedClassId]
@@ -28,7 +33,7 @@
             class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
 
             <form action="{{ route('assessments.recap') }}" method="GET"
-                class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
 
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">1. Pilih Kelas</label>
@@ -64,6 +69,17 @@
                             {{ $type->nama }}
                         </option>
                         @endforeach
+                    </select>
+                </div>
+
+                <div x-show="selectedSubjectId" style="display: none;">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">4. Filter Siswa</label>
+                    <select name="filter_nilai"
+                        class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">
+                        <option value="">Semua Siswa</option>
+                        <option value="belum" {{ request('filter_nilai')=='belum' ? 'selected' : '' }}>Belum ulangan (nilai kosong)</option>
+                        <option value="nol" {{ request('filter_nilai')=='nol' ? 'selected' : '' }}>Nilai 0</option>
+                        <option value="belum_nol" {{ request('filter_nilai')=='belum_nol' ? 'selected' : '' }}>Belum ulangan atau nilai 0</option>
                     </select>
                 </div>
 

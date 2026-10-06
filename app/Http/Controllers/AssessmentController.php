@@ -301,6 +301,23 @@ class AssessmentController extends Controller
                     $matrixScores[$score->student_id][$score->assessment_id] = $score->score;
                 }
             }
+
+            // Filter siswa yang belum ulangan (kosong) dan/atau bernilai 0
+            $filterNilai = $request->input('filter_nilai');
+            if (in_array($filterNilai, ['belum', 'nol', 'belum_nol'], true) && $assessments->count() > 0) {
+                $students = $students->filter(function ($siswa) use ($assessments, $matrixScores, $filterNilai) {
+                    foreach ($assessments as $ujian) {
+                        $nilai = $matrixScores[$siswa->id][$ujian->id] ?? null;
+                        $belum = $nilai === null;
+                        $nol = $nilai !== null && (float) $nilai == 0;
+                        if (($filterNilai === 'belum' && $belum) || ($filterNilai === 'nol' && $nol) || ($filterNilai === 'belum_nol' && ($belum || $nol))) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                })->values();
+            }
         }
 
         return view('assessments.recap', compact('classesData', 'students', 'assessments', 'matrixScores', 'assessmentTypes'));
