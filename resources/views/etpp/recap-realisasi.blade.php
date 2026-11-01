@@ -1,12 +1,12 @@
 <x-guest-layout wide>
     <div class="space-y-6">
-        <header class="rounded-2xl bg-gradient-to-r from-indigo-700 to-violet-700 px-6 py-8 text-center text-white shadow-lg">
-            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-indigo-200">Dokumen Publik</p>
+        <header class="rounded-lg bg-brand-900 px-6 py-8 text-center text-white">
+            <p class="text-xs font-semibold uppercase tracking-[0.25em] text-brand-200">Dokumen Publik</p>
             <h1 class="mt-2 text-2xl font-black">Rekap Realisasi Renkin</h1>
             <p class="mt-2 text-sm font-semibold">{{ $triwulan }} &middot; Tahun {{ $tahun }}</p>
         </header>
 
-        <section class="grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:grid-cols-3">
+        <section class="grid gap-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:grid-cols-3">
             <div>
                 <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Nama</p>
                 <p class="mt-1 font-semibold text-slate-800">{{ $employee?->nama_lengkap ?? $user->name }}</p>
@@ -21,7 +21,7 @@
             </div>
         </section>
 
-        <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <section class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
             <div class="border-b border-slate-200 px-5 py-4">
                 <h2 class="font-bold text-slate-800">Daftar Output dan Link Realisasi</h2>
                 <p class="mt-1 text-sm text-slate-500">Link berikut merupakan bukti realisasi yang telah diinput.</p>
@@ -42,7 +42,7 @@
                             <td class="px-5 py-4 font-semibold text-slate-800">{{ $record->outputTarget?->deskripsi_output ?? $record->nama_output }}</td>
                             <td class="px-5 py-4">
                                 @if($record->link_referensi)
-                                <a class="break-all font-medium text-indigo-600 underline hover:text-indigo-800" target="_blank" rel="noopener noreferrer" href="{{ $record->link_referensi }}">{{ $record->link_referensi }}</a>
+                                <a class="break-all font-medium text-brand-600 underline hover:text-brand-800" target="_blank" rel="noopener noreferrer" href="{{ $record->link_referensi }}">{{ $record->link_referensi }}</a>
                                 @else
                                 <span class="text-slate-400">Belum ada link</span>
                                 @endif

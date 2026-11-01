@@ -1,13 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight">
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100 leading-tight">
             Manajemen Ruangan & Wilayah Sekolah
         </h2>
         <p class="text-xs text-slate-500 mt-1">Daftar inventaris ruang fisik untuk melacak sebaran fasilitas sarana
             prasarana sekolah.</p>
     </x-slot>
 
-    <div class="py-8" x-data="{
+    <div class="py-6 sm:py-8" x-data="{
         showModal: false,
         isEdit: false,
         roomData: { id: '', nama_ruangan: '', deskripsi: '' },
@@ -27,23 +27,23 @@
             this.showModal = true;
         }
     }">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             @if(session('success'))
             <div
-                class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-semibold shadow-sm">
+                class="p-4 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-semibold shadow-sm">
                 {{ session('success') }}
             </div>
             @endif
 
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div
                     class="p-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <h3 class="text-base font-bold text-slate-700 dark:text-slate-300">Daftar Seluruh Ruang Fisik</h3>
                     <button @click="openCreate()"
-                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow transition">
-                        ➕ Tambah Ruangan Non-Kelas
+                        class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                        Tambah Ruangan Non-Kelas
                     </button>
                 </div>
 
@@ -66,18 +66,18 @@
                                 <td class="px-6 py-4 text-center text-slate-400 font-medium">{{ $index + 1 }}</td>
                                 <td class="px-6 py-4">
                                     <a href="{{ route('rooms.show-assets', ['type' => $room['tipe'] === 'Kelas' ? 'kelas' : 'ruangan', 'id' => $room['id']]) }}"
-                                        class="font-bold text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                                        class="font-bold text-slate-800 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 transition">
                                         {{ $room['nama_ruangan'] }} →
                                     </a>
                                 </td>
                                 <td class="px-6 py-4">
                                     @if($room['tipe'] === 'Kelas')
                                     <span
-                                        class="inline-flex items-center text-[11px] font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-200">🏫
+                                        class="inline-flex items-center text-[11px] font-bold bg-brand-50 text-brand-700 px-2 py-0.5 rounded border border-brand-200">
                                         Ruang Kelas</span>
                                     @else
                                     <span
-                                        class="inline-flex items-center text-[11px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-200">🚪
+                                        class="inline-flex items-center text-[11px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-200">
                                         Ruangan Lain</span>
                                     @endif
                                 </td>
@@ -94,20 +94,20 @@
                                         {{-- Tombol Edit khusus Ruangan Umum --}}
                                         <button
                                             @click="openEdit({{ json_encode($room['raw_data']) }}, '{{ route('rooms.update', $room['id']) }}')"
-                                            class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-xs shadow-sm transition">
+                                            class="inline-flex min-h-10 items-center rounded-md bg-amber-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-amber-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700">
                                             Edit
                                         </button>
                                         <form action="{{ route('rooms.destroy', $room['id']) }}" method="POST"
                                             onsubmit="return confirm('Hapus ruangan ini beserta log penempatan aset di dalamnya?')">
                                             @csrf @method('DELETE')
                                             <button type="submit"
-                                                class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-xs shadow-sm transition">Hapus</button>
+                                                class="inline-flex min-h-10 items-center rounded-md bg-rose-700 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-rose-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-700">Hapus</button>
                                         </form>
                                         @else
                                         {{-- Penanda Lock Kunci Otomatis untuk Rombel Akademik --}}
                                         <span
                                             class="text-[11px] font-medium text-slate-400 italic bg-slate-50 dark:bg-slate-700/40 px-3 py-1 rounded-lg">
-                                            🔒 Dikelola di Rombel
+                                            Dikelola di Rombel
                                         </span>
                                         @endif
                                     </div>
@@ -127,10 +127,10 @@
 
         {{-- INTERFASE MODAL POP-UP (HANYA UNTUK TAMBAH/EDIT RUANGAN UMUM) --}}
         <div x-show="showModal"
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 "
             style="display: none;" x-cloak>
             <div @click.outside="showModal = false"
-                class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg max-w-md w-full border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
                 <div class="p-5 border-b bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between">
                     <h3 class="font-bold text-slate-800 dark:text-slate-200 text-base"
                         x-text="isEdit ? 'Ubah Informasi Ruangan' : 'Tambah Ruangan Non-Kelas Baru'"></h3>
@@ -147,22 +147,22 @@
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nama Ruangan</label>
                         <input type="text" name="nama_ruangan" x-model="roomData.nama_ruangan" required
                             placeholder="e.g. Laboratorium Kimia Utama"
-                            class="w-full rounded-xl border-slate-300 text-sm focus:ring-indigo-500">
+                            class="w-full rounded-md border-slate-300 text-sm focus:ring-brand-500">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fungsi / Deskripsi
                             Pendukung</label>
                         <textarea name="deskripsi" x-model="roomData.deskripsi" rows="3"
-                            class="w-full rounded-xl border-slate-300 text-sm focus:ring-indigo-500"
+                            class="w-full rounded-md border-slate-300 text-sm focus:ring-brand-500"
                             placeholder="Keterangan isi atau peruntukan ruangan..."></textarea>
                     </div>
 
                     <div class="pt-4 border-t flex items-center justify-end gap-2">
                         <button type="button" @click="showModal = false"
-                            class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl">Batal</button>
+                            class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-md">Batal</button>
                         <button type="submit"
-                            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow"
+                            class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-md shadow"
                             x-text="isEdit ? 'Simpan Perubahan' : 'Daftarkan Ruangan'"></button>
                     </div>
                 </form>

@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center gap-3 sm:gap-4">
             <a href="{{ route('dashboard') }}"
-                class="sm:hidden flex-shrink-0 inline-flex items-center justify-center h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 active:scale-95 transition">
+                class="sm:hidden flex-shrink-0 inline-flex items-center justify-center h-10 w-10 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 active:scale-95 transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -10,13 +10,13 @@
             </a>
 
             <div
-                class="hidden sm:flex flex-shrink-0 h-11 w-11 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 items-center justify-center shadow-md shadow-indigo-500/20">
+                class="hidden h-11 w-11 flex-shrink-0 items-center justify-center rounded-md bg-brand-700 sm:flex">
                 <i class="fas fa-user-edit text-white text-lg"></i>
             </div>
 
             <div class="min-w-0 flex-1">
                 <h2 class="font-bold text-lg sm:text-2xl text-slate-800 dark:text-white tracking-tight truncate">
-                    Edit Profil: <span class="text-indigo-600 dark:text-indigo-400">{{ $student->name ?? 'Siswa'
+                    Edit Profil: <span class="text-brand-600 dark:text-brand-400">{{ $student->name ?? 'Siswa'
                         }}</span>
                 </h2>
                 <p class="hidden sm:block text-sm text-slate-500 dark:text-slate-400 mt-1">Lengkapi data pokok peserta
@@ -91,21 +91,21 @@
                             <span x-show="tab === 'kesehatan'">Data Kesehatan</span>
                         </span>
                         <span
-                            class="flex-shrink-0 text-xs font-extrabold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-1 rounded-md"
+                            class="flex-shrink-0 text-xs font-extrabold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-500/10 px-2 py-1 rounded-md"
                             x-text="progress"></span>
                     </div>
                     <div
                         class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 sm:h-2.5 overflow-hidden shadow-inner">
-                        <div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 h-full rounded-full transition-all duration-500 ease-out"
+                        <div class="bg-brand-600 h-full rounded-full transition-all duration-500 ease-out"
                             :style="'width: ' + progress"></div>
                     </div>
                     {{-- Step dots (desktop) --}}
                     <div class="hidden sm:flex justify-between mt-2">
                         <template x-for="(t, i) in tabsList" :key="t">
                             <div class="flex items-center gap-1.5"
-                                :class="i <= currentIndex ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-300 dark:text-slate-600'">
+                                :class="i <= currentIndex ? 'text-brand-600 dark:text-brand-400' : 'text-slate-300 dark:text-slate-600'">
                                 <span class="h-1.5 w-1.5 rounded-full"
-                                    :class="i <= currentIndex ? 'bg-indigo-600 dark:bg-indigo-400' : 'bg-slate-300 dark:bg-slate-600'"></span>
+                                    :class="i <= currentIndex ? 'bg-brand-600 dark:bg-brand-400' : 'bg-slate-300 dark:bg-slate-600'"></span>
                             </div>
                         </template>
                     </div>
@@ -115,39 +115,39 @@
                     {{-- SIDEBAR TABS --}}
                     <div class="w-full lg:w-72 flex-shrink-0 px-0 sm:px-0">
                         <div
-                            class="sticky top-0 lg:top-6 z-20 bg-white/95 dark:bg-slate-800/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:supports-[backdrop-filter]:bg-slate-800/80 rounded-none sm:rounded-2xl shadow-sm sm:border border-y sm:border-y-0 border-slate-200 dark:border-slate-700 p-2 sm:p-3">
+                            class="sticky top-0 lg:top-6 z-20 bg-white/95 dark:bg-slate-800/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:supports-[backdrop-filter]:bg-slate-800/80 rounded-none sm:rounded-lg shadow-sm sm:border border-y sm:border-y-0 border-slate-200 dark:border-slate-700 p-2 sm:p-3">
                             <nav
                                 class="flex overflow-x-auto snap-x snap-mandatory lg:flex-col gap-2 pb-1 lg:pb-0 px-4 sm:px-0 scrollbar-hide">
                                 <button type="button" @click="tab = 'identitas'"
-                                    :class="tab === 'identitas' ? 'bg-gradient-to-br from-indigo-600 to-indigo-500 text-white shadow-md shadow-indigo-500/30 font-bold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl text-[11px] sm:text-sm transition-all duration-200">
+                                    :class="tab === 'identitas' ? 'bg-brand-700 text-white font-semibold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
+                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-md text-[11px] sm:text-sm transition-all duration-200">
                                     <i class="fas fa-user-circle text-base lg:w-5"></i>
                                     <span class="leading-tight text-center lg:text-left">Identitas<span
                                             class="hidden lg:inline"> Pokok</span></span>
                                 </button>
                                 <button type="button" @click="tab = 'alamat'"
-                                    :class="tab === 'alamat' ? 'bg-gradient-to-br from-indigo-600 to-indigo-500 text-white shadow-md shadow-indigo-500/30 font-bold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl text-[11px] sm:text-sm transition-all duration-200">
+                                    :class="tab === 'alamat' ? 'bg-brand-700 text-white font-semibold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
+                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-md text-[11px] sm:text-sm transition-all duration-200">
                                     <i class="fas fa-map-marker-alt text-base lg:w-5"></i>
                                     <span class="leading-tight text-center lg:text-left">Alamat<span
                                             class="hidden lg:inline"> & Domisili</span></span>
                                 </button>
                                 <button type="button" @click="tab = 'keluarga'"
-                                    :class="tab === 'keluarga' ? 'bg-gradient-to-br from-indigo-600 to-indigo-500 text-white shadow-md shadow-indigo-500/30 font-bold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl text-[11px] sm:text-sm transition-all duration-200">
+                                    :class="tab === 'keluarga' ? 'bg-brand-700 text-white font-semibold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
+                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-md text-[11px] sm:text-sm transition-all duration-200">
                                     <i class="fas fa-users text-base lg:w-5"></i>
                                     <span class="leading-tight text-center lg:text-left">Keluarga<span
                                             class="hidden lg:inline"> Data</span></span>
                                 </button>
                                 <button type="button" @click="tab = 'finansial'"
-                                    :class="tab === 'finansial' ? 'bg-gradient-to-br from-indigo-600 to-indigo-500 text-white shadow-md shadow-indigo-500/30 font-bold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl text-[11px] sm:text-sm transition-all duration-200">
+                                    :class="tab === 'finansial' ? 'bg-brand-700 text-white font-semibold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
+                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-md text-[11px] sm:text-sm transition-all duration-200">
                                     <i class="fas fa-wallet text-base lg:w-5"></i>
                                     <span class="leading-tight text-center lg:text-left">Bantuan</span>
                                 </button>
                                 <button type="button" @click="tab = 'kesehatan'"
-                                    :class="tab === 'kesehatan' ? 'bg-gradient-to-br from-indigo-600 to-indigo-500 text-white shadow-md shadow-indigo-500/30 font-bold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
-                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl text-[11px] sm:text-sm transition-all duration-200">
+                                    :class="tab === 'kesehatan' ? 'bg-brand-700 text-white font-semibold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
+                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-md text-[11px] sm:text-sm transition-all duration-200">
                                     <i class="fas fa-heartbeat text-base lg:w-5"></i>
                                     <span class="leading-tight text-center lg:text-left">Kesehatan</span>
                                 </button>
@@ -156,7 +156,7 @@
                             <div
                                 class="pt-3 lg:pt-4 border-t border-slate-100 dark:border-slate-700 mt-2 lg:mt-4 hidden lg:block">
                                 <button type="submit"
-                                    class="w-full flex justify-center items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-xl text-sm font-bold shadow-lg shadow-emerald-500/30 transition-all focus:ring-4 focus:ring-emerald-500/20">
+                                    class="w-full flex justify-center items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-md text-sm font-bold shadow-lg shadow-emerald-500/30 transition-all focus:ring-4 focus:ring-emerald-500/20">
                                     <i class="fas fa-save"></i> Simpan Cepat
                                 </button>
                             </div>
@@ -166,7 +166,7 @@
                     {{-- MAIN CONTENT AREA --}}
                     <div class="flex-1 min-w-0 px-4 sm:px-0">
                         <div
-                            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col">
+                            class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col">
 
                             <div class="p-6 sm:p-8 flex-1">
 
@@ -181,7 +181,7 @@
 
                                     {{-- PERBAIKAN: Input Upload Foto 4x6 dengan Live Preview --}}
                                     <div x-data="{ photoName: null, photoPreview: null }"
-                                        class="mb-8 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700">
+                                        class="mb-8 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start p-4 sm:p-5 rounded-lg bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700">
                                         <!-- Area Preview Foto 4x6 -->
                                         <button type="button" @click="$refs.foto.click()"
                                             class="relative w-28 sm:w-32 aspect-[2/3] rounded-lg overflow-hidden border-4 border-white dark:border-slate-700 shadow-lg bg-slate-100 dark:bg-slate-800 flex-shrink-0 ring-1 ring-slate-200 dark:ring-slate-600 group">
@@ -199,7 +199,7 @@
                                                 class="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-black/50 text-white text-[9px] font-bold tracking-wide">4x6</span>
                                             <!-- Badge Kamera -->
                                             <span
-                                                class="absolute bottom-1.5 right-1.5 h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center rounded-full bg-indigo-600 text-white border-2 border-white dark:border-slate-800 shadow-md group-active:scale-90 transition">
+                                                class="absolute bottom-1.5 right-1.5 h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center rounded-full bg-brand-600 text-white border-2 border-white dark:border-slate-800 shadow-md group-active:scale-90 transition">
                                                 <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -261,7 +261,7 @@
                                             <input type="text" name="nama_lengkap"
                                                 placeholder="Masukkan nama lengkap sesuai ijazah/akta"
                                                 value="{{ old('nama_lengkap', $student->student->nama_lengkap ?? '') }}"
-                                                class="block w-full rounded-lg shadow-sm sm:text-sm dark:bg-slate-900 dark:text-white transition-colors {{ $errors->has('nama_lengkap') ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 dark:border-slate-600' }}">
+                                                class="block w-full rounded-lg shadow-sm sm:text-sm dark:bg-slate-900 dark:text-white transition-colors {{ $errors->has('nama_lengkap') ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:border-brand-500 focus:ring-brand-500 dark:border-slate-600' }}">
                                             @error('nama_lengkap') <p class="mt-1 text-xs font-semibold text-rose-500">
                                                 {{ $message }}</p> @enderror
                                         </div>
@@ -272,14 +272,14 @@
                                             <input type="text" name="nama_panggilan"
                                                 placeholder="Masukkan nama panggilan"
                                                 value="{{ old('nama_panggilan', $student->student->nama_panggilan ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">NISN</label>
                                             <input type="text" name="nisn" placeholder="Masukkan 10 digit NISN"
                                                 value="{{ old('nisn', $student->student->nisn ?? '') }}"
-                                                class="block w-full rounded-lg shadow-sm sm:text-sm dark:bg-slate-900 dark:text-white transition-colors {{ $errors->has('nisn') ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 dark:border-slate-600' }}"
+                                                class="block w-full rounded-lg shadow-sm sm:text-sm dark:bg-slate-900 dark:text-white transition-colors {{ $errors->has('nisn') ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:border-brand-500 focus:ring-brand-500 dark:border-slate-600' }}"
                                                 {{ $isStaff ? '' : 'readonly' }}>
                                             @error('nisn') <p class="mt-1 text-xs font-semibold text-rose-500">{{
                                                 $message }}</p> @enderror
@@ -289,7 +289,7 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">NIPD</label>
                                             <input type="text" name="nipd" placeholder="Masukkan NIPD/NIS"
                                                 value="{{ old('nipd', $student->student->nipd ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white"
                                                 {{ $isStaff ? '' : 'readonly' }}>
                                         </div>
                                         <div>
@@ -298,7 +298,7 @@
                                                 Kelas</label>
                                             <input type="text" name="class_code" placeholder="Misal: 4A"
                                                 value="{{ old('class_code', $student->student->class_code ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white"
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white"
                                                 {{ $isStaff ? '' : 'readonly' }}>
                                         </div>
                                         <div>
@@ -307,7 +307,7 @@
                                                 Siswa</label>
                                             <input type="text" name="nik" placeholder="Masukkan 16 digit NIK"
                                                 value="{{ old('nik', $student->student->nik ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
@@ -315,7 +315,7 @@
                                                 KK</label>
                                             <input type="text" name="no_kk" placeholder="Masukkan 16 digit No. KK"
                                                 value="{{ old('no_kk', $student->student->no_kk ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
@@ -324,7 +324,7 @@
                                             <input type="text" name="no_registrasi_akta_lahir"
                                                 placeholder="Misal: 3173-LT-12345678"
                                                 value="{{ old('no_registrasi_akta_lahir', $student->student->no_registrasi_akta_lahir ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
@@ -333,7 +333,7 @@
                                             <input type="text" name="tempat_lahir"
                                                 placeholder="Masukkan kota tempat lahir"
                                                 value="{{ old('tempat_lahir', $student->student->tempat_lahir ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
@@ -341,14 +341,14 @@
                                                 Lahir</label>
                                             <input type="date" name="tanggal_lahir"
                                                 value="{{ old('tanggal_lahir', optional($student->student->tanggal_lahir)->format('Y-m-d') ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Jenis
                                                 Kelamin <span class="text-rose-500">*</span></label>
                                             <select name="jenis_kelamin"
-                                                class="block w-full rounded-lg shadow-sm sm:text-sm dark:bg-slate-900 dark:text-white transition-colors {{ $errors->has('jenis_kelamin') ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 dark:border-slate-600' }}">
+                                                class="block w-full rounded-lg shadow-sm sm:text-sm dark:bg-slate-900 dark:text-white transition-colors {{ $errors->has('jenis_kelamin') ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:border-brand-500 focus:ring-brand-500 dark:border-slate-600' }}">
                                                 <option value="">-- Pilih --</option>
                                                 <option value="L" {{ old('jenis_kelamin', $student->
                                                     student->jenis_kelamin ?? '') == 'L' ? 'selected' : '' }}>Laki-laki
@@ -364,7 +364,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Agama</label>
                                             <select name="agama"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                                 <option value="">-- Pilih --</option>
                                                 @php $agamaLama = old('agama', $student->student->agama ?? ''); @endphp
                                                 <option value="Islam" {{ $agamaLama=='Islam' ? 'selected' : '' }}>
@@ -387,26 +387,26 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Hobi</label>
                                             <input type="text" name="hobi" placeholder="Misal: Membaca, Sepak Bola"
                                                 value="{{ old('hobi', $student->student->hobi ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Cita-cita</label>
                                             <input type="text" name="cita_cita" placeholder="Misal: Dokter, Polisi"
                                                 value="{{ old('cita_cita', $student->student->cita_cita ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div class="sm:col-span-3">
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Prestasi</label>
                                             <textarea name="prestasi" rows="2"
                                                 placeholder="Tuliskan prestasi yang pernah diraih (jika ada)"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">{{ old('prestasi', $student->student->prestasi ?? '') }}</textarea>
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">{{ old('prestasi', $student->student->prestasi ?? '') }}</textarea>
                                         </div>
                                     </div>
 
                                     <h4
-                                        class="font-bold text-indigo-700 dark:text-indigo-400 mb-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+                                        class="font-bold text-brand-700 dark:text-brand-400 mb-4 pt-4 border-t border-slate-100 dark:border-slate-700">
                                         Kontak & Akademik Lainnya</h4>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                         <div>
@@ -415,7 +415,7 @@
                                                 HP (WA Grup Kelas)</label>
                                             <input type="text" name="hp" placeholder="Misal: 081234567890"
                                                 value="{{ old('hp', $student->student->hp ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
@@ -423,7 +423,7 @@
                                                 Rumah</label>
                                             <input type="text" name="telepon" placeholder="Misal: 021-1234567"
                                                 value="{{ old('telepon', $student->student->telepon ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
@@ -431,7 +431,7 @@
                                                 Pribadi</label>
                                             <input type="text" name="email" placeholder="Misal: siswa@sekolah.com"
                                                 value="{{ old('email', $student->student->email ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
@@ -439,7 +439,7 @@
                                                 Sekolah</label>
                                             <input type="text" name="sekolah_asal" placeholder="Misal: TK Negeri 01"
                                                 value="{{ old('sekolah_asal', $student->student->sekolah_asal ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
 
                                         <div>
@@ -448,7 +448,7 @@
                                                 Ke-</label>
                                             <input type="number" name="anak_ke" placeholder="Misal: 1"
                                                 value="{{ old('anak_ke', $student->student->anak_ke ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                         <div>
                                             <label
@@ -456,7 +456,7 @@
                                                 Saudara Kandung</label>
                                             <input type="number" name="jml_saudara_kandung" placeholder="Misal: 2"
                                                 value="{{ old('jml_saudara_kandung', $student->student->jml_saudara_kandung ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white">
                                         </div>
                                     </div>
                                 </div>
@@ -476,21 +476,21 @@
                                                 Jalan</label>
                                             <textarea name="alamat" rows="2"
                                                 placeholder="Masukkan nama jalan, gang, perumahan, atau patokan"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">{{ old('alamat', $student->student->address->alamat ?? '') }}</textarea>
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">{{ old('alamat', $student->student->address->alamat ?? '') }}</textarea>
                                         </div>
                                         <div class="sm:col-span-2">
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">RT</label>
                                             <input type="text" name="rt" placeholder="Misal: 001"
                                                 value="{{ old('rt', $student->student->address->rt ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
                                         <div class="sm:col-span-2">
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">RW</label>
                                             <input type="text" name="rw" placeholder="Misal: 002"
                                                 value="{{ old('rw', $student->student->address->rw ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
                                         <div class="sm:col-span-2">
                                             <label
@@ -499,7 +499,7 @@
                                             <input type="text" name="kode_pos" id="kode_pos_input"
                                                 placeholder="Misal: 11440"
                                                 value="{{ old('kode_pos', $student->student->address->kode_pos ?? '') }}"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                         </div>
 
                                         {{-- DROPDOWN API --}}
@@ -507,7 +507,7 @@
                                             <label
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Provinsi</label>
                                             <select x-model="selectedProvId" @change="fetchCities(selectedProvId)"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors">
                                                 <option value="">-- Pilih Provinsi --</option>
                                                 <template x-for="prov in provinces" :key="prov.id">
                                                     <option :value="prov.id" x-text="prov.name"></option>
@@ -521,7 +521,7 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kota/Kabupaten</label>
                                             <select x-model="selectedCityId" @change="fetchDistricts(selectedCityId)"
                                                 :disabled="cities.length === 0"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800">
                                                 <option value="">-- Pilih Kota/Kabupaten --</option>
                                                 <template x-for="city in cities" :key="city.id">
                                                     <option :value="city.id" x-text="city.name"></option>
@@ -535,7 +535,7 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kecamatan</label>
                                             <select x-model="selectedDistId" @change="fetchVillages(selectedDistId)"
                                                 :disabled="districts.length === 0"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800">
                                                 <option value="">-- Pilih Kecamatan --</option>
                                                 <template x-for="dist in districts" :key="dist.id">
                                                     <option :value="dist.id" x-text="dist.name"></option>
@@ -549,7 +549,7 @@
                                                 class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Kelurahan/Desa</label>
                                             <select x-model="selectedVillId" @change="setVillage()"
                                                 :disabled="villages.length === 0"
-                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800">
+                                                class="block w-full rounded-lg border-slate-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800">
                                                 <option value="">-- Pilih Kelurahan/Desa --</option>
                                                 <template x-for="vill in villages" :key="vill.id">
                                                     <option :value="vill.id" x-text="vill.name"></option>
@@ -667,7 +667,7 @@
 
                                     {{-- OPSI TINGGAL BERSAMA ORANG TUA --}}
                                     <div
-                                        class="mb-6 p-4 sm:p-5 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                                        class="mb-6 p-4 sm:p-5 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
                                         <label class="block text-sm font-bold text-slate-800 dark:text-slate-200 mb-3">
                                             Apakah peserta didik tinggal bersama orang tua? <span
                                                 class="text-rose-500">*</span>
@@ -676,14 +676,14 @@
                                             <label class="inline-flex items-center gap-2.5 cursor-pointer">
                                                 <input type="radio" name="tinggal_bersama_ortu" value="ya"
                                                     x-model="bersamaOrtu"
-                                                    class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800">
+                                                    class="w-4 h-4 text-brand-600 focus:ring-brand-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800">
                                                 <span
                                                     class="text-sm font-semibold text-slate-700 dark:text-slate-300">Ya</span>
                                             </label>
                                             <label class="inline-flex items-center gap-2.5 cursor-pointer">
                                                 <input type="radio" name="tinggal_bersama_ortu" value="tidak"
                                                     x-model="bersamaOrtu"
-                                                    class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800">
+                                                    class="w-4 h-4 text-brand-600 focus:ring-brand-500 border-slate-300 dark:border-slate-600 dark:bg-slate-800">
                                                 <span
                                                     class="text-sm font-semibold text-slate-700 dark:text-slate-300">Tidak</span>
                                             </label>
@@ -694,17 +694,15 @@
 
                                         {{-- Ayah --}}
                                         <div
-                                            class="relative rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50/50 to-transparent p-5 sm:p-6 dark:border-blue-900/50 dark:from-blue-900/10">
-                                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 rounded-l-2xl">
-                                            </div>
+                                            class="relative rounded-lg border border-slate-200 bg-slate-50 p-5 sm:p-6 dark:border-slate-700 dark:bg-slate-900/40">
                                             <div
                                                 class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
-                                                <h4 class="font-bold text-blue-800 dark:text-blue-400">Data Ayah Kandung
+                                                <h4 class="font-semibold text-slate-900 dark:text-slate-100">Data Ayah Kandung
                                                 </h4>
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-xs font-bold text-slate-500">Status:</span>
                                                     <select name="is_ayah_hidup"
-                                                        class="rounded-md border-slate-300 shadow-sm text-xs py-1.5 pl-3 pr-8 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-600 dark:text-white font-semibold">
+                                                        class="rounded-md border-slate-300 text-xs py-1.5 pl-3 pr-8 focus:ring-brand-700 focus:border-brand-700 dark:bg-slate-800 dark:border-slate-600 dark:text-white font-semibold">
                                                         <option value="1" {{ old('is_ayah_hidup', $student->
                                                             student->family->is_ayah_hidup ?? 1) == 1 ? 'selected' : ''
                                                             }}>Masih Hidup</option>
@@ -814,17 +812,15 @@
 
                                         {{-- Ibu --}}
                                         <div
-                                            class="relative rounded-2xl border border-pink-100 bg-gradient-to-r from-pink-50/50 to-transparent p-5 sm:p-6 dark:border-pink-900/50 dark:from-pink-900/10">
-                                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-pink-400 rounded-l-2xl">
-                                            </div>
+                                            class="relative rounded-lg border border-slate-200 bg-slate-50 p-5 sm:p-6 dark:border-slate-700 dark:bg-slate-900/40">
                                             <div
                                                 class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
-                                                <h4 class="font-bold text-pink-800 dark:text-pink-400">Data Ibu Kandung
+                                                <h4 class="font-semibold text-slate-900 dark:text-slate-100">Data Ibu Kandung
                                                 </h4>
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-xs font-bold text-slate-500">Status:</span>
                                                     <select name="is_ibu_hidup"
-                                                        class="rounded-md border-slate-300 shadow-sm text-xs py-1.5 pl-3 pr-8 focus:ring-pink-500 focus:border-pink-500 dark:bg-slate-800 dark:border-slate-600 dark:text-white font-semibold">
+                                                        class="rounded-md border-slate-300 text-xs py-1.5 pl-3 pr-8 focus:ring-brand-700 focus:border-brand-700 dark:bg-slate-800 dark:border-slate-600 dark:text-white font-semibold">
                                                         <option value="1" {{ old('is_ibu_hidup', $student->
                                                             student->family->is_ibu_hidup ?? 1) == 1 ? 'selected' : ''
                                                             }}>Masih Hidup</option>
@@ -936,7 +932,7 @@
                                             x-transition:enter="transition ease-out duration-300"
                                             x-transition:enter-start="opacity-0 -translate-y-2"
                                             x-transition:enter-end="opacity-100 translate-y-0"
-                                            class="relative rounded-2xl border border-slate-200 bg-slate-50/50 p-5 sm:p-6 dark:border-slate-700 dark:bg-slate-800/50">
+                                            class="relative rounded-lg border border-slate-200 bg-slate-50/50 p-5 sm:p-6 dark:border-slate-700 dark:bg-slate-800/50">
                                             <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-500 rounded-l-2xl">
                                             </div>
                                             <h4
@@ -1056,12 +1052,12 @@
                                     </div>
                                     <div class="max-w-3xl">
                                         <div
-                                            class="space-y-4 bg-slate-50 dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                                            class="space-y-4 bg-slate-50 dark:bg-slate-800/80 p-5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
                                             <div class="flex items-center">
                                                 <input type="checkbox" name="penerima_kjp" id="kjp" value="1" {{
                                                     old('penerima_kjp', $student->student->financial->penerima_kjp ??
                                                 false) ? 'checked' : '' }} class="w-5 h-5 rounded border-slate-300
-                                                text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                                                text-brand-600 focus:ring-brand-500 cursor-pointer">
                                                 <label for="kjp"
                                                     class="ml-3 font-bold text-slate-800 dark:text-slate-200 cursor-pointer">Siswa
                                                     Penerima KJP (Kartu Jakarta Pintar)</label>
@@ -1071,7 +1067,7 @@
                                                 <input type="checkbox" name="penerima_pip" id="pip" value="1" {{
                                                     old('penerima_pip', $student->student->financial->penerima_pip ??
                                                 false) ? 'checked' : '' }} class="w-5 h-5 rounded border-slate-300
-                                                text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                                                text-brand-600 focus:ring-brand-500 cursor-pointer">
                                                 <label for="pip"
                                                     class="ml-3 font-bold text-slate-800 dark:text-slate-200 cursor-pointer">Siswa
                                                     Penerima PIP (Program Indonesia Pintar)</label>
@@ -1082,7 +1078,7 @@
                                                     value="1" {{ old('penerima_bantuan_lain',
                                                     $student->student->financial->penerima_bantuan_lain ?? false) ?
                                                 'checked' : '' }} class="w-5 h-5 rounded border-slate-300
-                                                text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                                                text-brand-600 focus:ring-brand-500 cursor-pointer">
                                                 <label for="bantuan_lain"
                                                     class="ml-3 font-bold text-slate-800 dark:text-slate-200 cursor-pointer">Siswa
                                                     Penerima Bantuan Lainnya</label>
@@ -1191,7 +1187,7 @@
                                 </div>
                                 <div>
                                     <button type="button" x-show="currentIndex < tabsList.length - 1" @click="next()"
-                                        class="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold shadow-md shadow-indigo-500/20 transition-colors">
+                                        class="flex items-center gap-2 px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-bold shadow-md shadow-brand-500/20 transition-colors">
                                         Selanjutnya
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1218,14 +1214,14 @@
                     style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));">
                     <div class="flex items-center gap-3 max-w-7xl mx-auto">
                         <button type="button" x-show="currentIndex > 0" @click="prev()"
-                            class="flex-shrink-0 flex items-center justify-center h-11 w-11 text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded-xl active:scale-95 transition">
+                            class="flex-shrink-0 flex items-center justify-center h-11 w-11 text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded-md active:scale-95 transition">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 19l-7-7 7-7"></path>
                             </svg>
                         </button>
                         <button type="button" x-show="currentIndex < tabsList.length - 1" @click="next()"
-                            class="flex-1 flex items-center justify-center gap-2 h-11 bg-indigo-600 active:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-md shadow-indigo-500/20 transition-colors">
+                            class="flex-1 flex items-center justify-center gap-2 h-11 bg-brand-600 active:bg-brand-700 text-white rounded-md text-sm font-bold shadow-md shadow-brand-500/20 transition-colors">
                             Selanjutnya
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
@@ -1233,7 +1229,7 @@
                             </svg>
                         </button>
                         <button type="submit" x-show="currentIndex === tabsList.length - 1"
-                            class="flex-1 flex items-center justify-center gap-2 h-11 bg-emerald-600 active:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-500/20 transition-colors"
+                            class="flex-1 flex items-center justify-center gap-2 h-11 bg-emerald-600 active:bg-emerald-700 text-white rounded-md text-sm font-bold shadow-md shadow-emerald-500/20 transition-colors"
                             style="display: none;">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

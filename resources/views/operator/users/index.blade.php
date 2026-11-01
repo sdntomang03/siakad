@@ -1,19 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <h2 class="font-semibold text-2xl text-slate-800 dark:text-slate-200">Manajemen Guru / Pengguna</h2>
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100 sm:text-2xl">Manajemen Guru / Pengguna</h2>
 
             <div class="flex items-center gap-2 w-full sm:w-auto">
                 @can('create-users')
                 {{-- TOMBOL IMPORT EXCEL --}}
                 <button @click="$dispatch('open-import-modal')"
-                    class="w-full sm:w-auto px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-emerald-700 transition shadow-lg shadow-emerald-500/20 text-center">
+                    class="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:w-auto">
                     Import Excel
                 </button>
 
                 {{-- TOMBOL TAMBAH PENGGUNA --}}
                 <button @click="$dispatch('open-user-modal')"
-                    class="w-full sm:w-auto px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/20 text-center">
+                    class="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-800 transition hover:bg-brand-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-brand-800 dark:bg-brand-900/30 dark:text-brand-200 dark:hover:bg-brand-900/50 sm:w-auto">
                     Tambah Pengguna
                 </button>
                 @endcan
@@ -27,27 +27,27 @@
     @endphp
 
     {{-- Wrapper utama dengan Alpine.js untuk fitur Multi-Delete --}}
-    <div class="py-12" x-data="{
+    <div class="py-6 sm:py-8" x-data="{
         selected: [],
         allIds: {{ $deletableIds->toJson() }},
         get isAllSelected() { return this.selected.length > 0 && this.selected.length === this.allIds.length },
         toggleAll() { this.selected = this.isAllSelected ? [] : [...this.allIds] }
     }">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             <div
-                class="mb-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-4">
+                class="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
                 <form method="GET" action="{{ route('operator.users.index') }}"
-                    class="flex flex-col md:flex-row gap-4 items-center justify-between">
-                    <div class="flex gap-3 w-full md:w-auto">
-                        <input type="text" name="search" value="{{ request('search') }}"
+                    class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+                    <div class="flex min-w-0 flex-1 gap-2">
+                        <input id="user-search" type="text" name="search" value="{{ request('search') }}"
                             placeholder="Cari nama / email..."
-                            class="w-full md:w-64 rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm">
+                            class="min-w-0 w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                         <button type="submit"
-                            class="px-4 py-2 bg-slate-800 text-white dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-700 transition">Cari</button>
+                            class="inline-flex min-h-11 shrink-0 items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">Cari</button>
                         @if(request()->has('search'))
                         <a href="{{ route('operator.users.index') }}"
-                            class="px-4 py-2 bg-rose-50 text-rose-600 border border-rose-200 rounded-lg text-sm font-semibold">Reset</a>
+                            class="inline-flex min-h-11 shrink-0 items-center justify-center rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">Reset</a>
                         @endif
                     </div>
                 </form>
@@ -56,7 +56,7 @@
             {{-- BANNER HAPUS TERPILIH (MUNCUL JIKA ADA CHECKBOX YANG DICENTANG) --}}
             @can('delete-users')
             <div x-show="selected.length > 0" x-transition style="display: none;"
-                class="mb-4 p-4 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-xl flex items-center justify-between shadow-sm">
+                class="flex flex-col items-start justify-between gap-3 rounded-md border border-rose-200 bg-rose-50 p-4 dark:border-rose-800 dark:bg-rose-900/20 sm:flex-row sm:items-center">
                 <span class="text-sm font-bold text-rose-700 dark:text-rose-400">
                     <span x-text="selected.length"></span> pengguna dipilih
                 </span>
@@ -77,7 +77,7 @@
             @endcan
 
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full w-full text-left whitespace-nowrap">
                         <thead class="bg-slate-50 dark:bg-slate-900/50">
@@ -114,7 +114,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <span
-                                        class="px-2 py-1 rounded-md text-[10px] font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 uppercase">
+                                        class="px-2 py-1 rounded-md text-[10px] font-bold bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400 uppercase">
                                         {{ $user->roles->first()->name ?? '-' }}
                                     </span>
                                 </td>
@@ -140,7 +140,7 @@
                                         title="Superadmin tidak memiliki data pegawai">Akun Sistem</span>
                                     @else
                                     <a href="{{ route('employees.edit', $user->id) }}"
-                                        class="text-indigo-600 hover:underline font-bold text-xs bg-indigo-50 dark:bg-indigo-900/20 px-2 py-1.5 rounded inline-block ml-2 border border-indigo-100">Data
+                                        class="text-brand-600 hover:underline font-bold text-xs bg-brand-50 dark:bg-brand-900/20 px-2 py-1.5 rounded inline-block ml-2 border border-brand-100">Data
                                         Pegawai</a>
                                     @endif
                                     @endcan
@@ -179,10 +179,10 @@
         <div x-data="{ show: false, formData: { name: '', email: '', role: 'guru', jenis_kelamin: '', nip: '' } }"
             @open-user-modal.window="show = true; formData = { name: '', email: '', role: 'guru', jenis_kelamin: '', nip: '' };"
             x-show="show"
-            class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+            class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 "
             style="display: none;">
             <div @click.away="show = false"
-                class="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+                class="bg-white dark:bg-slate-800 w-full max-w-md rounded-lg shadow-2xl overflow-hidden">
                 <form action="{{ route('operator.users.store') }}" method="POST">
                     @csrf
                     <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700">
@@ -190,7 +190,7 @@
                     </div>
                     <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                         <div
-                            class="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-100 dark:border-indigo-800 text-xs text-indigo-700 dark:text-indigo-300">
+                            class="p-3 bg-brand-50 dark:bg-brand-900/20 rounded-lg border border-brand-100 dark:border-brand-800 text-xs text-brand-700 dark:text-brand-300">
                             Password default untuk pengguna baru adalah: <strong>12345678</strong>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
@@ -248,7 +248,7 @@
                         <button type="button" @click="show = false"
                             class="text-xs font-bold text-slate-500 uppercase hover:text-slate-700">Batal</button>
                         <button type="submit"
-                            class="px-6 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase hover:bg-indigo-700 transition">Buat
+                            class="px-6 py-2 bg-brand-600 text-white rounded-lg text-xs font-bold uppercase hover:bg-brand-700 transition">Buat
                             Akun</button>
                     </div>
                 </form>
@@ -259,10 +259,10 @@
     {{-- MODAL IMPORT EXCEL --}}
     <div x-data="{ showImport: false, importType: 'pegawai' }"
         @open-import-modal.window="showImport = true; importType = 'pegawai'" x-show="showImport"
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 "
         style="display: none;" x-transition>
         <div @click.away="showImport = false"
-            class="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+            class="bg-white dark:bg-slate-800 w-full max-w-md rounded-lg shadow-2xl overflow-hidden">
             <form action="{{ route('operator.users.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700">
@@ -279,13 +279,13 @@
                         </select>
                     </div>
                     <div x-show="importType === 'pegawai'"
-                        class="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-100 dark:border-indigo-800 text-sm text-indigo-700 dark:text-indigo-300">
+                        class="p-4 bg-brand-50 dark:bg-brand-900/20 rounded-lg border border-brand-100 dark:border-brand-800 text-sm text-brand-700 dark:text-brand-300">
                         <p class="font-bold mb-2">Aturan Excel Pegawai:</p>
                         <ul class="list-disc pl-5 space-y-1 text-xs">
                             <li>Header: <strong>name, email, role, jenis_kelamin, nip, nuptk</strong>.</li>
                             <li>Kolom <strong>role</strong>: <span
-                                    class="font-mono bg-indigo-100 dark:bg-indigo-800 px-1 rounded">kepsek</span> atau
-                                <span class="font-mono bg-indigo-100 dark:bg-indigo-800 px-1 rounded">guru</span>.</li>
+                                    class="font-mono bg-brand-100 dark:bg-brand-800 px-1 rounded">kepsek</span> atau
+                                <span class="font-mono bg-brand-100 dark:bg-brand-800 px-1 rounded">guru</span>.</li>
                             <li>Password otomatis: <strong>12345678</strong>.</li>
                         </ul>
                     </div>
@@ -311,7 +311,7 @@
                     <button type="button" @click="showImport = false"
                         class="text-xs font-bold text-slate-500 uppercase hover:text-slate-700">Batal</button>
                     <button type="submit"
-                        class="px-6 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase hover:bg-indigo-700 transition flex items-center gap-2">
+                        class="px-6 py-2 bg-brand-600 text-white rounded-lg text-xs font-bold uppercase hover:bg-brand-700 transition flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>

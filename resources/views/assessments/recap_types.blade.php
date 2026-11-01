@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
             Rata-Rata Jenis Penilaian
         </h2>
     </x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="mx-auto max-w-7xl space-y-5 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 
         <!-- KOTAK PENCARIAN (Sama persis dengan halaman recap agar seragam) -->
         <div x-data="{
@@ -30,13 +30,13 @@
                     }
                 }
             }"
-            class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+            class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
 
-            <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <form method="GET" class="grid grid-cols-1 items-end gap-4 md:grid-cols-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">1. Pilih Kelas</label>
+                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Kelas</label>
                     <select name="classroom_id" required x-model="selectedClassId" @change="updateSubjects()"
-                        class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">
+                        class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                         <option value="">-- Pilih Kelas --</option>
                         <template x-for="(data, classId) in classesData" :key="classId">
                             <option :value="classId" x-text="data.nama_kelas"></option>
@@ -45,25 +45,25 @@
                 </div>
 
                 <div x-show="selectedClassId" style="display: none;">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">2. Mata Pelajaran</label>
+                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Mata Pelajaran</label>
                     <select name="subject_id" required x-model="selectedSubjectId"
-                        class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">
+                        class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                         <option value="">-- Pilih Mapel --</option>
-                        <option value="all" class="font-bold text-indigo-600">Semua Mata Pelajaran</option>
+                        <option value="all" class="font-bold text-brand-600">Semua Mata Pelajaran</option>
                         <template x-for="subject in availableSubjects" :key="subject.id">
                             <option :value="subject.id" x-text="subject.nama"></option>
                         </template>
                     </select>
                 </div>
 
-                <div x-show="selectedSubjectId" style="display: none;" class="md:col-span-2 flex gap-3">
+                <div x-show="selectedSubjectId" style="display: none;"                 class="md:col-span-2 flex flex-col gap-3 sm:flex-row">
                     <button type="submit" formaction="{{ route('assessments.recap') }}"
-                        class="flex-1 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-black shadow-md hover:bg-indigo-700 transition">
+                        class="inline-flex min-h-11 flex-1 items-center justify-center rounded-md border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700">
                         Gradebook Detail
                     </button>
                     <button type="submit" formaction="{{ route('assessments.recapByType') }}"
-                        class="flex-1 px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-black shadow-md hover:bg-emerald-700 transition">
-                        Rata-Rata per Jenis &rarr;
+                        class="inline-flex min-h-11 flex-1 items-center justify-center rounded-md bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                        Rata-Rata per Jenis
                     </button>
                 </div>
             </form>
@@ -72,7 +72,7 @@
         <!-- AREA MATRIKS -->
         @if(request('classroom_id') && request('subject_id'))
         <div
-            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
+            class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
             <div
                 class="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex justify-between items-center">
                 <div>
@@ -111,7 +111,7 @@
 
                             <!-- Kolom Judul Rata-Rata dan Ranking -->
                             <th rowspan="2"
-                                class="px-4 py-2 w-24 text-center border-b border-l border-slate-300 dark:border-slate-600 bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 font-bold">
+                                class="px-4 py-2 w-24 text-center border-b border-l border-slate-300 dark:border-slate-600 bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-300 font-bold">
                                 Rata-Rata<br>Total</th>
                             <th rowspan="2"
                                 class="px-4 py-2 w-20 text-center border-b border-l border-slate-300 dark:border-slate-600 bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 font-bold">
@@ -174,7 +174,7 @@
                             $rank = $studentRanks[$siswa->id] ?? '-';
                             @endphp
                             <td
-                                class="px-4 py-3 text-center border-l border-slate-100 dark:border-slate-700 font-black bg-indigo-50/50 dark:bg-indigo-900/10 {{ $overallAvg > 0 && $overallAvg < 75 ? 'text-rose-600' : 'text-indigo-600 dark:text-indigo-400' }}">
+                                class="px-4 py-3 text-center border-l border-slate-100 dark:border-slate-700 font-black bg-brand-50/50 dark:bg-brand-900/10 {{ $overallAvg > 0 && $overallAvg < 75 ? 'text-rose-600' : 'text-brand-600 dark:text-brand-400' }}">
                                 {{ $overallAvg > 0 ? $overallAvg : '-' }}
                             </td>
                             <td

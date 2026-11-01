@@ -1,22 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
                 Peminjaman Buku
             </h2>
             <a href="{{ route('book-loans.monitor') }}"
-                class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/20 text-center">
+                class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                 Monitoring Siswa
             </a>
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             {{-- ALERTS --}}
             @if(session('success'))
-            <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <div class="p-4 rounded-md bg-emerald-50 border border-emerald-200">
                 <div class="flex items-center gap-3">
                     <svg class="h-5 w-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
@@ -29,7 +29,7 @@
             @endif
 
             @if(session('warning'))
-            <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+            <div class="p-4 rounded-md bg-amber-50 border border-amber-200">
                 <div class="flex items-center gap-3">
                     <svg class="h-5 w-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
@@ -43,34 +43,34 @@
 
             {{-- CARD 1: FORM PEMINJAMAN --}}
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div class="p-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
                     <h3 class="text-sm font-bold text-slate-600 dark:text-slate-300">Form Peminjaman Buku</h3>
                     <p class="text-xs text-slate-500 mt-0.5">Catat peminjaman buku baru untuk siswa.</p>
                 </div>
 
-                <div class="p-6">
-                    <form action="{{ route('book-loans.store') }}" method="POST" class="grid lg:grid-cols-12 gap-6">
+                <div class="p-5 sm:p-6">
+                    <form action="{{ route('book-loans.store') }}" method="POST" class="grid grid-cols-1 gap-5 lg:grid-cols-12">
                         @csrf
 
                         {{-- Kolom Kiri: Siswa --}}
                         <div
-                            class="lg:col-span-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 p-5">
-                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Pilih
+                            class="lg:col-span-5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 p-5">
+                            <label for="student_select" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih
                                 Siswa</label>
                             <div class="flex items-center gap-2 mb-3">
                                 <input type="checkbox" id="select_all_students"
-                                    class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 cursor-pointer">
+                                    class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 h-4 w-4 cursor-pointer">
                                 <label for="select_all_students"
                                     class="text-xs font-bold text-slate-500 cursor-pointer hover:text-slate-700 uppercase">Pilih
                                     semua siswa di daftar</label>
                             </div>
                             <select id="student_select" name="student_ids[]" multiple size="7"
-                                class="block w-full rounded-xl border border-slate-300 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                class="block w-full rounded-md border border-slate-300 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-100 shadow-sm focus:border-brand-500 focus:ring-brand-500 text-sm">
                                 @foreach($students as $s)
                                 @php $kelas = $s->kelasAktif(); @endphp
                                 <option value="{{ $s->id }}" data-tingkat="{{ $kelas->tingkat ?? '' }}"
-                                    class="py-1.5 px-3 hover:bg-indigo-50 dark:hover:bg-slate-700 rounded-md font-medium">
+                                    class="py-1.5 px-3 hover:bg-brand-50 dark:hover:bg-slate-700 rounded-md font-medium">
                                     {{ $s->nama_lengkap }}{{ $kelas ? ' — Kelas '.$kelas->tingkat.' '.$kelas->nama_kelas
                                     : '' }}
                                 </option>
@@ -91,21 +91,21 @@
                         <div class="lg:col-span-7 grid gap-5 content-start">
                             <div class="grid gap-5 md:grid-cols-2">
                                 <div>
-                                    <label
-                                        class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Filter
+                                    <label for="tingkat_select"
+                                        class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Filter
                                         Tingkat</label>
                                     <select id="tingkat_select"
-                                        class="block w-full rounded-xl border border-slate-300 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        class="block w-full rounded-md border border-slate-300 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-100 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm">
                                         <option value="">Semua Tingkat</option>
                                         @for($i = 1; $i <= 6; $i++) <option value="{{ $i }}">Kelas {{ $i }}</option>
                                             @endfor
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Pilih
+                                    <label for="book_select" class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih
                                         Buku Paket</label>
                                     <select id="book_select" name="book_id"
-                                        class="block w-full rounded-xl border border-slate-300 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                        class="block w-full rounded-md border border-slate-300 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-100 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm">
                                         <option value="">-- Pilih Buku --</option>
                                         @php
                                         $booksByTingkat = \App\Models\Book::where('school_id',
@@ -127,7 +127,7 @@
                                         class="text-slate-400 font-normal">(opsional)</span></label>
                                 <input type="text" name="book_title" value="{{ old('book_title') }}"
                                     placeholder="Ketik judul buku di sini..."
-                                    class="block w-full rounded-xl border border-slate-300 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                                    class="block w-full rounded-md border border-slate-300 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-100 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm" />
                                 @error('book_title')<p class="mt-2 text-xs text-red-500 font-bold">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -136,7 +136,7 @@
                                 <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Tanggal
                                     Pengembalian <span class="text-slate-400 font-normal">(opsional)</span></label>
                                 <input type="datetime-local" name="returned_at" value="{{ old('returned_at') }}"
-                                    class="block w-full rounded-xl border border-slate-300 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                                    class="block w-full rounded-md border border-slate-300 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-100 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm" />
                                 <p class="mt-2 text-[11px] text-slate-400">Isi hanya jika ingin langsung menandai buku
                                     sudah dikembalikan.</p>
                                 @error('returned_at')<p class="mt-2 text-xs text-red-500 font-bold">{{ $message }}</p>
@@ -145,7 +145,7 @@
 
                             <div class="flex justify-end pt-2">
                                 <button type="submit"
-                                    class="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-md hover:bg-indigo-700 transition flex items-center">
+                                    class="px-5 py-2.5 bg-brand-600 text-white rounded-lg text-sm font-bold shadow-md hover:bg-brand-700 transition flex items-center">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 4v16m8-8H4"></path>
@@ -160,7 +160,7 @@
 
             {{-- CARD 2: RIWAYAT PEMINJAMAN DENGAN DATATABLES --}}
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div class="p-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
                     <h3 class="text-sm font-bold text-slate-600 dark:text-slate-300">Riwayat Peminjaman & Pengembalian
                     </h3>
@@ -266,7 +266,7 @@
                             <tr>
                                 <th class="px-3 py-4 w-12 text-center">
                                     <input type="checkbox" id="selectAllLoans"
-                                        class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 cursor-pointer" />
+                                        class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 h-4 w-4 cursor-pointer" />
                                 </th>
                                 <th class="px-6 py-4">Nama Siswa</th>
                                 <th class="px-6 py-4">Judul Buku</th>
@@ -284,7 +284,7 @@
                                 class="border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                                 <td class="px-3 py-4 text-center">
                                     <input type="checkbox"
-                                        class="loan-checkbox rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 cursor-pointer"
+                                        class="loan-checkbox rounded border-slate-300 text-brand-600 focus:ring-brand-500 h-4 w-4 cursor-pointer"
                                         value="{{ $loan->id }}" />
                                 </td>
                                 <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">
@@ -318,7 +318,7 @@
                                             class="inline-block">
                                             @csrf
                                             <button type="submit"
-                                                class="px-2 py-1 text-[10px] font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 uppercase">Kembalikan</button>
+                                                class="px-2 py-1 text-[10px] font-bold text-white bg-brand-600 rounded-lg hover:bg-brand-700 uppercase">Kembalikan</button>
                                         </form>
                                         @else
                                         <span
@@ -489,10 +489,10 @@
                     },
              initComplete: function() {
                         // PERBAIKAN FINAL: Tambahkan w-20 (lebar fix) dan pr-10 (padding kanan diperbesar)
-                        $('select[name="bookLoansTable_length"]').addClass('rounded-lg border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm focus:ring-indigo-500 focus:border-indigo-500 mx-2 py-1.5 pl-3 pr-10 w-20 outline-none shadow-sm cursor-pointer');
+                        $('select[name="bookLoansTable_length"]').addClass('rounded-lg border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm focus:ring-brand-500 focus:border-brand-500 mx-2 py-1.5 pl-3 pr-10 w-20 outline-none shadow-sm cursor-pointer');
 
                         // Injeksi class Tailwind ke dalam input pencarian
-                        $('.dataTables_filter input').addClass('rounded-lg border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm focus:ring-indigo-500 focus:border-indigo-500 ml-2 py-1.5 px-3 outline-none shadow-sm');
+                        $('.dataTables_filter input').addClass('rounded-lg border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm focus:ring-brand-500 focus:border-brand-500 ml-2 py-1.5 px-3 outline-none shadow-sm');
 
                         // Rapikan warna teks
                         $('.dataTables_info, .dataTables_length, .dataTables_filter').addClass('text-sm text-slate-600 dark:text-slate-400');

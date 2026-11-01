@@ -7,7 +7,7 @@
     <title>Pengumuman Kelulusan - SDN Tomang 03 Pagi</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,800,900" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -20,7 +20,7 @@
 
     <style>
         body {
-            font-family: 'Instrument Sans', sans-serif;
+            font-family: 'Figtree', sans-serif;
         }
 
         [x-cloak] {
@@ -28,73 +28,8 @@
         }
 
         .bg-pattern {
-            background-color: #f8fafc;
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 24px 24px;
-        }
-
-        /* --- ANIMASI KUSTOM --- */
-        @keyframes blob {
-            0% {
-                transform: translate(0px, 0px) scale(1);
-            }
-
-            33% {
-                transform: translate(30px, -50px) scale(1.1);
-            }
-
-            66% {
-                transform: translate(-20px, 20px) scale(0.9);
-            }
-
-            100% {
-                transform: translate(0px, 0px) scale(1);
-            }
-        }
-
-        .animate-blob {
-            animation: blob 7s infinite;
-        }
-
-        .animation-delay-2000 {
-            animation-delay: 2s;
-        }
-
-        .animation-delay-4000 {
-            animation-delay: 4s;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0px) rotate(-3deg);
-            }
-
-            50% {
-                transform: translateY(-10px) rotate(0deg);
-            }
-        }
-
-        .animate-float {
-            animation: float 5s ease-in-out infinite;
-        }
-
-        @keyframes gradient-x {
-
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
-        .animate-gradient-x {
-            background-size: 200% 200%;
-            animation: gradient-x 3s ease infinite;
+            background-color: #f5f6f2;
+            background-image: none;
         }
     </style>
 </head>
@@ -103,21 +38,11 @@
     x-data="countdownTimer()">
 
     <div
-        class="fixed top-1/4 left-1/4 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob pointer-events-none">
-    </div>
-    <div
-        class="fixed top-1/3 right-1/4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000 pointer-events-none">
-    </div>
-    <div
-        class="fixed -bottom-8 left-1/3 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000 pointer-events-none">
-    </div>
-
-    <div
-        class="max-w-3xl w-full bg-white/90 backdrop-blur-md rounded-[2rem] sm:rounded-[3rem] shadow-2xl shadow-indigo-900/20 border border-white p-6 sm:p-12 relative text-center z-10">
+        class="relative z-10 w-full max-w-3xl rounded-lg border border-slate-200 bg-white p-5 text-center sm:p-8">
 
         <div class="relative z-10">
             <div
-                class="w-24 h-24 sm:w-28 sm:h-28 bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-200 animate-float border-4 border-white">
+                class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-lg bg-brand-800 text-white sm:h-24 sm:w-24">
                 <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5z">
@@ -130,8 +55,7 @@
             </div>
 
             <div
-                class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-4 border border-indigo-100 shadow-sm">
-                <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                class="mb-4 inline-flex items-center rounded-md border border-brand-200 bg-brand-50 px-3 py-1.5 text-sm font-medium text-brand-900">
                 Tahun Ajaran 2025/2026
             </div>
 
@@ -144,20 +68,12 @@
         </div>
 
         <div
-            class="max-w-2xl mx-auto mb-10 bg-white border border-amber-200/60 rounded-2xl p-1.5 shadow-lg shadow-amber-100/50 relative z-10 transform transition-all hover:scale-[1.02]">
+            class="relative z-10 mx-auto mb-10 max-w-2xl rounded-lg border border-amber-200 bg-white p-1.5">
             <div
-                class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 sm:p-5 flex items-start sm:items-center gap-4 relative overflow-hidden">
-                <div
-                    class="absolute -right-4 -top-4 w-24 h-24 bg-amber-200/40 rounded-full blur-xl pointer-events-none">
-                </div>
-                <div
-                    class="absolute -left-4 -bottom-4 w-24 h-24 bg-orange-200/40 rounded-full blur-xl pointer-events-none">
-                </div>
+            class="relative flex items-start gap-4 rounded-md bg-amber-50 p-4 sm:items-center sm:p-5">
 
-                <div
-                    class="w-14 h-14 rounded-full bg-white text-amber-500 flex items-center justify-center shrink-0 shadow-md border border-amber-100 relative">
-                    <span
-                        class="absolute inset-0 rounded-full border-2 border-amber-400 animate-ping opacity-20"></span>
+            <div
+                class="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-md border border-amber-200 bg-white text-amber-700">
                     <svg class="w-7 h-7 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -168,13 +84,13 @@
 
                 <div class="flex-1 text-left relative z-10">
                     <h3
-                        class="text-amber-800 font-black text-xs sm:text-sm uppercase tracking-wider mb-1 flex items-center gap-2">
-                        <i class="fas fa-bell animate-bounce text-amber-500"></i> Informasi Jadwal Rilis
+                        class="mb-1 flex items-center gap-2 text-sm font-semibold text-amber-900">
+                        Informasi Jadwal Rilis
                     </h3>
                     <p class="text-amber-700/90 text-xs sm:text-sm font-semibold leading-relaxed">
                         Akses sistem pengumuman kelulusan akan resmi dibuka pada <br class="hidden sm:block">
                         <span
-                            class="inline-block mt-1 bg-gradient-to-r from-amber-500 via-orange-600 to-amber-500 bg-clip-text text-transparent animate-gradient-x font-black text-base sm:text-lg drop-shadow-sm">
+                            class="mt-1 inline-block text-base font-semibold text-amber-900 sm:text-lg">
                             Selasa, 2 Juni 2026 pukul 10.00 WIB
                         </span>
                     </p>
@@ -186,32 +102,31 @@
             x-transition>
 
             <div
-                class="bg-white rounded-2xl border-b-4 border-slate-200 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group hover:border-indigo-400 transition-colors">
+                class="bg-white rounded-lg border-b-4 border-slate-200 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group hover:border-brand-400 transition-colors">
                 <div class="text-3xl sm:text-5xl font-black text-slate-800 mb-1 font-mono tracking-tighter"
                     x-text="days">00</div>
                 <div class="text-[9px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">Hari</div>
             </div>
 
             <div
-                class="bg-white rounded-2xl border-b-4 border-slate-200 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group hover:border-indigo-400 transition-colors">
+                class="bg-white rounded-lg border-b-4 border-slate-200 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group hover:border-brand-400 transition-colors">
                 <div class="text-3xl sm:text-5xl font-black text-slate-800 mb-1 font-mono tracking-tighter"
                     x-text="hours">00</div>
                 <div class="text-[9px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">Jam</div>
             </div>
 
             <div
-                class="bg-white rounded-2xl border-b-4 border-slate-200 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group hover:border-indigo-400 transition-colors">
+                class="bg-white rounded-lg border-b-4 border-slate-200 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group hover:border-brand-400 transition-colors">
                 <div class="text-3xl sm:text-5xl font-black text-slate-800 mb-1 font-mono tracking-tighter"
                     x-text="minutes">00</div>
                 <div class="text-[9px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">Menit</div>
             </div>
 
             <div
-                class="bg-indigo-50 rounded-2xl border-b-4 border-indigo-500 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-indigo-100 opacity-0 animate-pulse"></div>
-                <div class="text-3xl sm:text-5xl font-black text-indigo-600 mb-1 font-mono tracking-tighter relative"
+                class="bg-brand-50 rounded-lg border-b-4 border-brand-500 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-center relative overflow-hidden">
+                <div class="text-3xl sm:text-5xl font-black text-brand-600 mb-1 font-mono tracking-tighter relative"
                     x-text="seconds">00</div>
-                <div class="text-[9px] sm:text-xs font-bold text-indigo-500 uppercase tracking-widest relative">Detik
+                <div class="text-[9px] sm:text-xs font-bold text-brand-500 uppercase tracking-widest relative">Detik
                 </div>
             </div>
 
@@ -219,9 +134,9 @@
 
         <div class="mb-10 relative z-10" x-show="isFinished" x-cloak x-transition.opacity.duration.1000ms>
             <div
-                class="inline-flex items-center gap-3 bg-emerald-50 border-2 border-emerald-200 text-emerald-700 px-8 py-4 rounded-2xl font-black text-lg shadow-lg shadow-emerald-100/50">
+                class="inline-flex items-center gap-3 bg-emerald-50 border-2 border-emerald-200 text-emerald-700 px-8 py-4 rounded-lg font-black text-lg shadow-lg shadow-emerald-100/50">
                 <div
-                    class="w-10 h-10 bg-emerald-500 text-white rounded-full flex items-center justify-center animate-bounce">
+                    class="flex h-10 w-10 items-center justify-center rounded-md bg-emerald-700 text-white">
                     <i class="fas fa-door-open text-xl"></i>
                 </div>
                 <span>Gerbang Pengumuman Telah Dibuka!</span>
@@ -230,7 +145,7 @@
 
         <div class="relative z-10 max-w-md mx-auto">
             <a :href="isFinished ? '{{ route('pengumuman.index') }}' : '#'"
-                class="w-full flex items-center justify-center gap-3 px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-black text-base sm:text-lg transition-all duration-300 transform group"
+                class="w-full flex items-center justify-center gap-3 px-8 sm:px-10 py-4 sm:py-5 rounded-lg font-black text-base sm:text-lg transition-all duration-300 transform group"
                 :class="isFinished
                             ? 'bg-slate-900 hover:bg-black text-white shadow-2xl shadow-slate-400 hover:-translate-y-1 hover:scale-105 active:scale-95 cursor-pointer'
                             : 'bg-slate-100 text-slate-400 border-2 border-slate-200 cursor-not-allowed'">
@@ -244,9 +159,9 @@
                 x-show="!isFinished">
                 <i class="fas fa-circle-notch fa-spin"></i> Menghitung mundur secara otomatis
             </p>
-            <div class="mt-6 text-xs sm:text-sm font-bold text-slate-500 bg-slate-50 py-3 px-4 rounded-xl border border-slate-200 shadow-inner flex justify-center items-center gap-2"
+            <div class="mt-6 text-xs sm:text-sm font-bold text-slate-500 bg-slate-50 py-3 px-4 rounded-md border border-slate-200 shadow-inner flex justify-center items-center gap-2"
                 x-show="isFinished" x-cloak>
-                <i class="fas fa-id-card text-indigo-400 text-lg"></i>
+                <i class="fas fa-id-card text-brand-400 text-lg"></i>
                 <span>Siapkan <strong class="text-slate-800">NISN</strong> dan <strong class="text-slate-800">Tanggal
                         Lahir</strong> Anda.</span>
             </div>

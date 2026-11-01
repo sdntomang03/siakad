@@ -8,31 +8,20 @@
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
 
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6">
-                <div class="p-6 bg-indigo-50 border-b border-indigo-100">
-                    <h3 class="font-bold text-indigo-800">Panduan Format Excel (.xlsx / .csv)</h3>
-                    <p class="text-sm text-indigo-700 mt-2">Pastikan struktur file Excel Anda persis seperti ini. Sistem
-                        akan otomatis mendeteksi berapapun jumlah mata pelajaran setelah kolom Nama.</p>
+            <div class="mb-6 overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+                <div class="border-b border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900/50 sm:p-6">
+                    <h3 class="font-semibold text-slate-950 dark:text-white">Panduan Format Excel (.xlsx / .csv)</h3>
+                    <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">Gunakan urutan kolom berikut. Sistem
+                        akan mendeteksi mata pelajaran setelah kolom Nama.</p>
                     <div class="mt-3 overflow-x-auto">
-                        <table class="w-full text-sm text-left bg-white border border-indigo-200">
-                            <thead class="bg-indigo-100 font-bold">
+                        <table class="w-full border border-slate-200 bg-white text-left text-sm dark:border-slate-700 dark:bg-slate-800">
+                            <thead class="bg-slate-100 font-semibold text-slate-700 dark:bg-slate-700 dark:text-slate-200">
                                 <tr>
-                                    <th class="px-4 py-2 border-r border-indigo-200">NIS (Kolom A)</th>
-                                    <th class="px-4 py-2 border-r border-indigo-200">Nama Siswa (Kolom B)</th>
-                                    <th class="px-4 py-2 border-r border-indigo-200">MTK (Kolom C)</th>
-                                    <th class="px-4 py-2 border-r border-indigo-200">IPA (Kolom D)</th>
-                                    <th class="px-4 py-2">IPS (Kolom E...)</th>
+                                    <th class="border-r border-slate-200 px-4 py-2 dark:border-slate-700">NIS (Kolom A)</th>
+                                    <th class="border-r border-slate-200 px-4 py-2 dark:border-slate-700">Nama Siswa (Kolom B)</th>
+                                    <th class="border-r border-slate-200 px-4 py-2 dark:border-slate-700">Mata Pelajaran (Kolom C dan seterusnya)</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="px-4 py-2 border-r border-indigo-200">1001</td>
-                                    <td class="px-4 py-2 border-r border-indigo-200">Andi</td>
-                                    <td class="px-4 py-2 border-r border-indigo-200">45</td>
-                                    <td class="px-4 py-2 border-r border-indigo-200">60</td>
-                                    <td class="px-4 py-2">55</td>
-                                </tr>
-                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -41,36 +30,36 @@
                     class="p-6 space-y-6">
                     @csrf
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Nilai KKM Target (Batas
+                            <label for="kkm" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Nilai KKM Target (Batas
                                 Bawah)</label>
-                            <input type="number" name="kkm" value="75" required
-                                class="w-full rounded-xl border-slate-300 focus:ring-indigo-500">
-                            <span class="text-xs text-slate-500">Siswa dengan nilai terendah di kelas akan otomatis
+                            <input id="kkm" type="number" name="kkm" value="75" required
+                                class="w-full rounded-md border-slate-300 focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                            <span class="mt-1 block text-sm text-slate-500 dark:text-slate-400">Siswa dengan nilai terendah di kelas akan otomatis
                                 menjadi nilai ini.</span>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Nilai Maksimal (Batas
+                            <label for="target_max" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Nilai Maksimal (Batas
                                 Atas)</label>
-                            <input type="number" name="target_max" value="100" required
-                                class="w-full rounded-xl border-slate-300 focus:ring-indigo-500">
-                            <span class="text-xs text-slate-500">Siswa dengan nilai tertinggi di kelas akan otomatis
+                            <input id="target_max" type="number" name="target_max" value="100" required
+                                class="w-full rounded-md border-slate-300 focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                            <span class="mt-1 block text-sm text-slate-500 dark:text-slate-400">Siswa dengan nilai tertinggi di kelas akan otomatis
                                 menjadi nilai ini.</span>
                         </div>
                     </div>
 
                     <div
-                        class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center bg-slate-50 hover:bg-slate-100 transition">
-                        <label class="block text-sm font-bold text-slate-700 mb-3">Upload File Nilai Mentah</label>
-                        <input type="file" name="file_excel" accept=".xlsx, .xls, .csv" required
-                            class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer mx-auto">
+                        class="rounded-md border border-dashed border-slate-300 bg-slate-50 p-5 transition hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-900/50 dark:hover:bg-slate-900 sm:p-8">
+                        <label for="file_excel" class="mb-3 block text-sm font-medium text-slate-700 dark:text-slate-200">Upload File Nilai Mentah</label>
+                        <input id="file_excel" type="file" name="file_excel" accept=".xlsx, .xls, .csv" required
+                            class="block min-h-11 w-full text-sm text-slate-600 file:mr-4 file:min-h-11 file:border-0 file:bg-brand-50 file:px-4 file:font-semibold file:text-brand-800 hover:file:bg-brand-100 dark:text-slate-300">
                     </div>
 
                     <button type="submit"
-                        class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition">
-                        🚀 Proses & Download Hasil Katrol
+                        class="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                        Proses & Download Hasil Katrol
                     </button>
                 </form>
             </div>

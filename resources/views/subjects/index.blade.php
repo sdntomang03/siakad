@@ -1,18 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
             Manajemen Mata Pelajaran
         </h2>
     </x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="mx-auto max-w-7xl space-y-5 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 
         @role('superadmin')
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
             <form action="{{ route('subjects.index') }}" method="GET">
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Pilih Sekolah</label>
-                <select name="school_id" onchange="this.form.submit()"
-                    class="w-full md:w-1/2 rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">
+                <label for="school_id" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Sekolah</label>
+                <select id="school_id" name="school_id" onchange="this.form.submit()"
+                    class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white md:max-w-xl">
                     <option value="">-- Pilih Sekolah Terlebih Dahulu --</option>
                     @foreach($schools as $sekolah)
                     <option value="{{ $sekolah->id }}" {{ $selectedSchoolId==$sekolah->id ? 'selected' : '' }}>
@@ -26,7 +26,7 @@
 
         @if(auth()->user()->hasRole('superadmin') && !$selectedSchoolId)
         <div
-            class="text-center py-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+            class="text-center py-16 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
             <h3 class="text-xl font-bold text-slate-800 dark:text-white">Pilih Sekolah</h3>
             <p class="text-slate-500 mt-2">Pilih sekolah di atas untuk mengelola mata pelajarannya.</p>
         </div>
@@ -36,7 +36,7 @@
 
             <div class="lg:col-span-1">
                 <div
-                    class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 sticky top-6">
+                    class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6 lg:sticky lg:top-6">
                     <h3 class="text-lg font-black text-slate-800 dark:text-white mb-1">Tambah Mapel Cepat</h3>
                     <p class="text-xs text-slate-500 mb-6">Pilih banyak mapel sekaligus untuk diterapkan ke kelas.</p>
 
@@ -53,7 +53,7 @@
                                 @for($i = 1; $i <= 6; $i++) <label
                                     class="flex items-center gap-1.5 p-2 border border-slate-200 dark:border-slate-700 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
                                     <input type="checkbox" name="tingkat[]" value="{{ $i }}"
-                                        class="rounded border-slate-300 text-indigo-600 shadow-sm focus:ring-indigo-500 w-4 h-4 cursor-pointer">
+                                        class="rounded border-slate-300 text-brand-600 shadow-sm focus:ring-brand-500 w-4 h-4 cursor-pointer">
                                     <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Kelas {{ $i
                                         }}</span>
                                     </label>
@@ -82,13 +82,13 @@
                             @endphp
 
                             <div
-                                class="space-y-1.5 max-h-48 overflow-y-auto p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900/30">
+                                class="space-y-1.5 max-h-48 overflow-y-auto p-3 border border-slate-200 dark:border-slate-700 rounded-md bg-slate-50 dark:bg-slate-900/30">
                                 @foreach($defaultSubjects as $subject)
                                 <label class="flex items-start gap-2 cursor-pointer group">
                                     <input type="checkbox" name="mapel_default[]" value="{{ $subject }}"
-                                        class="mt-0.5 rounded border-slate-300 text-indigo-600 shadow-sm focus:ring-indigo-500 w-4 h-4 cursor-pointer">
+                                        class="mt-0.5 rounded border-slate-300 text-brand-600 shadow-sm focus:ring-brand-500 w-4 h-4 cursor-pointer">
                                     <span
-                                        class="text-xs font-semibold text-slate-700 dark:text-slate-300 group-hover:text-indigo-600 transition">{{
+                                        class="text-xs font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-600 transition">{{
                                         $subject }}</span>
                                 </label>
                                 @endforeach
@@ -98,13 +98,13 @@
                         </div>
 
                         <div
-                            class="p-3 border border-dashed border-slate-300 dark:border-slate-600 rounded-xl bg-slate-50/50 dark:bg-slate-800/50">
+                            class="p-3 border border-dashed border-slate-300 dark:border-slate-600 rounded-md bg-slate-50/50 dark:bg-slate-800/50">
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-2">+ Mapel Kustom
                                 (Opsional)</label>
                             <input type="text" name="nama_mapel_kustom" placeholder="Nama Mapel (Cth: Muatan Lokal)"
-                                class="w-full mb-2 rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-xs focus:ring-indigo-500">
+                                class="w-full mb-2 rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-xs focus:ring-brand-500">
                             <input type="text" name="kode_mapel_kustom" placeholder="Kode Mapel (Opsional)"
-                                class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-xs focus:ring-indigo-500">
+                                class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-xs focus:ring-brand-500">
                         </div>
 
                         <div>
@@ -114,13 +114,13 @@
                                 <label
                                     class="flex items-center gap-2 p-2 border border-slate-200 dark:border-slate-700 rounded-lg cursor-pointer hover:bg-slate-50 transition bg-white dark:bg-slate-800">
                                     <input type="radio" name="pengampu" value="guru_kelas" checked
-                                        class="text-indigo-600 focus:ring-indigo-500 w-3 h-3">
+                                        class="text-brand-600 focus:ring-brand-500 w-3 h-3">
                                     <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Wali Kelas</span>
                                 </label>
                                 <label
                                     class="flex items-center gap-2 p-2 border border-slate-200 dark:border-slate-700 rounded-lg cursor-pointer hover:bg-slate-50 transition bg-white dark:bg-slate-800">
                                     <input type="radio" name="pengampu" value="guru_mapel"
-                                        class="text-indigo-600 focus:ring-indigo-500 w-3 h-3">
+                                        class="text-brand-600 focus:ring-brand-500 w-3 h-3">
                                     <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Guru Mapel</span>
                                 </label>
                             </div>
@@ -130,13 +130,13 @@
                                 <span class="text-xs font-bold text-slate-700 dark:text-slate-300 ml-1">Nilai KKM
                                     Minimum</span>
                                 <input type="number" name="kkm" value="75" min="0" max="100" required
-                                    class="w-16 h-8 text-center rounded border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-xs font-bold text-slate-700 p-1 focus:ring-indigo-500">
+                                    class="w-16 h-8 text-center rounded border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-xs font-bold text-slate-700 p-1 focus:ring-brand-500">
                             </div>
                         </div>
 
                         <div class="pt-2">
                             <button type="submit"
-                                class="w-full px-4 py-3 bg-indigo-600 text-white rounded-xl text-sm font-black shadow-lg hover:bg-indigo-700 transition transform hover:-translate-y-0.5">
+                                class="w-full px-4 py-3 bg-brand-600 text-white rounded-md text-sm font-black shadow-lg hover:bg-brand-700 transition transform hover:-translate-y-0.5">
                                 Eksekusi Tambah Mapel
                             </button>
                         </div>
@@ -153,13 +153,13 @@
                     @method('DELETE')
 
                     <div
-                        class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                        class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
 
                         <div
                             class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
                             <div class="flex items-center gap-3">
                                 <div
-                                    class="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-lg flex items-center justify-center font-black">
+                                    class="w-8 h-8 bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 rounded-lg flex items-center justify-center font-black">
                                     {{ $tingkat }}
                                 </div>
                                 <h4 class="font-black text-slate-800 dark:text-white uppercase tracking-tight">Tingkat
@@ -173,7 +173,7 @@
                                 </span>
 
                                 <button type="button" onclick="simpanUrutanMassal({{ $tingkat }})"
-                                    class="text-xs font-bold text-white bg-indigo-500 hover:bg-indigo-600 px-3 py-1.5 rounded-lg shadow-sm transition">
+                                    class="text-xs font-bold text-white bg-brand-500 hover:bg-brand-600 px-3 py-1.5 rounded-lg shadow-sm transition">
                                     Simpan Urutan
                                 </button>
 
@@ -206,7 +206,7 @@
                                         <td class="px-6 py-3 text-center">
                                             <input type="number" min="1" value="{{ $mapel->urutan ?? 0 }}"
                                                 data-id="{{ $mapel->id }}"
-                                                class="input-urutan-{{ $tingkat }} w-16 text-center rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:ring-indigo-500 py-1 font-bold text-indigo-700">
+                                                class="input-urutan-{{ $tingkat }} w-16 text-center rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:ring-brand-500 py-1 font-bold text-brand-700">
                                         </td>
                                         <td class="px-6 py-3 text-center">
                                             <span
@@ -220,7 +220,7 @@
                                             <button type="button"
                                                 onclick="toggleSidaniraInstan('{{ route('subjects.toggle-sidanira', $mapel->id) }}', this)"
                                                 data-active="{{ $mapel->is_sidanira ? 'true' : 'false' }}"
-                                                class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none transition-colors duration-200 ease-in-out {{ $mapel->is_sidanira ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-600' }}"
+                                                class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none transition-colors duration-200 ease-in-out {{ $mapel->is_sidanira ? 'bg-brand-600' : 'bg-slate-200 dark:bg-slate-600' }}"
                                                 title="Klik untuk mengubah status">
                                                 <span aria-hidden="true"
                                                     class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $mapel->is_sidanira ? 'translate-x-2.5' : '-translate-x-2.5' }}"></span>
@@ -298,12 +298,12 @@
             if (newState) {
                 // Berubah jadi ON (Biru)
                 btnElement.classList.remove('bg-slate-200', 'dark:bg-slate-600');
-                btnElement.classList.add('bg-indigo-600');
+                btnElement.classList.add('bg-brand-600');
                 spanElement.classList.remove('-translate-x-2.5');
                 spanElement.classList.add('translate-x-2.5');
             } else {
                 // Berubah jadi OFF (Abu-abu)
-                btnElement.classList.remove('bg-indigo-600');
+                btnElement.classList.remove('bg-brand-600');
                 btnElement.classList.add('bg-slate-200', 'dark:bg-slate-600');
                 spanElement.classList.remove('translate-x-2.5');
                 spanElement.classList.add('-translate-x-2.5');

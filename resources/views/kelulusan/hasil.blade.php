@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hasil Kelulusan — SDN Tomang 03 Pagi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Kelulusan: SDN Tomang 03 Pagi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -12,7 +12,7 @@
         rel="stylesheet">
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         *,
@@ -24,16 +24,16 @@
         }
 
         :root {
-            --gold-primary: #D4AF37;
-            --gold-light: #F4E4C1;
-            --gold-deep: #B8941F;
+            --gold-primary: #86efac;
+            --gold-light: #dcfce7;
+            --gold-deep: #166534;
             --navy-deep: #0A1628;
             --navy-primary: #111D35;
             --navy-light: #1A2942;
             --navy-card: #141F38;
             --cream: #FFFEF9;
             --cream-dark: #F5F3E8;
-            --accent-blue: #4A90E2;
+            --accent-blue: #4a7c59;
             --accent-green: #10B981;
             --accent-red: #DC2626;
             --text-muted: rgba(255, 255, 255, 0.5);
@@ -45,6 +45,23 @@
 
         [x-cloak] {
             display: none !important;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        a:focus-visible {
+            outline: 3px solid var(--gold-primary);
+            outline-offset: 3px;
         }
 
         html {
@@ -63,10 +80,6 @@
             color: #fff;
             min-height: 100dvh;
             position: relative;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
         }
 
         .bg-scene {
@@ -74,6 +87,7 @@
             inset: 0;
             z-index: 0;
             overflow: hidden;
+            display: none;
         }
 
         .bg-scene::before {
@@ -750,21 +764,26 @@
                 padding: 2.5rem 2rem 2rem;
             }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
 
 <body x-data="hasilApp">
 
-    <div class="bg-scene">
-        <div class="grid-overlay"></div>
-        <div class="light-rays"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="particles" id="particles"></div>
-    </div>
-
-    <div class="page-wrapper">
+    <header class="visually-hidden">
+        <h1>Hasil Kelulusan</h1>
+    </header>
+    <main class="page-wrapper">
         <!-- MODAL PANEL -->
         <div class="modal-panel"
             :class="(state === 'error' || studentData.keterangan === 'TIDAK LULUS') ? 'shake-error' : ''" x-cloak>
@@ -811,8 +830,10 @@
                         </div>
                     </div>
 
-                    <p class="result-label">Atas Nama</p>
+                    <header>
+                        <p class="result-label">Atas Nama</p>
                     <h2 class="result-name" x-text="studentData.nama"></h2>
+                    </header>
 
                     <p class="result-nisn">
                         NISN &nbsp;·&nbsp; <span x-text="studentData.nisn"></span> <br>
@@ -845,7 +866,7 @@
                     </template>
                     <div class="seal-line">
                         <div class="seal-icon">
-                            <svg style="width:20px;height:20px;color:#D4AF37;" fill="none" stroke="currentColor"
+                            <svg style="width:20px;height:20px;color:#166534;" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -855,13 +876,14 @@
                             <strong>SD Negeri Tomang 03 | Jakarta</strong>
                             <span class="verification-wrapper"
                                 style="font-size: 0.75rem; color: #64748b; display: block;">
-                                ID Verifikasi: <span style="font-family: monospace; font-weight: 800; color: #4f46e5;"
+                                ID Verifikasi: <span style="font-family: monospace; font-weight: 800; color: #166534;"
                                     x-text="studentData.securenumber"></span>
                             </span>
                         </p>
                     </div>
 
                     <!-- TOMBOL DOWNLOAD HANYA MUNCUL JIKA LULUS -->
+                    <footer>
                     @if(session('studentData') && session('studentData')->keterangan === 'LULUS')
                     <a href="{{ route('kelulusan.download', session('token')) }}"
                         style="display:flex; align-items:center; justify-content:center; gap:0.5rem; width:100%; padding:1.125rem; background:#10b981; color:#fff; border-radius:12px; font-weight:600; text-decoration:none; margin-bottom:1rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
@@ -873,7 +895,10 @@
                     </a>
                     @endif
 
+                    <nav aria-label="Navigasi hasil kelulusan">
                     <a href="{{ route('pengumuman.index') }}" class="btn-close">Kembali ke Halaman Awal</a>
+                    </nav>
+                    </footer>
                 </div>
             </div>
 
@@ -891,34 +916,18 @@
                     Anda untuk informasi
                     lebih lanjut.</p>
 
-                <a href="{{ route('pengumuman.index') }}" class="btn-close" style="margin-top: 1.5rem;">Kembali ke
-                    Halaman Awal</a>
+                <footer>
+                    <nav aria-label="Navigasi hasil kelulusan">
+                        <a href="{{ route('pengumuman.index') }}" class="btn-close" style="margin-top: 1.5rem;">Kembali ke
+                            Halaman Awal</a>
+                    </nav>
+                </footer>
             </div>
 
         </div>
-    </div>
+    </main>
 
     <script>
-        (function initParticles() {
-            const container = document.getElementById('particles');
-            if(!container) return;
-            for (let i = 0; i < 25; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                const size = 1 + Math.random() * 3;
-                particle.style.cssText = `
-                    left: ${Math.random() * 100}%;
-                    width: ${size}px;
-                    height: ${size}px;
-                    --dur: ${7 + Math.random() * 10}s;
-                    --delay: ${-Math.random() * 15}s;
-                    --drift: ${(Math.random() - 0.5) * 100}px;
-                    animation: particleFloat var(--dur) var(--delay) ease-in-out infinite;
-                `;
-                container.appendChild(particle);
-            }
-        })();
-
         document.addEventListener('alpine:init', () => {
             Alpine.data('hasilApp', () => ({
                 state: 'loading',
@@ -952,7 +961,9 @@
                 },
 
                 launchPremiumConfetti() {
-                    const colors = ['#D4AF37', '#FFFFFF', '#10b981', '#F4E4C1'];
+                    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+                    const colors = ['#255B4B', '#FFFFFF', '#8A5E13', '#DCEBE3'];
                     const duration = 5000;
                     const end = Date.now() + duration;
 

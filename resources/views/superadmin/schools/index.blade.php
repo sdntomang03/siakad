@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-2xl text-slate-800 dark:text-slate-200 leading-tight">
+            <h2 class="text-xl font-semibold leading-tight text-slate-950 dark:text-slate-100 sm:text-2xl">
                 {{ __('Manajemen Sekolah') }}
             </h2>
-            <button @click="$dispatch('open-school-modal')"
-                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 transition duration-150">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button type="button" @click="$dispatch('open-school-modal')"
+                class="inline-flex min-h-11 items-center justify-center rounded-md border border-transparent bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                <svg aria-hidden="true" class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
@@ -15,13 +15,13 @@
         </div>
     </x-slot>
 
-    <div class="py-8" x-data="{ open: false }">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-6 sm:py-8 lg:px-8" x-data="{ open: false }">
+        <div class="mx-auto max-w-screen-2xl">
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+                class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full w-full text-left whitespace-nowrap">
-                        <thead class="bg-slate-50 dark:bg-slate-800/50">
+                    <table class="min-w-full w-full text-left">
+                        <thead class="bg-slate-50 dark:bg-slate-900/50">
                             <tr>
                                 <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase">NPSN</th>
                                 <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Sekolah</th>
@@ -33,7 +33,7 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                             @forelse($schools as $school)
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                            <tr class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-700/50">
                                 <td class="px-6 py-4 text-sm font-medium text-slate-600 dark:text-slate-300">{{
                                     $school->npsn }}</td>
                                 <td class="px-6 py-4">
@@ -43,7 +43,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <span
-                                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                                        class="inline-flex rounded-md bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-900 dark:bg-brand-900 dark:text-brand-100">
                                         {{ $school->tingkat }}
                                     </span>
                                 </td>
@@ -51,13 +51,14 @@
                                     <span
                                         class="flex items-center text-sm {{ $school->status ? 'text-emerald-600' : 'text-rose-600' }}">
                                         <span
-                                            class="h-2 w-2 rounded-full {{ $school->status ? 'bg-emerald-500' : 'bg-rose-500' }} mr-2"></span>
+                                            aria-hidden="true"
+                                            class="mr-2 h-2 w-2 rounded-full {{ $school->status ? 'bg-emerald-600' : 'bg-red-600' }}"></span>
                                         {{ $school->status ? 'Aktif' : 'Suspend' }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right space-x-2">
                                     <button @click="$dispatch('open-school-modal', { school: {{ $school->toJson() }} })"
-                                        class="text-indigo-600 hover:text-indigo-900 font-medium text-sm">Edit</button>
+                                        class="inline-flex min-h-11 items-center rounded-sm text-sm font-medium text-brand-800 underline underline-offset-4 hover:text-brand-900 dark:text-brand-200 dark:hover:text-white">Edit</button>
 
                                     <form id="form-delete-school-{{ $school->id }}"
                                         action="{{ route('superadmin.schools.destroy', $school) }}" method="POST"
@@ -66,7 +67,7 @@
 
                                         <button type="button"
                                             onclick="confirmAction('form-delete-school-{{ $school->id }}', 'Hapus Sekolah?', 'Apakah Anda yakin? Semua data pengguna dan sistem yang terkait dengan sekolah ini akan ikut terhapus permanen.')"
-                                            class="text-rose-600 hover:text-rose-900 font-medium text-sm">
+                                            class="inline-flex min-h-11 items-center rounded-sm text-sm font-medium text-red-700 underline underline-offset-4 hover:text-red-900 dark:text-red-300">
                                             Hapus
                                         </button>
                                     </form>
@@ -81,7 +82,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-700">
+                <div class="border-t border-slate-200 px-5 py-4 dark:border-slate-700 sm:px-6">
                     {{ $schools->links() }}
                 </div>
             </div>
@@ -109,11 +110,11 @@
             " x-show="show" class="fixed inset-0 z-[60] overflow-y-auto" style="display: none;">
 
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <div @click="show = false" class="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-sm">
+                <div @click="show = false" class="fixed inset-0 bg-slate-900/60 transition-opacity">
                 </div>
 
                 <div
-                    class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white dark:bg-slate-800 rounded-2xl shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    class="inline-block w-full max-w-lg transform overflow-hidden rounded-lg border border-slate-200 bg-white text-left align-bottom shadow-lg transition-all dark:border-slate-700 dark:bg-slate-800 sm:my-8 sm:align-middle">
                     <form :action="action" method="POST">
                         @csrf
                         <template x-if="method === 'PUT'">
@@ -121,43 +122,43 @@
                         </template>
 
                         <div
-                            class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                            class="flex items-center justify-between border-b border-slate-200 px-5 py-4 dark:border-slate-700 sm:px-6">
                             <h3 class="text-lg font-bold text-slate-900 dark:text-white" x-text="title"></h3>
-                            <button type="button" @click="show = false"
-                                class="text-slate-400 hover:text-slate-600">&times;</button>
+                            <button type="button" aria-label="Tutup formulir" @click="show = false"
+                                class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-slate-600 hover:bg-slate-100 hover:text-slate-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white">&times;</button>
                         </div>
 
-                        <div class="px-6 py-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                        <div class="max-h-[70vh] space-y-4 overflow-y-auto px-5 py-5 sm:px-6">
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">NPSN</label>
                                 <input type="text" name="npsn" x-model="formData.npsn" required
-                                    class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                    class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-brand-500 shadow-sm">
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Nama
                                     Sekolah</label>
                                 <input type="text" name="nama_sekolah" x-model="formData.nama_sekolah" required
-                                    class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                    class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-brand-500 shadow-sm">
                             </div>
 
                             <!-- Input Kepala Sekolah dan NIP -->
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Kepala
                                         Sekolah</label>
                                     <input type="text" name="kepala_sekolah" x-model="formData.kepala_sekolah"
-                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-brand-500 shadow-sm">
                                 </div>
                                 <div>
                                     <label
                                         class="block text-sm font-medium text-slate-700 dark:text-slate-300">NIP</label>
                                     <input type="text" name="nip" x-model="formData.nip"
-                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-brand-500 shadow-sm">
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div>
                                     <label
                                         class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tingkat</label>
@@ -174,7 +175,7 @@
                                         class="block text-sm font-medium text-slate-700 dark:text-slate-300">Status</label>
                                     <div class="mt-2 flex items-center">
                                         <input type="checkbox" name="status" x-model="formData.status" value="1"
-                                            class="rounded border-slate-300 text-indigo-600 shadow-sm">
+                                            class="rounded border-slate-300 text-brand-600 shadow-sm">
                                         <span class="ml-2 text-sm text-slate-600 dark:text-slate-400">Aktif</span>
                                     </div>
                                 </div>
@@ -188,44 +189,44 @@
                             </div>
 
                             <!-- Input Detail Alamat -->
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div>
                                     <label
                                         class="block text-sm font-medium text-slate-700 dark:text-slate-300">Kelurahan /
                                         Desa</label>
                                     <input type="text" name="kelurahan" x-model="formData.kelurahan"
-                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-brand-500 shadow-sm">
                                 </div>
                                 <div>
                                     <label
                                         class="block text-sm font-medium text-slate-700 dark:text-slate-300">Kecamatan</label>
                                     <input type="text" name="kecamatan" x-model="formData.kecamatan"
-                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-brand-500 shadow-sm">
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Kota /
                                         Kabupaten</label>
                                     <input type="text" name="kota" x-model="formData.kota"
-                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-brand-500 shadow-sm">
                                 </div>
                                 <div>
                                     <label
                                         class="block text-sm font-medium text-slate-700 dark:text-slate-300">Provinsi</label>
                                     <input type="text" name="provinsi" x-model="formData.provinsi"
-                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-indigo-500 shadow-sm">
+                                        class="mt-1 block w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-brand-500 shadow-sm">
                                 </div>
                             </div>
                         </div>
 
                         <div
-                            class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-700 text-right space-x-3">
+                            class="flex flex-col-reverse gap-3 border-t border-slate-200 bg-slate-50 px-5 py-4 dark:border-slate-700 dark:bg-slate-800/50 sm:flex-row sm:justify-end sm:px-6">
                             <button type="button" @click="show = false"
-                                class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900">Batal</button>
+                                class="inline-flex min-h-11 items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 dark:text-slate-200 dark:hover:bg-slate-700">Batal</button>
                             <button type="submit"
-                                class="px-6 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition shadow-md shadow-indigo-500/20">Simpan
+                                class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-800">Simpan
                                 Data</button>
                         </div>
                     </form>

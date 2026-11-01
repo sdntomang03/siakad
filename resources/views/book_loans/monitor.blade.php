@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-                <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
+                <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
                     Monitoring Peminjaman Siswa
                 </h2>
                 <p class="text-sm text-slate-500 mt-1">Klik pada nama siswa untuk melihat dan mengembalikan buku yang
@@ -12,7 +12,7 @@
 
                 {{-- TOMBOL EXCEL BARU --}}
                 <a href="{{ route('book-loans.export-unreturned') }}"
-                    class="w-full sm:w-auto px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-emerald-700 transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10">
+                    class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:w-auto">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
@@ -22,19 +22,19 @@
                 </a>
 
                 <a href="{{ route('book-loans.index') }}"
-                    class="w-full sm:w-auto px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold text-center hover:bg-slate-300 transition">
-                    &larr; Kembali
+                    class="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700 sm:w-auto">
+                    Kembali
                 </a>
             </div>
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-5xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             {{-- ALERTS --}}
             @if(session('success'))
-            <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 mb-4">
+            <div class="p-4 rounded-md bg-emerald-50 border border-emerald-200 mb-4">
                 <div class="flex items-center gap-3">
                     <svg class="h-5 w-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
@@ -48,9 +48,10 @@
 
             {{-- FITUR PENCARIAN SISWA LOKAL --}}
             <div
-                class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <input type="text" id="searchInput" placeholder="Cari nama siswa..."
-                    class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/50 text-sm focus:ring-indigo-500 focus:border-indigo-500 p-3">
+                class="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
+                <label for="searchInput" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Cari nama siswa</label>
+                <input type="search" id="searchInput" placeholder="Ketik nama siswa..."
+                    class="w-full rounded-md border-slate-300 bg-white text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
             </div>
 
             {{-- DAFTAR SISWA (ACCORDION) --}}
@@ -63,26 +64,28 @@
 
                 {{-- Hanya tampilkan siswa yang punya pinjaman agar lebih rapi, tapi bisa diatur jika ingin semua --}}
                 <div x-data="{ open: false }"
-                    class="student-card bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                    class="student-card overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
                     data-name="{{ strtolower($student->nama_lengkap) }}">
 
                     {{-- HEADER ACCORDION --}}
-                    <button @click="open = !open"
-                        class="w-full flex items-center justify-between p-5 focus:outline-none hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                        <div class="flex items-center gap-4 text-left">
+                    <button type="button" @click="open = !open" :aria-expanded="open.toString()"
+                        aria-controls="loan-details-{{ $student->id }}"
+                        class="flex min-h-16 w-full items-center justify-between gap-3 p-4 text-left transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-brand-700 dark:hover:bg-slate-700/50 sm:p-5">
+                        <div class="flex min-w-0 items-center gap-3 sm:gap-4">
                             <div
-                                class="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold text-lg">
+                                aria-hidden="true"
+                                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-brand-100 text-lg font-semibold text-brand-800 dark:bg-brand-900/50 dark:text-brand-200">
                                 {{ substr($student->nama_lengkap, 0, 1) }}
                             </div>
                             <div>
-                                <h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm md:text-base">{{
+                                <h3 class="truncate text-sm font-semibold text-slate-950 dark:text-slate-100 md:text-base">{{
                                     $student->nama_lengkap }}</h3>
                                 <p class="text-xs text-slate-500">{{ $kelas ? 'Kelas '.$kelas->tingkat.'
                                     '.$kelas->nama_kelas : 'Belum masuk kelas' }}</p>
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-4">
+                        <div class="flex shrink-0 items-center gap-2 sm:gap-4">
                             @if($activeLoansCount > 0)
                             <span
                                 class="px-3 py-1 bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 text-xs font-bold rounded-full border border-rose-200 dark:border-rose-800">
@@ -94,7 +97,7 @@
                                 Tidak ada tanggungan
                             </span>
                             @endif
-                            <svg :class="open ? 'rotate-180 text-indigo-600' : 'text-slate-400'"
+                            <svg :class="open ? 'rotate-180 text-brand-600' : 'text-slate-400'"
                                 class="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -104,14 +107,14 @@
                     </button>
 
                     {{-- DETAIL BUKU DIPINJAM --}}
-                    <div x-show="open" x-collapse
+                    <div id="loan-details-{{ $student->id }}" x-show="open" x-collapse
                         class="border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50"
                         style="display: none;">
                         <div class="p-5">
                             @if($activeLoansCount > 0)
                             <div
-                                class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-                                <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
+                                class="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+                                <table class="min-w-[36rem] w-full text-left text-sm text-slate-600 dark:text-slate-300">
                                     <thead
                                         class="text-xs text-slate-700 uppercase bg-slate-100 dark:bg-slate-900/80 dark:text-slate-300">
                                         <tr>
@@ -150,7 +153,7 @@
                                             <td class="px-4 py-3 text-right">
 
                                                 {{-- TOMBOL TERIMA BUKU (Hanya Muncul Jika Belum Dikembalikan) --}}
-                                                <button x-show="!isReturned" @click="if(confirm('Tandai buku ini sudah dikembalikan?')) {
+                                                <button type="button" x-show="!isReturned" @click="if(confirm('Tandai buku ini sudah dikembalikan?')) {
                         isLoading = true;
                         fetch('{{ route('book-loans.return', $loan->id) }}', {
                             method: 'POST',
@@ -166,7 +169,7 @@
                             isLoading = false;
                         })
                         .catch(() => { isLoading = false; alert('Terjadi kesalahan jaringan.'); });
-                    }" :disabled="isLoading" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-emerald-700 shadow-sm transition disabled:opacity-50">
+                    }" :disabled="isLoading" class="inline-flex min-h-10 items-center justify-center rounded-md bg-brand-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:cursor-wait disabled:opacity-60">
                                                     <span x-show="!isLoading">Terima Buku</span>
                                                     <span x-show="isLoading">Memproses...</span>
                                                 </button>
@@ -199,7 +202,7 @@
                 </div>
                 @empty
                 <div
-                    class="text-center py-10 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-500">
+                    class="text-center py-10 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500">
                     <p>Tidak ada data siswa ditemukan.</p>
                 </div>
                 @endforelse

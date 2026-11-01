@@ -7,21 +7,21 @@
     <title>Rencana Kinerja Helper - Guru Kelas SD</title>
     <style>
         :root {
-            --blue-main: #1e40af;
-            --blue-bg: #eff6ff;
-            --blue-border: #bfdbfe;
-            --green-main: #15803d;
-            --green-bg: #f0fdf4;
-            --green-border: #bbf7d0;
-            --amber-main: #b45309;
-            --amber-bg: #fefce8;
-            --amber-border: #fef08a;
-            --pink-main: #be185d;
-            --pink-bg: #fdf2f8;
-            --pink-border: #fbcfe8;
-            --purple-main: #6d28d9;
-            --purple-bg: #f5f3ff;
-            --purple-border: #ddd6fe;
+            --blue-main: #255b4b;
+            --blue-bg: #f1f7f3;
+            --blue-border: #dcebe3;
+            --green-main: #1d4b3e;
+            --green-bg: #f1f7f3;
+            --green-border: #dcebe3;
+            --amber-main: #8a5e13;
+            --amber-bg: #f8f3e9;
+            --amber-border: #e9dab9;
+            --pink-main: #2f725d;
+            --pink-bg: #f1f7f3;
+            --pink-border: #dcebe3;
+            --purple-main: #173c32;
+            --purple-bg: #f1f7f3;
+            --purple-border: #dcebe3;
             --text-dark: #0f172a;
             --text-muted: #64748b;
         }
@@ -32,18 +32,14 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #f8fafc;
+            background: #f5f6f2;
             margin: 0;
             padding: 24px;
             color: var(--text-dark);
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1080px;
             margin: 0 auto;
         }
 
@@ -53,7 +49,6 @@
             color: #1e293b;
             display: flex;
             align-items: center;
-            gap: 8px;
         }
 
         .subtitle {
@@ -74,6 +69,7 @@
         }
 
         .tab-btn {
+            min-height: 44px;
             padding: 10px 18px;
             background: #f1f5f9;
             border: 1.5px solid #cbd5e1;
@@ -96,7 +92,7 @@
             background: var(--blue-main);
             color: #fff;
             border-color: var(--blue-main);
-            box-shadow: 0 4px 6px -1px rgba(30, 64, 175, 0.2);
+            box-shadow: 0 2px 5px rgba(37, 91, 75, 0.18);
         }
 
         /* --- SEARCH BOX --- */
@@ -114,6 +110,22 @@
 
         .search-box:focus {
             border-color: var(--blue-main);
+        }
+
+        .tab-btn:focus-visible,
+        .search-box:focus-visible,
+        .clickable-row:focus-visible,
+        .chip-item:focus-visible {
+            outline: 3px solid var(--amber-main);
+            outline-offset: 2px;
+        }
+
+        .search-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #334155;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         /* --- HIERARCHY TREE LAYOUT --- */
@@ -185,6 +197,7 @@
             border-left: 6px solid var(--blue-main);
             background: #ffffff;
             border-color: #94a3b8;
+            border-left-color: var(--blue-main);
         }
 
         .level-root .block-header {
@@ -195,6 +208,7 @@
             border-left: 5px solid var(--green-main);
             background: var(--green-bg);
             border-color: var(--green-border);
+            border-left-color: var(--green-main);
         }
 
         .level-ra .block-header {
@@ -205,6 +219,7 @@
             border-left: 5px solid var(--amber-main);
             background: var(--amber-bg);
             border-color: var(--amber-border);
+            border-left-color: var(--amber-main);
         }
 
         .level-kk .block-header {
@@ -215,6 +230,7 @@
             border-left: 5px solid var(--pink-main);
             background: var(--pink-bg);
             border-color: var(--pink-border);
+            border-left-color: var(--pink-main);
         }
 
         .level-out .block-header {
@@ -225,6 +241,7 @@
             border-left: 5px solid var(--purple-main);
             background: var(--purple-bg);
             border-color: var(--purple-border);
+            border-left-color: var(--purple-main);
         }
 
         .level-lampiran .block-header {
@@ -236,6 +253,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            min-height: 44px;
             padding: 10px 12px;
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -249,10 +267,35 @@
             margin-bottom: 0;
         }
 
+        .output-note,
+        .output-period {
+            display: flex;
+            align-items: center;
+            min-height: 44px;
+            padding: 10px 12px;
+            border: 1px solid var(--amber-border);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            background: var(--amber-bg);
+            color: var(--amber-main);
+        }
+
+        .output-period {
+            border-color: var(--blue-border);
+            background: var(--blue-bg);
+            color: var(--text-dark);
+        }
+
         .clickable-row:hover {
-            border-color: #3b82f6;
+            border-color: var(--blue-main);
             background: #f8fafc;
             transform: translateX(2px);
+        }
+
+        .clickable-row:active,
+        .chip-item:active,
+        .tab-btn:active {
+            transform: translateY(1px);
         }
 
         .row-label {
@@ -337,6 +380,9 @@
         }
 
         .chip-item {
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
             font-size: 11px;
             font-weight: 600;
             padding: 6px 12px;
@@ -348,7 +394,7 @@
         }
 
         .chip-item:hover {
-            border-color: #3b82f6;
+            border-color: var(--blue-main);
             background: var(--blue-bg);
         }
 
@@ -403,6 +449,24 @@
 
         .toast.show {
             opacity: 1;
+        }
+
+        .page-footer {
+            margin: 20px auto 0;
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
 
         /* =========================================
@@ -507,25 +571,34 @@
 
 <body>
 
-    <div class="container">
-        <h1>📋 Rencana Kinerja Helper - Guru Kelas SD</h1>
+    <header class="container">
+        <h1>Rencana Kinerja Helper: Guru Kelas SD</h1>
         <p class="subtitle">Klik tab di bawah untuk berpindah antar Rencana Kinerja (Indikator Utama) berdasarkan file
             Excel Renkin Guru.</p>
+    </header>
 
-        <div class="tabs-container">
-            <button class="tab-btn active" onclick="switchTab(0)" id="tab-0">1. Perencanaan</button>
-            <button class="tab-btn" onclick="switchTab(1)" id="tab-1">2. Pelaksanaan</button>
-            <button class="tab-btn" onclick="switchTab(2)" id="tab-2">3. Evaluasi Hasil</button>
-            <button class="tab-btn" onclick="switchTab(3)" id="tab-3">4. Pembimbingan & Tugas Tambahan</button>
-            <button class="tab-btn" onclick="switchTab(4)" id="tab-4">5. Lampiran SKP</button>
+    <main class="container">
+        <nav class="tabs-container" aria-label="Bagian rencana kinerja">
+            <button type="button" class="tab-btn active" onclick="switchTab(0)" id="tab-0" aria-pressed="true">1. Perencanaan</button>
+            <button type="button" class="tab-btn" onclick="switchTab(1)" id="tab-1" aria-pressed="false">2. Pelaksanaan</button>
+            <button type="button" class="tab-btn" onclick="switchTab(2)" id="tab-2" aria-pressed="false">3. Evaluasi Hasil</button>
+            <button type="button" class="tab-btn" onclick="switchTab(3)" id="tab-3" aria-pressed="false">4. Pembimbingan & Tugas Tambahan</button>
+            <button type="button" class="tab-btn" onclick="switchTab(4)" id="tab-4" aria-pressed="false">5. Lampiran SKP</button>
+        </nav>
+
+        <div id="searchControls">
+            <label for="searchBox" class="search-label">Cari dokumen</label>
+            <input type="text" class="search-box" id="searchBox" placeholder="Ketik nama dokumen atau indikator...">
         </div>
 
-        <input type="text" class="search-box" id="searchBox" placeholder="Cari nama dokumen pada halaman ini...">
+        <div id="treeContainer" role="region" aria-label="Data rencana kinerja"></div>
+    </main>
 
-        <div id="treeContainer"></div>
-    </div>
+    <footer class="page-footer container">
+        <p>Pilih item untuk menyalin isinya ke clipboard.</p>
+    </footer>
 
-    <div class="toast" id="toast">Tersalin ke clipboard</div>
+    <div class="toast" id="toast" role="status" aria-live="polite">Tersalin ke clipboard</div>
 
     <script>
         // DATA STRUKTUR HIERARKI LENGKAP BERSUMBER DARI EXCEL RENKIN
@@ -832,25 +905,48 @@
     });
   }
 
+  function makeCopyControlsAccessible() {
+    document.querySelectorAll('#treeContainer [onclick^="handleCopy("]').forEach((control) => {
+      if (control.dataset.keyboardAccessible === 'true') return;
+
+      control.dataset.keyboardAccessible = 'true';
+      control.setAttribute('role', 'button');
+      control.setAttribute('tabindex', '0');
+
+      const value = control.querySelector('.row-value');
+      const label = (value ? value.textContent : control.textContent).trim();
+      control.setAttribute('aria-label', label ? `Salin ke clipboard: ${label}` : 'Salin ke clipboard');
+      control.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          control.click();
+        }
+      });
+    });
+  }
+
   function switchTab(index) {
     currentTabIndex = index;
 
     document.querySelectorAll('.tab-btn').forEach((btn, i) => {
       btn.classList.toggle('active', i === index);
+      btn.setAttribute('aria-pressed', String(i === index));
     });
 
     document.getElementById('searchBox').value = '';
 
     if (index === 4) {
-      document.getElementById('searchBox').style.display = 'none';
+      document.getElementById('searchControls').style.display = 'none';
       renderLampiran(LAMPIRAN_DATA);
     } else if (index === 5) {
-      document.getElementById('searchBox').style.display = 'none';
+      document.getElementById('searchControls').style.display = 'none';
       renderLainnya(LAINNYA_DATA);
     } else {
-      document.getElementById('searchBox').style.display = '';
+      document.getElementById('searchControls').style.display = '';
       renderTree([TREE_DATA[index]]);
     }
+
+    makeCopyControlsAccessible();
   }
 
   function renderLainnya(rhk) {
@@ -960,14 +1056,14 @@
             <span>Output Renaksi [Pilih Salah Satu / Bisa Lebih]</span>
             <span class="btn-action-label" style="color:var(--pink-main)">Klik +Tambah Output</span>
           </div>
-          <div class="clickable-row" style="cursor:default; background:#fff7ed;">
-            <span class="row-value" style="font-style:italic; color:#9a3412;">${ra.kriteria.note}</span>
+          <div class="output-note">
+            <span class="row-value" style="font-style:italic; color:var(--amber-main);">${ra.kriteria.note}</span>
           </div>
           <div class="chip-box">${chipsHtml}</div>
           <div class="chip-box" style="margin-top:10px;">
-            <div class="chip-item" onclick="handleCopy('${ra.kriteria.target}', this)">🎯 Target Jml: <strong>${ra.kriteria.target}</strong></div>
-            <div class="chip-item" onclick="handleCopy('${ra.kriteria.tw2}', this)">📅 TW2: <strong>${ra.kriteria.tw2}</strong></div>
-            <div class="chip-item" onclick="handleCopy('${ra.kriteria.tw4}', this)">📅 TW4: <strong>${ra.kriteria.tw4}</strong></div>
+            <div class="chip-item" onclick="handleCopy('${ra.kriteria.target}', this)">Target jumlah: <strong>${ra.kriteria.target}</strong></div>
+            <div class="chip-item" onclick="handleCopy('${ra.kriteria.tw2}', this)">TW 2: <strong>${ra.kriteria.tw2}</strong></div>
+            <div class="chip-item" onclick="handleCopy('${ra.kriteria.tw4}', this)">TW 4: <strong>${ra.kriteria.tw4}</strong></div>
           </div>
         `;
       } else {
@@ -983,9 +1079,9 @@
             <span class="copy-status">✓ Copied</span>
           </div>
           <div class="chip-box">
-            <div class="chip-item" onclick="handleCopy('${out.target}', this)">🎯 Target Jml: <strong>${out.target}</strong></div>
-            <div class="chip-item" onclick="handleCopy('${out.tw2}', this)">📅 TW2: <strong>${out.tw2}</strong></div>
-            <div class="chip-item" onclick="handleCopy('${out.tw4}', this)">📅 TW4: <strong>${out.tw4}</strong></div>
+            <div class="chip-item" onclick="handleCopy('${out.target}', this)">Target jumlah: <strong>${out.target}</strong></div>
+            <div class="chip-item" onclick="handleCopy('${out.tw2}', this)">TW 2: <strong>${out.tw2}</strong></div>
+            <div class="chip-item" onclick="handleCopy('${out.tw4}', this)">TW 4: <strong>${out.tw4}</strong></div>
           </div>
         `;
       }
@@ -1039,6 +1135,7 @@
       groupNode.appendChild(groupDiv);
       container.appendChild(groupNode);
     });
+    makeCopyControlsAccessible();
   }
 
   function renderTree(items) {
@@ -1157,14 +1254,14 @@
                        <span>Output Renaksi [Pilih Salah Satu / Bisa Lebih]</span>
                        <span class="btn-action-label" style="color:var(--pink-main)">Klik +Tambah Output</span>
                      </div>
-                     <div class="clickable-row" style="cursor:default; background:#fff7ed;">
-                       <span class="row-value" style="font-style:italic; color:#9a3412;">${ra.kriteria.note}</span>
+                     <div class="output-note">
+                       <span class="row-value">${ra.kriteria.note}</span>
                      </div>
                      <div class="chip-box">${chipsHtml}</div>
                      <div class="chip-box" style="margin-top:10px;">
-                       <div class="chip-item" onclick="handleCopy('${ra.kriteria.target}', this)">🎯 Target Jml: <strong>${ra.kriteria.target}</strong></div>
-                       <div class="chip-item" onclick="handleCopy('${ra.kriteria.tw2}', this)">📅 TW2: <strong>${ra.kriteria.tw2}</strong></div>
-                       <div class="chip-item" onclick="handleCopy('${ra.kriteria.tw4}', this)">📅 TW4: <strong>${ra.kriteria.tw4}</strong></div>
+                       <div class="chip-item" onclick="handleCopy('${ra.kriteria.target}', this)">Target jumlah: <strong>${ra.kriteria.target}</strong></div>
+                       <div class="chip-item" onclick="handleCopy('${ra.kriteria.tw2}', this)">TW 2: <strong>${ra.kriteria.tw2}</strong></div>
+                       <div class="chip-item" onclick="handleCopy('${ra.kriteria.tw4}', this)">TW 4: <strong>${ra.kriteria.tw4}</strong></div>
                      </div>
                    `;
                 } else {
@@ -1181,8 +1278,8 @@
                        chips += `<div class="chip-item" onclick="handleCopy('${escaped}', this)">${letter}. ${s}</div>`;
                      });
                      subItemsHtml = `
-                       <div class="clickable-row" style="cursor:default; background:#fff7ed;">
-                         <span class="row-value" style="font-style:italic; color:#9a3412; font-size:11px;">Rincian dokumen pendukung (klik per poin untuk copy satuan, atau klik "Nama Output" di atas untuk copy semua sekaligus):</span>
+                       <div class="output-note">
+                         <span class="row-value">Rincian dokumen pendukung (klik per poin untuk copy satuan, atau klik "Nama Output" di atas untuk copy semua sekaligus):</span>
                        </div>
                        <div class="chip-box">${chips}</div>
                      `;
@@ -1201,9 +1298,9 @@
                      </div>
                      ${subItemsHtml}
                      <div class="chip-box">
-                       <div class="chip-item" onclick="handleCopy('${out.target}', this)">🎯 Target Jml: <strong>${out.target}</strong></div>
-                       <div class="chip-item" onclick="handleCopy('${out.satuan}', this)">📦 Satuan: <strong>${out.satuan}</strong></div>
-                       <div class="chip-item" style="background:#fff1f2; border-color:var(--pink-border); cursor:default;">📅 ${out.triwulan}</div>
+                       <div class="chip-item" onclick="handleCopy('${out.target}', this)">Target jumlah: <strong>${out.target}</strong></div>
+                       <div class="chip-item" onclick="handleCopy('${out.satuan}', this)">Satuan: <strong>${out.satuan}</strong></div>
+                       <div class="output-period">${out.triwulan}</div>
                      </div>
                    `;
                 }
@@ -1243,6 +1340,8 @@
             document.getElementById('treeContainer').innerHTML = '<div style="text-align:center; padding:20px; color:#64748b;">Data tidak ditemukan pada halaman ini.</div>';
         }
     }
+
+    makeCopyControlsAccessible();
   });
 
   switchTab(0);

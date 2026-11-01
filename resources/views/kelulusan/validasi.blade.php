@@ -5,13 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifikasi Dokumen Kelulusan</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@700&display=swap"
-        rel="stylesheet">
     <style>
         body {
-            font-family: 'Montserrat', sans-serif;
-            background: #f8fafc;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f5f6f2;
             color: #1e293b;
             margin: 0;
             padding: 0;
@@ -19,17 +16,15 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-            background-size: 20px 20px;
         }
 
         .card {
             background: #fff;
             width: 100%;
             max-width: 420px;
-            padding: 2.5rem 2rem 2rem;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+            padding: 2rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px -12px rgba(15, 23, 42, 0.24);
             text-align: center;
             margin: 20px;
             position: relative;
@@ -45,7 +40,7 @@
             left: 0;
             right: 0;
             height: 6px;
-            background: linear-gradient(90deg, #047857, #10b981, #34d399);
+            background: #166534;
         }
 
         /* Ikon Perisai (Shield) */
@@ -53,24 +48,17 @@
             width: 80px;
             height: 80px;
             background: #f0fdf4;
-            color: #10b981;
-            border-radius: 24px;
-            /* Bentuk squircle lebih modern dari lingkaran biasa */
+            color: #166534;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 1.5rem;
-            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.15);
-            transform: rotate(45deg);
-            /* Efek rotasi kotak */
         }
 
         .icon-shield svg {
             width: 40px;
             height: 40px;
-            transform: rotate(-45deg);
-            /* Mengembalikan posisi ikon */
-            filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.3));
         }
 
         h1 {
@@ -89,14 +77,13 @@
             background: #ecfdf5;
             color: #047857;
             padding: 6px 14px;
-            border-radius: 99px;
+            border-radius: 6px;
             font-size: 0.7rem;
             font-weight: 700;
             letter-spacing: 0.05em;
             text-transform: uppercase;
             margin-bottom: 2rem;
             border: 1px solid #a7f3d0;
-            animation: pulse-badge 2s infinite;
         }
 
         .badge-secure svg {
@@ -104,41 +91,13 @@
             height: 14px;
         }
 
-        @keyframes pulse-badge {
-            0% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
-            }
-
-            70% {
-                box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-            }
-        }
-
         .info-box {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 16px;
+            border-radius: 8px;
             padding: 1.5rem;
             text-align: left;
             margin-bottom: 1.5rem;
-            position: relative;
-        }
-
-        /* Watermark transparan di dalam box info */
-        .info-box::after {
-            content: '';
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            width: 80px;
-            height: 80px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23cbd5e1' stroke-width='1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' /%3E%3C/svg%3E");
-            opacity: 0.2;
-            pointer-events: none;
         }
 
         .info-label {
@@ -164,12 +123,12 @@
         }
 
         .nomor-validasi {
-            font-family: 'JetBrains Mono', monospace;
-            color: #4338ca;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            color: #166534;
             letter-spacing: 0.5px;
             font-size: 1.05rem;
             font-weight: 700;
-            background: #e0e7ff;
+            background: #dcfce7;
             padding: 4px 8px;
             border-radius: 6px;
             display: inline-block;
@@ -199,33 +158,67 @@
             color: #334155;
         }
 
+        .portal-link {
+            display: inline-flex;
+            min-height: 44px;
+            align-items: center;
+            margin-top: 12px;
+            color: #255b4b;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .portal-link:focus-visible {
+            outline: 3px solid #8a5e13;
+            outline-offset: 3px;
+        }
+
         .lock-icon {
             color: #94a3b8;
             width: 18px;
             height: 18px;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 1.5rem 1rem;
+            }
+
+            .info-box {
+                padding: 1rem;
+            }
+
+            .nomor-validasi {
+                max-width: 100%;
+                overflow-wrap: anywhere;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="card">
-        <div class="icon-shield">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <main class="card">
+        <header>
+            <div class="icon-shield" aria-hidden="true">
+            <svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                     d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
         </div>
 
-        <h1>Dokumen Asli</h1>
+            <h1>Dokumen Asli</h1>
 
-        <div class="badge-secure">
-            <svg fill="currentColor" viewBox="0 0 24 24">
+            <div class="badge-secure">
+            <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
                 <path
                     d="M12 1L9 4l-4-1-1 4-4 3 3 4-3 4 4 1 1 4 4-1 3 3 3-3 4 1 1-4 4-3-3-4 3-4-4-1-1-4-4 1zM10.8 16.6l-4.2-4.2 1.4-1.4 2.8 2.8 5.6-5.6 1.4 1.4-7 7z" />
             </svg>
             Tervalidasi Sistem
-        </div>
+            </div>
+        </header>
 
         <div class="info-box">
             <div class="info-label">ID Verifikasi Digital</div>
@@ -244,7 +237,7 @@
 
             <div class="info-label">Status Ketetapan</div>
             <div class="info-value status-lulus">
-                <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg aria-hidden="true" style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
                 </svg>
                 {{ $data->keterangan }}
@@ -253,8 +246,9 @@
             <div class="info-value">{{ $data->nomor_skl }}</div>
         </div>
 
+        <footer>
         <div class="footer-note">
-            <svg class="lock-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="lock-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
@@ -264,7 +258,11 @@
                 <strong>Kepala SD Negeri Tomang 03 Pagi</strong>
             </span>
         </div>
-    </div>
+            <nav aria-label="Navigasi portal kelulusan">
+                <a class="portal-link" href="{{ route('pengumuman.index') }}">Kembali ke portal kelulusan</a>
+            </nav>
+        </footer>
+    </main>
 
 </body>
 

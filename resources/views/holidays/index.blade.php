@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
-            Manajemen <span class="text-rose-600">Hari Libur (Tanggal Merah)</span>
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
+            Manajemen Hari Libur
         </h2>
     </x-slot>
 
@@ -10,14 +10,14 @@
 
             @if(session('success'))
             <div
-                class="mb-6 flex items-center p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-sm font-bold shadow-sm">
+                class="mb-6 flex items-center p-4 rounded-md bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-sm font-bold shadow-sm">
                 {{ session('success') }}
             </div>
             @endif
 
             @if($errors->any())
             <div
-                class="mb-6 p-4 rounded-xl bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400 text-sm font-bold shadow-sm">
+                class="mb-6 p-4 rounded-md bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400 text-sm font-bold shadow-sm">
                 <ul>
                     @foreach($errors->all() as $error)
                     <li>- {{ $error }}</li>
@@ -27,16 +27,16 @@
             @endif
             @if(session('warning'))
             <div
-                class="mb-6 flex items-center p-4 rounded-xl bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 text-sm font-bold shadow-sm">
+                class="mb-6 flex items-center p-4 rounded-md bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 text-sm font-bold shadow-sm">
                 {{ session('warning') }}
             </div>
             @endif
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
 
                 <div class="lg:col-span-1">
                     <div
-                        class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden sticky top-6">
+                        class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden sticky top-6">
                         <div
                             class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
                             <h3 class="text-base font-black text-slate-800 dark:text-white flex items-center">
@@ -53,33 +53,38 @@
                         <form action="{{ route('holidays.store') }}" method="POST" class="p-6">
                             @csrf
 
-                            <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2">
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tanggal
+                                    <label for="tanggal_mulai"
+                                        class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Tanggal
                                         Mulai</label>
-                                    <input type="date" name="tanggal_mulai" value="{{ old('tanggal_mulai') }}" required
-                                        class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:ring-rose-500">
+                                    <input id="tanggal_mulai" type="date" name="tanggal_mulai"
+                                        value="{{ old('tanggal_mulai') }}" required
+                                        class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tanggal
+                                    <label for="tanggal_selesai"
+                                        class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Tanggal
                                         Selesai</label>
-                                    <input type="date" name="tanggal_selesai" value="{{ old('tanggal_selesai') }}"
-                                        class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:ring-rose-500">
+                                    <input id="tanggal_selesai" type="date" name="tanggal_selesai"
+                                        value="{{ old('tanggal_selesai') }}"
+                                        class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                                     <p class="text-[10px] text-slate-400 mt-1 leading-tight">Kosongkan jika libur hanya
                                         1 hari</p>
                                 </div>
                             </div>
 
                             <div class="mb-6">
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Keterangan / Nama
+                                <label for="keterangan"
+                                    class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Keterangan / Nama
                                     Libur</label>
-                                <input type="text" name="keterangan" value="{{ old('keterangan') }}" required
+                                <input id="keterangan" type="text" name="keterangan" value="{{ old('keterangan') }}" required
                                     placeholder="Contoh: Libur Semester Ganjil"
-                                    class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:ring-rose-500">
+                                    class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                             </div>
 
                             <button type="submit"
-                                class="w-full flex justify-center items-center gap-2 bg-rose-600 text-white py-2.5 rounded-xl font-black shadow-lg shadow-rose-500/30 hover:bg-rose-700 transition transform hover:-translate-y-0.5 uppercase tracking-wide text-xs">
+                                class="flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-brand-700 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                                 Simpan Hari Libur
                             </button>
                         </form>
@@ -88,7 +93,7 @@
 
                 <div class="lg:col-span-2">
                     <div
-                        class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                        class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                         <div
                             class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
                             <h3 class="text-base font-black text-slate-800 dark:text-white">

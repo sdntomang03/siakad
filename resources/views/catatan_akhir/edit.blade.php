@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight">
-                Penyusunan Catatan Akhir: <span class="text-indigo-600 dark:text-indigo-400">{{ $student->nama_lengkap
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100 leading-tight">
+                Penyusunan Catatan Akhir: <span class="text-brand-600 dark:text-brand-400">{{ $student->nama_lengkap
                     ?? $student->nama }}</span>
             </h2>
             <a href="{{ route('catatan_akhir.index', ['classroom_id' => $classroom->id]) }}"
@@ -17,15 +17,15 @@
 
             @if(session('success'))
             <div
-                class="p-4 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 rounded-xl font-bold shadow-sm">
+                class="p-4 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 rounded-md font-bold shadow-sm">
                 {{ session('success') }}
             </div>
             @endif
 
             <!-- Kolom API Key AI -->
             <div
-                class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-2xl shadow-sm border border-indigo-200 dark:border-indigo-800/50 flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0"
+                class="bg-brand-50 dark:bg-brand-900/30 p-4 rounded-lg shadow-sm border border-brand-200 dark:border-brand-800/50 flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-600 dark:text-brand-400 shrink-0"
                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                     stroke-linejoin="round">
                     <path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4l-4 4Z" />
@@ -37,7 +37,7 @@
                 <div class="flex-1">
                     <input type="password" id="apiKey" value="{{ env('GEMINI_API_KEY', '') }}"
                         placeholder="Masukkan Gemini API Key untuk mengaktifkan AI Generator..."
-                        class="w-full bg-transparent border-none text-sm text-indigo-900 dark:text-indigo-100 placeholder-indigo-400 dark:placeholder-indigo-600 focus:ring-0 p-0 outline-none">
+                        class="w-full bg-transparent border-none text-sm text-brand-900 dark:text-brand-100 placeholder-brand-400 dark:placeholder-brand-600 focus:ring-0 p-0 outline-none">
                 </div>
             </div>
 
@@ -48,7 +48,7 @@
 
                     {{-- 1. Rekap Absen & Piket --}}
                     <div
-                        class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        class="bg-white dark:bg-slate-800 p-5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                         <h3
                             class="font-black text-slate-800 dark:text-slate-200 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2 uppercase tracking-wider text-sm">
                             Absensi & Piket Harian</h3>
@@ -111,18 +111,18 @@
 
                     {{-- 2. Rekap Nilai Ujian/Tes & Peringkat --}}
                     <div
-                        class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        class="bg-white dark:bg-slate-800 p-5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                         <h3
                             class="font-black text-slate-800 dark:text-slate-200 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2 uppercase tracking-wider text-sm">
                             Nilai Tes Akademik</h3>
 
                         {{-- Indikator Peringkat --}}
                         <div
-                            class="mb-4 flex justify-between items-center bg-indigo-50 dark:bg-indigo-900/30 p-3 rounded-lg border border-indigo-100 dark:border-indigo-800/50">
+                            class="mb-4 flex justify-between items-center bg-brand-50 dark:bg-brand-900/30 p-3 rounded-lg border border-brand-100 dark:border-brand-800/50">
                             <span
-                                class="text-xs font-bold text-indigo-800 dark:text-indigo-300 uppercase tracking-wider">Peringkat
+                                class="text-xs font-bold text-brand-800 dark:text-brand-300 uppercase tracking-wider">Peringkat
                                 Kelas</span>
-                            <span class="text-sm font-black text-indigo-600 dark:text-indigo-400" id="valPeringkat"
+                            <span class="text-sm font-black text-brand-600 dark:text-brand-400" id="valPeringkat"
                                 data-rank="{{ $studentRank }}" data-total="{{ $totalStudents }}">
                                 {{ $studentRank !== '-' ? $studentRank . ' dari ' . $totalStudents . ' Siswa' : 'Belum
                                 Terperingkat' }}
@@ -136,14 +136,14 @@
                                 data-text="{{ $nilai->nama_mapel }}: {{ $nilai->nilai_akhir }}">
                                 <span class="text-slate-600 dark:text-slate-400 font-medium truncate pr-3">{{
                                     $nilai->nama_mapel }}</span>
-                                <span class="font-black text-indigo-600 dark:text-indigo-400">{{ $nilai->nilai_akhir
+                                <span class="font-black text-brand-600 dark:text-brand-400">{{ $nilai->nilai_akhir
                                     }}</span>
                             </li>
                             @endforeach
                         </ul>
                         @else
                         <div
-                            class="text-center bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                            class="text-center bg-slate-50 dark:bg-slate-900/50 p-4 rounded-md border border-slate-100 dark:border-slate-700/50">
                             <p class="text-sm text-slate-500 italic">Belum ada nilai ujian format tes.</p>
                         </div>
                         @endif
@@ -151,14 +151,14 @@
 
                     {{-- 3. Rekap Observasi Non-Tes --}}
                     <div
-                        class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        class="bg-white dark:bg-slate-800 p-5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                         <h3
                             class="font-black text-slate-800 dark:text-slate-200 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2 uppercase tracking-wider text-sm">
                             Observasi Praktik / Proyek</h3>
                         @if($rekapObservasi->isNotEmpty())
                         <ul class="text-sm space-y-3" id="listObservasi">
                             @foreach($rekapObservasi as $obs)
-                            <li class="item-observasi bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50"
+                            <li class="item-observasi bg-slate-50 dark:bg-slate-900/50 p-3 rounded-md border border-slate-100 dark:border-slate-700/50"
                                 data-text="Mapel {{ $obs->nama_mapel }} kegiatan {{ $obs->kegiatan }} mendapat predikat {{ $obs->predikat }} (Catatan: {{ $obs->catatan }})">
                                 <div class="flex justify-between items-center mb-1">
                                     <span class="font-bold text-slate-700 dark:text-slate-300 text-xs">{{
@@ -177,7 +177,7 @@
                         </ul>
                         @else
                         <div
-                            class="text-center bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                            class="text-center bg-slate-50 dark:bg-slate-900/50 p-4 rounded-md border border-slate-100 dark:border-slate-700/50">
                             <p class="text-sm text-slate-500 italic">Belum ada penilaian praktik atau proyek.</p>
                         </div>
                         @endif
@@ -185,12 +185,12 @@
 
                     {{-- 4. Rekap Catatan Guru --}}
                     <div
-                        class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        class="bg-white dark:bg-slate-800 p-5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                         <h3
                             class="font-black text-slate-800 dark:text-slate-200 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2 uppercase tracking-wider text-sm">
                             Jurnal Perilaku Guru</h3>
                         @if($teacherNotes->isEmpty())
-                        <div class="text-center bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50"
+                        <div class="text-center bg-slate-50 dark:bg-slate-900/50 p-4 rounded-md border border-slate-100 dark:border-slate-700/50"
                             id="listCatatan">
                             <p class="text-sm text-slate-500 italic">Tidak ada catatan perilaku/prestasi.</p>
                         </div>
@@ -198,10 +198,10 @@
                         <ul class="text-sm space-y-3" id="listCatatan">
                             @foreach($teacherNotes as $note)
                             <li
-                                class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                                class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-md border border-slate-100 dark:border-slate-700/50">
                                 <div class="flex justify-between items-center mb-2">
                                     <span
-                                        class="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 text-[10px] font-bold uppercase rounded tracking-wider type-catatan">{{
+                                        class="inline-block px-2 py-1 bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400 text-[10px] font-bold uppercase rounded tracking-wider type-catatan">{{
                                         $note->jenis_catatan }}</span>
                                 </div>
                                 <p class="text-slate-600 dark:text-slate-300 leading-relaxed mt-1 isi-catatan">{{
@@ -216,7 +216,7 @@
                 {{-- KOLOM KANAN: FORM WALI KELAS --}}
                 <div class="lg:col-span-2">
                     <div
-                        class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 sticky top-6">
+                        class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 sticky top-6">
 
                         <div
                             class="mb-8 border-b border-slate-100 dark:border-slate-700 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -230,7 +230,7 @@
 
                             {{-- Tombol Generate AI --}}
                             <button type="button" onclick="generateCatatanAI()" id="btnGenerateAI"
-                                class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white text-sm font-bold rounded-xl shadow-md transition-all transform hover:-translate-y-0.5">
+                                class="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-800">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -249,7 +249,7 @@
 
                             {{-- Penyesuaian Angka Kehadiran --}}
                             <div
-                                class="bg-slate-50 dark:bg-slate-900/30 p-5 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                                class="bg-slate-50 dark:bg-slate-900/30 p-5 rounded-md border border-slate-100 dark:border-slate-700/50">
                                 <h4
                                     class="font-bold text-slate-700 dark:text-slate-300 mb-4 text-sm uppercase tracking-wider">
                                     Validasi Data Kehadiran</h4>
@@ -260,7 +260,7 @@
                                             (Hari)</label>
                                         <input type="number" name="sakit" id="inputSakit"
                                             value="{{ old('sakit', $finalNote->sakit ?? $sakit) }}" min="0"
-                                            class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
+                                            class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-sm">
                                     </div>
                                     <div>
                                         <label
@@ -268,7 +268,7 @@
                                             (Hari)</label>
                                         <input type="number" name="izin" id="inputIzin"
                                             value="{{ old('izin', $finalNote->izin ?? $izin) }}" min="0"
-                                            class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
+                                            class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-sm">
                                     </div>
                                     <div>
                                         <label
@@ -276,7 +276,7 @@
                                             (Hari)</label>
                                         <input type="number" name="alpha" id="inputAlpha"
                                             value="{{ old('alpha', $finalNote->alpha ?? $alpha) }}" min="0"
-                                            class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
+                                            class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-brand-500 focus:border-brand-500 transition shadow-sm">
                                     </div>
                                 </div>
                             </div>
@@ -287,14 +287,14 @@
                                     class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Kesimpulan
                                     Akhir & Saran (Tercetak di Raport)</label>
                                 <textarea name="catatan_akhir" id="catatanAkhir" rows="12" required
-                                    class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 p-4 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm leading-relaxed"
+                                    class="w-full rounded-md border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 p-4 focus:ring-brand-500 focus:border-brand-500 transition shadow-sm leading-relaxed"
                                     placeholder="Cth: Ananda {{ $student->nama_lengkap ?? 'Siswa' }} menunjukkan peningkatan yang luar biasa pada aspek akademik, namun perlu ditingkatkan kembali kedisiplinannya...">{{ old('catatan_akhir', $finalNote->catatan_akhir ?? '') }}</textarea>
                             </div>
 
                             {{-- Tombol Simpan --}}
                             <div class="pt-4 border-t border-slate-100 dark:border-slate-700">
                                 <button type="submit"
-                                    class="w-full bg-slate-800 hover:bg-slate-900 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex justify-center items-center gap-2">
+                                    class="w-full bg-slate-800 hover:bg-slate-900 dark:bg-brand-600 dark:hover:bg-brand-700 text-white font-bold py-3.5 px-4 rounded-md shadow-md transition flex justify-center items-center gap-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7"></path>

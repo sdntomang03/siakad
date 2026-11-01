@@ -1,8 +1,8 @@
 <x-app-layout>
-    <x-slot name="header"><h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">Edit Tugas</h2></x-slot>
-    <div class="py-8 max-w-6xl mx-auto sm:px-6 lg:px-8">
+    <x-slot name="header"><h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">Edit Tugas</h2></x-slot>
+    <div class="mx-auto max-w-6xl space-y-5 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div x-data="assignmentEdit({{ Js::from($assignment->loadMissing(['tasks', 'groups.students'])) }})"
-            class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+            class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-8">
             <form method="POST" action="{{ route('assignments.update', $assignment) }}" class="space-y-6">
                 @csrf @method('PUT')
                 <div class="grid md:grid-cols-2 gap-5">
@@ -16,7 +16,7 @@
                     <div class="flex justify-between items-center mb-3"><div><h3 class="font-bold">Daftar item tugas</h3><p class="text-xs text-slate-500">Item yang sudah dipilih kelompok tidak dapat dihapus.</p></div><button type="button" @click="tasks.push({id: null, title: '', description: ''})" class="btn-secondary">+ Tambah tugas</button></div>
                     <div class="space-y-4">
                         <template x-for="(task, index) in tasks" :key="index">
-                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border dark:border-slate-700">
+                            <div class="p-4 rounded-md bg-slate-50 dark:bg-slate-900/40 border dark:border-slate-700">
                                 <input type="hidden" :name="`task_ids[${index}]`" x-model="task.id">
                                 <div class="flex justify-between"><span class="text-xs font-bold text-slate-500">TUGAS <span x-text="index + 1"></span></span><button type="button" @click="tasks.splice(index, 1)" class="text-xs text-red-600">Hapus dari daftar</button></div>
                                 <input :name="`task_titles[${index}]`" x-model="task.title" class="form-input mt-2" required>
@@ -32,7 +32,7 @@
                         <div class="flex justify-between items-center mb-3"><div><h3 class="font-bold">Kelompok</h3><p class="text-xs text-slate-500">Kelompok yang sudah memilih tugas tidak dapat dihapus.</p></div><button type="button" @click="addGroup()" class="btn-secondary">+ Tambah kelompok</button></div>
                         <div class="space-y-4">
                             <template x-for="(group, groupIndex) in groups" :key="groupIndex">
-                                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border dark:border-slate-700">
+                                <div class="p-4 rounded-md bg-slate-50 dark:bg-slate-900/40 border dark:border-slate-700">
                                     <input type="hidden" :name="`groups[${groupIndex}][id]`" x-model="group.id">
                                     <div class="flex justify-between"><input :name="`groups[${groupIndex}][name]`" x-model="group.name" class="form-input" required><button type="button" @click="groups.splice(groupIndex, 1)" class="text-xs text-red-600 ml-3">Hapus</button></div>
                                     <label class="form-label mt-3">Ketua</label>
@@ -45,12 +45,12 @@
                     </div>
                 </template>
 
-                <div class="flex justify-end gap-3"><a href="{{ route('assignments.show', $assignment) }}" class="btn-secondary">Batal</a><button class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold">Simpan perubahan</button></div>
+                <div class="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 dark:border-slate-700 sm:flex-row sm:justify-end"><a href="{{ route('assignments.show', $assignment) }}" class="btn-secondary">Batal</a><button class="min-h-11 rounded-md bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">Simpan perubahan</button></div>
             </form>
         </div>
     </div>
-    <style>.form-label{display:block;font-size:.75rem;font-weight:700;color:#64748b;margin-bottom:.4rem}.form-input{width:100%;border-radius:.75rem;border-color:#cbd5e1;background:transparent;padding:.65rem .8rem;font-size:.875rem}.rich-editor{min-height:7rem;width:100%;border:1px solid #cbd5e1;border-radius:.75rem;padding:.65rem .8rem;font-size:.875rem;background:transparent}.rich-editor:focus{outline:2px solid #818cf8;outline-offset:1px}.rich-editor:empty:before{content:attr(data-placeholder);color:#94a3b8}.rich-editor ol{list-style:decimal;padding-left:1.5rem}.rich-editor ul{list-style:disc;padding-left:1.5rem}.btn-secondary{padding:.55rem .8rem;border-radius:.65rem;background:#e2e8f0;color:#334155;font-size:.75rem;font-weight:700}</style>
-    <style>.editor-toolbar{display:flex;gap:.25rem;padding:.35rem;border:1px solid #cbd5e1;border-bottom:0;border-radius:.75rem .75rem 0 0;background:#f8fafc}.editor-toolbar button{padding:.15rem .45rem;border-radius:.35rem;color:#475569;font-size:.75rem}.source-toggle{margin-left:auto;font-weight:700;color:#4f46e5!important}.rich-editor{border-radius:0 0 .75rem .75rem}.source-editor{width:100%;border:1px solid #cbd5e1;border-radius:0 0 .75rem .75rem;padding:.65rem .8rem;font:.8rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;background:#0f172a;color:#e2e8f0}</style>
+    <style>.form-label{display:block;font-size:.875rem;font-weight:600;color:#334155;margin-bottom:.4rem}.dark .form-label{color:#e2e8f0}.form-input{width:100%;border:1px solid #cbd5e1;border-radius:.375rem;background:transparent;padding:.65rem .8rem;font-size:.875rem}.form-input:focus,.source-editor:focus{outline:2px solid #2f725d;outline-offset:2px}.rich-editor{min-height:7rem;width:100%;border:1px solid #cbd5e1;border-radius:.375rem;padding:.65rem .8rem;font-size:.875rem;background:transparent}.rich-editor:focus{outline:2px solid #2f725d;outline-offset:2px}.rich-editor:empty:before{content:attr(data-placeholder);color:#94a3b8}.rich-editor ol{list-style:decimal;padding-left:1.5rem}.rich-editor ul{list-style:disc;padding-left:1.5rem}.btn-secondary{display:inline-flex;min-height:2.75rem;align-items:center;justify-content:center;padding:.55rem .8rem;border:1px solid #cbd5e1;border-radius:.375rem;background:#fff;color:#334155;font-size:.875rem;font-weight:600}.dark .btn-secondary{border-color:#475569;background:#1e293b;color:#e2e8f0}</style>
+    <style>.editor-toolbar{display:flex;flex-wrap:wrap;gap:.25rem;padding:.35rem;border:1px solid #cbd5e1;border-bottom:0;border-radius:.375rem .375rem 0 0;background:#f8fafc}.editor-toolbar button{min-height:2rem;padding:.15rem .45rem;border-radius:.25rem;color:#475569;font-size:.75rem}.source-toggle{margin-left:auto;font-weight:600;color:#255b4b!important}.rich-editor{border-radius:0 0 .375rem .375rem}.source-editor{width:100%;border:1px solid #cbd5e1;border-radius:0 0 .375rem .375rem;padding:.65rem .8rem;font:.8rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;background:#0f172a;color:#e2e8f0}</style>
     <script>
         function assignmentEdit(data) {
             return {

@@ -2,19 +2,19 @@
     <x-slot name="header">
         <div class="flex items-center gap-3 sm:gap-4">
             <div
-                class="flex-shrink-0 h-11 w-11 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center shadow-md shadow-indigo-500/20">
+                class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-md bg-brand-700">
                 <i class="fas fa-id-card text-white text-lg"></i>
             </div>
             <div class="min-w-0 flex-1">
                 <h2 class="font-bold text-lg sm:text-2xl text-slate-800 dark:text-white tracking-tight truncate">
-                    Detail Biodata: <span class="text-indigo-600 dark:text-indigo-400">{{ $student->nama_lengkap ??
+                    Detail Biodata: <span class="text-brand-600 dark:text-brand-400">{{ $student->nama_lengkap ??
                         'Siswa' }}</span>
                 </h2>
                 <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Informasi pokok peserta didik berdasarkan
                     dokumen resmi.</p>
             </div>
             <a href="{{ route('students.edit', $student->user->id) }}"
-                class="inline-flex flex-shrink-0 items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold shadow-md transition">
+                class="inline-flex flex-shrink-0 items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-semibold shadow-md transition">
                 <i class="fas fa-edit"></i> Edit Data
             </a>
         </div>
@@ -25,7 +25,7 @@
 
             <!-- 1. IDENTITAS POKOK -->
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div
                     class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-white">Identitas Pokok</h3>
@@ -64,7 +64,7 @@
 
             <!-- 2. ALAMAT & DOMISILI -->
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div
                     class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-white">Alamat & Domisili</h3>
@@ -88,7 +88,7 @@
 
             <!-- 3. DATA KELUARGA -->
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div
                     class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-white">Data Keluarga (Orang Tua / Wali)</h3>
@@ -96,7 +96,7 @@
                 <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Ayah -->
                     <div
-                        class="border border-blue-100 dark:border-blue-900/50 rounded-xl p-4 bg-blue-50/30 dark:bg-blue-900/10">
+                        class="border border-blue-100 dark:border-blue-900/50 rounded-md p-4 bg-blue-50/30 dark:bg-blue-900/10">
                         <h4
                             class="font-bold text-blue-700 dark:text-blue-400 mb-3 border-b border-blue-100 dark:border-blue-900/50 pb-2">
                             Data Ayah</h4>
@@ -110,7 +110,7 @@
                     </div>
                     <!-- Ibu -->
                     <div
-                        class="border border-pink-100 dark:border-pink-900/50 rounded-xl p-4 bg-pink-50/30 dark:bg-pink-900/10">
+                        class="border border-pink-100 dark:border-pink-900/50 rounded-md p-4 bg-pink-50/30 dark:bg-pink-900/10">
                         <h4
                             class="font-bold text-pink-700 dark:text-pink-400 mb-3 border-b border-pink-100 dark:border-pink-900/50 pb-2">
                             Data Ibu</h4>
@@ -125,7 +125,7 @@
                     <!-- Wali (Jika Ada) -->
                     @if(!empty($student->family->nama_wali))
                     <div
-                        class="lg:col-span-2 border border-amber-100 dark:border-amber-900/50 rounded-xl p-4 bg-amber-50/30 dark:bg-amber-900/10">
+                        class="lg:col-span-2 border border-amber-100 dark:border-amber-900/50 rounded-md p-4 bg-amber-50/30 dark:bg-amber-900/10">
                         <h4
                             class="font-bold text-amber-700 dark:text-amber-400 mb-3 border-b border-amber-100 dark:border-amber-900/50 pb-2">
                             Data Wali</h4>
@@ -143,7 +143,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Kesehatan -->
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                    class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                     <div
                         class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
                         <h3 class="text-lg font-bold text-slate-800 dark:text-white">Kesehatan</h3>
@@ -161,7 +161,7 @@
 
                 <!-- Bantuan -->
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                    class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                     <div
                         class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
                         <h3 class="text-lg font-bold text-slate-800 dark:text-white">Bantuan Finansial</h3>

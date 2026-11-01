@@ -5,34 +5,34 @@
         </h2>
     </x-slot>
 
-    <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 
-        <div class="mb-4 flex justify-between items-center">
+        <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <a href="{{ route('jadwal.index', ['classroom_id' => $classroom->id]) }}"
-                class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1">
+                class="inline-flex min-h-10 items-center gap-1 font-medium text-brand-700 hover:text-brand-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-300 dark:hover:text-brand-200">
                 &larr; Kembali ke Jadwal
             </a>
             <button type="button" onclick="tambahBaris()"
-                class="px-4 py-2 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:bg-emerald-700 transition shadow-sm">
-                + Tambah Jam
+                class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                Tambah Jam
             </button>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
             <form action="{{ route('jadwal.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="classroom_id" value="{{ $classroom->id }}">
                 <input type="hidden" name="hari" value="{{ $hari }}">
 
                 <!-- INPUT DURASI GLOBAL -->
-                <div class="bg-indigo-50 p-5 border-b border-indigo-100 flex flex-wrap items-center gap-4">
+                <div class="flex flex-wrap items-end gap-4 border-b border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900/50">
                     <div>
-                        <label class="block text-xs font-bold text-indigo-800 uppercase mb-1">Durasi per Mapel
+                        <label for="durasi_menit" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Durasi per Mapel
                             (Menit)</label>
                         <input type="number" id="durasi_menit" value="35"
-                            class="w-24 text-sm border-indigo-300 rounded-lg focus:ring-indigo-500 font-bold">
+                            class="w-28 rounded-md border-slate-300 text-sm font-medium focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-800 dark:text-white">
                     </div>
-                    <div class="text-xs text-indigo-700 flex-1 pt-4">
+                    <div class="text-sm leading-6 text-slate-600 dark:text-slate-300 flex-1">
                         <strong>Tips:</strong> Pilih Mata Pelajaran, maka jam akan terisi otomatis meneruskan baris di
                         atasnya. Jika opsi Mapel <strong>dikosongkan</strong> (untuk Istirahat/Upacara), jam harus Anda
                         ketik manual.
@@ -41,7 +41,7 @@
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left">
-                        <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                        <thead class="bg-slate-100 text-xs uppercase text-slate-700 dark:bg-slate-900 dark:text-slate-200">
                             <tr>
                                 <th class="px-4 py-4 w-20 text-center">Jam Ke-</th>
                                 <th class="px-4 py-4 w-36">Jam Mulai</th>
@@ -53,27 +53,27 @@
                         </thead>
                         <tbody id="jadwal-tbody">
                             @forelse($jadwal as $index => $item)
-                            <tr class="border-b border-slate-100 baris-jadwal hover:bg-slate-50">
+                            <tr class="baris-jadwal border-b border-slate-100 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700/40">
                                 <td class="px-4 py-2 text-center">
                                     <input type="number" name="urutan_jam[]" value="{{ $item->urutan_jam }}"
-                                        class="w-16 text-center text-sm border-slate-300 rounded-lg focus:ring-indigo-500"
+                                        class="w-16 text-center text-sm border-slate-300 rounded-lg focus:ring-brand-500"
                                         required>
                                 </td>
                                 <td class="px-4 py-2">
                                     <input type="time" name="jam_mulai[]"
                                         value="{{ \Carbon\Carbon::parse($item->jam_mulai)->format('H:i') }}"
-                                        class="w-full text-sm border-slate-300 rounded-lg focus:ring-indigo-500"
+                                        class="w-full text-sm border-slate-300 rounded-lg focus:ring-brand-500"
                                         onchange="otomatisWaktu(this)" required>
                                 </td>
                                 <td class="px-4 py-2">
                                     <input type="time" name="jam_selesai[]"
                                         value="{{ \Carbon\Carbon::parse($item->jam_selesai)->format('H:i') }}"
-                                        class="w-full text-sm border-slate-300 rounded-lg focus:ring-indigo-500"
+                                        class="w-full text-sm border-slate-300 rounded-lg focus:ring-brand-500"
                                         required>
                                 </td>
                                 <td class="px-4 py-2">
                                     <select name="subject_id[]" onchange="otomatisWaktu(this)"
-                                        class="w-full text-sm border-slate-300 rounded-lg focus:ring-indigo-500">
+                                        class="w-full text-sm border-slate-300 rounded-lg focus:ring-brand-500">
                                         <option value="">-- Kosong (Istirahat / Upacara) --</option>
                                         @foreach($subjects as $mapel)
                                         <option value="{{ $mapel->id }}" {{ $item->subject_id == $mapel->id ? 'selected'
@@ -86,7 +86,7 @@
                                 <td class="px-4 py-2">
                                     <input type="text" name="keterangan[]" value="{{ $item->keterangan }}"
                                         placeholder="Misal: Istirahat"
-                                        class="w-full text-sm border-slate-300 rounded-lg focus:ring-indigo-500">
+                                        class="w-full text-sm border-slate-300 rounded-lg focus:ring-brand-500">
                                 </td>
                                 <td class="px-4 py-2 text-center">
                                     <button type="button" onclick="hapusBaris(this)"
@@ -100,9 +100,9 @@
                     </table>
                 </div>
 
-                <div class="p-6 bg-slate-50 border-t border-slate-200 flex justify-end">
+                <div                 class="flex justify-end border-t border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900/50">
                     <button type="submit"
-                        class="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition">
+                        class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                         Simpan Perubahan
                     </button>
                 </div>
@@ -175,21 +175,21 @@
             tr.className = 'border-b border-slate-100 baris-jadwal hover:bg-slate-50';
             tr.innerHTML = `
                 <td class="px-4 py-2 text-center">
-                    <input type="number" name="urutan_jam[]" value="${rowCount}" class="w-16 text-center text-sm border-slate-300 rounded-lg focus:ring-indigo-500" required>
+                    <input type="number" name="urutan_jam[]" value="${rowCount}" class="w-16 text-center text-sm border-slate-300 rounded-lg focus:ring-brand-500" required>
                 </td>
                 <td class="px-4 py-2">
-                    <input type="time" name="jam_mulai[]" class="w-full text-sm border-slate-300 rounded-lg focus:ring-indigo-500" onchange="otomatisWaktu(this)" required>
+                    <input type="time" name="jam_mulai[]" class="w-full text-sm border-slate-300 rounded-lg focus:ring-brand-500" onchange="otomatisWaktu(this)" required>
                 </td>
                 <td class="px-4 py-2">
-                    <input type="time" name="jam_selesai[]" class="w-full text-sm border-slate-300 rounded-lg focus:ring-indigo-500" required>
+                    <input type="time" name="jam_selesai[]" class="w-full text-sm border-slate-300 rounded-lg focus:ring-brand-500" required>
                 </td>
                 <td class="px-4 py-2">
-                    <select name="subject_id[]" onchange="otomatisWaktu(this)" class="w-full text-sm border-slate-300 rounded-lg focus:ring-indigo-500">
+                    <select name="subject_id[]" onchange="otomatisWaktu(this)" class="w-full text-sm border-slate-300 rounded-lg focus:ring-brand-500">
                         ${opsiMapel}
                     </select>
                 </td>
                 <td class="px-4 py-2">
-                    <input type="text" name="keterangan[]" placeholder="Misal: Istirahat" class="w-full text-sm border-slate-300 rounded-lg focus:ring-indigo-500">
+                    <input type="text" name="keterangan[]" placeholder="Misal: Istirahat" class="w-full text-sm border-slate-300 rounded-lg focus:ring-brand-500">
                 </td>
                 <td class="px-4 py-2 text-center">
                     <button type="button" onclick="hapusBaris(this)" class="text-rose-600 hover:text-rose-800 font-bold p-2">✕</button>

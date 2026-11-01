@@ -1,21 +1,21 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight">
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100 leading-tight">
             Manajemen Distribusi Rapor
         </h2>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             @if(session('success'))
-            <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 font-medium text-sm">
+            <div class="p-4 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 font-medium text-sm">
                 {{ session('success') }}
             </div>
             @endif
 
             @if(auth()->user() && ! auth()->user()->hasRole('superadmin') && isset($students) && $students->isEmpty())
-            <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 font-medium text-sm">
+            <div class="p-4 rounded-md bg-amber-50 border border-amber-200 text-amber-800 font-medium text-sm">
                 Akun Anda belum terkait dengan kelas perwalian mana pun atau belum ada siswa di kelas Anda. Silakan
                 hubungi admin sekolah.
             </div>
@@ -23,7 +23,7 @@
 
             {{-- PANEL ATAS: FORM AKSI MASSAL --}}
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div class="p-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
                     <h3 class="text-base font-bold text-slate-700 dark:text-slate-300">Catat Pergerakan Rapor</h3>
                     <p class="text-xs text-slate-500">Pilih siswa di masing-masing kelas untuk menandai apakah rapor
@@ -42,7 +42,7 @@
                             <input type="hidden" name="posisi" class="posisiInput">
 
                             <div
-                                class="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm">
+                                class="border border-slate-200 dark:border-slate-700 rounded-md overflow-hidden shadow-sm">
                                 <div
                                     class="bg-slate-100 dark:bg-slate-700 px-4 py-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
                                     <div>
@@ -56,22 +56,22 @@
                                         </p>
                                     </div>
 
-                                    <div class="flex items-center gap-3">
+                                    <div class="flex flex-wrap items-center gap-2">
                                         <label
                                             class="flex items-center gap-2 text-xs font-semibold cursor-pointer mr-2 text-slate-700 dark:text-slate-300">
                                             <input type="checkbox"
-                                                class="class-select-all rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                                class="class-select-all rounded border-slate-300 text-brand-600 focus:ring-brand-500"
                                                 data-class-id="{{ $classroom->id }}" />
                                             Pilih Semua
                                         </label>
 
                                         <button type="button" onclick="submitBulk(this, 'Dibawa Siswa')"
-                                            class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg shadow transition text-xs">
-                                            ↑ Bagikan
+                                            class="inline-flex min-h-10 items-center justify-center rounded-md bg-amber-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-amber-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700">
+                                            Bagikan ke siswa
                                         </button>
                                         <button type="button" onclick="submitBulk(this, 'Di Sekolah')"
-                                            class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow transition text-xs">
-                                            ↓ Terima
+                                            class="inline-flex min-h-10 items-center justify-center rounded-md bg-brand-700 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                                            Terima di sekolah
                                         </button>
                                     </div>
                                 </div>
@@ -84,9 +84,9 @@
 
                                     @forelse($studentsInClass as $stu)
                                     <label
-                                        class="flex items-center gap-3 p-3 border border-slate-200 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-indigo-50 dark:hover:bg-slate-700 transition">
+                                        class="flex items-center gap-3 p-3 border border-slate-200 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-brand-50 dark:hover:bg-slate-700 transition">
                                         <input type="checkbox" name="student_ids[]" value="{{ $stu->id }}"
-                                            class="student-checkbox rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                            class="student-checkbox rounded border-slate-300 text-brand-600 focus:ring-brand-500"
                                             data-class-id="{{ $classroom->id }}" />
                                         <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">{{
                                             $stu->nama_lengkap }}</span>
@@ -121,7 +121,7 @@
                         }
                     }
                  }"
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
 
                 <form method="POST">
                     @csrf
@@ -160,7 +160,7 @@
                                 <tr>
                                     <th class="px-6 py-4 w-10">
                                         <input type="checkbox" @change="toggleAllHistory"
-                                            class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 cursor-pointer">
+                                            class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 h-4 w-4 cursor-pointer">
                                     </th>
                                     <th class="px-6 py-4">Nama Siswa</th>
                                     <th class="px-6 py-4">Kelas</th>
@@ -176,7 +176,7 @@
                                         {{-- Checkbox per baris --}}
                                         <input type="checkbox" name="submission_ids[]" value="{{ $s->id }}"
                                             x-model="selectedHistory"
-                                            class="history-checkbox rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4 cursor-pointer">
+                                            class="history-checkbox rounded border-slate-300 text-brand-600 focus:ring-brand-500 h-4 w-4 cursor-pointer">
                                     </td>
                                     <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">{{
                                         $s->student->nama_lengkap ?? '—' }}</td>

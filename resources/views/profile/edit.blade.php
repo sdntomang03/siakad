@@ -1,29 +1,29 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="text-xl font-semibold leading-tight text-slate-950 dark:text-slate-100">
             {{ __('Profile') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
+    <div class="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div class="mx-auto max-w-screen-xl space-y-5">
+            <section class="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
+                <div class="max-w-2xl">
                     @include('profile.partials.update-profile-information-form')
                 </div>
-            </div>
+            </section>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
+            <section class="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
+                <div class="max-w-2xl">
                     @include('profile.partials.update-password-form')
                 </div>
-            </div>
+            </section>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
+            <section class="rounded-lg border border-red-200 bg-white p-4 dark:border-red-900 dark:bg-slate-800 sm:p-6">
+                <div class="max-w-2xl">
                     @include('profile.partials.delete-user-form')
                 </div>
-            </div>
+            </section>
         </div>
     </div>
 </x-app-layout>

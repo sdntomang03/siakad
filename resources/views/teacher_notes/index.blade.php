@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 uppercase tracking-tight">
+                <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100 uppercase tracking-tight">
                     Buku Jurnal & Catatan Kelas
                 </h2>
                 <p class="text-sm text-slate-500 mt-1">
@@ -13,7 +13,7 @@
                 {{-- Tombol Rekap Baru --}}
                 @hasanyrole('superadmin|operator|guru|kepsek')
                 <a href="{{ route('teacher-notes.report') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-indigo-600 dark:text-indigo-400 shadow-sm hover:bg-slate-50 transition">
+                    class="inline-flex min-h-11 items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-brand-800 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:bg-slate-800 dark:text-brand-200 dark:hover:bg-slate-700">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 17v-2a4 4 0 00-4-4H5m11 0h2a4 4 0 004 4v2m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
@@ -30,19 +30,19 @@
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             {{-- 1. PILIH KELAS --}}
             @hasanyrole('superadmin|operator|guru|kepsek')
             <div
-                class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
                 <form action="{{ route('teacher-notes.index') }}" method="GET"
                     class="flex flex-col md:flex-row items-end gap-4">
                     <div class="w-full md:w-1/3">
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Pilih Kelas</label>
-                        <select name="classroom_id" onchange="this.form.submit()"
-                            class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">
+                        <label for="classroom_id" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Kelas</label>
+                        <select id="classroom_id" name="classroom_id" onchange="this.form.submit()"
+                            class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                             <option value="">-- Pilih Kelas --</option>
                             @foreach($myClassrooms as $cls)
                             <option value="{{ $cls->id }}" {{ request('classroom_id')==$cls->id ? 'selected' : '' }}>
@@ -65,7 +65,7 @@
                 <input type="hidden" name="classroom_id" value="{{ $selectedClassroom->id }}">
 
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-8">
+                    class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-8">
 
                     {{-- HEADER CATATAN --}}
                     <div
@@ -77,13 +77,13 @@
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tanggal
                                     Kejadian</label>
                                 <input type="date" name="tanggal" required value="{{ date('Y-m-d') }}"
-                                    class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-sm focus:ring-indigo-500 font-bold text-slate-700 dark:text-slate-300">
+                                    class="w-full rounded-md border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-sm focus:ring-brand-500 font-bold text-slate-700 dark:text-slate-300">
                             </div>
                             <div class="w-full md:w-1/4">
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Jenis
                                     Catatan</label>
                                 <select name="jenis_catatan" required
-                                    class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-sm focus:ring-indigo-500 font-bold text-indigo-700 dark:text-indigo-400">
+                                    class="w-full rounded-md border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-sm focus:ring-brand-500 font-bold text-brand-700 dark:text-brand-400">
                                     <option value="Catatan Wali Kelas">Catatan Wali Kelas</option>
                                     <option value="Prestasi Anak">Prestasi / Penghargaan</option>
                                     <option value="Pelanggaran / Kedisiplinan">Pelanggaran / Kedisiplinan</option>
@@ -93,7 +93,7 @@
                             <div class="w-full md:w-2/4 flex items-center pt-2 md:pt-6">
                                 <label class="flex items-center gap-3 cursor-pointer">
                                     <input type="checkbox" name="is_for_report" value="1" checked
-                                        class="w-6 h-6 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-500 dark:bg-slate-800 dark:border-slate-600">
+                                        class="w-6 h-6 text-brand-600 bg-white border-slate-300 rounded focus:ring-brand-500 dark:bg-slate-800 dark:border-slate-600">
                                     <div>
                                         <span class="block font-bold text-slate-700 dark:text-slate-200">Tampilkan di
                                             Raport E-Rapor</span>
@@ -111,13 +111,13 @@
                                         Kejadian / Pesan</label>
                                     <textarea name="catatan" required rows="3"
                                         placeholder="Contoh: Terpilih menjadi perwakilan sekolah..."
-                                        class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-sm focus:ring-indigo-500"></textarea>
+                                        class="w-full rounded-md border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-sm focus:ring-brand-500"></textarea>
                                 </div>
                                 <div class="w-full md:w-1/3">
                                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Lampiran Foto
                                         (Opsional)</label>
                                     <input type="file" name="foto[]" multiple accept="image/jpeg, image/png, image/webp"
-                                        class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/50 dark:file:text-indigo-400 cursor-pointer">
+                                        class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/50 dark:file:text-brand-400 cursor-pointer">
                                     <p class="text-[10px] text-slate-400 mt-2">*Maksimal 2MB. Format: JPG, PNG, WEBP.
                                     </p>
                                 </div>
@@ -137,8 +137,8 @@
                                     atas.</p>
                             </div>
                             <label
-                                class="flex items-center gap-2 text-sm font-bold text-indigo-600 cursor-pointer bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition">
-                                <input type="checkbox" x-model="selectAll" class="rounded text-indigo-600">
+                                class="flex items-center gap-2 text-sm font-bold text-brand-600 cursor-pointer bg-brand-50 px-3 py-1.5 rounded-lg hover:bg-brand-100 transition">
+                                <input type="checkbox" x-model="selectAll" class="rounded text-brand-600">
                                 Pilih Semua Siswa
                             </label>
                         </div>
@@ -146,10 +146,10 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                             @foreach($students as $siswa)
                             <label
-                                class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer transition">
+                                class="flex items-center gap-3 p-3 rounded-md border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer transition">
                                 <input type="checkbox" name="student_ids[]" value="{{ $siswa->id }}"
                                     x-bind:checked="selectAll"
-                                    class="w-5 h-5 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-500">
+                                    class="w-5 h-5 text-brand-600 bg-white border-slate-300 rounded focus:ring-brand-500">
                                 <div>
                                     <span class="block font-bold text-slate-700 dark:text-slate-200">{{
                                         $siswa->nama_lengkap }}</span>
@@ -162,7 +162,7 @@
 
                         <div class="mt-8 border-t border-slate-100 dark:border-slate-700 pt-6 text-right">
                             <button type="submit"
-                                class="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition transform hover:-translate-y-1">
+                                class="px-8 py-3 bg-brand-600 text-white rounded-md font-bold shadow-lg hover:bg-brand-700 transition transform hover:-translate-y-1">
                                 Simpan Kejadian &rarr;
                             </button>
                         </div>
@@ -175,7 +175,7 @@
             {{-- 3. TABEL RIWAYAT KEJADIAN KELAS --}}
 
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div class="p-6 border-b border-slate-100 dark:border-slate-700">
                     <h3 class="text-lg font-black text-slate-800 dark:text-white">Riwayat Jurnal Kelas</h3>
                     <p class="text-sm text-slate-500">Catatan kejadian yang telah tersimpan di semester ini.</p>
@@ -231,7 +231,7 @@
                                         <div x-data="{ imgModal: false }">
                                             {{-- Thumbnail Foto --}}
                                             <button type="button" @click="imgModal = true"
-                                                class="group relative w-12 h-12 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 hover:ring-2 hover:ring-indigo-500 transition">
+                                                class="group relative w-12 h-12 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 hover:ring-2 hover:ring-brand-500 transition">
                                                 <img src="{{ asset('storage/' . $path) }}"
                                                     class="w-full h-full object-cover">
                                                 <div
@@ -249,7 +249,7 @@
                                                     x-transition:leave="transition ease-in duration-200"
                                                     x-transition:leave-start="opacity-100"
                                                     x-transition:leave-end="opacity-0"
-                                                    class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
+                                                    class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/90 "
                                                     style="display: none;" @keydown.window.escape="imgModal = false">
 
                                                     {{-- Overlay Klik untuk Tutup --}}
@@ -318,12 +318,12 @@
                                                 x-transition:leave="transition ease-in duration-200"
                                                 x-transition:leave-start="opacity-100"
                                                 x-transition:leave-end="opacity-0"
-                                                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+                                                class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/50 "
                                                 style="display: none;">
 
                                                 <div class="absolute inset-0" @click="editModal = false"></div>
 
-                                                <div class="relative w-full max-w-lg bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden"
+                                                <div class="relative w-full max-w-lg bg-white dark:bg-slate-800 rounded-lg shadow-2xl overflow-hidden"
                                                     @click.stop>
                                                     <form action="{{ route('teacher-notes.update', $riwayat->id) }}"
                                                         method="POST" enctype="multipart/form-data">
@@ -346,14 +346,14 @@
                                                                     Kejadian</label>
                                                                 <input type="date" name="tanggal" required
                                                                     value="{{ $riwayat->tanggal ? $riwayat->tanggal : $riwayat->created_at->format('Y-m-d') }}"
-                                                                    class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500 font-bold text-slate-700 dark:text-slate-300">
+                                                                    class="w-full rounded-md border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-brand-500 font-bold text-slate-700 dark:text-slate-300">
                                                             </div>
                                                             <div>
                                                                 <label
                                                                     class="block text-xs font-bold text-slate-500 uppercase mb-2">Jenis
                                                                     Catatan</label>
                                                                 <select name="jenis_catatan" required
-                                                                    class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500 font-bold text-indigo-700 dark:text-indigo-400">
+                                                                    class="w-full rounded-md border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-brand-500 font-bold text-brand-700 dark:text-brand-400">
                                                                     <option value="Catatan Wali Kelas" {{ $riwayat->
                                                                         jenis_catatan == 'Catatan Wali Kelas' ?
                                                                         'selected' : '' }}>Catatan Wali Kelas</option>
@@ -374,15 +374,15 @@
                                                                     class="block text-xs font-bold text-slate-500 uppercase mb-2">Deskripsi
                                                                     Kejadian</label>
                                                                 <textarea name="catatan" required rows="3"
-                                                                    class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">{{ $riwayat->catatan }}</textarea>
+                                                                    class="w-full rounded-md border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-brand-500">{{ $riwayat->catatan }}</textarea>
                                                             </div>
                                                             <div>
                                                                 <label
                                                                     class="flex items-center gap-3 cursor-pointer mt-4">
                                                                     <input type="checkbox" name="is_for_report"
                                                                         value="1" {{ $riwayat->is_for_report ? 'checked'
-                                                                    : '' }} class="w-5 h-5 text-indigo-600 bg-white
-                                                                    border-slate-300 rounded focus:ring-indigo-500">
+                                                                    : '' }} class="w-5 h-5 text-brand-600 bg-white
+                                                                    border-slate-300 rounded focus:ring-brand-500">
                                                                     <span
                                                                         class="text-sm font-bold text-slate-700 dark:text-slate-200">Tampilkan
                                                                         di Raport E-Rapor</span>
@@ -397,14 +397,14 @@
                                                                     Foto Baru (Opsional)</label>
                                                                 <input type="file" name="foto[]" multiple
                                                                     accept="image/jpeg, image/png, image/webp"
-                                                                    class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/50 dark:file:text-indigo-400 cursor-pointer">
+                                                                    class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 dark:file:bg-brand-900/50 dark:file:text-brand-400 cursor-pointer">
                                                                 <p class="text-[10px] text-slate-400 mt-2">*Foto yang
                                                                     baru diunggah akan otomatis ditambahkan ke foto yang
                                                                     sudah ada sebelumnya.</p>
                                                             </div>
 
                                                             <div
-                                                                class="p-3 bg-amber-50 dark:bg-amber-900/30 rounded-xl border border-amber-100 dark:border-amber-800/50 mt-4">
+                                                                class="p-3 bg-amber-50 dark:bg-amber-900/30 rounded-md border border-amber-100 dark:border-amber-800/50 mt-4">
                                                                 <label class="flex items-start gap-3 cursor-pointer">
                                                                     <input type="checkbox" name="update_all" value="1"
                                                                         class="w-4 h-4 text-amber-600 mt-0.5 rounded focus:ring-amber-500">
@@ -422,7 +422,7 @@
                                                             <button type="button" @click="editModal = false"
                                                                 class="px-5 py-2 text-sm font-bold text-slate-500 hover:text-slate-700 transition">Batal</button>
                                                             <button type="submit"
-                                                                class="px-5 py-2 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg hover:bg-indigo-700 transition">Update
+                                                                class="px-5 py-2 bg-brand-600 text-white rounded-md text-sm font-bold shadow-lg hover:bg-brand-700 transition">Update
                                                                 Kejadian</button>
                                                         </div>
                                                     </form>

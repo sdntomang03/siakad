@@ -1,33 +1,33 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
-            Input Nilai: <span class="text-indigo-600">{{ $assessment->assessmentType->nama }}</span>
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
+            Input Nilai: <span class="text-brand-600">{{ $assessment->assessmentType->nama }}</span>
         </h2>
     </x-slot>
 
     <div class="py-8 max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
         <div
-            class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 grid grid-cols-2 md:grid-cols-4 gap-4">
+            class="grid grid-cols-1 gap-4 rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:grid-cols-2 md:grid-cols-4">
             <div>
-                <p class="text-xs font-bold text-slate-500 uppercase">Kelas</p>
+                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Kelas</p>
                 <p class="font-semibold text-slate-800 dark:text-slate-200">{{ $assessment->classroom->tingkat }} - {{
                     $assessment->classroom->nama_kelas }}</p>
             </div>
             <div>
-                <p class="text-xs font-bold text-slate-500 uppercase">Mata Pelajaran</p>
+                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Mata Pelajaran</p>
                 <p class="font-semibold text-slate-800 dark:text-slate-200">{{ $assessment->subject->nama_mapel }}</p>
             </div>
-            <div class="col-span-2">
-                <p class="text-xs font-bold text-slate-500 uppercase">Materi / Keterangan</p>
+            <div class="sm:col-span-2 md:col-span-2">
+                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">Materi / Keterangan</p>
                 <p class="font-semibold text-slate-800 dark:text-slate-200">{{ $assessment->keterangan }}</p>
             </div>
         </div>
 
         <div
-            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
             <div
-                class="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+                class="border-b border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/50">
                 <span class="text-sm font-bold text-slate-600 dark:text-slate-300">Daftar Siswa ({{ $students->count()
                     }} Orang)</span>
             </div>
@@ -36,7 +36,7 @@
                 @csrf
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
+                    <table class="min-w-[42rem] w-full text-left text-sm text-slate-600 dark:text-slate-300">
                         <thead
                             class="text-xs text-slate-700 uppercase bg-slate-100/50 dark:bg-slate-900/50 dark:text-slate-300">
                             <tr>
@@ -60,7 +60,7 @@
                                 <td class="px-6 py-4">
                                     <input type="number" name="scores[{{ $siswa->id }}]" data-nisn="{{ $siswa->nisn }}"
                                         value="{{ $existingScores[$siswa->id] ?? '' }}" min="0" max="100" step="0.01"
-                                        class="score-input w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-center font-bold text-indigo-600 focus:ring-indigo-500"
+                                        class="score-input w-full rounded-md border-slate-300 text-center font-semibold text-brand-700 focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-brand-300"
                                         placeholder="-">
                                 </td>
                             </tr>
@@ -77,19 +77,19 @@
 
                 @if($students->count() > 0)
                 <div
-                    class="p-6 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
+                    class="flex flex-col-reverse gap-3 border-t border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/30 sm:flex-row sm:justify-end sm:p-6">
 
                     {{-- Tombol Baru: Import JSON --}}
                     <button type="button" onclick="importJSON()"
-                        class="px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-200/50 hover:bg-emerald-700 transition">
+                        class="inline-flex min-h-11 items-center justify-center rounded-md bg-slate-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700 dark:bg-slate-600 dark:hover:bg-slate-500">
                         Paste JSON CBT
                     </button>
 
                     <a href="{{ route('assessments.create') }}"
-                        class="px-6 py-2.5 bg-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-300 transition">Batal</a>
+                        class="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">Batal</a>
 
                     <button type="submit"
-                        class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-black text-sm shadow-lg hover:bg-indigo-700 transition">
+                        class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                         Simpan Nilai
                     </button>
                 </div>

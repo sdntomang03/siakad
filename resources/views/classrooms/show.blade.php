@@ -3,45 +3,27 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
             <!-- Judul -->
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
                 Anggota Rombel:
-                <span class="text-indigo-600">
+                <span class="text-brand-600">
                     {{ $classroom->tingkat }} - {{ $classroom->nama_kelas }}
                 </span>
             </h2>
 
             <!-- Tombol Aksi -->
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
 
                 @can('edit-classes')
-                <a href="{{ route('classrooms.index') }}" class="inline-flex items-center gap-2 px-4 py-2
-                       bg-slate-100 text-slate-700
-                       border border-slate-200
-                       rounded-lg text-sm font-semibold
-                       hover:bg-slate-200 hover:text-slate-900
-                       transition duration-200">
-                    <i class="fas fa-arrow-left"></i>
+                <a href="{{ route('classrooms.index') }}" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
                     <span>Kembali</span>
                 </a>
                 @endcan
 
-                <a href="{{ route('classrooms.export_excel', $classroom->hashid) }}" class="inline-flex items-center gap-2 px-4 py-2
-                   bg-emerald-600 text-white
-                   rounded-lg text-sm font-semibold
-                   shadow-sm hover:bg-emerald-700
-                   focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2
-                   transition duration-200">
-                    <i class="fas fa-file-excel"></i>
+                <a href="{{ route('classrooms.export_excel', $classroom->hashid) }}" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-slate-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:bg-slate-600 dark:hover:bg-slate-500">
                     <span>Download Excel</span>
                 </a>
 
-                <a href="{{ route('classrooms.download_photos', $classroom->hashid) }}" class="inline-flex items-center gap-2 px-4 py-2
-                   bg-indigo-600 text-white
-                   rounded-lg text-sm font-semibold
-                   shadow-sm hover:bg-indigo-700
-                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-                   transition duration-200">
-                    <i class="fas fa-images"></i>
+                <a href="{{ route('classrooms.download_photos', $classroom->hashid) }}" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                     <span>Download Foto</span>
                 </a>
 
@@ -49,34 +31,34 @@
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             <div
-                class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 grid grid-cols-2 md:grid-cols-4 gap-4">
+                class="grid grid-cols-1 gap-4 rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:grid-cols-2 lg:grid-cols-4 sm:p-6">
                 <div>
-                    <p class="text-xs font-bold text-slate-500 uppercase">Wali Kelas</p>
+                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Wali Kelas</p>
                     <p class="font-semibold text-slate-800 dark:text-slate-200">{{
                         $classroom->homeroomTeacher->nama_lengkap ?? 'Belum Ditentukan' }}</p>
                 </div>
                 <div>
-                    <p class="text-xs font-bold text-slate-500 uppercase">Tahun Ajaran</p>
+                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Tahun Ajaran</p>
                     <p class="font-semibold text-slate-800 dark:text-slate-200">{{
                         $classroom->academicYear->tahun_ajaran ?? '-'
                         }} ({{ $classroom->academicYear->semester ?? '-' }})</p>
                 </div>
                 <div>
-                    <p class="text-xs font-bold text-slate-500 uppercase">Kapasitas</p>
+                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Kapasitas</p>
                     <p
-                        class="font-semibold {{ $classroom->students->count() >= $classroom->kapasitas ? 'text-rose-500' : 'text-indigo-600' }}">
+                        class="font-semibold {{ $classroom->students->count() >= $classroom->kapasitas ? 'text-rose-500' : 'text-brand-600' }}">
                         {{ $classroom->students->count() }} / {{ $classroom->kapasitas }} Siswa
                     </p>
                 </div>
                 <div class="flex items-center justify-end">
                     @can('edit-classes')
-                    <button x-data @click="$dispatch('open-add-student-modal')"
-                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-lg hover:bg-indigo-700 transition">
-                        + Tambah Siswa
+                    <button type="button" x-data @click="$dispatch('open-add-student-modal')"
+                        class="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:w-auto">
+                        Tambah Siswa
                     </button>
                     @endcan
                 </div>
@@ -98,28 +80,28 @@
                     @csrf @method('DELETE')
 
                     <div
-                        class="overflow-x-auto w-full bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                        class="overflow-x-auto w-full bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
 
                         <div
-                            class="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+                            class="flex flex-col gap-3 border-b border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/50 sm:flex-row sm:items-center sm:justify-between">
                             <span class="text-sm font-bold text-slate-600 dark:text-slate-300">Daftar Siswa di Kelas
                                 Ini</span>
 
                             <button x-show="selected.length > 0" style="display: none;" type="submit"
                                 onclick="return confirm('Keluarkan semua siswa yang dipilih?')"
-                                class="px-3 py-1.5 bg-rose-100 text-rose-700 border border-rose-200 hover:bg-rose-600 hover:text-white rounded-lg text-xs font-bold transition">
+                                class="inline-flex min-h-10 items-center justify-center rounded-md border border-rose-300 px-3 py-1.5 text-sm font-semibold text-rose-700 transition hover:bg-rose-700 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-700 dark:border-rose-800 dark:text-rose-300 dark:hover:bg-rose-700 dark:hover:text-white">
                                 Keluarkan <span x-text="selected.length"></span> Siswa Terpilih
                             </button>
                         </div>
 
-                        <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
+                        <table class="min-w-[48rem] w-full text-left text-sm text-slate-600 dark:text-slate-300">
                             <thead
                                 class="text-xs text-slate-700 uppercase bg-slate-100/50 dark:bg-slate-900/50 dark:text-slate-300">
                                 <tr>
                                     @can('edit-classes')
                                     <th class="px-6 py-4 w-10">
                                         <input type="checkbox" @change="toggleAll"
-                                            class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                                            class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">
                                     </th>
                                     @endcan
                                     <th class="px-6 py-4">No</th>
@@ -137,7 +119,7 @@
                                     <td class="px-6 py-4">
                                         <input type="checkbox" name="student_ids[]" value="{{ $siswa->id }}"
                                             x-model="selected"
-                                            class="student-checkbox rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                                            class="student-checkbox rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer">
                                     </td>
                                     @endcan
                                     <td class="px-6 py-4 font-bold">{{ $index + 1 }}</td>
@@ -150,7 +132,7 @@
                                     {{-- PERUBAHAN DISINI: Membuat Nama Menjadi Link yang bisa diklik --}}
                                     <td class="px-6 py-4 font-bold">
                                         <a href="{{ route('students.show', $siswa->id) }}" target="_blank"
-                                            class="text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline transition-colors flex items-center gap-2"
+                                            class="text-slate-800 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:underline transition-colors flex items-center gap-2"
                                             title="Lihat Biodata Siswa">
                                             {{ $siswa->nama_lengkap }}
                                             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
@@ -197,7 +179,7 @@
             </div>
             @can('edit-classes')
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div
                     class="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
                     <div>
@@ -206,8 +188,8 @@
                         <p class="text-xs text-slate-500 mt-0.5">Atur pengampu mapel khusus (Agama, PJOK, dll) untuk
                             kelas ini.</p>
                     </div>
-                    <div class="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg shrink-0">
-                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 bg-brand-50 dark:bg-brand-900/30 rounded-lg shrink-0">
+                        <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
                             </path>
@@ -240,7 +222,7 @@
                                         '-' }}</td>
                                     <td class="px-6 py-4">
                                         <select name="assignments[{{ $index }}][employee_id]"
-                                            class="w-full md:w-64 rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-xs focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            class="w-full md:w-64 rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-xs focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                             {{ !auth()->user()->can('edit-classes') ? 'disabled' : '' }}>
                                             <option value="">-- Kosongkan (Pilih Guru) --</option>
                                             @foreach($teachers ?? [] as $teacher)
@@ -269,7 +251,7 @@
                     <div
                         class="p-4 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-100 dark:border-slate-700 flex justify-end">
                         <button type="submit"
-                            class="px-5 py-2 bg-indigo-600 text-white rounded-lg font-bold text-xs shadow-md hover:bg-indigo-700 transition">
+                            class="px-5 py-2 bg-brand-600 text-white rounded-lg font-bold text-xs shadow-md hover:bg-brand-700 transition">
                             Simpan Penugasan Guru
                         </button>
                     </div>
@@ -282,11 +264,11 @@
 
     {{-- MODAL TAMBAH SISWA (DIPERBARUI DENGAN ALPINE FILTER CODE) --}}
     <div x-data="{ show: false, search: '', filterCode: '' }" @open-add-student-modal.window="show = true" x-show="show"
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 "
         style="display: none;">
 
         <form action="{{ route('classrooms.assign', $classroom->id) }}" method="POST" @click.away="show = false"
-            class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
             @csrf
 
             <div
@@ -317,10 +299,10 @@
                     @foreach($availableStudents as $availSiswa)
                     <label
                         x-show="(search === '' || '{{ strtolower(addslashes($availSiswa->nama_lengkap)) }}'.includes(search.toLowerCase())) && (filterCode === '' || '{{ $availSiswa->class_code }}' === filterCode)"
-                        class="flex items-center gap-4 cursor-pointer p-3 bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-slate-700 rounded-xl transition border border-slate-200 dark:border-slate-700 hover:border-indigo-300 shadow-sm">
+                        class="flex items-center gap-4 cursor-pointer p-3 bg-white dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-slate-700 rounded-md transition border border-slate-200 dark:border-slate-700 hover:border-brand-300 shadow-sm">
 
                         <input type="checkbox" name="student_ids[]" value="{{ $availSiswa->id }}"
-                            class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-5 h-5 shrink-0">
+                            class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 w-5 h-5 shrink-0">
 
                         <div class="flex-1">
                             <span class="block text-sm font-bold text-slate-800 dark:text-slate-200">{{
@@ -349,7 +331,7 @@
 
                 @if($availableStudents->count() > 0)
                 <button type="submit"
-                    class="px-6 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase shadow-md hover:bg-indigo-700 transition">
+                    class="px-6 py-2 bg-brand-600 text-white rounded-lg text-xs font-bold uppercase shadow-md hover:bg-brand-700 transition">
                     Tambahkan Siswa
                 </button>
                 @endif

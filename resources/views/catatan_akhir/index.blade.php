@@ -1,21 +1,21 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
             Pengisian Catatan Akhir Siswa (Raport)
         </h2>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             {{-- Filter Multi-Tenant untuk Superadmin --}}
             @role('superadmin')
             <div
-                class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
                 <form action="{{ route('catatan_akhir.index') }}" method="GET">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Pilih Sekolah</label>
+                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Sekolah</label>
                     <select name="school_id" onchange="this.form.submit()"
-                        class="w-full md:w-1/2 rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">
+                        class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white md:w-1/2">
                         <option value="">-- Pilih Sekolah --</option>
                         @foreach($schools as $sekolah)
                         <option value="{{ $sekolah->id }}" {{ $selectedSchoolId==$sekolah->id ? 'selected' : '' }}>
@@ -29,14 +29,14 @@
 
             @if(auth()->user()->hasRole('superadmin') && !$selectedSchoolId)
             <div
-                class="text-center py-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                class="text-center py-16 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                 <h3 class="text-xl font-bold text-slate-800 dark:text-white">Pilih Sekolah Terlebih Dahulu</h3>
                 <p class="text-slate-500 mt-2">Pilih sekolah di atas untuk mulai mengisi catatan akhir siswa.</p>
             </div>
 
             @elseif(!$activeYear)
             <div
-                class="text-center py-16 bg-amber-50 dark:bg-amber-900/20 rounded-2xl border-2 border-dashed border-amber-200 dark:border-amber-800">
+                class="text-center py-16 bg-amber-50 dark:bg-amber-900/20 rounded-lg border-2 border-dashed border-amber-200 dark:border-amber-800">
                 <h3 class="text-xl font-bold text-amber-700 dark:text-amber-400">Tahun Ajaran Belum Diatur</h3>
                 <p class="text-amber-600 dark:text-amber-500 mt-2">Tidak ada Tahun Ajaran yang berstatus aktif di
                     sekolah ini.</p>
@@ -45,10 +45,10 @@
             @else
             {{-- Panel Filter Kelas --}}
             <div
-                class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row justify-between items-center gap-4">
+                class="flex flex-col items-stretch justify-between gap-4 rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6 md:flex-row md:items-center">
                 <div>
-                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Tahun Ajaran Aktif</span>
-                    <h3 class="text-lg font-black text-slate-800 dark:text-white">{{ $activeYear->tahun_ajaran }} - {{
+                    <span class="text-sm font-semibold text-brand-700 dark:text-brand-300">Tahun Ajaran Aktif</span>
+                    <h3 class="text-lg font-semibold text-slate-950 dark:text-white">{{ $activeYear->tahun_ajaran }} - {{
                         $activeYear->semester }}</h3>
                 </div>
 
@@ -57,8 +57,9 @@
                     @if(auth()->user()->hasRole('superadmin'))
                     <input type="hidden" name="school_id" value="{{ $selectedSchoolId }}">
                     @endif
-                    <select name="classroom_id" onchange="this.form.submit()"
-                        class="w-full min-w-[250px] rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">
+                    <label for="classroom_id" class="sr-only">Pilih kelas</label>
+                    <select id="classroom_id" name="classroom_id" onchange="this.form.submit()"
+                        class="w-full min-w-[250px] rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                         <option value="">-- Pilih Kelas --</option>
                         @foreach($allClassrooms as $cls)
                         <option value="{{ $cls->id }}" {{ request('classroom_id')==$cls->id ? 'selected' : '' }}>
@@ -76,16 +77,16 @@
             {{-- Tabel Daftar Siswa --}}
             @if($selectedClassroom)
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
                 <div
-                    class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                    <h4 class="font-black text-slate-800 dark:text-white uppercase tracking-tight">Daftar Siswa - Kelas
+                    class="flex flex-col gap-1 border-b border-slate-200 bg-slate-50 px-5 py-4 dark:border-slate-700 dark:bg-slate-900/50 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                    <h4 class="font-semibold text-slate-950 dark:text-white">Daftar Siswa - Kelas
                         {{ $selectedClassroom->nama_kelas }}</h4>
                     <span class="text-xs font-bold text-slate-500 italic">Total {{ $students->count() }} Siswa</span>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left">
+                    <table class="min-w-[42rem] w-full text-left text-sm">
                         <thead
                             class="text-xs text-slate-500 uppercase tracking-wider bg-slate-50/50 dark:bg-slate-900/30">
                             <tr>
@@ -115,7 +116,7 @@
 
                                 <td class="px-6 py-4 text-center">
                                     <a href="{{ route('catatan_akhir.edit', ['student_id' => $student->id, 'classroom_id' => $selectedClassroom->id]) }}"
-                                        class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-100 text-indigo-700 hover:bg-indigo-600 hover:text-white rounded-lg font-bold transition-colors text-xs shadow-sm">
+                                        class="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-md bg-brand-100 px-4 py-2 text-sm font-semibold text-brand-800 transition-colors hover:bg-brand-700 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:bg-brand-900/50 dark:text-brand-200 dark:hover:bg-brand-700">
                                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -149,14 +150,14 @@
             @elseif(request('classroom_id'))
             {{-- Jika ID kelas dimanipulasi dari URL dan tidak sesuai hak akses --}}
             <div
-                class="text-center py-10 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                class="text-center py-10 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                 <p class="text-red-500 font-bold">Kelas tidak ditemukan atau Anda tidak memiliki akses ke kelas
                     tersebut.</p>
             </div>
             @else
             {{-- Tampilan saat kelas belum dipilih --}}
             <div
-                class="text-center py-20 bg-white dark:bg-slate-800 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700">
+                class="text-center py-20 bg-white dark:bg-slate-800 rounded-lg border-2 border-dashed border-slate-200 dark:border-slate-700">
                 <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

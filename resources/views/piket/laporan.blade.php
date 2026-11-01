@@ -3,14 +3,15 @@
         <h2 class="font-semibold text-xl text-slate-800 leading-tight">Laporan Pelaksanaan Piket</h2>
     </x-slot>
 
-    <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 max-w-7xl mx-auto space-y-5 px-4 sm:px-6 sm:py-8 lg:px-8">
 
         <!-- FILTER LAPORAN -->
-        <div class="bg-white p-6 rounded-xl shadow-sm mb-6 border border-slate-200 print:hidden">
-            <form action="{{ route('piket.laporan') }}" method="GET" class="flex flex-wrap items-end gap-4">
+        <div class="bg-white p-6 rounded-md shadow-sm mb-6 border border-slate-200 print:hidden">
+            <form action="{{ route('piket.laporan') }}" method="GET"
+                class="grid grid-cols-1 items-end gap-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)_minmax(0,0.7fr)_auto]">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Pilih Kelas</label>
-                    <select name="classroom_id" class="rounded-lg border-slate-300 text-sm focus:ring-indigo-500"
+                    <label for="classroom_id" class="mb-2 block text-sm font-medium text-slate-700">Pilih Kelas</label>
+                    <select id="classroom_id" name="classroom_id" class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600"
                         onchange="this.form.submit()">
                         @foreach($classrooms as $kelas)
                         <option value="{{ $kelas->id }}" {{ $classroomId==$kelas->id ? 'selected' : '' }}>
@@ -20,8 +21,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Bulan</label>
-                    <select name="bulan" class="rounded-lg border-slate-300 text-sm focus:ring-indigo-500"
+                    <label for="bulan" class="mb-2 block text-sm font-medium text-slate-700">Bulan</label>
+                    <select id="bulan" name="bulan" class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600"
                         onchange="this.form.submit()">
                         @foreach($bulanList as $num => $namaBulan)
                         <option value="{{ $num }}" {{ $bulan==$num ? 'selected' : '' }}>{{ $namaBulan }}</option>
@@ -29,14 +30,14 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tahun</label>
-                    <input type="number" name="tahun" value="{{ $tahun }}"
-                        class="rounded-lg border-slate-300 text-sm focus:ring-indigo-500 w-24"
+                    <label for="tahun" class="mb-2 block text-sm font-medium text-slate-700">Tahun</label>
+                    <input id="tahun" type="number" name="tahun" value="{{ $tahun }}"
+                        class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600"
                         onchange="this.form.submit()">
                 </div>
-                <div class="ml-auto">
+                <div class="sm:col-span-2 lg:col-span-1">
                     <button type="button" onclick="window.print()"
-                        class="px-4 py-2 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-700 transition flex items-center gap-2">
+                        class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:w-auto">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
@@ -50,7 +51,7 @@
 
         <!-- TABEL REKAPITULASI -->
         <div
-            class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden print:shadow-none print:border-none">
+            class="bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden print:shadow-none print:border-none">
             <div class="p-5 border-b border-slate-100 bg-slate-50 print:bg-transparent">
                 <h3 class="font-bold text-slate-800 text-lg uppercase text-center">Rekapitulasi Piket Siswa</h3>
                 <p class="text-sm text-slate-500 text-center font-medium">Bulan {{ $bulanList[$bulan] }} {{ $tahun }}
@@ -67,10 +68,10 @@
                             <th class="px-4 py-4 text-center w-24 print:border print:border-slate-800">Total Piket</th>
                             <th
                                 class="px-4 py-4 text-center w-32 bg-emerald-50 text-emerald-800 print:border print:border-slate-800">
-                                ✅ Terlaksana</th>
+                                Terlaksana</th>
                             <th
                                 class="px-4 py-4 text-center w-36 bg-rose-50 text-rose-800 print:border print:border-slate-800">
-                                ❌ Tidak Terlaksana</th>
+                                Tidak Terlaksana</th>
                             <th class="px-4 py-4 w-1/3 print:border print:border-slate-800">Catatan Pelanggaran / Alasan
                             </th>
                         </tr>
@@ -154,12 +155,12 @@
             }
 
             /* Membuat tabel print bisa tampil dan tidak tertutup yang lain */
-            .bg-white.rounded-xl,
-            .bg-white.rounded-xl * {
+            .bg-white.rounded-md,
+            .bg-white.rounded-md * {
                 visibility: visible;
             }
 
-            .bg-white.rounded-xl {
+            .bg-white.rounded-md {
                 position: absolute;
                 left: 0;
                 top: 0;

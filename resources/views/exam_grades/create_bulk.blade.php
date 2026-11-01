@@ -1,26 +1,26 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
-                Input Nilai Kelas: <span class="text-indigo-600">Form Massal</span>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
+                Input Nilai Kelas: <span class="text-brand-600">Form Massal</span>
             </h2>
 
-            <a href="{{ route('exam-grades.index') }}" class="text-sm font-bold text-slate-500 hover:text-slate-700">
-                &larr; Kembali ke Daftar Nilai
+            <a href="{{ route('exam-grades.index') }}" class="inline-flex min-h-11 items-center text-sm font-semibold text-brand-700 hover:text-brand-900 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-300 dark:hover:text-brand-200">
+                Kembali ke Daftar Nilai
             </a>
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
                 <div
-                    class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
-                    <h3 class="text-base font-black text-slate-800 dark:text-white flex items-center">
+                    class="border-b border-slate-200 bg-slate-50 px-5 py-4 dark:border-slate-700 dark:bg-slate-900/50 sm:px-6">
+                    <h3 class="flex items-center text-base font-semibold text-slate-950 dark:text-white">
                         <span
-                            class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-400 text-xs mr-2">1</span>
+                            class="flex items-center justify-center w-6 h-6 rounded-full bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-400 text-xs mr-2">1</span>
                         Pengaturan Penilaian
                     </h3>
                 </div>
@@ -28,9 +28,9 @@
                 <form action="{{ route('exam-grades.createBulk') }}" method="GET" class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Pilih Kelas</label>
+                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Kelas</label>
                             <select name="classroom_id"
-                                class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:ring-indigo-500"
+                                class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                                 required>
                                 <option value="">-- Kelas --</option>
                                 @foreach($classrooms as $kelas)
@@ -43,9 +43,9 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Mata Pelajaran</label>
+                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Mata Pelajaran</label>
                             <select name="subject_id"
-                                class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:ring-indigo-500"
+                                class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                                 required>
                                 <option value="">-- Mapel --</option>
                                 @foreach($subjects as $subject)
@@ -58,9 +58,9 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Kategori Ujian</label>
+                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Kategori Ujian</label>
                             <select name="kategori_ujian"
-                                class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:ring-indigo-500"
+                                class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                                 required>
                                 <option value="">-- Kategori --</option>
                                 <option value="Ujian Sekolah" {{ request('kategori_ujian')=='Ujian Sekolah' ? 'selected'
@@ -78,7 +78,7 @@
                     </div>
 
                     <button type="submit"
-                        class="bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-bold shadow-sm hover:bg-indigo-700 transition uppercase text-xs w-full md:w-auto">
+                        class="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 md:w-auto">
                         Tampilkan Form Nilai Siswa
                     </button>
                 </form>
@@ -86,10 +86,10 @@
 
             @if($selectedClassroom)
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
                 <div
-                    class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
-                    <h3 class="text-base font-black text-slate-800 dark:text-white flex items-center">
+                    class="flex flex-col gap-2 border-b border-slate-200 bg-slate-50 px-5 py-4 dark:border-slate-700 dark:bg-slate-900/50 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                    <h3 class="flex items-center text-base font-semibold text-slate-950 dark:text-white">
                         <span
                             class="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400 text-xs mr-2">2</span>
                         Form Pengisian Nilai
@@ -107,9 +107,9 @@
                     <input type="hidden" name="kategori_ujian" value="{{ $kategoriUjian }}">
                     <input type="hidden" name="semester" value="{{ $semester }}">
 
-                    <div class="overflow-x-auto p-6">
+                    <div class="overflow-x-auto p-4 sm:p-6">
                         <table
-                            class="w-full text-sm text-left whitespace-nowrap mb-6 border border-slate-200 dark:border-slate-700">
+                            class="mb-6 w-full min-w-[42rem] whitespace-nowrap border border-slate-200 text-left text-sm dark:border-slate-700">
                             <thead class="text-xs text-slate-500 uppercase bg-slate-100 dark:bg-slate-900/50">
                                 <tr>
                                     <th
@@ -120,7 +120,7 @@
                                     <th class="px-6 py-3 border-b border-r border-slate-200 dark:border-slate-700">Nama
                                         Lengkap</th>
                                     <th
-                                        class="px-6 py-3 border-b border-slate-200 dark:border-slate-700 w-48 text-center bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400">
+                                        class="px-6 py-3 border-b border-slate-200 dark:border-slate-700 w-48 text-center bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400">
                                         Nilai</th>
                                 </tr>
                             </thead>
@@ -139,11 +139,11 @@
                                         class="px-6 py-3 border-r border-slate-200 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300">
                                         {{ $student->nama_lengkap }}
                                     </td>
-                                    <td class="px-4 py-2 bg-indigo-50/30 dark:bg-indigo-900/10">
+                                    <td class="px-4 py-2 bg-brand-50/30 dark:bg-brand-900/10">
                                         <input type="number" step="0.01" min="0" max="100"
                                             name="nilai[{{ $student->id }}]"
                                             value="{{ $existingGrades[$student->id] ?? '' }}" placeholder="0-100"
-                                            class="w-full text-center font-black rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:ring-indigo-500">
+                                            class="w-full text-center font-black rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:ring-brand-500">
                                     </td>
                                 </tr>
                                 @empty
@@ -157,7 +157,7 @@
                         </table>
 
                         <button type="submit"
-                            class="w-full md:w-auto bg-emerald-600 text-white px-8 py-3 rounded-xl font-black shadow-lg shadow-emerald-500/30 hover:bg-emerald-700 transition transform hover:-translate-y-0.5 uppercase tracking-wide text-sm flex items-center justify-center gap-2">
+                            class="w-full md:w-auto bg-emerald-600 text-white px-8 py-3 rounded-md font-black shadow-lg shadow-emerald-500/30 hover:bg-emerald-700 transition transform hover:-translate-y-0.5 uppercase tracking-wide text-sm flex items-center justify-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                 fill="currentColor">
                                 <path fill-rule="evenodd"

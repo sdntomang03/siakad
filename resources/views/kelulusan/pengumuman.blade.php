@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Portal Kelulusan — SDN Tomang 03 Pagi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Kelulusan: SDN Tomang 03 Pagi</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
@@ -17,10 +17,21 @@
             padding: 0;
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
         :root {
-            --gold-primary: #D4AF37;
-            --gold-light: #F4E4C1;
-            --gold-deep: #B8941F;
+            --gold-primary: #86efac;
+            --gold-light: #dcfce7;
+            --gold-deep: #166534;
             --navy-deep: #0A1628;
             --navy-primary: #111D35;
             --navy-light: #1A2942;
@@ -57,27 +68,6 @@
             color: #fff;
             min-height: 100dvh;
             position: relative;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-
-        /* Prevent text selection on all elements */
-        * {
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-
-        /* Allow selection only on input fields */
-        input,
-        textarea {
-            user-select: text;
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
         }
 
         /* ══════════════════════════════════════════════════════════════════
@@ -89,6 +79,7 @@
             inset: 0;
             z-index: 0;
             overflow: hidden;
+            display: none;
         }
 
         /* Multi-layer gradient background */
@@ -776,10 +767,24 @@
 
         .page-footer p {
             font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.25);
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.78);
             font-weight: 400;
+        }
+
+        .footer-nav-link {
+            display: inline-flex;
+            min-height: 44px;
+            align-items: center;
+            margin-top: 8px;
+            color: var(--gold-primary);
+            font-size: 0.875rem;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .footer-nav-link:focus-visible {
+            outline: 3px solid var(--gold-primary);
+            outline-offset: 3px;
         }
 
         /* ══════════════════════════════════════════════════════════════════
@@ -1521,7 +1526,7 @@
             padding: 1rem;
             margin: 1rem 0;
             font-size: 0.85rem;
-            color: #D4AF37;
+            color: #166534;
         }
 
         @keyframes fadeIn {
@@ -1615,19 +1620,11 @@
 </head>
 
 <body>
-    <div class="bg-scene">
-        <div class="grid-overlay"></div>
-        <div class="light-rays"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="particles" id="particles"></div>
-    </div>
-
     <div class="page-wrapper">
+        <header>
         <div class="school-badge">
             <div class="badge-emblem">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                 </svg>
@@ -1649,8 +1646,9 @@
             <h1 class="headline-title">Portal Kelulusan</h1>
             <span class="headline-year">Tahun Ajaran 2025 / 2026</span>
         </div>
+        </header>
 
-        <div class="form-card">
+        <main class="form-card">
             <div class="card-intro">
                 <p>Masukkan NISN dan tanggal lahir siswa untuk mengetahui status kelulusan secara resmi dan
                     terverifikasi.</p>
@@ -1666,25 +1664,25 @@
             <form action="{{ route('kelulusan.cek') }}" method="POST">
                 @csrf
                 <div class="field-group">
-                    <label class="field-label">NISN Siswa</label>
+                    <label class="field-label" for="nisn">NISN Siswa</label>
                     <div class="field-wrap">
-                        <svg class="field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="field-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0" />
                         </svg>
-                        <input type="number" name="nisn" class="field-input" placeholder="Masukkan NISN" required
+                        <input type="number" id="nisn" name="nisn" class="field-input" placeholder="Masukkan NISN" required
                             maxlength="10">
                     </div>
                 </div>
 
                 <div class="field-group">
-                    <label class="field-label">Tanggal Lahir</label>
+                    <label class="field-label" for="tanggal_lahir">Tanggal Lahir</label>
                     <div class="field-wrap">
-                        <svg class="field-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="field-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        <input type="date" name="tanggal_lahir" class="field-input" required>
+                        <input type="date" id="tanggal_lahir" name="tanggal_lahir" class="field-input" required>
                     </div>
                 </div>
 
@@ -1692,35 +1690,16 @@
                     <div class="btn-inner">Verifikasi Status Kelulusan</div>
                 </button>
             </form>
-        </div>
+        </main>
 
-        <div class="page-footer">
+        <footer class="page-footer">
             <p>Sistem Informasi Akademik &copy; 2026 · SDN Tomang 03</p>
-        </div>
+            <nav aria-label="Navigasi utama">
+                <a class="footer-nav-link" href="{{ url('/') }}">Halaman utama</a>
+            </nav>
+        </footer>
     </div>
     <script>
-        // ══════════════════════════════════════════════════════════════════
-        // FLOATING PARTICLES INITIALIZATION
-        // ══════════════════════════════════════════════════════════════════
-        (function initParticles() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 25; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                const size = 1 + Math.random() * 3;
-                particle.style.cssText = `
-                    left: ${Math.random() * 100}%;
-                    width: ${size}px;
-                    height: ${size}px;
-                    --dur: ${7 + Math.random() * 10}s;
-                    --delay: ${-Math.random() * 15}s;
-                    --drift: ${(Math.random() - 0.5) * 100}px;
-                    animation: particleFloat var(--dur) var(--delay) ease-in-out infinite;
-                `;
-                container.appendChild(particle);
-            }
-        })();
-
         // ══════════════════════════════════════════════════════════════════
         // ALPINE.JS APPLICATION
         // ══════════════════════════════════════════════════════════════════
@@ -1845,7 +1824,9 @@
     },
                 // Premium confetti effect
                 launchPremiumConfetti() {
-                    const colors = ['#D4AF37', '#FFFFFF', '#10b981', '#F4E4C1'];
+                    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+                    const colors = ['#255B4B', '#FFFFFF', '#8A5E13', '#DCEBE3'];
                     const duration = 5000;
                     const end = Date.now() + duration;
 

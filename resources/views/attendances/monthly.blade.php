@@ -1,22 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
-            Rekap Absensi <span class="text-indigo-600">Bulanan</span>
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
+            Rekap Absensi <span class="text-brand-600">Bulanan</span>
         </h2>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-[98%] mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-[98rem] space-y-5 px-4 sm:px-6 lg:px-8">
 
             <div
-                class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
                 <form action="{{ route('attendances.monthly') }}" method="GET"
-                    class="flex flex-wrap md:flex-nowrap gap-4 items-end">
+                    class="grid grid-cols-1 items-end gap-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.8fr)_minmax(0,0.7fr)_auto]">
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Pilih Kelas</label>
-                        <select name="classroom_id"
-                            class="rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 text-sm focus:ring-indigo-500 w-48"
+                        <label for="classroom_id" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Kelas</label>
+                        <select id="classroom_id" name="classroom_id"
+                            class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                             required>
                             <option value="">-- Kelas --</option>
                             @foreach($classrooms as $kelas)
@@ -29,9 +29,9 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Bulan</label>
-                        <select name="month"
-                            class="rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 text-sm focus:ring-indigo-500 w-32"
+                        <label for="month" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Bulan</label>
+                        <select id="month" name="month"
+                            class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                             required>
                             @foreach(range(1, 12) as $m)
                             <option value="{{ sprintf('%02d', $m) }}" {{ $month==sprintf('%02d', $m) ? 'selected' : ''
@@ -43,9 +43,9 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tahun</label>
-                        <select name="year"
-                            class="rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 text-sm focus:ring-indigo-500 w-28"
+                        <label for="year" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Tahun</label>
+                        <select id="year" name="year"
+                            class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                             required>
                             @for($y = date('Y') + 1; $y >= date('Y') - 3; $y--)
                             <option value="{{ $y }}" {{ $year==$y ? 'selected' : '' }}>{{ $y }}</option>
@@ -54,7 +54,7 @@
                     </div>
 
                     <button type="submit"
-                        class="bg-indigo-600 text-white px-6 py-2.5 h-[42px] rounded-lg font-bold shadow-sm hover:bg-indigo-700 transition uppercase text-xs">
+                        class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                         Tampilkan Data
                     </button>
                 </form>
@@ -62,7 +62,7 @@
 
             @if($selectedClassroom)
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
 
                 <div
                     class="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex justify-between items-center">
@@ -75,7 +75,7 @@
 
                     <!-- Tombol Download PDF -->
                     <a href="{{ route('attendances.monthly.pdf', request()->all()) }}"
-                        class="inline-flex items-center bg-rose-600 text-white px-4 py-2 rounded-lg font-bold shadow-sm hover:bg-rose-700 transition uppercase text-xs">
+                        class="inline-flex min-h-11 items-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

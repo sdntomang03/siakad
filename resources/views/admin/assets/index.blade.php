@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100 leading-tight">
                 Pusat Logistik & Inventaris Aset Sekolah
             </h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Dashboard monitoring distribusi aset global dan
@@ -9,13 +9,13 @@
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             {{-- NOTIFIKASI / ALERTS --}}
             @if(session('success'))
             <div
-                class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm font-semibold shadow-sm flex items-center gap-3">
+                class="p-4 rounded-md bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm font-semibold shadow-sm flex items-center gap-3">
                 <svg class="w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -28,8 +28,8 @@
             {{-- PANEL STATISTIK RINGKASAN ASET --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div
-                    class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
-                    <div class="p-3 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-xl">
+                    class="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
+                    <div class="p-3 bg-brand-50 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 rounded-md">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 11m8 4V3.5M4 11v10l8 4"></path>
@@ -44,9 +44,9 @@
                 </div>
 
                 <div
-                    class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
+                    class="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
                     <div
-                        class="p-3 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-xl">
+                        class="p-3 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-md">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -61,8 +61,8 @@
                 </div>
 
                 <div
-                    class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
-                    <div class="p-3 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-xl">
+                    class="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
+                    <div class="p-3 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-md">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
@@ -78,8 +78,8 @@
                 </div>
 
                 <div
-                    class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
-                    <div class="p-3 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 rounded-xl">
+                    class="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
+                    <div class="p-3 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 rounded-md">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -99,10 +99,9 @@
 
                 {{-- Kiri: Form Tambah Master Aset Baru --}}
                 <div
-                    class="lg:col-span-5 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                    class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 lg:col-span-5 sm:p-6">
                     <div class="mb-4">
-                        <h3 class="font-bold text-sm text-slate-700 dark:text-slate-200 uppercase tracking-wider">➕
-                            Tambah Master Aset Baru</h3>
+                        <h3                         class="text-sm font-semibold text-slate-900 dark:text-slate-100">Tambah Master Aset Baru</h3>
                         <p class="text-xs text-slate-500 mt-0.5">Daftarkan jenis barang baru langsung ke database induk
                             sekolah.</p>
                     </div>
@@ -114,7 +113,7 @@
                                 class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Nama
                                 Item/Barang</label>
                             <input type="text" name="nama_aset" placeholder="e.g. Kursi Belajar Siswa Chitose" required
-                                class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm focus:ring-indigo-500">
+                                class="w-full rounded-md border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm focus:ring-brand-500">
                         </div>
                         <div class="grid grid-cols-3 gap-2">
                             <div class="col-span-2">
@@ -122,18 +121,18 @@
                                     class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Kode
                                     Inventaris</label>
                                 <input type="text" name="kode_aset" placeholder="e.g. INV/KRS/2026" required
-                                    class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm focus:ring-indigo-500">
+                                    class="w-full rounded-md border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm focus:ring-brand-500">
                             </div>
                             <div class="col-span-1">
                                 <label
                                     class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Total
                                     Stok</label>
                                 <input type="number" name="total_stok" value="10" min="0" required
-                                    class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm text-center focus:ring-indigo-500">
+                                    class="w-full rounded-md border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm text-center focus:ring-brand-500">
                             </div>
                         </div>
                         <button type="submit"
-                            class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition shadow">
+                            class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-md transition shadow">
                             Simpan ke Database Induk
                         </button>
                     </form>
@@ -141,10 +140,9 @@
 
                 {{-- Kanan: Daftar Tunggu Approval Pengajuan Guru --}}
                 <div
-                    class="lg:col-span-7 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm min-h-[240px]">
+                    class="min-h-[240px] rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 lg:col-span-7 sm:p-6">
                     <div class="mb-3">
-                        <h3 class="font-bold text-sm text-slate-700 dark:text-slate-200 uppercase tracking-wider">🔔
-                            Verifikasi Pengajuan Barang Guru</h3>
+                        <h3                         class="text-sm font-semibold text-slate-900 dark:text-slate-100">Verifikasi Pengajuan Barang Guru</h3>
                         <p class="text-xs text-slate-500 mt-0.5">Daftar item baru yang dilaporkan guru dan memerlukan
                             penerbitan kode inventaris.</p>
                     </div>
@@ -164,7 +162,7 @@
                                 class="flex items-center gap-1.5">
                                 @csrf @method('PATCH')
                                 <input type="text" name="kode_aset" placeholder="Kode Inv" required
-                                    class="rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-[11px] py-1 w-36 focus:ring-indigo-500">
+                                    class="rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-[11px] py-1 w-36 focus:ring-brand-500">
                                 <button type="submit"
                                     class="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-[10px] transition">Setujui</button>
                                 <button type="submit" formaction="{{ route('admin.assets.reject', $pa) }}"
@@ -182,7 +180,7 @@
 
             {{-- 3. PANEL MONITORING UTAMA: BUKU INDUK INVENTARIS LOKASI --}}
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
                 <div
                     class="p-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div>
@@ -194,9 +192,11 @@
 
                     {{-- Penyaringan Data / Filter --}}
                     <form method="GET" action="{{ route('admin.asset-tracking.index') }}"
-                        class="flex flex-wrap items-center gap-2">
+                        class="grid w-full gap-2 sm:grid-cols-2 lg:w-auto lg:grid-cols-[minmax(11rem,1fr)_minmax(11rem,1fr)_auto_auto]">
+                        <label for="asset-classroom-filter" class="sr-only">Filter kelas</label>
                         <select name="classroom_id"
-                            class="rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs focus:ring-indigo-500 shadow-sm cursor-pointer">
+                            id="asset-classroom-filter"
+                            class="min-h-11 rounded-md border-slate-300 bg-white text-sm text-slate-700 focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
                             <option value="">-- Semua Kelas --</option>
                             @foreach($classrooms as $c)
                             <option value="{{ $c->id }}" {{ request('classroom_id')==$c->id ? 'selected' : '' }}>Kelas
@@ -204,8 +204,10 @@
                             @endforeach
                         </select>
 
+                        <label for="asset-room-filter" class="sr-only">Filter ruangan</label>
                         <select name="room_id"
-                            class="rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs focus:ring-indigo-500 shadow-sm cursor-pointer">
+                            id="asset-room-filter"
+                            class="min-h-11 rounded-md border-slate-300 bg-white text-sm text-slate-700 focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200">
                             <option value="">-- Semua Ruangan --</option>
                             @foreach($rooms as $r)
                             <option value="{{ $r->id }}" {{ request('room_id')==$r->id ? 'selected' : '' }}>{{
@@ -214,17 +216,17 @@
                         </select>
 
                         <button type="submit"
-                            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow transition">Filter</button>
+                            class="min-h-11 rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">Filter</button>
                         @if(request()->filled('classroom_id') || request()->filled('room_id'))
                         <a href="{{ route('admin.asset-tracking.index') }}"
-                            class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl hover:bg-slate-300 dark:hover:bg-slate-600 transition">Reset</a>
+                            class="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">Reset</a>
                         @endif
                     </form>
                 </div>
 
                 {{-- TABEL INVENTARIS GLOBAL --}}
                 <div class="overflow-x-auto w-full">
-                    <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
+                    <table class="min-w-[58rem] w-full text-left text-sm text-slate-600 dark:text-slate-300">
                         <thead
                             class="text-xs text-slate-500 uppercase bg-slate-100 dark:bg-slate-700/60 dark:text-slate-300">
                             <tr>
@@ -239,7 +241,7 @@
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                             @forelse($placements as $p)
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                                <td class="px-6 py-4 font-mono font-bold text-xs text-indigo-600 dark:text-indigo-400">
+                                <td class="px-6 py-4 font-mono font-bold text-xs text-brand-600 dark:text-brand-400">
                                     {{ $p->asset->kode_aset ?? 'PROSES_VERIFIKASI' }}
                                 </td>
                                 <td class="px-6 py-4 font-semibold text-slate-800 dark:text-slate-200">
@@ -248,7 +250,7 @@
                                 <td class="px-6 py-4">
                                     @if($p->classroom_id)
                                     <span
-                                        class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2.5 py-1 rounded-lg border border-indigo-100 dark:border-indigo-900/60">
+                                        class="inline-flex items-center gap-1.5 text-xs font-bold text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/40 px-2.5 py-1 rounded-lg border border-brand-100 dark:border-brand-900/60">
                                         🏫 Kelas {{ $p->classroom->tingkat }} {{ $p->classroom->nama_kelas }}
                                     </span>
                                     @elseif($p->room_id)

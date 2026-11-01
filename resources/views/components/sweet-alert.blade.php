@@ -13,7 +13,7 @@
                 background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
                 color: document.documentElement.classList.contains('dark') ? '#f8fafc' : '#0f172a',
                 customClass: {
-                    popup: 'rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700'
+                    popup: 'rounded-lg shadow-lg border border-slate-200 dark:border-slate-700'
                 }
             });
         @endif
@@ -27,8 +27,8 @@
                 background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
                 color: document.documentElement.classList.contains('dark') ? '#f8fafc' : '#0f172a',
                 customClass: {
-                    popup: 'rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700',
-                    confirmButton: 'bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg px-4 py-2 font-semibold'
+                    popup: 'rounded-lg shadow-xl border border-slate-200 dark:border-slate-700',
+                    confirmButton: 'bg-brand-700 hover:bg-brand-800 text-white rounded-md px-4 py-2 font-semibold'
                 }
             });
         @endif
@@ -50,7 +50,7 @@
             text: text,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#4f46e5', // Warna tombol Indigo-600 (Sesuai tema)
+            confirmButtonColor: '#255b4b',
             cancelButtonColor: '#94a3b8', // Warna tombol Batal (Slate-400)
             confirmButtonText: 'Ya, Lanjutkan!',
             cancelButtonText: 'Batal',
@@ -58,7 +58,7 @@
             background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
             color: document.documentElement.classList.contains('dark') ? '#f8fafc' : '#0f172a',
             customClass: {
-                popup: 'rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700'
+                popup: 'rounded-lg shadow-lg border border-slate-200 dark:border-slate-700'
             }
         }).then((result) => {
             // Jika pengguna klik "Ya, Lanjutkan!"

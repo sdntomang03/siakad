@@ -1,11 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">Buat Tugas</h2>
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">Buat Tugas</h2>
     </x-slot>
 
-    <div class="py-8 max-w-6xl mx-auto sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div class="mx-auto max-w-screen-xl">
         <div x-data="assignmentForm({{ Js::from($classrooms) }})"
-            class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+            class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-8">
             <form action="{{ route('assignments.store') }}" method="POST" class="space-y-6">
                 @csrf
                 <div class="grid md:grid-cols-2 gap-5">
@@ -61,7 +62,7 @@
                     </div>
                     <div class="space-y-4">
                         <template x-for="(task, index) in tasks" :key="index">
-                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border dark:border-slate-700">
+                            <div class="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/40">
                                 <div class="flex justify-between gap-4">
                                     <span class="text-xs font-bold text-slate-500">TUGAS <span x-text="index + 1"></span></span>
                                     <button type="button" x-show="tasks.length > 1" @click="tasks.splice(index, 1)" class="text-xs text-red-600">Hapus</button>
@@ -87,7 +88,7 @@
                     </template>
                     <div class="space-y-4">
                         <template x-for="(group, groupIndex) in groups" :key="groupIndex">
-                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border dark:border-slate-700">
+                            <div class="rounded-md border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/40">
                                 <div class="flex justify-between gap-4 mb-3">
                                     <input :name="`groups[${groupIndex}][name]`" x-model="group.name" class="form-input" placeholder="Nama kelompok" required>
                                     <button type="button" x-show="groups.length > 1" @click="groups.splice(groupIndex, 1)" class="text-xs text-red-600">Hapus</button>
@@ -112,18 +113,19 @@
                 </div>
 
                 <div class="flex justify-end pt-4">
-                    <button class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700">Simpan tugas</button>
+                    <button class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">Simpan tugas</button>
                 </div>
             </form>
         </div>
+        </div>
     </div>
     <style>
-        .form-label { display:block; font-size:.75rem; font-weight:700; color:#64748b; margin-bottom:.4rem; text-transform:uppercase; }
-        .source-toggle { font-size:.75rem; font-weight:700; color:#4f46e5; }
-        .source-editor { width:100%; border:1px solid #cbd5e1; border-radius:.75rem; padding:.65rem .8rem; font: .8rem/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; background:#0f172a; color:#e2e8f0; }
+        .form-label { display:block; font-size:.875rem; font-weight:600; color:#334155; margin-bottom:.4rem; }
+        .source-toggle { min-height:2.75rem; font-size:.875rem; font-weight:600; color:#1d4b3e; text-decoration:underline; text-underline-offset:.2em; }
+        .source-editor { width:100%; border:1px solid #cbd5e1; border-radius:.375rem; padding:.65rem .8rem; font: .8rem/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; background:#f8fafc; color:#0f172a; }
         .quill-editor { min-height:8rem; }
-        .form-input { width:100%; border-radius:.75rem; border-color:#cbd5e1; background:transparent; padding:.65rem .8rem; font-size:.875rem; }
-        .btn-secondary { padding:.55rem .8rem; border-radius:.65rem; background:#e2e8f0; color:#334155; font-size:.75rem; font-weight:700; }
+        .form-input { width:100%; min-height:2.75rem; border-radius:.375rem; border:1px solid #cbd5e1; background:#fff; padding:.65rem .8rem; font-size:.875rem; color:#0f172a; }
+        .btn-secondary { min-height:2.75rem; padding:.55rem .8rem; border-radius:.375rem; background:#f1f7f3; color:#173c32; font-size:.875rem; font-weight:600; }
     </style>
     <script>
         function assignmentForm(classrooms) {

@@ -14,19 +14,19 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
+<body class="min-h-screen bg-slate-50 font-sans antialiased text-slate-900 dark:bg-slate-900 dark:text-slate-100">
 
-    <div class="py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-5xl mx-auto space-y-6">
+    <main class="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div class="mx-auto max-w-6xl space-y-5">
 
             {{-- Judul Halaman --}}
-            <div class="text-center mb-10">
-                <h2 class="text-2xl sm:text-3xl font-black text-gray-800 dark:text-gray-200">
-                    Dokumen <span class="text-indigo-600 dark:text-indigo-400">e-Kinerja Saya</span>
+            <header class="mb-8">
+                <h2 class="text-2xl font-semibold text-slate-950 dark:text-white sm:text-3xl">
+                    Dokumen <span class="text-brand-600 dark:text-brand-400">e-Kinerja Saya</span>
                 </h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Daftar Rencana Aksi dan Output milik Anda
+                <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">Daftar Rencana Aksi dan Output milik Anda
                     berdasarkan Target Waktu (TW).</p>
-            </div>
+            </header>
 
             {{-- Menampilkan Notifikasi Sukses/Error --}}
             @if(session('success'))
@@ -55,17 +55,17 @@
 
             {{-- Filter periode dokumen --}}
             <div
-                class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
+                class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
                 <form action="{{ route('etpp.ku') }}" method="GET"
-                    class="flex flex-col sm:flex-row gap-4 items-end justify-center">
+                    class="grid grid-cols-1 items-end gap-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.5fr)_minmax(8rem,0.75fr)_minmax(10rem,1fr)_auto]">
 
                     {{-- Select Filter TW --}}
                     <div class="w-full sm:w-1/2">
                         <label for="tw"
-                            class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Pilih
+                            class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih
                             Target Waktu (TW)</label>
                         <select id="tw" name="tw"
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-base sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
+                            class="w-full rounded-md border-slate-300 text-base focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white sm:text-sm">
                             <option value="semua" {{ $filter_tw=='semua' ? 'selected' : '' }}>-- Tampilkan Semua TW --
                             </option>
                             <option value="TW 1" {{ $filter_tw=='TW 1' ? 'selected' : '' }}>Triwulan 1 (TW 1)</option>
@@ -76,15 +76,15 @@
                     </div>
                     <div class="w-full sm:w-1/4">
                         <label for="tahun"
-                            class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Tahun</label>
+                            class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Tahun</label>
                         <input id="tahun" name="tahun" type="number" min="2000" max="2100" value="{{ $tahun }}"
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-base sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
+                            class="w-full rounded-md border-slate-300 text-base focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white sm:text-sm">
                     </div>
                     <div class="w-full sm:w-1/4">
                         <label for="bulan"
-                            class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Bulan Dialog</label>
+                            class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Bulan Dialog</label>
                         <select id="bulan" name="bulan"
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-base sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
+                            class="w-full rounded-md border-slate-300 text-base focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white sm:text-sm">
                             @foreach(range(1, 12) as $nomorBulan)
                             <option value="{{ $nomorBulan }}" {{ $bulan === $nomorBulan ? 'selected' : '' }}>
                                 {{ \Carbon\Carbon::createFromDate($tahun, $nomorBulan, 1)->locale('id')->isoFormat('MMMM') }}
@@ -94,17 +94,17 @@
                     </div>
 
                     {{-- Tombol Aksi --}}
-                    <div class="w-full sm:w-auto">
+                    <div class="w-full sm:col-span-2 lg:col-span-1">
                         <button type="submit"
-                            class="w-full sm:w-auto px-8 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-md hover:bg-indigo-700 hover:shadow-lg transition">
+                            class="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                             Terapkan Filter
                         </button>
                     </div>
                 </form>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <section class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                <section class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                     <div class="flex items-start justify-between gap-4 mb-5">
                         <div>
                             <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Realisasi Triwulan</h3>
@@ -119,7 +119,7 @@
                                     <option value="{{ $triwulan }}" {{ $filter_tw === $triwulan ? 'selected' : '' }}>{{ $triwulan }}</option>
                                     @endforeach
                                 </select>
-                                <button type="submit" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">
+                                <button type="submit" class="text-xs font-bold text-brand-600 hover:text-brand-800 dark:text-brand-400">
                                     Unduh PDF
                                 </button>
                             </div>
@@ -167,7 +167,7 @@
                                 class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm">
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Opsional. Link akan muncul di bawah daftar realisasi dan pada PDF.</p>
                         </div>
-                        <button type="submit" class="w-full px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition">
+                        <button type="submit" class="w-full px-4 py-2.5 bg-brand-600 text-white rounded-lg text-sm font-bold hover:bg-brand-700 transition">
                             Simpan Realisasi
                         </button>
                     </form>
@@ -180,7 +180,7 @@
                         @foreach($realisasiList as $realisasiItem)
                         <details class="text-sm p-3 rounded-lg bg-gray-50 dark:bg-gray-900/50">
                             <summary class="cursor-pointer">
-                                <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ $realisasiItem->triwulan }}</span>
+                                <span class="font-bold text-brand-600 dark:text-brand-400">{{ $realisasiItem->triwulan }}</span>
                                 <span class="text-gray-700 dark:text-gray-200">— {{ $realisasiItem->outputTarget->deskripsi_output }}</span>
                             </summary>
                             <form action="{{ route('etpp.realisasi.update', $realisasiItem) }}" method="POST" class="mt-3 space-y-2">
@@ -192,7 +192,7 @@
                                     placeholder="https://contoh.go.id/profil-realisasi"
                                     class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm">
                                 <div class="flex flex-wrap items-center gap-3">
-                                    <button type="submit" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">Perbarui</button>
+                                    <button type="submit" class="text-xs font-bold text-brand-600 hover:text-brand-800 dark:text-brand-400">Perbarui</button>
                                     @if($realisasiItem->link_referensi)
                                     <a href="{{ $realisasiItem->link_referensi }}" target="_blank" rel="noopener noreferrer"
                                         class="text-xs font-bold text-emerald-600 hover:text-emerald-800 dark:text-emerald-400">
@@ -213,7 +213,7 @@
                     @endif
                 </section>
 
-                <section class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <section class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                     <div class="flex items-start justify-between gap-4 mb-5">
                         <div>
                             <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Dialog Kinerja Bulanan</h3>
@@ -222,7 +222,7 @@
                         <form action="{{ route('etpp.dialog-kinerja.pdf') }}" method="GET" class="shrink-0">
                             <input type="hidden" name="tahun" value="{{ $tahun }}">
                             <input type="hidden" name="bulan" value="{{ $bulan }}">
-                            <button type="submit" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">
+                            <button type="submit" class="text-xs font-bold text-brand-600 hover:text-brand-800 dark:text-brand-400">
                                 Unduh PDF
                             </button>
                         </form>
@@ -260,7 +260,7 @@
                                 class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-sm">
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Opsional. Link akan dapat dibuka dari profil dialog dan PDF.</p>
                         </div>
-                        <button type="submit" class="w-full px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition">
+                        <button type="submit" class="w-full px-4 py-2.5 bg-brand-600 text-white rounded-lg text-sm font-bold hover:bg-brand-700 transition">
                             Simpan Dialog Kinerja
                         </button>
                     </form>
@@ -293,11 +293,11 @@
 
                 {{-- KIRI: Profil Pegawai Anda --}}
                 <div
-                    class="md:col-span-1 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden self-start sticky top-6">
+                    class="md:col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden self-start sticky top-6">
                     <div
-                        class="p-6 bg-indigo-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700 text-center">
+                        class="p-6 bg-brand-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700 text-center">
                         <div
-                            class="w-24 h-24 bg-indigo-200 text-indigo-700 rounded-full mx-auto flex items-center justify-center text-3xl font-black mb-4 uppercase shadow-inner">
+                            class="w-24 h-24 bg-brand-200 text-brand-700 rounded-full mx-auto flex items-center justify-center text-3xl font-black mb-4 uppercase shadow-inner">
                             {{ substr(auth()->user()->name ?? 'U', 0, 1) }}
                         </div>
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white leading-tight">
@@ -308,7 +308,7 @@
 
                         @if(isset($employee->kategori_pegawai))
                         <span
-                            class="inline-block mt-3 px-3 py-1 bg-indigo-600 text-white text-[10px] font-bold uppercase rounded-full tracking-widest">
+                            class="inline-block mt-3 px-3 py-1 bg-brand-600 text-white text-[10px] font-bold uppercase rounded-full tracking-widest">
                             {{ $employee->kategori_pegawai }}
                         </span>
                         @endif
@@ -338,12 +338,12 @@
                     @if(isset($data_kategori) && count($data_kategori) > 0)
                     @foreach($data_kategori as $kategori)
                     <div
-                        class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 
                         {{-- Header Kategori --}}
                         <div class="bg-gray-50 dark:bg-gray-900/50 p-4 border-b border-gray-200 dark:border-gray-700">
                             <h3 class="font-bold text-gray-800 dark:text-gray-200 text-lg flex items-center gap-2">
-                                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor"
+                                <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
@@ -370,12 +370,12 @@
                             @forelse($filteredRhk as $rhk)
                             <div class="space-y-3">
                                 {{-- Judul RHK --}}
-                                <h4 class="font-semibold text-sm text-indigo-700 dark:text-indigo-400 leading-snug">
+                                <h4 class="font-semibold text-sm text-brand-700 dark:text-brand-400 leading-snug">
                                     {{ $rhk->deskripsi_rhk }}
                                 </h4>
 
                                 {{-- Indentasi untuk Rencana Aksi --}}
-                                <div class="pl-4 border-l-2 border-indigo-100 dark:border-indigo-900/50 space-y-4">
+                                <div class="pl-4 border-l-2 border-brand-100 dark:border-brand-900/50 space-y-4">
                                     @foreach($rhk->rencanaAksi as $ra)
 
                                     {{-- Hanya tampilkan jika Rencana Aksi memiliki Output --}}
@@ -402,12 +402,12 @@
                                             <ul class="space-y-4">
                                                 @foreach($ra->outputTarget as $output)
                                                 <li
-                                                    class="flex flex-col gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm relative overflow-hidden">
+                                                    class="flex flex-col gap-3 bg-white dark:bg-gray-800 p-4 rounded-md border border-gray-200 dark:border-gray-700 shadow-sm relative overflow-hidden">
 
                                                     {{-- Detail Target & Output --}}
                                                     <div class="flex items-start gap-3">
                                                         <span
-                                                            class="shrink-0 mt-0.5 px-2 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 text-[11px] font-black tracking-wider uppercase rounded">
+                                                            class="shrink-0 mt-0.5 px-2 py-1 bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300 text-[11px] font-black tracking-wider uppercase rounded">
                                                             {{ $output->target_waktu }}
                                                         </span>
                                                         <span
@@ -453,7 +453,7 @@
                                                             <div class="flex flex-wrap gap-2">
                                                                 @foreach($output->buktiDukung as $bukti)
                                                                 <div
-                                                                    class="inline-flex items-center bg-indigo-50 dark:bg-indigo-900/20 rounded-md border border-indigo-100 dark:border-indigo-800/50 overflow-hidden">
+                                                                    class="inline-flex items-center bg-brand-50 dark:bg-brand-900/20 rounded-md border border-brand-100 dark:border-brand-800/50 overflow-hidden">
 
                                                                     {{-- Tentukan URL (Link Eksternal atau File
                                                                     Internal) --}}
@@ -465,7 +465,7 @@
 
                                                                     {{-- Link Lihat Dokumen --}}
                                                                     <a href="{{ $urlBukti }}" target="_blank"
-                                                                        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition"
+                                                                        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand-600 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-900/40 transition"
                                                                         title="Lihat Dokumen">
 
                                                                         {{-- Ikon berubah tergantung jenis (File / Link)
@@ -535,7 +535,7 @@
                                                             {{-- Dropdown Pilih Jenis Bukti --}}
                                                             <select name="jenis_bukti"
                                                                 onchange="toggleBuktiInput(this, {{ $output->id }})"
-                                                                class="w-full sm:w-1/4 text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1.5 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                                                class="w-full sm:w-1/4 text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1.5 focus:ring-brand-500 focus:border-brand-500 transition">
                                                                 <option value="link" selected>Tautkan Link</option>
                                                                 <option value="file">Unggah File</option>
                                                             </select>
@@ -545,17 +545,17 @@
                                                                 id="input_link_{{ $output->id }}" required
                                                                 placeholder="Contoh: https://drive.google.com/..."
                                                                 style="display: block;"
-                                                                class="w-full text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1.5 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                                                class="w-full text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-2 py-1.5 focus:ring-brand-500 focus:border-brand-500 transition">
 
                                                             {{-- Input 2: File (Sembunyi secara default) --}}
                                                             <input type="file" name="file_bukti"
                                                                 id="input_file_{{ $output->id }}" style="display: none;"
                                                                 accept=".pdf,.jpg,.jpeg,.png"
-                                                                class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer transition">
+                                                                class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-brand-100 file:text-brand-700 hover:file:bg-brand-200 cursor-pointer transition">
 
                                                             {{-- Tombol Submit --}}
                                                             <button type="submit"
-                                                                class="w-full sm:w-auto shrink-0 bg-indigo-600 text-white text-xs px-5 py-2 rounded-md hover:bg-indigo-700 font-bold transition shadow-sm flex items-center justify-center gap-1.5">
+                                                                class="w-full sm:w-auto shrink-0 bg-brand-600 text-white text-xs px-5 py-2 rounded-md hover:bg-brand-700 font-bold transition shadow-sm flex items-center justify-center gap-1.5">
                                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                                     viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -595,7 +595,7 @@
                     @else
                     {{-- Tampilan jika Data Kosong / Belum Import Data e-Kinerja --}}
                     <div
-                        class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center flex flex-col items-center justify-center h-full min-h-[300px]">
+                        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center flex flex-col items-center justify-center h-full min-h-[300px]">
                         <div
                             class="relative w-20 h-20 mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-400 dark:text-gray-500">
                             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -610,7 +610,7 @@
                                 $filter_tw }}</strong>.</p>
 
                         <a href="{{ route('etpp.import.form') }}"
-                            class="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-md hover:bg-indigo-700 transition">
+                            class="mt-6 px-6 py-2 bg-brand-600 text-white rounded-lg text-sm font-bold shadow-md hover:bg-brand-700 transition">
                             Import Data e-Kinerja Sekarang
                         </a>
                     </div>
@@ -620,7 +620,7 @@
             </div>
 
         </div>
-    </div>
+    </main>
 
     {{-- Script untuk Toggle Form Input Bukti (File vs Link) --}}
     <script>

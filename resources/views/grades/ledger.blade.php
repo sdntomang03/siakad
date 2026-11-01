@@ -1,31 +1,31 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
                 Ledger Lengkap Nilai Siswa (Kelas 4 - Kelas 6)
             </h2>
-            <a href="{{ route('dashboard') }}" class="text-sm font-bold text-slate-500 hover:text-slate-700">
-                &larr; Kembali ke Dashboard
+            <a href="{{ route('dashboard') }}" class="inline-flex min-h-11 items-center text-sm font-semibold text-brand-700 hover:text-brand-900 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-300 dark:hover:text-brand-200">
+                Kembali ke Dashboard
             </a>
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-full mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-full space-y-5 px-4 sm:px-6 lg:px-8">
 
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 max-w-3xl">
+                class="max-w-3xl rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
                 @if($myClassrooms->isEmpty())
-                <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-sm font-semibold">
+                <div class="p-4 rounded-md bg-amber-50 border border-amber-200 text-amber-700 text-sm font-semibold">
                     Anda belum ditetapkan sebagai Wali Kelas untuk kelas mana pun. Silakan hubungi operator sekolah.
                 </div>
                 @else
                 <form action="{{ route('grades.ledger') }}" method="GET"
-                    class="flex flex-col md:flex-row gap-4 items-end">
-                    <div class="w-full md:w-2/3">
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Pilih Kelas</label>
+                    class="flex flex-col items-stretch gap-4 sm:flex-row sm:items-end">
+                    <div class="w-full sm:flex-1">
+                    <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Kelas</label>
                         <select name="classroom_id"
-                            class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                             required>
                             <option value="">-- Pilih Kelas --</option>
                             @foreach($myClassrooms as $kelas)
@@ -36,9 +36,9 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="w-full md:w-1/3">
+                    <div class="w-full sm:w-auto">
                         <button type="submit"
-                            class="w-full bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-bold shadow-sm hover:bg-indigo-700 transition uppercase text-sm">
+                            class="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:w-auto">
                             Tampilkan Ledger
                         </button>
                     </div>
@@ -48,10 +48,10 @@
 
             @if($selectedClassroom)
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
 
                 <div
-                    class="p-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center">
+                    class="flex flex-col gap-3 border-b border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900/50 sm:flex-row sm:items-center sm:justify-between sm:p-6">
                     <div>
                         <h3 class="text-lg font-bold text-slate-800 dark:text-white">Matriks Rekapitulasi Nilai Siswa (6
                             Semester)</h3>
@@ -61,7 +61,7 @@
                         </p>
                     </div>
                     <button onclick="window.print()"
-                        class="text-sm bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg font-bold hover:bg-slate-300 transition flex items-center">
+                        class="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700 sm:w-auto">
                         Cetak Leger
                     </button>
                 </div>
@@ -113,7 +113,7 @@
                                     class="px-1.5 py-1 text-center font-semibold text-slate-500 border-r border-slate-200 bg-slate-50">
                                     6.2</th>
                                 <th
-                                    class="px-2 py-1 text-center font-bold text-indigo-700 border-r border-slate-200 bg-indigo-50/70">
+                                    class="px-2 py-1 text-center font-bold text-brand-700 border-r border-slate-200 bg-brand-50/70">
                                     RT</th>
                                 @endforeach
                             </tr>
@@ -167,7 +167,7 @@
                                 }
                                 @endphp
                                 <td
-                                    class="px-2 py-2 text-center font-bold text-indigo-700 border-r border-slate-200 bg-indigo-50/50">
+                                    class="px-2 py-2 text-center font-bold text-brand-700 border-r border-slate-200 bg-brand-50/50">
                                     {{ $rataMapel > 0 ? $rataMapel : '-' }}
                                 </td>
                                 @endforeach

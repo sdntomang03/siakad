@@ -4,9 +4,9 @@
             <h2 class="font-semibold text-xl text-slate-800 leading-tight">Jurnal Piket Harian</h2>
 
             <!-- Tombol Navigasi Cepat -->
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
                 <a href="{{ route('piket.jadwal') }}"
-                    class="px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-sm font-bold rounded-lg border border-indigo-200 transition shadow-sm flex items-center gap-2">
+                    class="inline-flex min-h-10 items-center gap-2 rounded-md border border-brand-200 bg-brand-50 px-3 py-2 text-sm font-medium text-brand-800 transition hover:bg-brand-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
@@ -15,7 +15,7 @@
                     Jadwal Master
                 </a>
                 <a href="{{ route('piket.daftarJadwal') }}"
-                    class="px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-sm font-bold rounded-lg border border-indigo-200 transition shadow-sm flex items-center gap-2">
+                    class="inline-flex min-h-10 items-center gap-2 rounded-md border border-brand-200 bg-brand-50 px-3 py-2 text-sm font-medium text-brand-800 transition hover:bg-brand-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
@@ -24,7 +24,7 @@
                     Jadwal Piket
                 </a>
                 <a href="{{ route('piket.laporan') }}"
-                    class="px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-sm font-bold rounded-lg border border-indigo-200 transition shadow-sm flex items-center gap-2">
+                    class="inline-flex min-h-10 items-center gap-2 rounded-md border border-brand-200 bg-brand-50 px-3 py-2 text-sm font-medium text-brand-800 transition hover:bg-brand-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
@@ -36,18 +36,18 @@
         </div>
     </x-slot>
 
-    <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl space-y-5 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 
         @if(session('success'))
         <div class="mb-4 p-4 bg-emerald-100 text-emerald-700 rounded-lg font-bold">{{ session('success') }}</div>
         @endif
 
         <!-- Filter Kelas dan Tanggal -->
-        <div class="bg-white p-6 rounded-xl shadow-sm mb-6 border border-slate-200">
-            <form action="{{ route('piket.jurnal') }}" method="GET" class="flex flex-wrap items-end gap-4">
+        <div class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
+            <form action="{{ route('piket.jurnal') }}" method="GET" class="grid grid-cols-1 items-end gap-4 sm:grid-cols-2">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Pilih Kelas</label>
-                    <select name="classroom_id" class="rounded-lg border-slate-300 text-sm"
+                    <label for="classroom_id" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Kelas</label>
+                    <select id="classroom_id" name="classroom_id" class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                         onchange="this.form.submit()">
                         @foreach($classrooms as $kelas)
                         <option value="{{ $kelas->id }}" {{ $classroomId==$kelas->id ? 'selected' : '' }}>
@@ -57,18 +57,18 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tanggal Pelaksanaan</label>
-                    <input type="date" name="tanggal" value="{{ $tanggal }}" class="rounded-lg border-slate-300 text-sm"
+                    <label for="tanggal" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Tanggal Pelaksanaan</label>
+                    <input id="tanggal" type="date" name="tanggal" value="{{ $tanggal }}" class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                         onchange="this.form.submit()">
                 </div>
             </form>
         </div>
 
         <!-- Tabel Jurnal -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 bg-slate-50">
-                <h3 class="font-bold text-slate-800">Daftar Piket Hari {{ $namaHari }}</h3>
-                <p class="text-xs text-slate-500">Jika siswa di-absen tidak masuk, baris akan terkunci otomatis.</p>
+        <div class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+            <div class="border-b border-slate-100 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900/50">
+                <h3 class="font-semibold text-slate-950 dark:text-white">Daftar Piket Hari {{ $namaHari }}</h3>
+                <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">Jika siswa tidak hadir, baris akan terkunci otomatis.</p>
             </div>
 
             <form action="{{ route('piket.jurnal.store') }}" method="POST">
@@ -125,7 +125,7 @@
                                 <td class="px-4 py-3">
                                     <input type="text" name="catatan[{{ $siswa->id }}]" value="{{ $savedCatatan }}"
                                         placeholder="Tulis alasan jika kabur..."
-                                        class="w-full text-sm border-slate-300 rounded-lg focus:ring-indigo-500">
+                                        class="w-full text-sm border-slate-300 rounded-lg focus:ring-brand-500">
                                 </td>
                                 @else
                                 <!-- Siswa Tidak Hadir: Terkunci dan terisi otomatis dari absensi -->

@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
-                Profil Kepegawaian: <span class="text-indigo-600">{{ $user->name }}</span>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
+                Profil Kepegawaian: <span class="text-brand-600">{{ $user->name }}</span>
             </h2>
 
             @if(auth()->user()->hasRole('superadmin|operator'))
@@ -17,8 +17,8 @@
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <form action="{{ route('employees.update', $user->id) }}" method="POST">
                 @csrf @method('PUT')
 
@@ -26,24 +26,24 @@
 
                     <div class="lg:col-span-2 space-y-6">
                         <div
-                            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                            class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
                             <h3
                                 class="text-lg font-bold text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-700 pb-2 mb-4">
                                 Identitas & Kepegawaian</h3>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="col-span-2">
-                                    <label class="block text-xs font-bold text-slate-500 uppercase">Nama Lengkap</label>
+                                <div class="col-span-full">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Nama Lengkap</label>
                                     <input type="text" name="name" value="{{ old('name', $user->name) }}"
-                                        class="mt-1 w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm"
+                                        class="mt-1 w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                                         required>
                                 </div>
 
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase">Jenis
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Jenis
                                         Kelamin</label>
                                     <select name="jenis_kelamin"
-                                        class="mt-1 w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm"
+                                        class="mt-1 w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                                         required>
                                         <option value="L" {{ old('jenis_kelamin', $user->employee->jenis_kelamin ?? '')
                                             == 'L' ? 'selected' : '' }}>Laki-laki</option>
@@ -53,12 +53,12 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase">Kategori
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Kategori
                                         Pegawai</label>
                                     <input type="text" name="kategori_pegawai"
                                         value="{{ old('kategori_pegawai', $user->employee->kategori_pegawai ?? '') }}"
                                         placeholder="Contoh: Guru Kelas, Tenaga Administrasi"
-                                        class="mt-1 w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm"
+                                        class="mt-1 w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                                         required>
                                 </div>
 
@@ -98,14 +98,14 @@
 
                     <div class="space-y-6">
                         <div
-                            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                            class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
                             <h3
                                 class="text-lg font-bold text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-700 pb-2 mb-4">
                                 Alamat Domisili</h3>
 
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="col-span-2">
-                                    <label class="block text-xs font-bold text-slate-500 uppercase">Jalan / Detail
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Jalan / Detail
                                         Alamat</label>
                                     <textarea name="alamat" rows="2"
                                         class="mt-1 w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm">{{ old('alamat', $user->employee->alamat ?? '') }}</textarea>
@@ -142,9 +142,9 @@
                         </div>
 
                         <div
-                            class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+                            class="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
                             <button type="submit"
-                                class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition uppercase text-sm">
+                                class="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                                 Simpan Perubahan
                             </button>
                         </div>

@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+	:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+		outline: 2px solid #8a5e13;
+		outline-offset: 2px;
+	}
+
+	.sidebar-shell :where(a, button):focus-visible {
+		outline-color: #ffffff;
+	}
+}
+
 @layer utilities {
 	.no-scrollbar {
 		-ms-overflow-style: none; /* IE and Edge */

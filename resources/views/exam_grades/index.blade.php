@@ -1,24 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
-                Manajemen <span class="text-indigo-600">Nilai Ujian</span>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
+                Manajemen <span class="text-brand-600">Nilai Ujian</span>
             </h2>
 
             <a href="{{ route('dashboard') }}"
-                class="text-sm font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
-                &larr; Kembali ke Dashboard
+                class="inline-flex min-h-11 items-center text-sm font-semibold text-brand-700 hover:text-brand-900 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-300 dark:hover:text-brand-200">
+                Kembali ke Dashboard
             </a>
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             <!-- Alert Messages -->
             @if(session('success'))
             <div
-                class="flex items-center p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-sm font-bold shadow-sm">
+                class="flex items-center p-4 rounded-md bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-sm font-bold shadow-sm">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -29,7 +29,7 @@
 
             @if(session('error'))
             <div
-                class="flex items-center p-4 rounded-xl bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400 text-sm font-bold shadow-sm">
+                class="flex items-center p-4 rounded-md bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400 text-sm font-bold shadow-sm">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -43,7 +43,7 @@
 
                 <!-- KIRI: MENU INPUT NILAI KELAS (BULK) -->
                 <div
-                    class="bg-indigo-600 rounded-2xl shadow-lg border border-indigo-700 overflow-hidden relative p-8 flex flex-col justify-center items-center text-center">
+                    class="relative flex flex-col items-center justify-center overflow-hidden rounded-lg border border-brand-800 bg-brand-900 p-6 text-center sm:p-8">
                     <div class="text-white/80 mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
@@ -52,11 +52,11 @@
                         </svg>
                     </div>
                     <h3 class="text-2xl font-black text-white mb-2">Input Nilai Per Kelas</h3>
-                    <p class="text-indigo-200 text-sm mb-6">Pilih kelas dan mata pelajaran, lalu ketik nilai seluruh
+                    <p class="text-brand-200 text-sm mb-6">Pilih kelas dan mata pelajaran, lalu ketik nilai seluruh
                         siswa dalam format tabel buku nilai.</p>
 
                     <a href="{{ route('exam-grades.createBulk') }}"
-                        class="bg-white text-indigo-700 hover:bg-slate-50 px-6 py-3 rounded-xl font-black uppercase text-sm shadow-md transition transform hover:-translate-y-0.5 inline-flex items-center gap-2">
+                        class="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-white px-6 py-3 text-sm font-semibold text-brand-900 transition hover:bg-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
                             <path fill-rule="evenodd"
@@ -69,7 +69,7 @@
 
                 <!-- KANAN: FORM IMPORT EXCEL -->
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                    class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
                     <div
                         class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
                         <h3 class="text-base font-black text-slate-800 dark:text-white flex items-center">
@@ -78,7 +78,7 @@
                         <!-- Tombol Unduh Template -->
                         <div class="flex items-center gap-2">
                             <select id="tingkat_template"
-                                class="rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-xs py-1 h-8 focus:ring-indigo-500">
+                                class="rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-xs py-1 h-8 focus:ring-brand-500">
 
                                 <option value="6">Kls 6</option>
                             </select>
@@ -97,7 +97,7 @@
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Kategori Ujian
                                     (Wajib)</label>
                                 <select name="kategori_ujian"
-                                    class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:ring-indigo-500"
+                                    class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:ring-brand-500"
                                     required>
                                     <option value="">-- Pilih Kategori --</option>
                                     <option value="Ujian Sekolah">Ujian Sekolah (Tulis)</option>
@@ -113,15 +113,15 @@
                                 <input type="file" name="file_excel" required accept=".csv, .xls, .xlsx"
                                     class="block w-full text-sm text-slate-500 dark:text-slate-400
                                     file:mr-4 file:py-2 file:px-4
-                                    file:rounded-xl file:border-0
+                                    file:rounded-md file:border-0
                                     file:text-xs file:font-black file:uppercase
-                                    file:bg-indigo-50 file:text-indigo-700
-                                    dark:file:bg-indigo-900/50 dark:file:text-indigo-400
-                                    hover:file:bg-indigo-100 transition cursor-pointer border border-slate-300 dark:border-slate-600 rounded-xl p-1.5 bg-slate-50 dark:bg-slate-900/50">
+                                    file:bg-brand-50 file:text-brand-700
+                                    dark:file:bg-brand-900/50 dark:file:text-brand-400
+                                    hover:file:bg-brand-100 transition cursor-pointer border border-slate-300 dark:border-slate-600 rounded-md p-1.5 bg-slate-50 dark:bg-slate-900/50">
                             </div>
                         </div>
                         <button type="submit"
-                            class="w-full bg-indigo-600 text-white py-2.5 rounded-xl font-black shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 transition transform hover:-translate-y-0.5 uppercase tracking-wide text-xs">
+                            class="w-full bg-brand-600 text-white py-2.5 rounded-md font-black shadow-lg shadow-brand-500/30 hover:bg-brand-700 transition transform hover:-translate-y-0.5 uppercase tracking-wide text-xs">
                             Mulai Import Ujian
                         </button>
                     </form>
@@ -131,20 +131,21 @@
 
             <!-- TABEL DATA NILAI UJIAN & FILTER -->
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <!-- Header & Filter Tabel -->
                 <div
                     class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
-                    <h3 class="text-base font-black text-slate-800 dark:text-white">
+                    <h3 class="text-base font-semibold text-slate-950 dark:text-white">
                         Daftar Nilai Masuk
                     </h3>
 
                     <form action="{{ route('exam-grades.index') }}" method="GET"
-                        class="flex flex-wrap items-center gap-2">
+                        class="grid w-full gap-2 sm:grid-cols-2 xl:w-auto xl:grid-cols-[minmax(10rem,1fr)_minmax(10rem,1fr)_auto_auto]">
 
                         <!-- Filter Kategori (Jenis Penilaian) -->
                         <select name="kategori_ujian"
-                            class="rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-xs h-9 focus:ring-indigo-500">
+                            aria-label="Filter kategori ujian"
+                            class="min-h-11 rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                             <option value="">Semua Kategori</option>
                             <option value="Ujian Sekolah" {{ request('kategori_ujian')=='Ujian Sekolah' ? 'selected'
                                 : '' }}>Ujian Sekolah</option>
@@ -158,7 +159,8 @@
 
                         <!-- Filter Mata Pelajaran -->
                         <select name="subject_id"
-                            class="rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-xs h-9 focus:ring-indigo-500 max-w-[150px] truncate">
+                            aria-label="Filter mata pelajaran"
+                            class="min-h-11 max-w-full truncate rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white xl:max-w-[15rem]">
                             <option value="">Semua Mapel</option>
                             @foreach($subjects as $subj)
                             <option value="{{ $subj->id }}" {{ request('subject_id')==$subj->id ? 'selected' : '' }}>
@@ -171,7 +173,7 @@
 
 
                         <button type="submit"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 h-9 rounded-lg text-xs font-bold transition shadow-sm">
+                            class="min-h-11 rounded-md bg-brand-700 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                             Filter
                         </button>
 
@@ -179,7 +181,8 @@
                         @if(request('kategori_ujian') || request('subject_id') || request('tingkat_kelas') ||
                         request('semester'))
                         <a href="{{ route('exam-grades.index') }}" title="Hapus Filter"
-                            class="bg-slate-200 hover:bg-slate-300 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300 px-3 py-1.5 h-9 rounded-lg text-xs font-bold transition flex items-center justify-center">
+                            aria-label="Reset filter"
+                            class="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -191,7 +194,7 @@
 
                 <!-- Isi Tabel -->
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left whitespace-nowrap">
+                    <table class="min-w-[58rem] w-full whitespace-nowrap text-left text-sm">
                         <thead class="text-xs text-slate-500 uppercase bg-slate-50/80 dark:bg-slate-900/30">
                             <tr>
                                 <th class="px-6 py-3 border-b border-slate-100 dark:border-slate-700">Nama Siswa</th>
@@ -215,7 +218,7 @@
                                 </td>
                                 <td class="px-6 py-3">
                                     <span
-                                        class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-2 py-1 rounded text-xs font-bold border border-indigo-100 dark:border-indigo-800">
+                                        class="bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 px-2 py-1 rounded text-xs font-bold border border-brand-100 dark:border-brand-800">
                                         {{ $grade->kategori_ujian }}
                                     </span>
                                 </td>

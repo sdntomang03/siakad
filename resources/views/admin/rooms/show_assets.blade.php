@@ -2,34 +2,34 @@
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Lokasi
+                <span class="text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider">Lokasi
                     Fisik / Detail Inventaris</span>
-                <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight mt-0.5">
+                <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100 leading-tight mt-0.5">
                     {{ $namaRuangan }}
                 </h2>
                 <p class="text-xs text-slate-500 dark:text-slate-400 italic mt-0.5">{{ $deskripsi }}</p>
             </div>
 
             <a href="{{ route('rooms.index') }}"
-                class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl transition flex items-center gap-1.5 self-start">
+                class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-md transition flex items-center gap-1.5 self-start">
                 ← Kembali ke Daftar Ruangan
             </a>
         </div>
     </x-slot>
 
-    <div class="py-8" x-data="{ showModal: false, placement: {}, actionUrl: '' }">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8" x-data="{ showModal: false, placement: {}, actionUrl: '' }">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             @if(session('success'))
             <div
-                class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-semibold shadow-sm">
+                class="p-4 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-semibold shadow-sm">
                 {{ session('success') }}
             </div>
             @endif
 
             {{-- TABEL DATA BARANG DI DALAM RUANGAN INI --}}
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div class="p-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
                     <h3 class="text-base font-bold text-slate-700 dark:text-slate-300">Daftar Fasilitas & Aset Terdata
                     </h3>
@@ -53,7 +53,7 @@
                             @forelse($placements as $index => $p)
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                                 <td class="px-6 py-4 text-center text-slate-400 font-medium">{{ $index + 1 }}</td>
-                                <td class="px-6 py-4 font-mono font-bold text-xs text-indigo-600 dark:text-indigo-400">
+                                <td class="px-6 py-4 font-mono font-bold text-xs text-brand-600 dark:text-brand-400">
                                     {{ $p->asset->kode_aset ?? 'MENUNGGU_ACC' }}
                                 </td>
                                 <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">
@@ -85,7 +85,7 @@
                                             actionUrl = '{{ route('assets.placement.update-condition', $p->id) }}';
                                             showModal = true;
                                         "
-                                            class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-xs transition">
+                                            class="inline-flex min-h-10 items-center rounded-md bg-amber-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-amber-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700">
                                             Ubah Kondisi
                                         </button>
 
@@ -93,7 +93,7 @@
                                             onsubmit="return confirm('Keluarkan barang ini dari catatan inventaris ruangan?')">
                                             @csrf @method('DELETE')
                                             <button type="submit"
-                                                class="px-2.5 py-1.5 bg-rose-100 hover:bg-rose-600 text-rose-700 hover:text-white font-bold rounded-lg text-xs transition">
+                                                class="inline-flex min-h-10 items-center rounded-md border border-rose-200 px-3 py-1.5 text-sm font-semibold text-rose-700 transition hover:bg-rose-700 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-700 dark:border-rose-800 dark:text-rose-300">
                                                 Tarik
                                             </button>
                                         </form>
@@ -116,10 +116,10 @@
 
         {{-- MODAL UBAH KONDISI/KUANTITAS BARANG INLINE --}}
         <div x-show="showModal"
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 "
             style="display: none;" x-cloak>
             <div @click.outside="showModal = false"
-                class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg max-w-md w-full border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
                 <div class="p-5 border-b bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between">
                     <h3 class="font-bold text-slate-800 dark:text-slate-200 text-base">Perbarui Kondisi Barang</h3>
                     <button @click="showModal = false" class="text-slate-400 text-sm">✕</button>
@@ -132,12 +132,12 @@
                         <div class="col-span-1">
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Jumlah</label>
                             <input type="number" name="jumlah" x-model="placement.jumlah" required min="1"
-                                class="w-full rounded-xl border-slate-300 text-sm text-center font-bold">
+                                class="w-full rounded-md border-slate-300 text-sm text-center font-bold">
                         </div>
                         <div class="col-span-2">
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Kondisi Fisik</label>
                             <select name="kondisi" x-model="placement.kondisi"
-                                class="w-full rounded-xl border-slate-300 text-sm">
+                                class="w-full rounded-md border-slate-300 text-sm">
                                 <option value="Baik">Baik</option>
                                 <option value="Rusak Ringan">Rusak Ringan</option>
                                 <option value="Rusak Berat">Rusak Berat</option>
@@ -149,14 +149,14 @@
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Keterangan Spesifik
                             Letak</label>
                         <input type="text" name="keterangan" x-model="placement.keterangan"
-                            class="w-full rounded-xl border-slate-300 text-sm">
+                            class="w-full rounded-md border-slate-300 text-sm">
                     </div>
 
                     <div class="pt-4 border-t flex items-center justify-end gap-2">
                         <button type="button" @click="showModal = false"
-                            class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl">Batal</button>
+                            class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-md">Batal</button>
                         <button type="submit"
-                            class="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl shadow">Simpan</button>
+                            class="px-4 py-2 bg-brand-600 text-white text-xs font-bold rounded-md shadow">Simpan</button>
                     </div>
                 </form>
             </div>

@@ -1,32 +1,32 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight">
+        <h2 class="text-xl font-semibold leading-tight text-slate-950 dark:text-slate-100">
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div class="mx-auto max-w-screen-2xl space-y-6">
 
             <div
-                class="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-6 md:p-8 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+                class="flex flex-col items-start justify-between gap-4 rounded-lg bg-brand-900 p-6 text-white sm:flex-row sm:items-center md:p-8">
                 <div>
-                    <h3 class="text-2xl md:text-3xl font-black mb-1">Selamat datang, {{ $user->name }}! 👋</h3>
-                    <p class="text-indigo-100">
+                    <h3 class="mb-1 text-2xl font-semibold md:text-3xl">Selamat datang, {{ $user->name }}</h3>
+                    <p class="text-brand-100">
                         Anda saat ini login sebagai <span
-                            class="px-2 py-0.5 bg-white/20 rounded font-bold uppercase tracking-wider text-xs ml-1">{{
+                            class="ml-1 rounded bg-white/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide">{{
                             $roleName }}</span>
                         @if($user->school_id)
                         di <span class="font-bold">{{ $user->school->nama_sekolah ?? 'Sekolah Anda' }}</span>
                         @endif
                     </p>
                     @if($activeYear)
-                    <p class="text-xs text-indigo-200 mt-2 font-medium">
+                    <p class="mt-2 text-sm font-medium text-brand-100">
                         Tahun Ajaran Aktif: {{ $activeYear->tahun_ajaran }} (Semester {{ $activeYear->semester }})
                     </p>
                     @endif
                 </div>
-                <div class="hidden md:block p-3 bg-white/10 rounded-xl backdrop-blur-sm">
+                <div class="hidden rounded-md bg-white/10 p-3 md:block">
                     <svg class="w-12 h-12 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                             d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
@@ -36,10 +36,10 @@
 
             @if($user->hasRole('superadmin'))
             {{-- TAMPILAN KHUSUS SUPERADMIN --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
                 <div
-                    class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
-                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4">
+                    class="rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800">
+                    <div class="mb-4 flex h-11 w-11 items-center justify-center rounded-md bg-brand-50 text-brand-800 dark:bg-brand-900 dark:text-brand-200">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
@@ -51,9 +51,9 @@
                     <p class="text-3xl font-black text-slate-800 dark:text-white mt-1">{{ $totalSchools ?? 0 }}</p>
                 </div>
                 <div
-                    class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                     <div
-                        class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center mb-4">
+                        class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-md flex items-center justify-center mb-4">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
@@ -65,7 +65,7 @@
                     <p class="text-3xl font-black text-slate-800 dark:text-white mt-1">{{ $totalUsers ?? 0 }}</p>
                 </div>
                 <a href="{{ route('superadmin.users.index') }}"
-                    class="bg-slate-800 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600 transition p-6 rounded-2xl shadow-sm flex flex-col items-center justify-center text-white group">
+                    class="group flex flex-col items-center justify-center rounded-lg bg-brand-800 p-6 text-white transition-colors hover:bg-brand-900 dark:bg-brand-700 dark:hover:bg-brand-800">
                     <svg class="w-8 h-8 mb-2 group-hover:scale-110 transition-transform" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -85,28 +85,28 @@
             @elseif($user->hasRole('kepsek'))
             {{-- TAMPILAN KHUSUS KEPALA SEKOLAH --}}
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl p-8 text-center shadow-sm border border-slate-200 dark:border-slate-700">
+                class="bg-white dark:bg-slate-800 rounded-lg p-8 text-center shadow-sm border border-slate-200 dark:border-slate-700">
                 <!-- Konten Kepsek sama seperti sebelumnya -->
             </div>
 
             @elseif($user->hasRole('guru'))
             {{-- TAMPILAN KHUSUS GURU --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
                 <div
-                    class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    class="rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800">
                     <h4 class="text-slate-800 dark:text-white font-bold mb-4">Kelas Wali (Tahun Aktif)</h4>
 
                     @if(isset($myClass) && $myClass)
                     <div
-                        class="p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl flex items-center justify-between">
+                        class="flex items-center justify-between rounded-md border border-brand-200 bg-brand-50 p-4 dark:border-brand-800 dark:bg-brand-900">
                         <div>
-                            <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase">Wali
+                            <span class="text-xs font-semibold uppercase text-brand-800 dark:text-brand-200">Wali
                                 Kelas</span>
                             <p class="font-black text-xl text-slate-800 dark:text-slate-200">{{ $myClass->tingkat }} -
                                 {{ $myClass->nama_kelas }}</p>
                         </div>
                         <a href="{{ route('classrooms.show', $myClass->hashid) }}"
-                            class="p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                            class="flex min-h-11 min-w-11 items-center justify-center rounded-md bg-brand-700 text-white hover:bg-brand-800">
                             &rarr;
                         </a>
                     </div>
@@ -117,7 +117,7 @@
 
                 <div class="col-span-1 md:col-span-1 lg:col-span-2 grid grid-cols-2 gap-4">
                     <a href="{{ route('assessments.index') }}"
-                        class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition flex flex-col items-center justify-center text-center">
+                        class="flex flex-col items-center justify-center rounded-lg border border-slate-200 bg-white p-6 text-center transition-colors hover:border-brand-500 dark:border-slate-700 dark:bg-slate-800">
                         <svg class="w-8 h-8 text-emerald-500 mb-2" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -129,8 +129,8 @@
 
                     @if(isset($myClass) && $myClass)
                     <a href="{{ route('attendances.show', $myClass->hashid) }}"
-                        class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-blue-500 transition flex flex-col items-center justify-center text-center group">
-                        <svg class="w-8 h-8 text-blue-500 mb-2 group-hover:scale-110 transition-transform" fill="none"
+                        class="group flex flex-col items-center justify-center rounded-lg border border-slate-200 bg-white p-6 text-center transition-colors hover:border-brand-500 dark:border-slate-700 dark:bg-slate-800">
+                        <svg class="mb-2 h-8 w-8 text-brand-700 dark:text-brand-300" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
@@ -140,7 +140,7 @@
                     </a>
                     @else
                     <div
-                        class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center opacity-70 cursor-not-allowed">
+                        class="flex cursor-not-allowed flex-col items-center justify-center rounded-lg border border-slate-200 bg-slate-50 p-6 text-center opacity-70 dark:border-slate-700 dark:bg-slate-800/50">
                         <svg class="w-8 h-8 text-slate-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
@@ -157,7 +157,7 @@
             {{-- TAMPILAN KHUSUS SISWA --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div
-                    class="md:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    class="rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-slate-800 md:col-span-2">
                     <div class="flex items-start justify-between">
                         <div>
                             <h4
@@ -170,7 +170,7 @@
                         </div>
 
                         <div
-                            class="px-4 py-2 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl text-center">
+                            class="px-4 py-2 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-md text-center">
                             <span class="block text-[10px] font-bold text-emerald-600 uppercase">Kelas Saat Ini</span>
                             <span class="block text-xl font-black text-emerald-700 dark:text-emerald-400">{{
                                 $myClassroom->nama_kelas ?? 'Belum Ada' }}</span>
@@ -181,7 +181,7 @@
                         class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row gap-3 sm:gap-4">
                         @if($user->student)
                         <a href="{{ route('students.edit', $user->id) }}"
-                            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-md shadow-indigo-500/20 transition-colors">
+                            class="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
@@ -190,7 +190,7 @@
                             Update Profil
                         </a>
                         <a href="{{ route('assignments.index') }}"
-                            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-md shadow-indigo-500/20 transition-colors">
+                            class="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a3 3 0 006 0M9 5a3 3 0 016 0M9 12h6M9 16h4">
@@ -200,7 +200,7 @@
                         </a>
                         @else
                         <span
-                            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 rounded-xl text-sm font-bold cursor-not-allowed"
+                            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 rounded-md text-sm font-bold cursor-not-allowed"
                             title="Data siswa belum tersedia, hubungi admin.">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -1,20 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
             Rekapitulasi Absensi Semester
         </h2>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div class="mx-auto max-w-screen-2xl space-y-6">
 
             @role('superadmin')
             <div
-                class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
                 <form action="{{ route('attendances.index') }}" method="GET">
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Pilih Sekolah</label>
                     <select name="school_id" onchange="this.form.submit()"
-                        class="w-full md:w-1/2 rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">
+                        class="min-h-11 w-full rounded-md border-slate-300 text-sm focus:border-brand-700 focus:ring-brand-700 dark:border-slate-600 dark:bg-slate-700 md:w-1/2">
                         <option value="">-- Pilih Sekolah --</option>
                         @foreach($schools as $sekolah)
                         <option value="{{ $sekolah->id }}" {{ $selectedSchoolId==$sekolah->id ? 'selected' : '' }}>
@@ -28,23 +28,23 @@
 
             @if(auth()->user()->hasRole('superadmin') && !$selectedSchoolId)
             <div
-                class="text-center py-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                class="rounded-lg border border-slate-200 bg-white px-5 py-12 text-center dark:border-slate-700 dark:bg-slate-800">
                 <h3 class="text-xl font-bold text-slate-800 dark:text-white">Pilih Sekolah Terlebih Dahulu</h3>
                 <p class="text-slate-500 mt-2">Pilih sekolah di atas untuk melihat laporan rekapitulasi absensinya.</p>
             </div>
             @elseif(!$activeYear)
             <div
-                class="text-center py-16 bg-amber-50 dark:bg-amber-900/20 rounded-2xl border-2 border-dashed border-amber-200 dark:border-amber-800">
+                class="rounded-lg border border-amber-200 bg-amber-50 px-5 py-12 text-center dark:border-amber-800 dark:bg-amber-900/20">
                 <h3 class="text-xl font-bold text-amber-700 dark:text-amber-400">Tahun Ajaran Belum Diatur</h3>
                 <p class="text-amber-600 dark:text-amber-500 mt-2">Tidak ada Tahun Ajaran yang berstatus aktif
                     (is_active = true) di sekolah ini.</p>
             </div>
             @else
             <div
-                class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row justify-between items-center gap-4">
+                class="flex flex-col items-start justify-between gap-4 rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 md:flex-row md:items-center">
                 <div class="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 w-full md:w-auto">
                     <div>
-                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Tahun Ajaran
+                        <span class="text-sm font-semibold text-brand-800 dark:text-brand-200">Tahun Ajaran
                             Aktif</span>
                         <h3 class="text-lg font-black text-slate-800 dark:text-white">{{ $activeYear->tahun_ajaran }} -
                             {{ $activeYear->semester }}</h3>
@@ -60,8 +60,8 @@
 
                     @if($myClass)
                     <a href="{{ route('attendances.show', $myClass->hashid) }}"
-                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-md hover:bg-indigo-700 transition transform hover:-translate-y-0.5 w-full md:w-auto">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800 md:w-auto">
+                        <svg aria-hidden="true" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
                             </path>
@@ -78,7 +78,7 @@
                     <input type="hidden" name="school_id" value="{{ $selectedSchoolId }}">
                     @endif
                     <select name="classroom_id" onchange="this.form.submit()"
-                        class="rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500 flex-1">
+                        class="min-h-11 flex-1 rounded-md border-slate-300 text-sm focus:border-brand-700 focus:ring-brand-700 dark:border-slate-600 dark:bg-slate-700">
                         <option value="">Semua Kelas</option>
                         @foreach($allClassrooms as $cls)
                         <option value="{{ $cls->id }}" {{ request('classroom_id')==$cls->id ? 'selected' : '' }}>
@@ -93,10 +93,10 @@
 
             @forelse($reportData as $namaKelas => $siswas)
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
                 <div
-                    class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                    <h4 class="font-black text-slate-800 dark:text-white uppercase tracking-tight">Kelas {{ $namaKelas
+                    class="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-5 py-4 dark:border-slate-700 dark:bg-slate-900/50 sm:px-6">
+                    <h4 class="font-semibold text-slate-950 dark:text-white">Kelas {{ $namaKelas
                         }}</h4>
                     <span class="text-xs font-bold text-slate-500 italic">Total {{ count($siswas) }} Siswa</span>
                 </div>
@@ -131,7 +131,7 @@
 
                                 <td class="px-6 py-4 text-right">
                                     <a href="{{ route('attendances.student-report', $data['id']) }}"
-                                        class="p-2 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg inline-block transition"
+                                        class="inline-flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-brand-800 underline underline-offset-4 hover:bg-brand-50 dark:text-brand-200 dark:hover:bg-brand-900"
                                         title="Lihat Riwayat">
                                         Lihat &rarr;
                                     </a>
@@ -144,7 +144,7 @@
             </div>
             @empty
             <div
-                class="py-20 bg-white dark:bg-slate-800 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 text-center">
+                class="rounded-lg border border-slate-200 bg-white px-5 py-12 text-center dark:border-slate-700 dark:bg-slate-800">
                 <p class="text-slate-500">Belum ada kelas atau data siswa pada Tahun Ajaran ini.</p>
             </div>
             @endforelse

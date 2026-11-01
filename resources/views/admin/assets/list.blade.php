@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight">
+                <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100 leading-tight">
                     Katalog Master Aset Sekolah
                 </h2>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Daftar monitoring kuantitas total stok,
@@ -11,8 +11,8 @@
 
             @hasanyrole('superadmin|operator')
             <a href="{{ route('admin.asset-tracking.index') }}"
-                class="px-4 py-2 bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 font-bold text-xs rounded-xl shadow hover:bg-slate-700 transition flex items-center gap-1.5 self-start sm:self-auto">
-                📊 Ruang Kontrol Admin
+                class="inline-flex min-h-11 items-center gap-1.5 self-start rounded-md bg-slate-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:bg-slate-200 dark:text-slate-900 sm:self-auto">
+                Ruang Kontrol Admin
             </a>
             @endhasanyrole
         </div>
@@ -33,45 +33,45 @@
             {{-- NOTIFIKASI SUKSES --}}
             @if(session('success'))
             <div
-                class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm font-semibold shadow-sm">
+                class="p-4 rounded-md bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm font-semibold shadow-sm">
                 {{ session('success') }}
             </div>
             @endif
 
             {{-- NOTIFIKASI ERROR VALIDASI GLOBAL --}}
             @if($errors->any())
-            <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-semibold shadow-sm">
+            <div class="p-4 rounded-md bg-rose-50 border border-rose-200 text-rose-800 text-sm font-semibold shadow-sm">
                 ⚠️ Gagal memperbarui data. Silakan periksa kembali inputan Anda pada modal.
             </div>
             @endif
 
             {{-- BAR PENCARIAN --}}
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                class="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
                 <form method="GET" action="{{ route('admin.assets.list') }}"
                     class="w-full sm:w-96 flex items-center gap-2">
                     <div class="relative w-full">
                         <input type="text" name="search" value="{{ request('search') }}"
                             placeholder="Cari nama aset atau kode inventaris..."
-                            class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs py-2.5 pl-3 pr-10 focus:ring-indigo-500 shadow-sm">
+                            class="w-full rounded-md border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs py-2.5 pl-3 pr-10 focus:ring-brand-500 shadow-sm">
                         @if(request()->filled('search'))
                         <a href="{{ route('admin.assets.list') }}"
                             class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 text-xs">✕</a>
                         @endif
                     </div>
                     <button type="submit"
-                        class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow transition">Cari</button>
+                        class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-md shadow transition">Cari</button>
                 </form>
 
                 <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                    Menampilkan total <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ $assets->total()
+                    Menampilkan total <span class="font-bold text-brand-600 dark:text-brand-400">{{ $assets->total()
                         }}</span> jenis barang resmi.
                 </div>
             </div>
 
             {{-- TABEL KATALOG BARANG --}}
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div class="overflow-x-auto w-full">
                     <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                         <thead
@@ -95,7 +95,7 @@
                                 <td class="px-6 py-4 text-center text-slate-400 font-medium">
                                     {{ $assets->firstItem() + $index }}
                                 </td>
-                                <td class="px-6 py-4 font-mono font-bold text-xs text-indigo-600 dark:text-indigo-400">
+                                <td class="px-6 py-4 font-mono font-bold text-xs text-brand-600 dark:text-brand-400">
                                     {{ $asset->kode_aset ?? 'BELUM_DITERBITKAN' }}
                                 </td>
                                 <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">
@@ -106,7 +106,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-100">
                                         {{ $asset->total_tersebar }} Unit
                                     </span>
                                 </td>
@@ -171,14 +171,14 @@
 
         {{-- WADAH MODAL POP-UP --}}
         <div x-show="showEditModal"
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 "
             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95"
             x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
             style="display: none;" x-cloak>
 
             <div @click.outside="showEditModal = false"
-                class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden transform transition-all">
+                class="bg-white dark:bg-slate-800 rounded-lg max-w-md w-full border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden transform transition-all">
 
                 <div
                     class="p-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between">
@@ -199,7 +199,7 @@
                         <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Nama
                             Item Aset</label>
                         <input type="text" name="nama_aset" x-model="editAsset.nama_aset" required
-                            class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 text-sm focus:ring-indigo-500 shadow-sm">
+                            class="w-full rounded-md border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 text-sm focus:ring-brand-500 shadow-sm">
                         @error('nama_aset')
                         <p class="text-xs text-rose-500 mt-1 font-semibold">{{ $message }}</p>
                         @enderror
@@ -211,7 +211,7 @@
                                 class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Kode
                                 Inventaris</label>
                             <input type="text" name="kode_aset" x-model="editAsset.kode_aset" required
-                                class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 text-sm font-mono focus:ring-indigo-500 shadow-sm">
+                                class="w-full rounded-md border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 text-sm font-mono focus:ring-brand-500 shadow-sm">
                             @error('kode_aset')
                             <p class="text-xs text-rose-500 mt-1 font-semibold">{{ $message }}</p>
                             @enderror
@@ -222,7 +222,7 @@
                                 class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Total
                                 Stok</label>
                             <input type="number" name="total_stok" x-model="editAsset.total_stok" required min="0"
-                                class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 text-sm text-center font-bold focus:ring-indigo-500 shadow-sm">
+                                class="w-full rounded-md border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 text-sm text-center font-bold focus:ring-brand-500 shadow-sm">
                             @error('total_stok')
                             <p class="text-xs text-rose-500 mt-1 font-semibold">{{ $message }}</p>
                             @enderror
@@ -232,11 +232,11 @@
                     <div
                         class="pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-end gap-2">
                         <button type="button" @click="showEditModal = false"
-                            class="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition">
+                            class="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-md transition">
                             Batal
                         </button>
                         <button type="submit"
-                            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow transition">
+                            class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-md shadow transition">
                             Simpan Perubahan
                         </button>
                     </div>

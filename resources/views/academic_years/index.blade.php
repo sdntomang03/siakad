@@ -1,21 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-2xl text-slate-800 dark:text-slate-200">Tahun Pelajaran</h2>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100 sm:text-2xl">Tahun Pelajaran</h2>
             @can('create-academic-years')
             <button @click="$dispatch('open-at-modal')"
-                class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase hover:bg-indigo-700 transition shadow-lg shadow-indigo-500/20">
+                class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                 Tambah Tahun
             </button>
             @endcan
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <table class="min-w-full w-full text-left whitespace-nowrap">
+                class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+                <div class="overflow-x-auto">
+                <table class="min-w-[48rem] w-full text-left whitespace-nowrap">
                     <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
                         <tr>
                             <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Tahun Ajaran</th>
@@ -48,7 +49,6 @@
                                 @if($activeSemester)
                                 <span
                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30">
-                                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
                                     {{ $activeSemester->semester }} Aktif
                                 </span>
                                 @else
@@ -63,7 +63,7 @@
                                         @csrf @method('PATCH')
                                         <button type="button"
                                             @click="confirmAction('form-active-{{ $ganjil->id }}', 'Aktifkan Ganjil?', 'Aktifkan semester Ganjil {{ $tahun }}?')"
-                                            class="px-3 py-1.5 text-xs font-bold rounded-l-lg border border-slate-200 dark:border-slate-700 {{ $ganjil->is_active ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300' }}">
+                                            class="px-3 py-1.5 text-xs font-bold rounded-l-lg border border-slate-200 dark:border-slate-700 {{ $ganjil->is_active ? 'bg-brand-600 text-white' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300' }}">
                                             Ganjil
                                         </button>
                                     </form>
@@ -72,7 +72,7 @@
                                         @csrf @method('PATCH')
                                         <button type="button"
                                             @click="confirmAction('form-active-{{ $genap->id }}', 'Aktifkan Genap?', 'Aktifkan semester Genap {{ $tahun }}?')"
-                                            class="px-3 py-1.5 text-xs font-bold rounded-r-lg border-t border-b border-r border-slate-200 dark:border-slate-700 {{ $genap->is_active ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300' }}">
+                                            class="px-3 py-1.5 text-xs font-bold rounded-r-lg border-t border-b border-r border-slate-200 dark:border-slate-700 {{ $genap->is_active ? 'bg-brand-600 text-white' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300' }}">
                                             Genap
                                         </button>
                                     </form>
@@ -82,7 +82,8 @@
                                 @can('edit-academic-years')
                                 <button
                                     @click="$dispatch('open-at-modal', { id: {{ $ganjil->id }}, tahun: '{{ $tahun }}' })"
-                                    class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors align-middle">
+                                    aria-label="Edit tahun ajaran {{ $tahun }}"
+                                    class="inline-flex h-10 w-10 items-center justify-center rounded-md text-amber-700 transition-colors hover:bg-amber-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 dark:text-amber-300 dark:hover:bg-amber-950/40">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
@@ -99,7 +100,8 @@
                                     @csrf @method('DELETE')
                                     <button type="button"
                                         @click="confirmAction('form-del-{{ $ganjil->id }}', 'Hapus Tahun?', 'Hapus paket tahun ajaran {{ $tahun }}?')"
-                                        class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors {{ ($ganjil->is_active || $genap->is_active) ? 'opacity-20 cursor-not-allowed' : '' }}"
+                                        aria-label="Hapus tahun ajaran {{ $tahun }}"
+                                        class="inline-flex h-10 w-10 items-center justify-center rounded-md text-rose-700 transition-colors hover:bg-rose-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-700 dark:text-rose-300 dark:hover:bg-rose-950/40 {{ ($ganjil->is_active || $genap->is_active) ? 'opacity-40 cursor-not-allowed' : '' }}"
                                         {{ ($ganjil->is_active || $genap->is_active) ? 'disabled' : '' }}>
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -118,6 +120,7 @@
                         @endforelse
                     </tbody>
                 </table>
+                </div>
                 <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-700">
                     {{ $academicYears->links() }}
                 </div>
@@ -145,10 +148,10 @@
                 tahun = '';
             }
         " x-show="show"
-            class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+            class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 "
             style="display: none;">
             <div @click.away="show = false"
-                class="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+                class="bg-white dark:bg-slate-800 w-full max-w-md rounded-lg shadow-2xl overflow-hidden">
                 <form :action="actionUrl" method="POST">
                     @csrf
                     <template x-if="method === 'PUT'"><input type="hidden" name="_method" value="PUT"></template>
@@ -188,7 +191,7 @@
                         <button type="button" @click="show = false"
                             class="text-xs font-bold text-slate-500 uppercase">Batal</button>
                         <button type="submit"
-                            class="px-6 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase hover:bg-indigo-700">Simpan</button>
+                            class="px-6 py-2 bg-brand-600 text-white rounded-lg text-xs font-bold uppercase hover:bg-brand-700">Simpan</button>
                     </div>
                 </form>
             </div>

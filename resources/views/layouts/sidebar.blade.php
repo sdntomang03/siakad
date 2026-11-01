@@ -1,39 +1,44 @@
 <div x-show="sidebarOpen" @click="sidebarOpen = false" x-transition.opacity
-    class="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm md:hidden" style="display: none;">
+    aria-hidden="true"
+    class="fixed inset-0 z-40 bg-slate-950/45 md:hidden" style="display: none;">
 </div>
 
-<aside :class="sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0 md:w-20'"
-    class="fixed md:relative inset-y-0 left-0 z-50 flex flex-col h-screen min-h-0 bg-slate-800 dark:bg-slate-950 text-slate-300 transition-all duration-300 ease-in-out shadow-2xl md:shadow-xl">
+<aside id="main-sidebar" :class="sidebarOpen ? 'translate-x-0 md:w-64' : '-translate-x-full md:translate-x-0 md:w-20'"
+    @keydown.escape.window="sidebarOpen = false"
+    aria-label="Navigasi utama"
+    class="sidebar-shell fixed inset-y-0 left-0 z-50 flex h-screen h-[100dvh] w-72 min-h-0 flex-col border-r border-brand-800 bg-brand-900 text-slate-100 transition-[transform,width] duration-200 ease-out md:relative md:translate-x-0 md:shadow-none">
 
-    <div class="h-16 flex items-center px-4 bg-slate-900 transition-all duration-300 text-white"
+    <div class="flex h-16 shrink-0 items-center border-b border-white/10 px-4 text-white transition-colors duration-150"
         :class="sidebarOpen ? 'justify-between' : 'justify-center'">
 
-        <div x-show="sidebarOpen" x-transition.opacity.duration.300ms class="flex items-center gap-3 overflow-hidden">
-            <div class="p-1.5 bg-indigo-500 rounded-lg shrink-0">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div x-show="sidebarOpen" x-transition.opacity.duration.200ms class="flex min-w-0 items-center gap-3 overflow-hidden">
+            <div class="shrink-0 rounded-md bg-white/10 p-1.5">
+                <svg aria-hidden="true" class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
                     </path>
                 </svg>
             </div>
-            <span class="font-bold text-xl tracking-tight truncate">SIAKAD</span>
+            <span class="truncate text-lg font-semibold tracking-tight">SIAKAD</span>
         </div>
 
         <button @click="sidebarOpen = !sidebarOpen"
-            class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-colors focus:outline-none shrink-0"
-            title="Toggle Sidebar">
-            <svg x-show="!sidebarOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            type="button"
+            :aria-label="sidebarOpen ? 'Ciutkan navigasi' : 'Perluas navigasi'"
+            :aria-expanded="sidebarOpen.toString()"
+            class="shrink-0 rounded-md p-2 text-slate-200 hover:bg-white/10 hover:text-white">
+            <svg x-show="!sidebarOpen" aria-hidden="true" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
                 </path>
             </svg>
-            <svg x-show="sidebarOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            <svg x-show="sidebarOpen" aria-hidden="true" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                 style="display: none;">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
         </button>
     </div>
 
-    <nav class="flex-1 mt-4 px-3 space-y-2 overflow-y-auto no-scrollbar pb-6">
+    <nav class="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pb-6 pt-3">
 
         <x-sidebar-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
             icon="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
@@ -50,22 +55,23 @@
         @role('superadmin')
         <div x-data="{ open: {{ request()->routeIs('superadmin.*') ? 'true' : 'false' }} }" class="space-y-1">
             <button @click="open = !open; if(!sidebarOpen) sidebarOpen = true"
-                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-700 hover:text-white"
-                :class="open ? 'bg-slate-800 text-white' : 'text-slate-300'">
+                type="button" aria-controls="nav-superadmin" :aria-expanded="open.toString()"
+                class="flex min-h-11 w-full items-center justify-between rounded-md px-3 py-2.5 text-left text-sm font-medium text-slate-200/85 transition-colors hover:bg-white/10 hover:text-white"
+                :class="open ? 'bg-white/10 text-white' : ''">
                 <div class="flex items-center gap-3">
-                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg aria-hidden="true" class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
                         </path>
                     </svg>
                     <span x-show="sidebarOpen" class="truncate">Manajemen Pusat</span>
                 </div>
-                <svg x-show="sidebarOpen" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
+                <svg x-show="sidebarOpen" aria-hidden="true" :class="open ? 'rotate-180' : ''" class="h-4 w-4 transition-transform"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
             </button>
-            <div x-show="open && sidebarOpen" x-collapse class="pl-4 pr-2 space-y-1">
+            <div id="nav-superadmin" x-show="open && sidebarOpen" x-collapse class="space-y-1 pl-4 pr-2">
                 <x-sidebar-link :href="route('superadmin.roles.index')"
                     :active="request()->routeIs('superadmin.roles.*')" icon="M9 5l7 7-7 7">
                     Manajemen Akses
@@ -83,7 +89,7 @@
         @endrole
 
         @hasanyrole('superadmin|operator|guru|kepsek')
-        <div x-show="sidebarOpen" class="pt-4 pb-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <div x-show="sidebarOpen" class="px-3 pb-2 pt-5 text-xs font-semibold text-brand-200">
             Akademik & Layanan
         </div>
 
@@ -91,22 +97,23 @@
         <div x-data="{ open: {{ request()->routeIs('academic-years.*', 'operator.users.*', 'subjects.*', 'books.*', 'classrooms.*') ? 'true' : 'false' }} }"
             class="space-y-1">
             <button @click="open = !open; if(!sidebarOpen) sidebarOpen = true"
-                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-700 hover:text-white"
-                :class="open ? 'bg-slate-800 text-white' : 'text-slate-300'">
+                type="button" aria-controls="nav-data-master" :aria-expanded="open.toString()"
+                class="flex min-h-11 w-full items-center justify-between rounded-md px-3 py-2.5 text-left text-sm font-medium text-slate-200/85 transition-colors hover:bg-white/10 hover:text-white"
+                :class="open ? 'bg-white/10 text-white' : ''">
                 <div class="flex items-center gap-3">
-                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg aria-hidden="true" class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4">
                         </path>
                     </svg>
                     <span x-show="sidebarOpen" class="truncate">Data Master</span>
                 </div>
-                <svg x-show="sidebarOpen" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
+                <svg x-show="sidebarOpen" aria-hidden="true" :class="open ? 'rotate-180' : ''" class="h-4 w-4 transition-transform"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
             </button>
-            <div x-show="open && sidebarOpen" x-collapse class="pl-4 pr-2 space-y-1">
+            <div id="nav-data-master" x-show="open && sidebarOpen" x-collapse class="space-y-1 pl-4 pr-2">
                 <x-sidebar-link :href="route('academic-years.index')" :active="request()->routeIs('academic-years.*')"
                     icon="M9 5l7 7-7 7">
                     Tahun Ajaran
@@ -136,22 +143,23 @@
         <div x-data="{ open: {{ request()->routeIs('attendances.*', 'assessments.*', 'teacher-notes.*', 'piket.*', 'jadwal.*') ? 'true' : 'false' }} }"
             class="space-y-1">
             <button @click="open = !open; if(!sidebarOpen) sidebarOpen = true"
-                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-700 hover:text-white"
-                :class="open ? 'bg-slate-800 text-white' : 'text-slate-300'">
+                type="button" aria-controls="nav-kbm" :aria-expanded="open.toString()"
+                class="flex min-h-11 w-full items-center justify-between rounded-md px-3 py-2.5 text-left text-sm font-medium text-slate-200/85 transition-colors hover:bg-white/10 hover:text-white"
+                :class="open ? 'bg-white/10 text-white' : ''">
                 <div class="flex items-center gap-3">
-                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg aria-hidden="true" class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
                         </path>
                     </svg>
                     <span x-show="sidebarOpen" class="truncate">KBM & Kesiswaan</span>
                 </div>
-                <svg x-show="sidebarOpen" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
+                <svg x-show="sidebarOpen" aria-hidden="true" :class="open ? 'rotate-180' : ''" class="h-4 w-4 transition-transform"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
             </button>
-            <div x-show="open && sidebarOpen" x-collapse class="pl-4 pr-2 space-y-1">
+            <div id="nav-kbm" x-show="open && sidebarOpen" x-collapse class="space-y-1 pl-4 pr-2">
                 @hasanyrole('superadmin|operator|guru|kepsek')
                 <x-sidebar-link :href="route('attendances.index')" :active="request()->routeIs('attendances.index')"
                     icon="M9 5l7 7-7 7">
@@ -196,20 +204,21 @@
         @hasanyrole('superadmin|operator|guru|kepsek')
         <div x-data="{ open: {{ request()->routeIs('etpp.*') ? 'true' : 'false' }} }" class="space-y-1">
             <button @click="open = !open; if(!sidebarOpen) sidebarOpen = true"
-                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-700 hover:text-white"
-                :class="open ? 'bg-slate-800 text-white' : 'text-slate-300'">
+                type="button" aria-controls="nav-etpp" :aria-expanded="open.toString()"
+                class="flex min-h-11 w-full items-center justify-between rounded-md px-3 py-2.5 text-left text-sm font-medium text-slate-200/85 transition-colors hover:bg-white/10 hover:text-white"
+                :class="open ? 'bg-white/10 text-white' : ''">
                 <div class="flex items-center gap-3">
-                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg aria-hidden="true" class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 002 2h2"></path>
                     </svg>
                     <span x-show="sidebarOpen" class="truncate">e-TPP</span>
                 </div>
-                <svg x-show="sidebarOpen" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
+                <svg x-show="sidebarOpen" aria-hidden="true" :class="open ? 'rotate-180' : ''" class="h-4 w-4 transition-transform"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
             </button>
-            <div x-show="open && sidebarOpen" x-collapse class="pl-4 pr-2 space-y-1">
+            <div id="nav-etpp" x-show="open && sidebarOpen" x-collapse class="space-y-1 pl-4 pr-2">
                 <x-sidebar-link :href="route('etpp.realisasi.index')" :active="request()->routeIs('etpp.realisasi.*')"
                     icon="M9 5l7 7-7 7">
                     Realisasi Triwulan
@@ -225,22 +234,23 @@
         <div x-data="{ open: {{ request()->routeIs('book-loans.*', 'report-submissions.*', 'admin.asset-tracking.*', 'kelulusan.*') ? 'true' : 'false' }} }"
             class="space-y-1">
             <button @click="open = !open; if(!sidebarOpen) sidebarOpen = true"
-                class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-700 hover:text-white"
-                :class="open ? 'bg-slate-800 text-white' : 'text-slate-300'">
+                type="button" aria-controls="nav-admin" :aria-expanded="open.toString()"
+                class="flex min-h-11 w-full items-center justify-between rounded-md px-3 py-2.5 text-left text-sm font-medium text-slate-200/85 transition-colors hover:bg-white/10 hover:text-white"
+                :class="open ? 'bg-white/10 text-white' : ''">
                 <div class="flex items-center gap-3">
-                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg aria-hidden="true" class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                         </path>
                     </svg>
                     <span x-show="sidebarOpen" class="truncate">Administrasi</span>
                 </div>
-                <svg x-show="sidebarOpen" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
+                <svg x-show="sidebarOpen" aria-hidden="true" :class="open ? 'rotate-180' : ''" class="h-4 w-4 transition-transform"
                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
             </button>
-            <div x-show="open && sidebarOpen" x-collapse class="pl-4 pr-2 space-y-1">
+            <div id="nav-admin" x-show="open && sidebarOpen" x-collapse class="space-y-1 pl-4 pr-2">
                 <x-sidebar-link :href="route('book-loans.index')" :active="request()->routeIs('book-loans.*')"
                     icon="M9 5l7 7-7 7">
                     Peminjaman Buku

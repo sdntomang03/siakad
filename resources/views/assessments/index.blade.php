@@ -1,11 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
             Riwayat Penilaian
         </h2>
     </x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <div class="mx-auto max-w-screen-2xl space-y-6">
 
         <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
             <div>
@@ -15,7 +16,7 @@
 
             <div class="flex flex-wrap items-center gap-3">
                 <a href="{{ route('assessments.recap') }}"
-                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+                    class="inline-flex min-h-11 items-center gap-2 rounded-md border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700">
                     <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
@@ -26,24 +27,24 @@
 
                 <!-- Tambahan Tombol Buat Observasi -->
                 <a href="{{ route('observations.create') }}"
-                    class="px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold shadow-lg hover:bg-emerald-700 transition">
-                    + Observasi
+                    class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-50 px-5 py-2.5 text-sm font-semibold text-brand-900 transition-colors hover:bg-brand-100 dark:bg-brand-900 dark:text-brand-100 dark:hover:bg-brand-900">
+                    Observasi
                 </a>
 
                 <!-- Tombol Buat Tes Konvensional -->
                 <a href="{{ route('assessments.create') }}"
-                    class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg hover:bg-indigo-700 transition">
-                    + Penilaian
+                    class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800">
+                    Penilaian
                 </a>
             </div>
         </div>
 
         <div
-            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
                     <thead
-                        class="text-xs text-slate-700 uppercase bg-slate-50 dark:bg-slate-900/50 dark:text-slate-300">
+                        class="bg-slate-50 text-xs font-medium text-slate-700 dark:bg-slate-900/50 dark:text-slate-300">
                         <tr>
                             <th class="px-6 py-4">Tanggal</th>
                             <th class="px-6 py-4">Kelas & Mapel</th>
@@ -54,12 +55,12 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                         @forelse($assessments as $item)
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                        <tr class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-700/50">
                             <td class="px-6 py-4 whitespace-nowrap font-bold text-slate-700 dark:text-slate-200">
                                 {{ $item->tanggal->format('d M Y') }}
                             </td>
                             <td class="px-6 py-4">
-                                <span class="block font-black text-indigo-600 dark:text-indigo-400">{{
+                                <span class="block font-semibold text-brand-800 dark:text-brand-200">{{
                                     $item->classroom->tingkat }} - {{ $item->classroom->nama_kelas }}</span>
                                 <span class="block text-xs font-bold text-slate-500">{{ $item->subject->nama_mapel
                                     }}</span>
@@ -67,7 +68,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex gap-2 mb-1">
                                     <span
-                                        class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                                        class="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-200">
                                         {{ $item->assessmentType->nama ?? $item->jenis_penilaian ?? 'Penilaian' }}
                                     </span>
 
@@ -79,7 +80,7 @@
                                     </span>
                                     @else
                                     <span
-                                        class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 uppercase tracking-wider">
+                                        class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-[10px] font-bold bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400 uppercase tracking-wider">
                                         TES
                                     </span>
                                     @endif
@@ -105,12 +106,12 @@
                                 <!-- Logika Aksi Edit Dinamis berdasarkan Format -->
                                 @if($item->format === 'non-tes')
                                 <a href="{{ route('observations.input', $item->id) }}"
-                                    class="inline-block px-4 py-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white font-bold rounded-lg transition text-xs">
+                                    class="inline-flex min-h-11 items-center rounded-md bg-brand-50 px-4 py-2 text-sm font-medium text-brand-900 transition-colors hover:bg-brand-700 hover:text-white dark:bg-brand-900 dark:text-brand-100 dark:hover:bg-brand-700">
                                     Edit Observasi &rarr;
                                 </a>
                                 @else
                                 <a href="{{ route('assessments.input', $item->id) }}"
-                                    class="inline-block px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white font-bold rounded-lg transition text-xs">
+                                    class="inline-flex min-h-11 items-center rounded-md bg-brand-50 px-4 py-2 text-sm font-medium text-brand-900 transition-colors hover:bg-brand-700 hover:text-white dark:bg-brand-900 dark:text-brand-100 dark:hover:bg-brand-700">
                                     Edit Nilai &rarr;
                                 </a>
                                 @endif
@@ -121,7 +122,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
-                                        class="px-4 py-2 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white font-bold rounded-lg transition text-xs">
+                                        class="inline-flex min-h-11 items-center rounded-md bg-red-50 px-4 py-2 text-sm font-medium text-red-800 transition-colors hover:bg-red-700 hover:text-white dark:bg-red-950 dark:text-red-200">
                                         Hapus
                                     </button>
                                 </form>
@@ -155,6 +156,6 @@
             </div>
             @endif
         </div>
-
+      </div>
     </div>
 </x-app-layout>

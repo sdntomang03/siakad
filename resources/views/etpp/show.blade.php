@@ -14,44 +14,44 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased text-gray-900 bg-gray-50 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
+<body class="min-h-screen bg-slate-50 font-sans antialiased text-slate-900 dark:bg-slate-900 dark:text-slate-100">
 
-    <div class="py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-5xl mx-auto space-y-6">
+    <main class="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div class="mx-auto max-w-6xl space-y-5">
 
             {{-- Judul Halaman --}}
-            <div class="text-center mb-10">
-                <h2 class="text-2xl sm:text-3xl font-black text-gray-800 dark:text-gray-200">
-                    Portal Kelengkapan <span class="text-indigo-600 dark:text-indigo-400">Syarat e-TPP</span>
+            <header class="mb-8">
+                <h2 class="text-2xl font-semibold text-slate-950 dark:text-white sm:text-3xl">
+                    Portal Kelengkapan <span class="text-brand-600 dark:text-brand-400">Syarat e-TPP</span>
                 </h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Cek rincian Rencana Aksi dan Output berdasarkan
+                <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">Cek rincian Rencana Aksi dan Output berdasarkan
                     Target Waktu (TW).</p>
-            </div>
+            </header>
 
             {{-- Card Form Pencarian --}}
             <div
-                class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
+                class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
                 <form action="{{ route('etpp.search') }}" method="POST"
-                    class="flex flex-col md:flex-row gap-4 items-end">
+                    class="grid grid-cols-1 items-end gap-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_auto]">
                     @csrf
 
                     {{-- Input NIP --}}
                     <div class="flex-1 w-full">
                         <label for="nip"
-                            class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Nomor
+                            class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Nomor
                             Induk Pegawai (NIP)</label>
                         <input type="number" id="nip" name="nip" value="{{ old('nip', $nip ?? '') }}" required
                             placeholder="Masukkan NIP Anda..."
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-base sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
+                            class="w-full rounded-md border-slate-300 text-base focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white sm:text-sm">
                     </div>
 
                     {{-- Dropdown Filter TW --}}
                     <div class="flex-1 w-full md:w-1/3">
                         <label for="tw"
-                            class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Target
+                            class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Target
                             Waktu (TW)</label>
                         <select id="tw" name="tw"
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white text-base sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
+                            class="w-full rounded-md border-slate-300 text-base focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white sm:text-sm">
                             <option value="semua" {{ ($filter_tw ?? 'semua' )=='semua' ? 'selected' : '' }}>-- Semua TW
                                 --</option>
                             <option value="TW 1" {{ ($filter_tw ?? '' )=='TW 1' ? 'selected' : '' }}>Triwulan 1 (TW 1)
@@ -66,15 +66,15 @@
                     </div>
 
                     {{-- Tombol Aksi --}}
-                    <div class="flex flex-col-reverse sm:flex-row gap-3 w-full md:w-auto">
+                    <div class="flex w-full flex-col-reverse gap-3 sm:col-span-2 sm:flex-row lg:col-span-1">
                         @if(isset($nip) && $nip)
                         <a href="{{ route('etpp.show') }}"
-                            class="w-full sm:w-auto px-6 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-lg text-sm font-bold text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                            class="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700 sm:w-auto">
                             Reset
                         </a>
                         @endif
                         <button type="submit"
-                            class="w-full sm:w-auto px-8 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-md hover:bg-indigo-700 hover:shadow-lg transition">
+                            class="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:w-auto">
                             Cari Dokumen
                         </button>
                     </div>
@@ -95,7 +95,7 @@
             {{-- HASIL PENCARIAN --}}
             @if(isset($nip) && $nip && !isset($employee))
             <div
-                class="p-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl text-center">
+                class="p-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-center">
                 <svg class="w-12 h-12 text-red-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -106,15 +106,15 @@
             </div>
 
             @elseif(isset($employee) && $employee)
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
 
                 {{-- KIRI: Profil Pegawai --}}
                 <div
-                    class="md:col-span-1 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden self-start sticky top-6">
+                    class="md:col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden self-start sticky top-6">
                     <div
-                        class="p-6 bg-indigo-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700 text-center">
+                        class="p-6 bg-brand-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700 text-center">
                         <div
-                            class="w-24 h-24 bg-indigo-200 text-indigo-700 rounded-full mx-auto flex items-center justify-center text-3xl font-black mb-4 uppercase shadow-inner">
+                            class="w-24 h-24 bg-brand-200 text-brand-700 rounded-full mx-auto flex items-center justify-center text-3xl font-black mb-4 uppercase shadow-inner">
                             {{ substr($employee->nama_lengkap, 0, 1) }}
                         </div>
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white leading-tight">{{
@@ -123,7 +123,7 @@
 
                         @if(isset($employee->kategori_pegawai))
                         <span
-                            class="inline-block mt-3 px-3 py-1 bg-indigo-600 text-white text-[10px] font-bold uppercase rounded-full tracking-widest">
+                            class="inline-block mt-3 px-3 py-1 bg-brand-600 text-white text-[10px] font-bold uppercase rounded-full tracking-widest">
                             {{ $employee->kategori_pegawai }}
                         </span>
                         @endif
@@ -145,12 +145,12 @@
                     @if(isset($data_kategori) && count($data_kategori) > 0)
                     @foreach($data_kategori as $kategori)
                     <div
-                        class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 
                         {{-- Header Kategori --}}
                         <div class="bg-gray-50 dark:bg-gray-900/50 p-4 border-b border-gray-200 dark:border-gray-700">
                             <h3 class="font-bold text-gray-800 dark:text-gray-200 text-lg flex items-center gap-2">
-                                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor"
+                                <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
@@ -175,12 +175,12 @@
                             @forelse($filteredRhk as $rhk)
                             <div class="space-y-3">
                                 {{-- Judul RHK --}}
-                                <h4 class="font-semibold text-sm text-indigo-700 dark:text-indigo-400 leading-snug">
+                                <h4 class="font-semibold text-sm text-brand-700 dark:text-brand-400 leading-snug">
                                     {{ $rhk->deskripsi_rhk }}
                                 </h4>
 
                                 {{-- Indentasi untuk Rencana Aksi --}}
-                                <div class="pl-4 border-l-2 border-indigo-100 dark:border-indigo-900/50 space-y-4">
+                                <div class="pl-4 border-l-2 border-brand-100 dark:border-brand-900/50 space-y-4">
                                     @foreach($rhk->rencanaAksi as $ra)
 
                                     {{-- Hanya tampilkan jika Rencana Aksi memiliki Output --}}
@@ -207,12 +207,12 @@
                                             <ul class="space-y-4">
                                                 @foreach($ra->outputTarget as $output)
                                                 <li
-                                                    class="flex flex-col gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm relative overflow-hidden">
+                                                    class="flex flex-col gap-3 bg-white dark:bg-gray-800 p-4 rounded-md border border-gray-200 dark:border-gray-700 shadow-sm relative overflow-hidden">
 
                                                     {{-- Detail Target & Output --}}
                                                     <div class="flex items-start gap-3">
                                                         <span
-                                                            class="shrink-0 mt-0.5 px-2 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 text-[11px] font-black tracking-wider uppercase rounded">
+                                                            class="shrink-0 mt-0.5 px-2 py-1 bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300 text-[11px] font-black tracking-wider uppercase rounded">
                                                             {{ $output->target_waktu }}
                                                         </span>
                                                         <span
@@ -236,7 +236,7 @@
                                                         <div class="flex flex-wrap gap-2 mt-2">
                                                             @foreach($output->buktiDukung as $bukti)
                                                             <div
-                                                                class="inline-flex items-center bg-indigo-50 dark:bg-indigo-900/20 rounded-md border border-indigo-100 dark:border-indigo-800/50 overflow-hidden">
+                                                                class="inline-flex items-center bg-brand-50 dark:bg-brand-900/20 rounded-md border border-brand-100 dark:border-brand-800/50 overflow-hidden">
 
                                                                 {{-- Tentukan URL (Link Eksternal atau File Internal)
                                                                 --}}
@@ -247,7 +247,7 @@
 
                                                                 {{-- Link Lihat Dokumen --}}
                                                                 <a href="{{ $urlBukti }}" target="_blank"
-                                                                    class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition"
+                                                                    class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand-600 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-900/40 transition"
                                                                     title="Lihat Dokumen">
 
                                                                     @if($bukti->jenis_bukti === 'link')
@@ -310,7 +310,7 @@
                     @else
                     {{-- Tampilan jika Data Kosong / Tidak Cocok Filter --}}
                     <div
-                        class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center flex flex-col items-center justify-center h-full min-h-[300px]">
+                        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center flex flex-col items-center justify-center h-full min-h-[300px]">
                         <div
                             class="relative w-20 h-20 mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-400 dark:text-gray-500">
                             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -328,7 +328,7 @@
                     @endif
 
                 </div>
-            </div>
+            </main>
             @endif
 
         </div>

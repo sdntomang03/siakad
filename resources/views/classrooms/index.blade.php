@@ -1,14 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
                 Manajemen Kelas & Rombel
             </h2>
 
             @can('edit-classes')
 
             <button x-data @click="$dispatch('open-class-modal')"
-                class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-lg hover:bg-indigo-700 transition">
+                class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                 + Tambah Kelas
             </button>
 
@@ -16,16 +16,16 @@
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div class="mx-auto max-w-screen-2xl space-y-6">
 
             @role('superadmin')
             <div
-                class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
                 <form action="{{ route('classrooms.index') }}" method="GET">
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Pilih Sekolah Target</label>
                     <select name="school_id" onchange="this.form.submit()"
-                        class="w-full md:w-1/2 rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        class="min-h-11 w-full rounded-md border-slate-300 text-sm focus:border-brand-700 focus:ring-brand-700 dark:border-slate-600 dark:bg-slate-700 md:w-1/2">
                         <option value="">-- Pilih Sekolah untuk Menampilkan Data Kelas --</option>
                         @foreach($schools as $sekolah)
                         <option value="{{ $sekolah->id }}" {{ request('school_id')==$sekolah->id ? 'selected' : '' }}>
@@ -39,10 +39,10 @@
 
             @if(auth()->user()->hasRole('superadmin') && !request('school_id'))
             <div
-                class="text-center py-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                class="rounded-lg border border-slate-200 bg-white px-5 py-12 text-center dark:border-slate-700 dark:bg-slate-800">
                 <div
-                    class="w-20 h-20 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-md bg-brand-50 text-brand-800 dark:bg-brand-900 dark:text-brand-200">
+                    <svg aria-hidden="true" class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
                         </path>
@@ -56,10 +56,10 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($classrooms as $kelas)
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
-                    <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-start">
+                    class="flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+                    <div class="flex items-start justify-between gap-4 border-b border-slate-200 p-5 dark:border-slate-700 sm:p-6">
                         <div>
-                            <span class="text-xs font-bold px-2 py-1 bg-indigo-100 text-indigo-700 rounded-md">Kelas {{
+                            <span class="rounded-md bg-brand-50 px-2 py-1 text-xs font-medium text-brand-900 dark:bg-brand-900 dark:text-brand-100">Kelas {{
                                 $kelas->tingkat }}</span>
                             <h3 class="text-2xl font-black text-slate-800 dark:text-white mt-2">{{ $kelas->nama_kelas }}
                             </h3>
@@ -68,8 +68,8 @@
                         </div>
 
                         <div x-data="{ open: false }" class="relative">
-                            <button @click="open = !open" @click.away="open = false"
-                                class="text-slate-400 hover:text-slate-600">
+                            <button type="button" aria-label="Buka opsi kelas" @click="open = !open" @click.away="open = false"
+                                class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z">
@@ -77,7 +77,7 @@
                                 </svg>
                             </button>
                             <div x-show="open"
-                                class="absolute right-0 mt-2 w-32 bg-white dark:bg-slate-700 rounded-lg shadow-xl border border-slate-100 dark:border-slate-600 z-10"
+                                class="absolute right-0 z-10 mt-2 w-40 rounded-md border border-slate-200 bg-white shadow-lg dark:border-slate-600 dark:bg-slate-700"
                                 style="display: none;">
                                 <button
                                     @click="$dispatch('open-class-modal', { kelas: {{ json_encode($kelas) }} }); open = false"
@@ -94,7 +94,7 @@
                         </div>
                     </div>
 
-                    <div class="p-6 flex-1 bg-slate-50/50 dark:bg-slate-800/50 space-y-4">
+                    <div class="flex-1 space-y-4 bg-slate-50/50 p-5 dark:bg-slate-800/50 sm:p-6">
                         <div class="flex items-center gap-3">
                             <div
                                 class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold">
@@ -111,11 +111,11 @@
                             <div class="flex justify-between text-xs mb-1">
                                 <span class="font-bold text-slate-500">Kapasitas Terisi</span>
                                 <span
-                                    class="font-bold {{ $kelas->students_count >= $kelas->kapasitas ? 'text-rose-500' : 'text-indigo-600' }}">{{
+                                    class="font-bold {{ $kelas->students_count >= $kelas->kapasitas ? 'text-rose-500' : 'text-brand-600' }}">{{
                                     $kelas->students_count }} / {{ $kelas->kapasitas }}</span>
                             </div>
-                            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                                <div class="bg-indigo-600 h-2 rounded-full"
+                            <div                             class="h-2 w-full rounded-full bg-slate-200 dark:bg-slate-700">
+                            <div class="h-2 rounded-full bg-brand-700"
                                     style="width: {{ min(($kelas->students_count / $kelas->kapasitas) * 100, 100) }}%">
                                 </div>
                             </div>
@@ -131,7 +131,7 @@
                 </div>
                 @empty
                 <div
-                    class="col-span-1 md:col-span-3 text-center py-12 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                    class="col-span-1 rounded-lg border border-slate-200 bg-white px-5 py-12 text-center dark:border-slate-700 dark:bg-slate-800 md:col-span-3">
                     <p class="text-slate-500 dark:text-slate-400">Belum ada kelas yang ditambahkan di sekolah ini.</p>
                 </div>
                 @endforelse
@@ -162,11 +162,11 @@
                 form = { academic_year_id: '', tingkat: '', nama_kelas: '', homeroom_teacher_id: '', kapasitas: 30 };
             }
         " x-show="show"
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 "
         style="display: none;">
 
         <div @click.away="show = false"
-            class="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+            class="w-full max-w-md overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800">
             <form :action="action" method="POST">
                 @csrf
                 <template x-if="isEdit"><input type="hidden" name="_method" value="PUT"></template>
@@ -229,7 +229,7 @@
                     <button type="button" @click="show = false"
                         class="text-xs font-bold text-slate-500 uppercase hover:text-slate-700">Batal</button>
                     <button type="submit"
-                        class="px-6 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase shadow-md hover:bg-indigo-700 transition">Simpan</button>
+                        class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">Simpan</button>
                 </div>
             </form>
         </div>

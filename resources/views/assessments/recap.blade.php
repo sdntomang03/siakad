@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
             Rekapitulasi Nilai Kelas
         </h2>
     </x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="mx-auto max-w-7xl space-y-5 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 
         <div x-data="{
                 classesData: {{ json_encode($classesData) }},
@@ -30,15 +30,15 @@
                     }
                 }
             }"
-            class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+            class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
 
             <form action="{{ route('assessments.recap') }}" method="GET"
-                class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                class="grid grid-cols-1 items-end gap-4 md:grid-cols-5">
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">1. Pilih Kelas</label>
+                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Kelas</label>
                     <select name="classroom_id" required x-model="selectedClassId" @change="updateSubjects()"
-                        class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">
+                        class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                         <option value="">-- Pilih Kelas Anda --</option>
                         <template x-for="(data, classId) in classesData" :key="classId">
                             <option :value="classId" x-text="data.nama_kelas"></option>
@@ -47,11 +47,11 @@
                 </div>
 
                 <div x-show="selectedClassId" style="display: none;">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">2. Mata Pelajaran</label>
+                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Mata Pelajaran</label>
                     <select name="subject_id" required x-model="selectedSubjectId"
-                        class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">
+                        class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                         <option value="">-- Pilih Mapel --</option>
-                        <option value="all" class="font-bold text-indigo-600">Semua Mata Pelajaran</option>
+                        <option value="all" class="font-bold text-brand-600">Semua Mata Pelajaran</option>
                         <template x-for="subject in availableSubjects" :key="subject.id">
                             <option :value="subject.id" x-text="subject.nama"></option>
                         </template>
@@ -59,9 +59,9 @@
                 </div>
 
                 <div x-show="selectedSubjectId" style="display: none;">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">3. Jenis Penilaian</label>
+                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Jenis Penilaian</label>
                     <select name="assessment_type_id"
-                        class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">
+                        class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                         <option value="">-- Semua Jenis --</option>
                         @foreach($assessmentTypes as $type)
                         <option value="{{ $type->id }}" {{ request('assessment_type_id')==$type->id ? 'selected' : ''
@@ -73,9 +73,9 @@
                 </div>
 
                 <div x-show="selectedSubjectId" style="display: none;">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">4. Filter Siswa</label>
+                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Filter Siswa</label>
                     <select name="filter_nilai"
-                        class="w-full rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500">
+                        class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                         <option value="">Semua Siswa</option>
                         <option value="belum" {{ request('filter_nilai')=='belum' ? 'selected' : '' }}>Belum ulangan (nilai kosong)</option>
                         <option value="nol" {{ request('filter_nilai')=='nol' ? 'selected' : '' }}>Nilai 0</option>
@@ -85,12 +85,12 @@
 
                 <div x-show="selectedSubjectId" style="display: none;" class="flex flex-col gap-3">
                     <button type="submit"
-                        class="w-full px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-black shadow-md hover:bg-indigo-700 transition">
-                        Detail Nilai (Gradebook) &rarr;
+                        class="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                        Detail Nilai (Gradebook)
                     </button>
                     <button type="submit" formaction="{{ route('assessments.recapByType') }}"
-                        class="w-full px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-black shadow-md hover:bg-emerald-700 transition">
-                        Rata-Rata per Jenis Penilaian &rarr;
+                        class="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700">
+                        Rata-Rata per Jenis Penilaian
                     </button>
                 </div>
             </form>
@@ -98,7 +98,7 @@
 
         @if(request('classroom_id') && request('subject_id'))
         <div x-data="{ modalOpen: false, modalNama: '', modalGroups: [], modalTotal: 0 }"
-            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
+            class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
 
             <div
                 class="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex justify-between items-center">
@@ -112,7 +112,7 @@
             <div x-show="modalOpen" x-cloak style="display: none;"
                 class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                 @keydown.escape.window="modalOpen = false" @click.self="modalOpen = false">
-                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden">
+                <div class="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden">
                     <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-start gap-4 shrink-0">
                         <div class="min-w-0">
                             <h3 class="font-black text-slate-800 dark:text-white truncate" x-text="modalNama"></h3>
@@ -131,9 +131,9 @@
                         </p>
                         <template x-for="(group, gi) in modalGroups" :key="gi">
                             <div>
-                                <h4 class="text-xs font-black uppercase tracking-wide text-indigo-700 dark:text-indigo-300 mb-2"
+                                <h4 class="text-xs font-black uppercase tracking-wide text-brand-700 dark:text-brand-300 mb-2"
                                     x-text="group.mapel"></h4>
-                                <ul class="divide-y divide-slate-100 dark:divide-slate-700 rounded-xl border border-slate-100 dark:border-slate-700">
+                                <ul class="divide-y divide-slate-100 dark:divide-slate-700 rounded-md border border-slate-100 dark:border-slate-700">
                                     <template x-for="(item, i) in group.items" :key="i">
                                         <li class="flex items-center justify-between gap-3 px-3 py-2.5 text-sm">
                                             <div class="min-w-0">
@@ -153,7 +153,7 @@
 
                     <div class="px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-right shrink-0">
                         <button type="button" @click="modalOpen = false"
-                            class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200">Tutup</button>
+                            class="px-4 py-2 rounded-md bg-slate-100 dark:bg-slate-700 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200">Tutup</button>
                     </div>
                 </div>
             </div>
@@ -176,7 +176,7 @@
 
                             @foreach($groupedAssessments as $subjectId => $subjectAssessments)
                             <th colspan="{{ $subjectAssessments->count() }}"
-                                class="px-4 py-2 text-center border-b border-r border-slate-200 dark:border-slate-700 bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 font-bold">
+                                class="px-4 py-2 text-center border-b border-r border-slate-200 dark:border-slate-700 bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-300 font-bold">
                                 {{ $subjectAssessments->first()->subject->nama_mapel ?? 'Mata Pelajaran' }}
                             </th>
                             <!-- Kolom Rata-rata Per Mapel -->
@@ -201,7 +201,7 @@
                             @foreach($subjectAssessments as $ujian)
                             <th class="px-4 py-4 text-center min-w-[120px] group cursor-default border-r border-slate-200 dark:border-slate-700"
                                 title="{{ $ujian->keterangan }}">
-                                <span class="block font-black text-indigo-600 dark:text-indigo-400">{{
+                                <span class="block font-black text-brand-600 dark:text-brand-400">{{
                                     $ujian->assessmentType->singkatan ?? 'Unknown' }}</span>
                                 <span
                                     class="block text-[10px] text-slate-500 mt-1 font-normal truncate max-w-[120px]">{{
@@ -209,14 +209,14 @@
                             </th>
                             @endforeach
                             <th
-                                class="px-4 py-4 text-center bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border-r border-slate-200 dark:border-slate-700">
+                                class="px-4 py-4 text-center bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 border-r border-slate-200 dark:border-slate-700">
                                 Rata2 Mapel</th>
                             @endforeach
                             @else
                             @foreach($assessments as $ujian)
                             <th class="px-4 py-4 text-center min-w-[120px] group cursor-default"
                                 title="{{ $ujian->keterangan }}">
-                                <span class="block font-black text-indigo-600 dark:text-indigo-400">{{
+                                <span class="block font-black text-brand-600 dark:text-brand-400">{{
                                     $ujian->assessmentType->singkatan ?? 'Unknown' }}</span>
                                 <span
                                     class="block text-[10px] text-slate-500 mt-1 font-normal truncate max-w-[120px]">{{
@@ -224,7 +224,7 @@
                             </th>
                             @endforeach
                             <th
-                                class="px-4 py-4 text-center bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border-l border-slate-200 dark:border-slate-700">
+                                class="px-4 py-4 text-center bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 border-l border-slate-200 dark:border-slate-700">
                                 Rata-Rata</th>
                             @endif
                         </tr>
@@ -259,7 +259,7 @@
                                 @endphp
                                 <button type="button"
                                     @click="modalNama = @js($siswa->nama_lengkap); modalGroups = @js($belumGroups); modalTotal = {{ count($belumList) }}; modalOpen = true"
-                                    class="block text-left font-bold text-indigo-600 dark:text-indigo-400 hover:underline truncate max-w-[200px]"
+                                    class="block text-left font-bold text-brand-600 dark:text-brand-400 hover:underline truncate max-w-[200px]"
                                     title="Lihat ulangan yang belum dilaksanakan">{{ $siswa->nama_lengkap }}
                                     @if(count($belumList) > 0)<span class="text-[10px] text-rose-500">({{ count($belumList) }})</span>@endif
                                 </button>
@@ -290,7 +290,7 @@
                             $rataRataMapel = $totalUjianMapel > 0 ? round($totalNilaiMapel / $totalUjianMapel, 1) : 0;
                             @endphp
                             <td
-                                class="px-4 py-3 text-center font-black bg-indigo-50/50 dark:bg-indigo-900/10 border-r border-slate-200 dark:border-slate-700 {{ $rataRataMapel < 75 ? 'text-rose-600' : 'text-indigo-600' }}">
+                                class="px-4 py-3 text-center font-black bg-brand-50/50 dark:bg-brand-900/10 border-r border-slate-200 dark:border-slate-700 {{ $rataRataMapel < 75 ? 'text-rose-600' : 'text-brand-600' }}">
                                 {{ $rataRataMapel }}
                             </td>
                             @endforeach
@@ -319,7 +319,7 @@
                             $rataRata = $totalUjian > 0 ? round($totalNilai / $totalUjian, 1) : 0;
                             @endphp
                             <td
-                                class="px-4 py-3 text-center font-black bg-indigo-50/50 dark:bg-indigo-900/10 border-l border-slate-100 dark:border-slate-700 {{ $rataRata < 75 ? 'text-rose-600' : 'text-indigo-600' }}">
+                                class="px-4 py-3 text-center font-black bg-brand-50/50 dark:bg-brand-900/10 border-l border-slate-100 dark:border-slate-700 {{ $rataRata < 75 ? 'text-rose-600' : 'text-brand-600' }}">
                                 {{ $rataRata }}
                             </td>
                             @endif
@@ -333,7 +333,7 @@
             <div class="p-16 text-center">
                 <p class="text-slate-500 font-bold mb-2">Belum ada data penilaian.</p>
                 <a href="{{ route('assessments.create') }}"
-                    class="text-sm text-indigo-600 hover:text-indigo-700 font-bold underline">Mulai buat penilaian
+                    class="text-sm text-brand-600 hover:text-brand-700 font-bold underline">Mulai buat penilaian
                     pertama di kelas ini.</a>
             </div>
             @endif

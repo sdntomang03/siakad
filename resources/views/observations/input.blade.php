@@ -1,17 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
             Input Nilai Observasi / Non-Tes
         </h2>
     </x-slot>
 
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
+    <div class="mx-auto max-w-7xl space-y-5 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 
         <!-- KOLOM API KEY GEMINI -->
         <div
-            class="bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-xl shadow-sm border border-indigo-100 dark:border-indigo-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            class="bg-brand-50 dark:bg-brand-900/20 p-3 rounded-md shadow-sm border border-brand-100 dark:border-brand-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-3">
-                <div class="p-1.5 bg-indigo-100 dark:bg-indigo-800 rounded-lg text-indigo-600 dark:text-indigo-300">
+                <div class="p-1.5 bg-brand-100 dark:bg-brand-800 rounded-lg text-brand-600 dark:text-brand-300">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path
@@ -22,17 +22,17 @@
                     </svg>
                 </div>
                 <div>
-                    <h4 class="text-xs font-bold text-indigo-900 dark:text-indigo-300">AI Assistant Aktif</h4>
-                    <p class="text-[10px] text-indigo-700 dark:text-indigo-400">Gunakan AI untuk merapikan catatan
+                    <h4 class="text-xs font-bold text-brand-900 dark:text-brand-300">AI Assistant Aktif</h4>
+                    <p class="text-[10px] text-brand-700 dark:text-brand-400">Gunakan AI untuk merapikan catatan
                         mentah Anda.</p>
                 </div>
             </div>
             <div class="relative w-full sm:w-64">
                 <input type="password" id="geminiApiKey" value="{{ env('GEMINI_API_KEY', '') }}"
                     placeholder="Masukkan Gemini API Key..."
-                    class="w-full text-xs rounded-lg border-indigo-200 dark:border-indigo-700 dark:bg-slate-800 focus:ring-indigo-500 focus:border-indigo-500 py-1.5 pl-3 pr-8 transition shadow-sm">
+                    class="w-full text-xs rounded-lg border-brand-200 dark:border-brand-700 dark:bg-slate-800 focus:ring-brand-500 focus:border-brand-500 py-1.5 pl-3 pr-8 transition shadow-sm">
                 <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <svg class="w-3 h-3 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-3 h-3 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z">
                         </path>
@@ -42,7 +42,7 @@
         </div>
 
         <!-- KARTU INFORMASI PENILAIAN -->
-        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-md shadow-sm border border-slate-200 dark:border-slate-700">
             <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
                 <div>
                     <div class="flex items-center gap-1.5 mb-1.5">
@@ -67,18 +67,18 @@
                         {{ \Carbon\Carbon::parse($assessment->tanggal)->format('d M Y') }}
                     </p>
                 </div>
-                <div class="flex items-center gap-4">
+                <div class="flex flex-wrap items-center gap-3">
                     <a href="{{ route('assessments.index') }}"
-                        class="inline-flex items-center gap-1 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition">
+                        class="inline-flex min-h-10 items-center gap-1 text-sm font-medium text-slate-600 transition hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-slate-300 dark:hover:text-brand-300">
                         &larr; Kembali ke Riwayat
                     </a>
                     <a href="{{ route('observations.status', $assessment->id) }}"
-                        class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg hover:bg-indigo-200 transition shadow-sm border border-indigo-200">
+                        class="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border border-brand-200 bg-brand-50 px-3 py-1.5 text-sm font-semibold text-brand-800 transition hover:bg-brand-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-brand-800 dark:bg-brand-900/30 dark:text-brand-200 dark:hover:bg-brand-900/50">
                         <i class="fas fa-users"></i> Status
                     </a>
                     <!-- TOMBOL EXPORT EXCEL BARU -->
                     <a href="{{ route('observations.export', $assessment->id) }}"
-                        class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-xs font-bold rounded-lg hover:bg-emerald-200 transition shadow-sm border border-emerald-200 dark:border-emerald-800">
+                        class="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
@@ -96,7 +96,7 @@
 
             <!-- LEGEND / DAFTAR KRITERIA -->
             <div
-                class="bg-emerald-50 dark:bg-emerald-900/20 p-3.5 rounded-xl border border-emerald-100 dark:border-emerald-800/50">
+                class="bg-emerald-50 dark:bg-emerald-900/20 p-3.5 rounded-md border border-emerald-100 dark:border-emerald-800/50">
                 <h4
                     class="text-xs font-black text-emerald-800 dark:text-emerald-400 mb-2 uppercase tracking-wider flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +123,7 @@
 
             <!-- MATRIKS TABEL -->
             <div
-                class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
 
                 <!-- HEADER MATRIKS & TOMBOL GENERATE MASSAL -->
                 <div
@@ -131,11 +131,11 @@
                     <div>
                         <h3 class="text-sm font-black text-slate-800 dark:text-white">Matriks Penilaian Siswa</h3>
                         <p class="text-[10px] font-medium text-slate-500 mt-0.5">Isi skor & ketik catatan mentah. Lalu
-                            klik <strong class="text-indigo-600">Generate AI Semua Siswa</strong>.</p>
+                            klik <strong class="text-brand-600">Generate AI Semua Siswa</strong>.</p>
                     </div>
 
                     <button type="button" id="btnGenerateAll" onclick="generateAllAINotesBatch()"
-                        class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition shadow-sm shrink-0">
+                        class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-brand-600 text-white text-xs font-bold rounded-lg hover:bg-brand-700 transition shadow-sm shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path
@@ -230,7 +230,7 @@
                                         <button type="button"
                                             onclick="generateAINote({{ $siswa->id }}, '{{ addslashes($siswa->nama_lengkap) }}')"
                                             id="btnAi_{{ $siswa->id }}"
-                                            class="shrink-0 w-6 h-6 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white border border-indigo-200 rounded-md transition-colors shadow-sm flex items-center justify-center"
+                                            class="shrink-0 w-6 h-6 bg-brand-50 text-brand-600 hover:bg-brand-600 hover:text-white border border-brand-200 rounded-md transition-colors shadow-sm flex items-center justify-center"
                                             title="Rapikan catatan">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"

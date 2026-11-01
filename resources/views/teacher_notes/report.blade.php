@@ -1,24 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 uppercase tracking-tight">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100 uppercase tracking-tight">
                 Rekap Catatan Siswa
             </h2>
             <p class="text-sm text-slate-500">TA: {{ $activeYear->tahun_ajaran ?? '-' }}</p>
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             {{-- Filter Kelas --}}
             <div
-                class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                 <form action="{{ route('teacher-notes.report') }}" method="GET">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Pilih Kelas untuk Melihat
+                    <label for="classroom_id" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Kelas untuk Melihat
                         Rekap</label>
-                    <select name="classroom_id" onchange="this.form.submit()"
-                        class="w-full md:w-1/3 rounded-xl border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm">
+                    <select id="classroom_id" name="classroom_id" onchange="this.form.submit()"
+                        class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white md:max-w-md">
                         <option value="">-- Pilih Kelas --</option>
                         @foreach($myClassrooms as $cls)
                         <option value="{{ $cls->id }}" {{ request('classroom_id')==$cls->id ? 'selected' : '' }}>
@@ -34,15 +34,17 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($students as $siswa)
                 <div x-data="{ open: false }"
-                    class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 hover:border-indigo-400 transition cursor-pointer group"
-                    @click="open = true">
+                    class="group cursor-pointer rounded-lg border border-slate-200 bg-white p-5 transition hover:border-brand-400 dark:border-slate-700 dark:bg-slate-800"
+                    role="button" tabindex="0" aria-haspopup="dialog"
+                    aria-label="Lihat riwayat catatan {{ $siswa->nama_lengkap }}"
+                    @click="open = true" @keydown.enter.prevent="open = true" @keydown.space.prevent="open = true">
                     <div class="flex items-center gap-4">
                         <div
-                            class="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-xl font-black group-hover:bg-indigo-600 group-hover:text-white transition">
+                            class="w-14 h-14 bg-brand-100 text-brand-600 rounded-lg flex items-center justify-center text-xl font-black group-hover:bg-brand-600 group-hover:text-white transition">
                             {{ substr($siswa->nama_lengkap, 0, 1) }}
                         </div>
                         <div class="flex-1">
-                            <h3 class="font-bold text-slate-800 dark:text-white group-hover:text-indigo-600 transition">
+                            <h3 class="font-bold text-slate-800 dark:text-white group-hover:text-brand-600 transition">
                                 {{ $siswa->nama_lengkap }}</h3>
                             <p class="text-xs text-slate-500">{{ $siswa->nisn ?? 'Tanpa NISN' }}</p>
                         </div>
@@ -56,7 +58,7 @@
                     {{-- Modal Riwayat (Alpine.js) --}}
                     <div x-show="open" style="display: none;"
                         class="fixed inset-0 z-50 flex items-center justify-center p-4">
-                        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click.stop="open = false"></div>
+                        <div class="fixed inset-0 bg-slate-900/60 " @click.stop="open = false"></div>
 
                         <div class="relative bg-white dark:bg-slate-800 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700"
                             @click.stop>
@@ -72,17 +74,17 @@
                             {{-- Isi Modal --}}
                             <div class="p-6 max-h-[70vh] overflow-y-auto space-y-4">
                                 <div class="mb-4 text-center">
-                                    <h4 class="text-lg font-bold text-indigo-600">{{ $siswa->nama_lengkap }}</h4>
+                                    <h4 class="text-lg font-bold text-brand-600">{{ $siswa->nama_lengkap }}</h4>
                                     <p class="text-xs text-slate-500">Detail catatan perkembangan selama semester ini.
                                     </p>
                                 </div>
 
                                 @forelse($siswa->notes as $note)
                                 <div
-                                    class="p-4 rounded-2xl border border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30">
+                                    class="p-4 rounded-lg border border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30">
                                     <div class="flex justify-between items-start mb-2">
                                         <span
-                                            class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[10px] font-bold uppercase">{{
+                                            class="px-2 py-0.5 bg-brand-100 text-brand-700 rounded text-[10px] font-bold uppercase">{{
                                             $note->jenis_catatan }}</span>
                                         <span class="text-[10px] text-slate-400">{{
                                             \Carbon\Carbon::parse($note->tanggal)->format('d M Y') }}</span>
@@ -97,7 +99,7 @@
                                         <div x-data="{ imgModal: false }">
                                             {{-- Preview Foto Kecil --}}
                                             <div @click="imgModal = true"
-                                                class="w-16 h-16 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 cursor-zoom-in hover:ring-2 hover:ring-indigo-500 transition group relative">
+                                                class="w-16 h-16 rounded-md overflow-hidden border border-slate-200 dark:border-slate-700 cursor-zoom-in hover:ring-2 hover:ring-brand-500 transition group relative">
                                                 <img src="{{ asset('storage/' . $path) }}"
                                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
                                                 <div
@@ -114,7 +116,7 @@
                                                     x-transition:leave="transition ease-in duration-200"
                                                     x-transition:leave-start="opacity-100"
                                                     x-transition:leave-end="opacity-0"
-                                                    class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
+                                                    class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/90 "
                                                     style="display: none;" @keydown.window.escape="imgModal = false">
 
                                                     {{-- Klik area luar untuk tutup --}}
@@ -123,7 +125,7 @@
                                                     {{-- Gambar --}}
                                                     <div class="relative max-w-5xl w-full flex flex-col items-center">
                                                         <img :src="'{{ asset('storage/' . $path) }}'"
-                                                            class="max-h-[85vh] rounded-2xl shadow-2xl border-4 border-white dark:border-slate-800 object-contain">
+                                                            class="max-h-[85vh] rounded-lg shadow-2xl border-4 border-white dark:border-slate-800 object-contain">
 
                                                         <button @click="imgModal = false"
                                                             class="mt-4 px-8 py-2.5 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-full font-black shadow-xl hover:bg-rose-500 hover:text-white transition-all uppercase text-xs tracking-widest">
@@ -140,7 +142,7 @@
                                     @if($note->foto)
                                     <div class="mt-3">
                                         <a href="{{ asset('storage/'.$note->foto) }}" target="_blank"
-                                            class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">Lihat
+                                            class="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded">Lihat
                                             Lampiran (Format Lama)</a>
                                     </div>
                                     @endif

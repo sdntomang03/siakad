@@ -5,19 +5,20 @@
         </h2>
     </x-slot>
 
-    <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="mx-auto max-w-7xl space-y-5 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 
         <!-- FILTER KELAS -->
         <div
-            class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            class="bg-white p-5 rounded-lg shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h3 class="text-lg font-black text-slate-800">Tampilan Tabel Piket</h3>
                 <p class="text-xs text-slate-500 font-medium mt-0.5">Daftar siswa yang bertugas disusun per hari aktif.
                 </p>
             </div>
             <form method="GET" action="{{ route('piket.daftarJadwal') }}" class="w-full sm:w-auto">
+                <label for="classroom_id" class="sr-only">Pilih kelas</label>
                 <select id="classroom_id" name="classroom_id" onchange="this.form.submit()"
-                    class="w-full sm:w-64 text-sm font-semibold rounded-xl border-slate-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                    class="min-h-11 w-full rounded-md border-slate-300 text-sm font-medium focus:border-brand-600 focus:ring-brand-600 sm:w-64">
                     @foreach($classrooms as $classroom)
                     <option value="{{ $classroom->id }}" {{ $classroomId==$classroom->id ? 'selected' : '' }}>
                         Kelas {{ $classroom->tingkat }} - {{ $classroom->nama_kelas }}
@@ -44,7 +45,7 @@
         @endphp
 
         <!-- TABEL JADWAL -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
 
             <!-- Opsi Tombol Cetak / Aksi lain -->
             <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
@@ -52,7 +53,7 @@
                     Jadwal Piket Kelas {{ $classrooms->firstWhere('id', $classroomId)->nama_kelas ?? '' }}
                 </h3>
                 <button onclick="window.print()"
-                    class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300 transition flex items-center gap-2">
+                    class="inline-flex min-h-11 items-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 print:hidden">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
@@ -64,17 +65,17 @@
 
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
-                    <thead class="text-xs uppercase bg-indigo-600 text-white">
+                    <thead class="text-xs uppercase bg-brand-600 text-white">
                         <tr>
                             @if(count($hariAktif) > 0)
                             @foreach($hariAktif as $hari)
-                            <th class="px-4 py-3 text-center border-r border-indigo-500 font-black tracking-widest"
+                            <th class="px-4 py-3 text-center border-r border-brand-500 font-black tracking-widest"
                                 style="width: {{ 100 / count($hariAktif) }}%">
                                 {{ $hari }}
                             </th>
                             @endforeach
                             @else
-                            <th class="px-4 py-3 text-center border-r border-indigo-500 font-black tracking-widest">
+                            <th class="px-4 py-3 text-center border-r border-brand-500 font-black tracking-widest">
                                 JADWAL PIKET
                             </th>
                             @endif
@@ -115,12 +116,12 @@
                 visibility: hidden;
             }
 
-            .bg-white.rounded-2xl.shadow-sm,
-            .bg-white.rounded-2xl.shadow-sm * {
+            .bg-white.rounded-lg.shadow-sm,
+            .bg-white.rounded-lg.shadow-sm * {
                 visibility: visible;
             }
 
-            .bg-white.rounded-2xl.shadow-sm {
+            .bg-white.rounded-lg.shadow-sm {
                 position: absolute;
                 left: 0;
                 top: 0;

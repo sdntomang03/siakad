@@ -1,17 +1,17 @@
 <x-app-layout>
 
-    <div class="py-8">
-        <div class="max-w-7xl sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div class="mx-auto max-w-screen-2xl space-y-6">
 
             <div
-                class="mb-8 bg-gradient-to-r from-indigo-600 to-blue-500 rounded-2xl p-6 shadow-lg text-white flex items-center justify-between">
+                class="flex items-center justify-between gap-4 rounded-lg bg-brand-900 p-6 text-white md:p-8">
                 <div>
-                    <h3 class="text-2xl font-bold mb-1">Selamat datang, {{ auth()->user()->name }}!</h3>
-                    <p class="text-indigo-100 text-sm">Berikut adalah ringkasan statistik dari seluruh sekolah yang
+                    <h3 class="mb-1 text-2xl font-semibold">Selamat datang, {{ auth()->user()->name }}</h3>
+                    <p class="text-sm leading-6 text-brand-100">Berikut adalah ringkasan statistik dari seluruh sekolah yang
                         terdaftar di sistem.</p>
                 </div>
                 <div class="hidden md:block">
-                    <svg class="w-20 h-20 text-indigo-200 opacity-75" fill="none" stroke="currentColor"
+                    <svg aria-hidden="true" class="h-16 w-16 text-brand-100" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
@@ -20,18 +20,18 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
 
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow duration-300">
+                    class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Total Sekolah</p>
                             <h4 class="text-3xl font-bold text-slate-900 dark:text-white">{{
                                 number_format($stats['total_sekolah']) }}</h4>
                         </div>
-                        <div class="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl">
-                            <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor"
+                        <div class="rounded-md bg-brand-50 p-3 dark:bg-brand-900">
+                            <svg aria-hidden="true" class="h-8 w-8 text-brand-800 dark:text-brand-200" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 14l9-5-9-5-9 5 9 5z"></path>
@@ -46,15 +46,15 @@
                 </div>
 
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow duration-300">
+                    class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Pengguna Akun</p>
                             <h4 class="text-3xl font-bold text-slate-900 dark:text-white">{{
                                 number_format($stats['total_pengguna']) }}</h4>
                         </div>
-                        <div class="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
-                            <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
+                        <div class="rounded-md bg-brand-50 p-3 dark:bg-brand-900">
+                            <svg aria-hidden="true" class="h-8 w-8 text-brand-800 dark:text-brand-200" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
@@ -65,14 +65,14 @@
                 </div>
 
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow duration-300">
+                    class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Total Guru</p>
                             <h4 class="text-3xl font-bold text-slate-900 dark:text-white">{{
                                 number_format($stats['total_guru_nasional']) }}</h4>
                         </div>
-                        <div class="p-3 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl">
+                        <div class="p-3 bg-emerald-50 dark:bg-emerald-900/30 rounded-md">
                             <svg class="w-8 h-8 text-emerald-600 dark:text-emerald-400" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -84,15 +84,15 @@
                 </div>
 
                 <div
-                    class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow duration-300">
+                    class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Total Siswa</p>
                             <h4 class="text-3xl font-bold text-slate-900 dark:text-white">{{
                                 number_format($stats['total_siswa_nasional']) }}</h4>
                         </div>
-                        <div class="p-3 bg-amber-50 dark:bg-amber-900/30 rounded-xl">
-                            <svg class="w-8 h-8 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor"
+                        <div class="rounded-md bg-brand-50 p-3 dark:bg-brand-900">
+                            <svg aria-hidden="true" class="h-8 w-8 text-brand-800 dark:text-brand-200" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
@@ -104,22 +104,22 @@
             </div>
 
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+                class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
                 <div
-                    class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    class="flex flex-col justify-between gap-4 border-b border-slate-200 px-5 py-5 dark:border-slate-700 sm:flex-row sm:items-center sm:px-6">
                     <div>
                         <h3 class="text-lg font-bold text-slate-900 dark:text-white">Daftar Sekolah Terbaru</h3>
                         <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Sekolah yang baru saja bergabung ke
                             dalam sistem.</p>
                     </div>
-                    <button
-                        class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a href="{{ route('superadmin.schools.create') }}"
+                        class="inline-flex min-h-11 items-center justify-center rounded-md border border-transparent bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                        <svg aria-hidden="true" class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
                         Tambah Sekolah
-                    </button>
+                    </a>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -145,14 +145,15 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                             @forelse($schools as $school)
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
+                            <tr class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-700/50">
                                 <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300 font-medium">
                                     {{ $school->npsn }}
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
                                         <div
-                                            class="h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs mr-3">
+                                            aria-hidden="true"
+                                            class="mr-3 flex h-8 w-8 items-center justify-center rounded-md bg-brand-50 text-xs font-semibold text-brand-800 dark:bg-brand-900 dark:text-brand-200">
                                             {{ substr($school->nama_sekolah, 0, 1) }}
                                         </div>
                                         <span class="text-sm font-semibold text-slate-900 dark:text-white">{{
@@ -161,7 +162,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                        class="inline-flex items-center rounded-md bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-900 dark:bg-brand-900 dark:text-brand-100">
                                         {{ $school->tingkat }}
                                     </span>
                                 </td>
@@ -169,8 +170,8 @@
                                     {{ $school->alamat }}
                                 </td>
                                 <td class="px-6 py-4 text-right text-sm font-medium">
-                                    <a href="#"
-                                        class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Kelola</a>
+                                    <a href="{{ route('superadmin.schools.index') }}"
+                                        class="inline-flex min-h-11 items-center rounded-sm font-medium text-brand-800 underline underline-offset-4 hover:text-brand-900 dark:text-brand-200 dark:hover:text-white">Kelola</a>
                                 </td>
                             </tr>
                             @empty

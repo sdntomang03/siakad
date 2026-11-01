@@ -71,9 +71,9 @@ $logoBase64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
             <td class="kop-logo-cell">
                 {{-- Gunakan Base64 jika berhasil, gunakan asset() biasa sebagai cadangan (jika dibuka di web) --}}
                 @if($logoBase64)
-                <img src="{{ $logoBase64 }}" alt="Logo Jakarta">
+                <img src="{{ $logoBase64 }}" alt="Logo Jakarta" width="656" height="800">
                 @else
-                <img src="{{ asset('storage/jayakarta.png') }}" alt="Logo Jakarta">
+                <img src="{{ asset('storage/jayakarta.png') }}" alt="Logo Jakarta" width="656" height="800">
                 @endif
             </td>
             <td class="kop-text-cell">

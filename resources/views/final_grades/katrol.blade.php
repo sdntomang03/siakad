@@ -1,16 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200 leading-tight">
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100 leading-tight">
             Penyesuaian Nilai Akademik (Katrol Linier)
         </h2>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             {{-- TAMPILAN NOTIFIKASI SUKSES / ERROR SISTEM --}}
             @if(session('success'))
-            <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl font-bold shadow-sm">
+            <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-md font-bold shadow-sm">
                 <div class="flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -21,7 +21,7 @@
             @endif
 
             @if(session('error'))
-            <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl font-bold shadow-sm">
+            <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-md font-bold shadow-sm">
                 <div class="flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -34,7 +34,7 @@
 
             {{-- TAMPILAN ERROR VALIDASI (DENGAN PENCEGAH KEBOCORAN KODE VALIDATION.REQUIRED) --}}
             @if ($errors->any())
-            <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl font-bold shadow-sm mb-6">
+            <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-md font-bold shadow-sm mb-6">
                 <div class="flex items-center gap-2 mb-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -59,15 +59,15 @@
 
             {{-- 1. PANEL FILTER KELAS & MAPEL --}}
             <div
-                class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-end justify-between gap-4">
+                class="flex flex-col items-stretch justify-between gap-4 rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6 md:flex-row md:items-end">
                 <form action="{{ route('rapor.index') }}" method="GET"
-                    class="flex flex-col md:flex-row items-end gap-4 w-full">
+                    class="grid w-full grid-cols-1 items-end gap-4 sm:grid-cols-2 md:flex">
 
-                    <div class="w-full md:w-1/3">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Pilih
+                    <div class="w-full md:min-w-48">
+                        <label for="classroom_id" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih
                             Kelas</label>
-                        <select name="classroom_id" onchange="this.form.submit()"
-                            class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500 transition">
+                        <select id="classroom_id" name="classroom_id" onchange="this.form.submit()"
+                            class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                             <option value="">-- Pilih Kelas --</option>
                             @foreach($classrooms as $cls)
                             <option value="{{ $cls->id }}" {{ request('classroom_id')==$cls->id ? 'selected' : '' }}>
@@ -78,11 +78,11 @@
                     </div>
 
                     @if($selectedClassroom)
-                    <div class="w-full md:w-1/3">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Mata
+                    <div class="w-full md:min-w-56">
+                        <label for="subject_id" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Mata
                             Pelajaran</label>
-                        <select name="subject_id" onchange="this.form.submit()"
-                            class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm focus:ring-indigo-500 transition">
+                        <select id="subject_id" name="subject_id" onchange="this.form.submit()"
+                            class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                             <option value="">-- Pilih Mata Pelajaran --</option>
                             @foreach($subjects as $subj)
                             <option value="{{ $subj->id }}" {{ request('subject_id')==$subj->id ? 'selected' : '' }}>
@@ -102,7 +102,7 @@
                     <input type="hidden" name="classroom_id" value="{{ request('classroom_id') }}">
                     <input type="hidden" name="subject_id" value="{{ request('subject_id') }}">
                     <button type="submit"
-                        class="shrink-0 inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 text-xs font-bold py-2.5 px-4 rounded-xl transition border border-slate-300 dark:border-slate-600 shadow-sm"
+                        class="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-md border border-slate-300 bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
                         title="Tarik ulang data ujian">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -122,9 +122,9 @@
             {{-- JIKA BELUM ADA DATA SAMA SEKALI --}}
             @if($grades->isEmpty())
             <div
-                class="py-20 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 text-center flex flex-col items-center justify-center">
+                class="flex flex-col items-center justify-center rounded-lg border border-slate-200 bg-white px-5 py-16 text-center dark:border-slate-700 dark:bg-slate-800">
                 <div
-                    class="w-20 h-20 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center mb-4">
+                    class="w-20 h-20 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 rounded-full flex items-center justify-center mb-4">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
@@ -140,7 +140,7 @@
                     <input type="hidden" name="classroom_id" value="{{ request('classroom_id') }}">
                     <input type="hidden" name="subject_id" value="{{ request('subject_id') }}">
                     <button type="submit"
-                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none transition flex items-center gap-2">
+                        class="bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-8 rounded-md shadow-lg shadow-brand-200 dark:shadow-none transition flex items-center gap-2">
                         Mulai Tarik Rekap Nilai Ujian
                     </button>
                 </form>
@@ -153,7 +153,7 @@
                 {{-- PANEL PENGATURAN RUMUS KATROL --}}
                 <div class="lg:col-span-1">
                     <div
-                        class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 sticky top-6">
+                        class="sticky top-6 rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
                         <div class="mb-6 border-b border-slate-100 dark:border-slate-700 pb-4">
                             <h3 class="text-lg font-black text-slate-800 dark:text-slate-200 uppercase tracking-tight">
                                 Pengaturan Katrol</h3>
@@ -174,38 +174,38 @@
                             @endphp
 
                             <div
-                                class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 mb-6">
+                                class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-md border border-slate-200 dark:border-slate-700 mb-6">
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="text-xs font-bold text-slate-500">Nilai Asli Terendah</span>
                                     <span class="text-sm font-black text-rose-500">{{ $nilaiTerendah ?? 0 }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-xs font-bold text-slate-500">Nilai Asli Tertinggi</span>
-                                    <span class="text-sm font-black text-indigo-500">{{ $nilaiTertinggi ?? 0 }}</span>
+                                    <span class="text-sm font-black text-brand-500">{{ $nilaiTertinggi ?? 0 }}</span>
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Target
+                                <label for="target_min" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Target
                                     Nilai Terendah (KKM)</label>
-                                <input type="number" name="target_min" value="75" min="0" max="100" required
-                                    class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                <p class="text-[10px] text-slate-500 mt-1">Siswa dengan nilai {{ $nilaiTerendah }}
+                                <input id="target_min" type="number" name="target_min" value="75" min="0" max="100" required
+                                    class="w-full rounded-md border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
+                                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Siswa dengan nilai {{ $nilaiTerendah }}
                                     otomatis akan mendapat nilai ini.</p>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Target
+                                <label for="target_max" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Target
                                     Nilai Maksimal</label>
-                                <input type="number" name="target_max" value="98" min="0" max="100" required
-                                    class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                <p class="text-[10px] text-slate-500 mt-1">Siswa dengan nilai {{ $nilaiTertinggi }}
+                                <input id="target_max" type="number" name="target_max" value="98" min="0" max="100" required
+                                    class="w-full rounded-md border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100">
+                                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Siswa dengan nilai {{ $nilaiTertinggi }}
                                     otomatis akan mendapat nilai ini.</p>
                             </div>
 
                             <button type="submit"
                                 onclick="return confirm('Proses ini akan menimpa kolom Nilai Akhir seluruh siswa di mapel ini. Anda yakin?')"
-                                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition mt-4">
+                                class="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                                 Eksekusi Katrol Nilai
                             </button>
                         </form>
@@ -215,7 +215,7 @@
                 {{-- PANEL TABEL DATA NILAI --}}
                 <div class="lg:col-span-2">
                     <div
-                        class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                        class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                         <div
                             class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
                             <h4 class="font-black text-slate-800 dark:text-white uppercase tracking-tight">Daftar Nilai
@@ -235,7 +235,7 @@
                                             class="px-6 py-4 text-center border-l border-slate-200 dark:border-slate-700">
                                             Nilai Asli</th>
                                         <th
-                                            class="px-6 py-4 text-center bg-indigo-50/50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300">
+                                            class="px-6 py-4 text-center bg-brand-50/50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300">
                                             Nilai Akhir</th>
                                         <th class="px-6 py-4 text-center">Predikat</th>
                                     </tr>
@@ -254,7 +254,7 @@
                                         </td>
 
                                         <td
-                                            class="px-6 py-3 text-center bg-indigo-50/30 dark:bg-indigo-900/10 font-black text-indigo-600 dark:text-indigo-400 text-base">
+                                            class="px-6 py-3 text-center bg-brand-50/30 dark:bg-brand-900/10 font-black text-brand-600 dark:text-brand-400 text-base">
                                             {{ $grade->nilai_akhir }}
                                         </td>
 

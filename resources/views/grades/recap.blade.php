@@ -1,28 +1,28 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
-                Rekapitulasi Nilai: <span class="text-indigo-600">Sidanira</span>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
+                Rekapitulasi Nilai: <span class="text-brand-600">Sidanira</span>
             </h2>
 
-            <a href="{{ route('dashboard') }}" class="text-sm font-bold text-slate-500 hover:text-slate-700">
-                &larr; Kembali ke Dashboard
+            <a href="{{ route('dashboard') }}" class="inline-flex min-h-11 items-center text-sm font-semibold text-brand-700 hover:text-brand-900 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-300 dark:hover:text-brand-200">
+                Kembali ke Dashboard
             </a>
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
                 <form action="{{ route('grades.recap') }}" method="GET"
-                    class="flex flex-col md:flex-row gap-4 items-end">
+                    class="flex flex-col items-stretch gap-4 sm:flex-row sm:items-end">
 
-                    <div class="w-full md:w-1/2">
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Pilih Siswa</label>
+                    <div class="w-full sm:max-w-xl sm:flex-1">
+                        <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Siswa</label>
                         <select name="student_id"
-                            class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                             required>
                             <option value="">-- Cari Berdasarkan Nama / NISN --</option>
                             @foreach($students as $student)
@@ -36,7 +36,7 @@
 
                     <div>
                         <button type="submit"
-                            class="bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-bold shadow-sm hover:bg-indigo-700 transition uppercase text-sm">
+                            class="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 sm:w-auto">
                             Tampilkan Rekap
                         </button>
                     </div>
@@ -45,10 +45,10 @@
 
             @if($selectedStudent)
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
 
                 <div
-                    class="p-6 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center">
+                    class="flex flex-col gap-3 border-b border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900/50 sm:flex-row sm:items-center sm:justify-between sm:p-6">
                     <div>
                         <h3 class="text-lg font-bold text-slate-800 dark:text-white">Matriks Nilai 5 Semester</h3>
                         <p class="text-sm text-slate-500">
@@ -59,7 +59,7 @@
                         </p>
                     </div>
                     <button onclick="window.print()"
-                        class="text-sm bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg font-bold hover:bg-slate-300 transition">
+                        class="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700 sm:w-auto">
                         Cetak Laporan
                     </button>
                 </div>

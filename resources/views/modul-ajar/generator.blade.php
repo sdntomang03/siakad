@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
-            AI Modul <span class="text-indigo-600">Generator</span>
+        <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
+            AI Modul <span class="text-brand-600">Generator</span>
         </h2>
     </x-slot>
 
@@ -120,15 +120,22 @@
             background: #cbd5e1;
             border-radius: 10px;
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            .animate-spin,
+            .animate-pulse {
+                animation: none !important;
+            }
+        }
     </style>
 
-    <div class="py-8">
-        <div class="max-w-[98%] mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto w-full max-w-[98rem] space-y-6 px-4 sm:px-6 lg:px-8">
 
             <!-- Kolom API Key (AMAN UNTUK GITHUB) -->
             <div
-                class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none"
+                class="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-600 dark:border-slate-700 dark:bg-slate-800">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4l-4 4Z" />
                     <path d="m21 2-9.6 9.6" />
@@ -137,16 +144,17 @@
                     <path d="M14 12h2" />
                 </svg>
                 <!-- API Key diambil secara dinamis dari file .env -->
+                <label for="apiKey" class="shrink-0 text-sm font-medium text-slate-700 dark:text-slate-200">API Key</label>
                 <input type="password" id="apiKey" value="{{ env('GEMINI_API_KEY', '') }}"
                     placeholder="Masukkan Gemini API Key..."
-                    class="outline-none bg-transparent text-sm w-full focus:ring-0 dark:text-white border-none p-0">
+                    class="min-w-0 w-full border-0 bg-transparent p-0 text-sm focus:ring-0 dark:text-white">
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <!-- PANEL KIRI: Form Input -->
                 <aside class="lg:col-span-4 space-y-6">
                     <div
-                        class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+                        class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
                         <h2
                             class="text-lg font-bold mb-4 flex items-center gap-2 border-b dark:border-slate-700 pb-2 dark:text-white">
                             Pengaturan Modul
@@ -156,13 +164,13 @@
                         <input type="hidden" id="academicYearId" value="{{ $activeYear->id ?? '' }}">
                         <!-- BARU: Dropdown Load Modul -->
                         <div
-                            class="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-xl border border-indigo-200 dark:border-indigo-800">
-                            <label
-                                class="block text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider mb-2">
+                            class="bg-brand-50 dark:bg-brand-900/30 p-4 rounded-md border border-brand-200 dark:border-brand-800">
+                            <label for="loadModulSelect"
+                                class="block text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider mb-2">
                                 Muat Modul Tersimpan (Database)
                             </label>
                             <select id="loadModulSelect" onchange="loadModulFromDb(this.value)"
-                                class="w-full p-2 bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                                class="w-full p-2 bg-white dark:bg-slate-800 border border-brand-200 dark:border-brand-700 dark:text-white rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm">
                                 <option value="">-- Buat Modul Baru --</option>
                                 @foreach($savedModuls as $mod)
                                 <option value="{{ $mod->id }}">{{ $mod->mata_pelajaran }} - {{ $mod->topik }} ({{
@@ -174,11 +182,11 @@
                         <div class="space-y-4">
                             <!-- Identitas (Otomatis dari Database) -->
                             <div
-                                class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+                                class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-md border border-slate-200 dark:border-slate-700 space-y-3">
                                 <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Identitas Sekolah
                                     & Guru</h3>
                                 <div>
-                                    <label
+                                    <label for="namaSekolah"
                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Nama
                                         Sekolah</label>
                                     <input type="text" id="namaSekolah" value="{{ $sekolah->nama_sekolah ?? '' }}"
@@ -187,7 +195,7 @@
                                 </div>
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label
+                                        <label for="namaKS"
                                             class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Nama
                                             KS</label>
                                         <input type="text" id="namaKS" value="{{ $sekolah->kepala_sekolah ?? '' }}"
@@ -195,7 +203,7 @@
                                             class="w-full p-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-500 cursor-not-allowed">
                                     </div>
                                     <div>
-                                        <label
+                                        <label for="nipKS"
                                             class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">NIP
                                             KS</label>
                                         <input type="text" id="nipKS" value="{{ $sekolah->nip ?? '' }}" readonly
@@ -204,14 +212,14 @@
                                 </div>
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label
+                                        <label for="namaGuru"
                                             class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Nama
                                             Guru</label>
                                         <input type="text" id="namaGuru" value="{{ $namaGuru }}" readonly
                                             class="w-full p-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-500 cursor-not-allowed">
                                     </div>
                                     <div>
-                                        <label
+                                        <label for="nipGuru"
                                             class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">NIP
                                             Guru</label>
                                         <input type="text" id="nipGuru" value="{{ $nipGuru }}" readonly
@@ -222,11 +230,11 @@
 
                             <!-- Dropdown Dinamis -->
                             <div>
-                                <label
+                                <label for="jenjang"
                                     class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Jenjang
                                     Pendidikan</label>
                                 <select id="jenjang"
-                                    class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                                    class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-md focus:ring-2 focus:ring-brand-500 outline-none transition-all">
                                     <option value="PAUD">PAUD</option>
                                     <option value="SD" selected>SD</option>
                                     <option value="SMP">SMP</option>
@@ -237,58 +245,58 @@
 
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label
+                                    <label for="fase"
                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Fase</label>
                                     <select id="fase"
-                                        class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"></select>
+                                        class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-md focus:ring-2 focus:ring-brand-500 outline-none"></select>
                                 </div>
                                 <div>
-                                    <label
+                                    <label for="kelas"
                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Kelas</label>
                                     <select id="kelas"
-                                        class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"></select>
+                                        class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-md focus:ring-2 focus:ring-brand-500 outline-none"></select>
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label
+                                    <label for="jumlahPertemuan"
                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Jml
                                         Pertemuan</label>
                                     <input type="number" id="jumlahPertemuan" min="1" max="10" value="1"
-                                        class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-md focus:ring-2 focus:ring-brand-500 outline-none">
                                 </div>
                                 <div>
-                                    <label
+                                    <label for="alokasiWaktu"
                                         class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Alokasi
                                         Waktu</label>
                                     <input type="text" id="alokasiWaktu" value="2 JP x 35 Menit"
-                                        class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-md focus:ring-2 focus:ring-brand-500 outline-none">
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Mata
+                                <label for="mapel" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Mata
                                     Pelajaran</label>
                                 <input type="text" id="mapel" placeholder="Contoh: Matematika"
-                                    class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-md focus:ring-2 focus:ring-brand-500 outline-none">
                             </div>
 
                             <div>
-                                <label
+                                <label for="topik"
                                     class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Topik
                                     Utama</label>
                                 <input type="text" id="topik" placeholder="Contoh: Bilangan Cacah"
-                                    class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-md focus:ring-2 focus:ring-brand-500 outline-none">
                             </div>
 
                             <div>
-                                <label
+                                <label for="cakupan"
                                     class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Cakupan
                                     / Penjabaran Materi</label>
                                 <textarea id="cakupan" rows="3"
                                     placeholder="Contoh: Pertemuan 1 mengidentifikasi organ..."
-                                    class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                                    class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-md focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
                             </div>
 
                             <!-- 8 Dimensi -->
@@ -297,7 +305,7 @@
                                     class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Dimensi
                                     Profil Lulusan</label>
                                 <div
-                                    class="space-y-2 max-h-48 overflow-y-auto p-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900 text-sm custom-scroll">
+                                    class="space-y-2 max-h-48 overflow-y-auto p-2 border border-slate-200 dark:border-slate-700 rounded-md bg-slate-50 dark:bg-slate-900 text-sm custom-scroll">
                                     @php
                                     $profils = ['Keimanan dan Ketakwaan', 'Kewargaan', 'Penalaran Kritis',
                                     'Kreativitas', 'Kolaborasi', 'Kemandirian', 'Kesehatan (Fisik & Mental)',
@@ -306,7 +314,7 @@
                                     @foreach($profils as $profil)
                                     <label class="flex items-start gap-2 cursor-pointer">
                                         <input type="checkbox" name="profilLulusan" value="{{ $profil }}"
-                                            class="mt-1 w-4 h-4 text-indigo-600 rounded">
+                                            class="mt-1 w-4 h-4 text-brand-600 rounded">
                                         <span class="text-slate-600 dark:text-slate-300 text-xs"><b>{{ $profil
                                                 }}</b></span>
                                     </label>
@@ -315,16 +323,16 @@
                             </div>
 
                             <div>
-                                <label
+                                <label for="tanggal"
                                     class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Tanggal
                                     Dokumen</label>
                                 <input type="date" id="tanggal"
-                                    class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                                    class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-md focus:ring-2 focus:ring-brand-500 outline-none transition-all">
                             </div>
 
                             <!-- Tombol Generate -->
                             <button onclick="generateModul()" id="btnGenerate"
-                                class="w-full mt-6 py-3 px-6 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex items-center justify-center gap-2">
+                                class="w-full mt-6 py-3 px-6 bg-brand-600 hover:bg-brand-700 text-white rounded-md font-bold shadow-lg shadow-brand-200 dark:shadow-none transition-all flex items-center justify-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
@@ -346,7 +354,7 @@
 
                             <!-- (BARU) Tombol Buat Prompt Copy-Paste -->
                             <button type="button" onclick="showPromptModal()"
-                                class="w-full py-3 px-6 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2">
+                                class="w-full py-3 px-6 bg-slate-800 hover:bg-slate-900 text-white rounded-md font-bold shadow-md transition-all flex items-center justify-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -357,21 +365,21 @@
 
                             <!-- (BARU) Area Textarea Prompt (Sembunyi by default) -->
                             <div id="promptArea"
-                                class="hidden mt-4 p-4 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700">
+                                class="hidden mt-4 p-4 bg-slate-100 dark:bg-slate-900 rounded-md border border-slate-300 dark:border-slate-700">
                                 <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-bold text-slate-700 dark:text-slate-300">1. Copy Prompt
-                                        Ini:</span>
+                                    <label for="generatedPromptText" class="text-xs font-bold text-slate-700 dark:text-slate-300">1. Copy Prompt
+                                        Ini:</label>
                                     <button type="button" onclick="copyPromptText()"
-                                        class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded shadow">Copy
+                                        class="text-xs bg-brand-600 hover:bg-brand-700 text-white px-3 py-1 rounded shadow">Copy
                                         Prompt</button>
                                 </div>
                                 <textarea id="generatedPromptText" rows="6"
-                                    class="w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg outline-none custom-scroll"
+                                    class="w-full p-2 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg custom-scroll focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
                                     readonly></textarea>
 
                                 <div class="mt-4 flex justify-between items-center mb-2">
-                                    <span class="text-xs font-bold text-slate-700 dark:text-slate-300">2. Paste HTML
-                                        dari Gemini:</span>
+                                    <label for="manualHtmlInput" class="text-xs font-bold text-slate-700 dark:text-slate-300">2. Paste HTML
+                                        dari Gemini:</label>
                                     <button type="button" onclick="previewManualHtml()"
                                         class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded shadow">Preview
                                         & Simpan</button>
@@ -387,7 +395,7 @@
                 <!-- PANEL KANAN: Hasil Preview -->
                 <main class="lg:col-span-8">
                     <div
-                        class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 h-full min-h-[600px] flex flex-col">
+                        class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 h-full min-h-[600px] flex flex-col">
 
                         <div
                             class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 rounded-t-2xl sticky top-0 z-10">
@@ -437,7 +445,7 @@
                         <!-- Area Hasil -->
                         <div id="previewArea" class="p-8 flex-1 overflow-auto bg-slate-50/20 dark:bg-slate-900/20">
                             <div id="loading"
-                                class="hidden h-full flex flex-col items-center justify-center text-indigo-600">
+                                class="hidden h-full flex flex-col items-center justify-center text-brand-600">
                                 <svg class="w-10 h-10 animate-spin mb-4" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"

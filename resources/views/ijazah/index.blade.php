@@ -1,20 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-slate-800 dark:text-slate-200">
-                Pengolahan Nilai <span class="text-emerald-600">Akhir Ijazah</span>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-xl font-semibold text-slate-950 dark:text-slate-100">
+                Pengolahan Nilai <span class="text-brand-700 dark:text-brand-400">Akhir Ijazah</span>
             </h2>
-            <a href="{{ route('dashboard') }}" class="text-sm font-bold text-slate-500 hover:text-slate-700 transition">
+            <a href="{{ route('dashboard') }}" class="inline-flex min-h-10 items-center text-sm font-medium text-slate-600 transition hover:text-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-slate-300 dark:hover:text-brand-300">
                 &larr; Dashboard
             </a>
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-[95%] mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-6 sm:py-8">
+        <div class="mx-auto max-w-[95rem] space-y-5 px-4 sm:px-6 lg:px-8">
 
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-6">
                 <div
                     class="border-b border-slate-100 dark:border-slate-700 pb-4 mb-4 flex items-center justify-between">
                     <h3 class="text-lg font-black text-slate-800 dark:text-white flex items-center gap-2">
@@ -32,11 +32,11 @@
                 </div>
 
                 <form action="{{ route('ijazah.index') }}" method="GET"
-                    class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                    class="grid grid-cols-1 items-end gap-5 sm:grid-cols-2 lg:grid-cols-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Pilih Kelas 6</label>
-                        <select name="classroom_id"
-                            class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 text-sm focus:ring-emerald-500"
+                        <label for="classroom_id" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Kelas 6</label>
+                        <select id="classroom_id" name="classroom_id"
+                            class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white"
                             required>
                             <option value="">-- Pilih Kelas --</option>
                             @foreach($classrooms as $kelas)
@@ -49,30 +49,30 @@
                     </div>
 
                     <div
-                        class="col-span-2 p-3 bg-emerald-50/50 dark:bg-emerald-900/20 rounded-xl border border-emerald-100 dark:border-emerald-800 flex gap-4">
-                        <div class="w-1/2">
+                        class="col-span-1 flex flex-col gap-4 rounded-md border border-brand-100 bg-brand-50/50 p-4 dark:border-brand-800 dark:bg-brand-900/20 sm:col-span-2 sm:flex-row lg:col-span-2">
+                        <div class="w-full sm:w-1/2">
                             <label
-                                class="block text-xs font-black text-emerald-700 dark:text-emerald-400 uppercase mb-2">Bobot
+                                for="bobot_rapor" class="mb-2 block text-sm font-medium text-brand-800 dark:text-brand-200">Bobot
                                 Rapor (%)</label>
-                            <input type="number" name="bobot_rapor" value="{{ $bobotRapor }}" min="0" max="100"
-                                class="w-full rounded-lg border-emerald-200 dark:border-emerald-700 bg-white dark:bg-slate-800 font-bold text-emerald-700 text-center"
+                            <input id="bobot_rapor" type="number" name="bobot_rapor" value="{{ $bobotRapor }}" min="0" max="100"
+                                class="w-full rounded-md border-slate-300 bg-white text-center text-sm font-semibold text-slate-900 focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                                 required>
-                            <p class="text-[10px] text-emerald-500 mt-1">Kelas 4, 5, dan 6 (Smt 7-12)</p>
+                            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Kelas 4, 5, dan 6 (Smt 7-12)</p>
                         </div>
-                        <div class="w-1/2">
+                        <div class="w-full sm:w-1/2">
                             <label
-                                class="block text-xs font-black text-emerald-700 dark:text-emerald-400 uppercase mb-2">Bobot
+                                for="bobot_ujian" class="mb-2 block text-sm font-medium text-brand-800 dark:text-brand-200">Bobot
                                 Ujian (%)</label>
-                            <input type="number" name="bobot_ujian" value="{{ $bobotUjian }}" min="0" max="100"
-                                class="w-full rounded-lg border-emerald-200 dark:border-emerald-700 bg-white dark:bg-slate-800 font-bold text-emerald-700 text-center"
+                            <input id="bobot_ujian" type="number" name="bobot_ujian" value="{{ $bobotUjian }}" min="0" max="100"
+                                class="w-full rounded-md border-slate-300 bg-white text-center text-sm font-semibold text-slate-900 focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                                 required>
-                            <p class="text-[10px] text-emerald-500 mt-1">Nilai Ujian Sekolah</p>
+                            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Nilai Ujian Sekolah</p>
                         </div>
                     </div>
 
                     <div>
                         <button type="submit"
-                            class="w-full bg-emerald-600 text-white px-6 py-3 rounded-xl font-black shadow-lg shadow-emerald-500/30 hover:bg-emerald-700 transition uppercase text-xs">
+                            class="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                             Proses Data Ijazah
                         </button>
                     </div>
@@ -81,7 +81,7 @@
 
             @if($selectedClassroom && count($ijazahSubjects) > 0)
             <div
-                class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div
                     class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
                     <div>
