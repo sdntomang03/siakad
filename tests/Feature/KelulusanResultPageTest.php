@@ -34,9 +34,11 @@ test('the result page shows the decision and only offers the certificate to grad
         ->assertDontSeeText('Menghubungkan ke database');
 
     if ($status === 'LULUS') {
-        $response->assertSee(route('kelulusan.download', 'token-uji'));
+        $response->assertSee(route('kelulusan.download', 'token-uji'))
+            ->assertSee('graduation-fireworks');
     } else {
-        $response->assertDontSee(route('kelulusan.download', 'token-uji'));
+        $response->assertDontSee(route('kelulusan.download', 'token-uji'))
+            ->assertDontSee('graduation-fireworks');
     }
 })->with('graduation results');
 

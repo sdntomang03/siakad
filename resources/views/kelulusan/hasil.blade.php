@@ -50,6 +50,15 @@
             line-height: 1.6;
         }
 
+        .fireworks-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
         a {
             color: inherit;
             cursor: pointer;
@@ -64,7 +73,7 @@
             position: absolute;
             top: 0.75rem;
             left: 0.75rem;
-            z-index: 1;
+            z-index: 3;
             padding: 0.65rem 0.9rem;
             transform: translateY(-160%);
             border-radius: 0.375rem;
@@ -78,6 +87,8 @@
         }
 
         .page-shell {
+            position: relative;
+            z-index: 1;
             width: min(100% - 2rem, 56rem);
             margin-inline: auto;
             padding-block: clamp(1.5rem, 5vw, 3.5rem);
@@ -453,6 +464,119 @@
             </footer>
         </main>
     </div>
+    @if ($student->keterangan === 'LULUS')
+        <canvas class="fireworks-canvas" id="graduation-fireworks" aria-hidden="true"></canvas>
+        <script>
+            (() => {
+                const canvas = document.getElementById('graduation-fireworks');
+                const context = canvas?.getContext('2d');
+
+                if (!canvas || !context || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    canvas?.remove();
+                    return;
+                }
+
+                const palette = ['#173C32', '#2F725D', '#8A5E13', '#FFFFFF'];
+                const bursts = [120, 1120, 2120, 3120];
+                const particles = [];
+                const launched = new Set();
+                const startedAt = performance.now();
+                let previousFrame = startedAt;
+
+                const resizeCanvas = () => {
+                    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+                    canvas.width = Math.round(window.innerWidth * pixelRatio);
+                    canvas.height = Math.round(window.innerHeight * pixelRatio);
+                    context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+                };
+
+                const launchBurst = (index) => {
+                    const positions = [
+                        [0.22, 0.17],
+                        [0.78, 0.18],
+                        [0.5, 0.22],
+                        [0.3, 0.28],
+                    ];
+                    const [horizontal, vertical] = positions[index];
+                    const centerX = window.innerWidth * horizontal;
+                    const centerY = window.innerHeight * vertical;
+                    const particleCount = 34;
+
+                    for (let particleIndex = 0; particleIndex < particleCount; particleIndex += 1) {
+                        const angle = (Math.PI * 2 * particleIndex) / particleCount + Math.random() * 0.035;
+                        const speed = 1.1 + Math.random() * 2;
+
+                        particles.push({
+                            x: centerX,
+                            y: centerY,
+                            velocityX: Math.cos(angle) * speed,
+                            velocityY: Math.sin(angle) * speed,
+                            age: 0,
+                            lifetime: 1050 + Math.random() * 250,
+                            color: palette[Math.floor(Math.random() * palette.length)],
+                        });
+                    }
+                };
+
+                const animate = (now) => {
+                    const elapsed = now - startedAt;
+                    const frameScale = Math.min((now - previousFrame) / 16.67, 2);
+                    previousFrame = now;
+                    context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+                    bursts.forEach((time, index) => {
+                        if (elapsed >= time && !launched.has(index)) {
+                            launchBurst(index);
+                            launched.add(index);
+                        }
+                    });
+
+                    for (let index = particles.length - 1; index >= 0; index -= 1) {
+                        const particle = particles[index];
+                        particle.age += frameScale * 16.67;
+                        particle.x += particle.velocityX * frameScale;
+                        particle.y += particle.velocityY * frameScale;
+                        particle.velocityX *= Math.pow(0.985, frameScale);
+                        particle.velocityY = particle.velocityY * Math.pow(0.985, frameScale) + 0.035 * frameScale;
+
+                        if (particle.age >= particle.lifetime) {
+                            particles.splice(index, 1);
+                            continue;
+                        }
+
+                        context.globalAlpha = 1 - particle.age / particle.lifetime;
+                        context.strokeStyle = particle.color;
+                        context.lineWidth = 1.8;
+                        context.beginPath();
+                        context.arc(particle.x, particle.y, 1.5, 0, Math.PI * 2);
+                        context.fillStyle = particle.color;
+                        context.fill();
+                        context.beginPath();
+                        context.moveTo(particle.x, particle.y);
+                        context.lineTo(
+                            particle.x - particle.velocityX * 3,
+                            particle.y - particle.velocityY * 3,
+                        );
+                        context.stroke();
+                    }
+
+                    context.globalAlpha = 1;
+
+                    if (elapsed < 4400 || particles.length > 0) {
+                        window.requestAnimationFrame(animate);
+                    } else {
+                        context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+                        canvas.remove();
+                        window.removeEventListener('resize', resizeCanvas);
+                    }
+                };
+
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas, { passive: true });
+                window.requestAnimationFrame(animate);
+            })();
+        </script>
+    @endif
 </body>
 
 </html>
