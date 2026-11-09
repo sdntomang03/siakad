@@ -1,767 +1,350 @@
+@php
+    $student = session('studentData');
+    $birthDate = \Illuminate\Support\Carbon::parse($student->tanggal_lahir);
+@endphp
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hasil Kelulusan: SDN Tomang 03 Pagi</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-        rel="stylesheet">
-
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Hasil Kelulusan | SDN Tomang 03 Pagi</title>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            color-scheme: light;
+            font-family: Figtree, ui-sans-serif, system-ui, sans-serif;
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
+            --page: #f5f6f2;
+            --surface: #ffffff;
+            --surface-muted: #f1f7f3;
+            --text: #1f2937;
+            --muted: #526055;
+            --border: #d7dfd8;
+            --brand: #255b4b;
+            --brand-strong: #173c32;
+            --accent: #8a5e13;
+            --success-bg: #e8f4ec;
+            --success-text: #1d4b3e;
+            --warning-bg: #fff7df;
+            --warning-text: #713f12;
+            --danger-bg: #fdf0ef;
+            --danger-text: #8f2823;
+        }
+
         *,
         *::before,
         *::after {
             box-sizing: border-box;
+        }
+
+        body {
+            min-width: 0;
+            min-height: 100vh;
             margin: 0;
-            padding: 0;
+            background: var(--page);
+            color: var(--text);
+            line-height: 1.6;
         }
 
-        :root {
-            --gold-primary: #86efac;
-            --gold-light: #dcfce7;
-            --gold-deep: #166534;
-            --navy-deep: #0A1628;
-            --navy-primary: #111D35;
-            --navy-light: #1A2942;
-            --navy-card: #141F38;
-            --cream: #FFFEF9;
-            --cream-dark: #F5F3E8;
-            --accent-blue: #4a7c59;
-            --accent-green: #10B981;
-            --accent-red: #DC2626;
-            --text-muted: rgba(255, 255, 255, 0.5);
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.2);
-            --shadow-lg: 0 16px 64px rgba(0, 0, 0, 0.3);
-            --shadow-xl: 0 32px 96px rgba(0, 0, 0, 0.4);
-        }
-
-        [x-cloak] {
-            display: none !important;
-        }
-
-        .visually-hidden {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
+        a {
+            color: inherit;
+            cursor: pointer;
         }
 
         a:focus-visible {
-            outline: 3px solid var(--gold-primary);
+            outline: 3px solid var(--accent);
             outline-offset: 3px;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
-        html,
-        body {
-            height: 100%;
-            overflow-x: hidden;
-        }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: var(--navy-deep);
-            color: #fff;
-            min-height: 100dvh;
-            position: relative;
-        }
-
-        .bg-scene {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            overflow: hidden;
-            display: none;
-        }
-
-        .bg-scene::before {
-            content: '';
+        .skip-link {
             position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(ellipse 100% 80% at 20% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse 90% 70% at 80% 100%, rgba(74, 144, 226, 0.06) 0%, transparent 50%),
-                linear-gradient(135deg, #0A1628 0%, #141F38 40%, #0F1A2E 70%, #0A1628 100%);
-        }
-
-        .bg-scene::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            pointer-events: none;
-            mix-blend-mode: screen;
-        }
-
-        .orb-1 {
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, rgba(212, 175, 55, 0.04) 40%, transparent 70%);
-            top: -150px;
-            left: -150px;
-            animation: orbFloat1 20s ease-in-out infinite;
-        }
-
-        .orb-2 {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(74, 144, 226, 0.1) 0%, rgba(74, 144, 226, 0.03) 40%, transparent 70%);
-            bottom: -100px;
-            right: -100px;
-            animation: orbFloat2 25s ease-in-out infinite;
-        }
-
-        .orb-3 {
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(184, 148, 31, 0.08) 0%, transparent 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: orbFloat3 30s ease-in-out infinite;
-        }
-
-        @keyframes orbFloat1 {
-
-            0%,
-            100% {
-                transform: translate(0, 0) scale(1);
-                opacity: 1;
-            }
-
-            25% {
-                transform: translate(50px, -30px) scale(1.1);
-                opacity: 0.8;
-            }
-
-            50% {
-                transform: translate(20px, 40px) scale(0.9);
-                opacity: 1;
-            }
-
-            75% {
-                transform: translate(-30px, 20px) scale(1.05);
-                opacity: 0.9;
-            }
-        }
-
-        @keyframes orbFloat2 {
-
-            0%,
-            100% {
-                transform: translate(0, 0) scale(1);
-                opacity: 1;
-            }
-
-            33% {
-                transform: translate(-40px, 30px) scale(1.08);
-                opacity: 0.85;
-            }
-
-            66% {
-                transform: translate(25px, -20px) scale(0.92);
-                opacity: 1;
-            }
-        }
-
-        @keyframes orbFloat3 {
-
-            0%,
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.6;
-            }
-
-            50% {
-                transform: translate(-50%, -50%) scale(1.15);
-                opacity: 0.8;
-            }
-        }
-
-        .grid-overlay {
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(212, 175, 55, 0.03) 1.5px, transparent 1.5px),
-                linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1.5px, transparent 1.5px);
-            background-size: 80px 80px;
-            mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 20%, transparent 100%);
-            animation: gridPulse 8s ease-in-out infinite;
-        }
-
-        @keyframes gridPulse {
-
-            0%,
-            100% {
-                opacity: 0.4;
-            }
-
-            50% {
-                opacity: 0.7;
-            }
-        }
-
-        .light-rays {
-            position: absolute;
-            inset: 0;
-            background:
-                linear-gradient(45deg, transparent 48%, rgba(212, 175, 55, 0.02) 50%, transparent 52%),
-                linear-gradient(-45deg, transparent 48%, rgba(212, 175, 55, 0.02) 50%, transparent 52%);
-            background-size: 200px 200px;
-            animation: raysMove 40s linear infinite;
-            opacity: 0.3;
-        }
-
-        @keyframes raysMove {
-            0% {
-                background-position: 0 0, 0 0;
-            }
-
-            100% {
-                background-position: 200px 200px, -200px -200px;
-            }
-        }
-
-        .particles {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            background: var(--gold-primary);
-            border-radius: 50%;
-            opacity: 0;
-            box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
-        }
-
-        @keyframes particleFloat {
-            0% {
-                transform: translateY(100vh) translateX(0) rotate(0deg);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 0.8;
-            }
-
-            90% {
-                opacity: 0.3;
-            }
-
-            100% {
-                transform: translateY(-10vh) translateX(var(--drift, 40px)) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        .page-wrapper {
-            position: relative;
+            top: 0.75rem;
+            left: 0.75rem;
             z-index: 1;
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem 1.5rem;
-        }
-
-        .modal-panel {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 520px;
-            background: var(--cream);
-            border-radius: 32px;
-            overflow: hidden;
-            box-shadow:
-                0 0 0 1px rgba(255, 255, 255, 0.5),
-                0 24px 96px rgba(0, 0, 0, 0.6),
-                0 48px 128px rgba(0, 0, 0, 0.4);
-            transition: all 0.4s ease;
-        }
-
-        .state-loading {
-            padding: 4rem 3rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            background: linear-gradient(135deg, #0A1628 0%, #141F38 100%);
-            color: #fff;
-            position: relative;
-        }
-
-        .state-loading::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.08) 0%, transparent 60%);
-            pointer-events: none;
-        }
-
-        .scanner {
-            width: 120px;
-            height: 120px;
-            position: relative;
-            margin-bottom: 2.5rem;
-        }
-
-        .scanner-ring {
-            position: absolute;
-            inset: 0;
-            border: 2.5px solid rgba(212, 175, 55, 0.15);
-            border-radius: 50%;
-        }
-
-        .scanner-ring-spin {
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            border: 2.5px solid transparent;
-            border-top-color: var(--gold-primary);
-            border-right-color: rgba(212, 175, 55, 0.4);
-            animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
-        }
-
-        .scanner-ring-slow {
-            position: absolute;
-            inset: 12px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            border-bottom-color: rgba(212, 175, 55, 0.6);
-            border-left-color: rgba(212, 175, 55, 0.3);
-            animation: spin 2.5s linear infinite reverse;
-        }
-
-        .scanner-dot {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .scanner-dot-inner {
-            width: 16px;
-            height: 16px;
-            background: var(--gold-primary);
-            border-radius: 50%;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(212, 175, 55, 0.4);
-            animation: pulseDot 1.5s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes pulseDot {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.4);
-                opacity: 0.6;
-            }
-        }
-
-        .loading-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 0.75rem;
-            letter-spacing: 0.02em;
-        }
-
-        .loading-sub {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            font-weight: 500;
-        }
-
-        .progress-track {
-            width: 100%;
-            max-width: 280px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 4px;
-            margin-top: 2.5rem;
-            overflow: hidden;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--gold-deep), var(--gold-primary), var(--gold-light));
-            border-radius: 4px;
-            width: 0;
-            animation: progressAnim 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-            box-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
-            position: relative;
-        }
-
-        @keyframes progressAnim {
-            0% {
-                width: 0;
-            }
-
-            40% {
-                width: 45%;
-            }
-
-            70% {
-                width: 78%;
-            }
-
-            100% {
-                width: 96%;
-            }
-        }
-
-        .state-result {
-            background: var(--cream);
-            color: var(--navy-deep);
-        }
-
-        .result-band {
-            height: 8px;
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .band-lulus {
-            background: linear-gradient(90deg, #047857, #10b981, #34d399, #10b981, #047857);
-            background-size: 200% 100%;
-            animation: bandFlow 4s ease-in-out infinite;
-        }
-
-        .band-tidak {
-            background: linear-gradient(90deg, #be123c, #dc2626, #f87171, #dc2626, #be123c);
-            background-size: 200% 100%;
-            animation: bandFlow 4s ease-in-out infinite;
-        }
-
-        @keyframes bandFlow {
-
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
-        .result-body {
-            padding: 3rem 3rem 2.5rem;
-            position: relative;
-        }
-
-        .result-body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.04) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .result-stamp-area {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 2rem;
-        }
-
-        .stamp {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: stampIn 0.6s 0.1s cubic-bezier(0.68, -0.55, 0.265, 1.55) both;
-            position: relative;
-        }
-
-        .stamp::before {
-            content: '';
-            position: absolute;
-            inset: -8px;
-            border-radius: 50%;
-            background: inherit;
-            filter: blur(12px);
-            opacity: 0.3;
-        }
-
-        .stamp-lulus {
-            background: linear-gradient(135deg, rgba(4, 120, 87, 0.08) 0%, rgba(16, 185, 129, 0.12) 100%);
-            border: 3px solid rgba(4, 120, 87, 0.3);
-            box-shadow: 0 8px 24px rgba(4, 120, 87, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-
-        .stamp-tidak {
-            background: linear-gradient(135deg, rgba(190, 18, 60, 0.08) 0%, rgba(220, 38, 38, 0.12) 100%);
-            border: 3px solid rgba(190, 18, 60, 0.3);
-            box-shadow: 0 8px 24px rgba(190, 18, 60, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-
-        @keyframes stampIn {
-            0% {
-                transform: scale(0.3) rotate(-25deg);
-                opacity: 0;
-            }
-
-            60% {
-                transform: scale(1.1) rotate(5deg);
-            }
-
-            100% {
-                transform: scale(1) rotate(0);
-                opacity: 1;
-            }
-        }
-
-        .result-label {
-            text-align: center;
-            font-size: 0.7rem;
-            font-weight: 600;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: rgba(10, 22, 40, 0.4);
-            margin-bottom: 0.625rem;
-        }
-
-        .result-name {
-            text-align: center;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(1.6rem, 6vw, 2.2rem);
-            font-weight: 700;
-            color: var(--navy-deep);
-            line-height: 1.2;
-            margin-bottom: 0.5rem;
-            letter-spacing: 0.01em;
-            text-transform: uppercase;
-        }
-
-        .result-nisn {
-            text-align: center;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: rgba(10, 22, 40, 0.35);
-            margin-bottom: 2rem;
-            letter-spacing: 0.15em;
-        }
-
-        .cert-box {
-            border-radius: 20px;
-            padding: 2rem 1.75rem;
-            text-align: center;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-        }
-
-        .cert-box-lulus {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
-            border: 2px solid rgba(4, 120, 87, 0.2);
-        }
-
-        .cert-box-tidak {
-            background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fecdd3 100%);
-            border: 2px solid rgba(190, 18, 60, 0.2);
-        }
-
-        .cert-desc {
-            font-size: 0.9rem;
-            line-height: 1.7;
-            color: rgba(15, 23, 42, 0.8);
-            margin-bottom: 2rem;
+            padding: 0.65rem 0.9rem;
+            transform: translateY(-160%);
+            border-radius: 0.375rem;
+            background: var(--surface);
+            color: var(--brand-strong);
             font-weight: 600;
         }
 
-        .cert-verdict {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(2.2rem, 9vw, 3.2rem);
+        .skip-link:focus {
+            transform: translateY(0);
+        }
+
+        .page-shell {
+            width: min(100% - 2rem, 56rem);
+            margin-inline: auto;
+            padding-block: clamp(1.5rem, 5vw, 3.5rem);
+        }
+
+        .school-header {
+            margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .school-name {
+            margin: 0;
+            color: var(--brand-strong);
+            font-size: 1rem;
             font-weight: 700;
-            letter-spacing: -0.01em;
-            line-height: 1;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .verdict-lulus {
-            color: #047857;
+        .portal-name {
+            margin: 0.2rem 0 0;
+            color: var(--muted);
+            font-size: 0.875rem;
         }
 
-        .verdict-tidak {
-            color: #be123c;
+        .page-heading {
+            max-width: 38rem;
+            margin-bottom: 1.5rem;
         }
 
-        .seal-line {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding: 1rem 1.25rem;
-            background: rgba(10, 22, 40, 0.03);
-            border-radius: 12px;
-            border: 1.5px solid rgba(10, 22, 40, 0.08);
-            position: relative;
-            overflow: hidden;
+        h1 {
+            margin: 0;
+            color: var(--brand-strong);
+            font-size: clamp(1.75rem, 5vw, 2.4rem);
+            font-weight: 700;
+            letter-spacing: -0.035em;
+            line-height: 1.15;
         }
 
-        .seal-line::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: linear-gradient(180deg, var(--gold-primary), var(--gold-deep));
+        .page-intro {
+            margin: 0.65rem 0 0;
+            color: var(--muted);
+            font-size: 1rem;
         }
 
-        .seal-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--navy-deep);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+        .result-sheet {
+            overflow-wrap: anywhere;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            background: var(--surface);
         }
 
-        .btn-close {
+        .result-content {
+            padding: clamp(1.25rem, 4vw, 2.25rem);
+        }
+
+        .decision {
+            margin-bottom: 1.75rem;
+            padding: 1rem 1.125rem;
+            border: 1px solid transparent;
+            border-radius: 0.5rem;
+        }
+
+        .decision--passed {
+            border-color: #b7d7c1;
+            background: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .decision--failed {
+            border-color: #e6bfbc;
+            background: var(--danger-bg);
+            color: var(--danger-text);
+        }
+
+        .decision--pending {
+            border-color: #e8d59f;
+            background: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
+        .decision-label,
+        .field-label {
             display: block;
-            width: 100%;
-            padding: 1.125rem;
-            background: var(--navy-deep);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.8rem;
+            margin: 0;
+            font-size: 0.8125rem;
             font-weight: 600;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
+        }
+
+        .decision-value {
+            margin: 0.2rem 0 0;
+            font-size: clamp(1.25rem, 4vw, 1.625rem);
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        .student-name {
+            margin: 0.25rem 0 0;
+            color: var(--text);
+            font-size: clamp(1.35rem, 4vw, 1.75rem);
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .student-details {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0 0;
+            padding: 1.25rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .student-details div {
+            min-width: 0;
+        }
+
+        .student-details dt {
+            color: var(--muted);
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+
+        .student-details dd {
+            margin: 0.2rem 0 0;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .result-message {
+            margin: 1.25rem 0 0;
+            color: var(--text);
+        }
+
+        .verification {
+            margin: 1.5rem 0 0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: var(--surface-muted);
+        }
+
+        .verification-label {
+            display: block;
+            color: var(--muted);
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+
+        .verification code {
+            display: block;
+            margin-top: 0.2rem;
+            color: var(--brand-strong);
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 0.875rem;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .result-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            padding: 1.25rem clamp(1.25rem, 4vw, 2.25rem);
+            border-top: 1px solid var(--border);
+        }
+
+        .action-link {
+            display: inline-flex;
+            min-height: 44px;
+            align-items: center;
+            justify-content: center;
+            padding: 0.65rem 1rem;
+            border: 1px solid var(--brand);
+            border-radius: 0.375rem;
+            background: var(--brand);
+            color: #ffffff;
+            font-size: 0.9375rem;
+            font-weight: 600;
             text-align: center;
             text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(10, 22, 40, 0.2);
+            transition: background-color 140ms ease, border-color 140ms ease;
         }
 
-        .btn-close:hover {
-            background: var(--navy-light);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(10, 22, 40, 0.3);
+        .action-link:hover {
+            border-color: var(--brand-strong);
+            background: var(--brand-strong);
         }
 
-        .state-error {
-            padding: 3.5rem 3rem;
-            text-align: center;
-            background: var(--cream);
+        .action-link:active {
+            background: var(--brand-strong);
         }
 
-        .error-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
+        .action-link--secondary {
+            background: transparent;
+            color: var(--brand-strong);
         }
 
-        .error-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--navy-deep);
-            margin-bottom: 0.75rem;
+        .action-link--secondary:hover {
+            background: var(--surface-muted);
         }
 
-        .error-msg {
-            font-size: 0.875rem;
-            color: rgba(10, 22, 40, 0.5);
-            line-height: 1.8;
-            margin-bottom: 2.5rem;
+        .page-footer {
+            margin-top: 1.25rem;
+            color: var(--muted);
+            font-size: 0.8125rem;
         }
 
-        .shake-error {
-            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
-        }
-
-        @keyframes shake {
-
-            10%,
-            90% {
-                transform: translate3d(-2px, 0, 0);
-            }
-
-            20%,
-            80% {
-                transform: translate3d(4px, 0, 0);
-            }
-
-            30%,
-            50%,
-            70% {
-                transform: translate3d(-6px, 0, 0);
-            }
-
-            40%,
-            60% {
-                transform: translate3d(6px, 0, 0);
+        @media (min-width: 38rem) {
+            .student-details {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1.5rem;
             }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 34rem) {
+            .page-shell {
+                width: min(100% - 1.25rem, 56rem);
+                padding-block: 1.25rem;
+            }
 
-            .result-body,
-            .state-error,
-            .state-loading {
-                padding: 2.5rem 2rem 2rem;
+            .result-actions {
+                flex-direction: column;
+            }
+
+            .action-link {
+                width: 100%;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                color-scheme: dark;
+                --page: #111b15;
+                --surface: #1b2820;
+                --surface-muted: #24352a;
+                --text: #edf2ee;
+                --muted: #b7c3ba;
+                --border: #3a4b3e;
+                --brand: #34745d;
+                --brand-strong: #d5eadb;
+                --accent: #f1c777;
+                --success-bg: #1d3b2a;
+                --success-text: #c4e8ce;
+                --warning-bg: #3a3018;
+                --warning-text: #f5d98d;
+                --danger-bg: #402524;
+                --danger-text: #ffd1cc;
+            }
+
+            .decision--passed {
+                border-color: #3d7050;
+            }
+
+            .decision--failed {
+                border-color: #80504c;
+            }
+
+            .decision--pending {
+                border-color: #776130;
+            }
+
+            .action-link {
+                color: #ffffff;
+            }
+
+            .action-link--secondary {
+                color: var(--brand-strong);
             }
         }
 
@@ -770,233 +353,106 @@
             *::before,
             *::after {
                 scroll-behavior: auto !important;
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
             }
         }
     </style>
 </head>
 
-<body x-data="hasilApp">
+<body>
+    <a class="skip-link" href="#main-content">Lewati ke hasil kelulusan</a>
 
-    <header class="visually-hidden">
-        <h1>Hasil Kelulusan</h1>
-    </header>
-    <main class="page-wrapper">
-        <!-- MODAL PANEL -->
-        <div class="modal-panel"
-            :class="(state === 'error' || studentData.keterangan === 'TIDAK LULUS') ? 'shake-error' : ''" x-cloak>
+    <div class="page-shell">
+        <header class="school-header">
+            <p class="school-name">SD Negeri Tomang 03 Pagi</p>
+            <p class="portal-name">Portal pengumuman kelulusan</p>
+        </header>
 
-            <!-- 1. LOADING MEMVERIFIKASI AWAL -->
-            <div x-show="state === 'loading'" class="state-loading">
-                <div class="scanner">
-                    <div class="scanner-ring"></div>
-                    <div class="scanner-ring-spin"></div>
-                    <div class="scanner-ring-slow"></div>
-                    <div class="scanner-dot">
-                        <div class="scanner-dot-inner"></div>
-                    </div>
-                </div>
-                <p class="loading-title">Memverifikasi</p>
-                <p class="loading-sub">Menghubungkan ke database</p>
-                <div class="progress-track">
-                    <div class="progress-fill"></div>
-                </div>
+        <main id="main-content">
+            <div class="page-heading">
+                <h1>Hasil kelulusan</h1>
+                <p class="page-intro">Informasi hasil berdasarkan data yang digunakan saat pencarian.</p>
             </div>
 
-            <!-- 2. HASIL LULUS & TIDAK LULUS -->
-            <div x-show="state === 'result'" class="state-result" style="display: none;">
-                <div class="result-band"
-                    :class="{ 'band-lulus': studentData.keterangan === 'LULUS', 'band-tidak': studentData.keterangan === 'TIDAK LULUS' }">
-                </div>
-                <div class="result-body">
-                    <div class="result-stamp-area">
-                        <div class="stamp" :class="studentData.keterangan === 'LULUS' ? 'stamp-lulus' : 'stamp-tidak'">
-                            <template x-if="studentData.keterangan === 'LULUS'">
-                                <svg style="width:48px;height:48px;color:#047857;" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                                </svg>
-                            </template>
-                            <template x-if="studentData.keterangan === 'TIDAK LULUS'">
-                                <svg style="width:48px;height:48px;color:#be123c;" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                </svg>
-                            </template>
+            <section class="result-sheet" aria-labelledby="student-name">
+                <div class="result-content">
+                    @if ($student->keterangan === 'LULUS')
+                        <div class="decision decision--passed">
+                            <p class="decision-label">Keputusan kelulusan</p>
+                            <p class="decision-value">LULUS</p>
                         </div>
-                    </div>
-
-                    <header>
-                        <p class="result-label">Atas Nama</p>
-                    <h2 class="result-name" x-text="studentData.nama"></h2>
-                    </header>
-
-                    <p class="result-nisn">
-                        NISN &nbsp;·&nbsp; <span x-text="studentData.nisn"></span> <br>
-                        <span style="font-size: 0.7rem; color: rgba(10, 22, 40, 0.45); text-transform: uppercase;">
-                            TTL &nbsp;·&nbsp; <span x-text="studentData.ttl"></span>
-                        </span>
-                    </p>
-
-                    <div class="cert-box"
-                        :class="{ 'cert-box-lulus': studentData.keterangan === 'LULUS', 'cert-box-tidak': studentData.keterangan === 'TIDAK LULUS' }">
-                        <p class="cert-desc">Berdasarkan Keputusan Rapat Pleno Dewan Guru SD Negeri Tomang 03, siswa
-                            tersebut dinyatakan:</p>
-                        <!-- PESAN WARNA MERAH UNTUK TIDAK LULUS -->
-                        <div class="cert-verdict"
-                            :class="{'verdict-lulus': studentData.keterangan === 'LULUS', 'verdict-tidak': studentData.keterangan === 'TIDAK LULUS'}"
-                            x-text="studentData.keterangan"></div>
-                    </div>
-                    <template x-if="studentData.keterangan === 'TIDAK LULUS'">
-                        <div
-                            style="margin-bottom: 1rem; padding: 1rem; background-color: #fff1f2; border: 1px solid #fda4af; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(190, 18, 60, 0.05);">
-                            <p style="font-weight: 700; color: #be123c; margin-bottom: 0.5rem; font-size: 1rem;">
-                                Tetap Semangat & Jangan Menyerah!
-                            </p>
-                            <p style="color: #9f1239; font-size: 0.85rem; line-height: 1.5; margin: 0;">
-                                Hasil ini bukanlah akhir dari segalanya. Jadikan momen ini sebagai batu loncatan untuk
-                                belajar lebih giat dan bangkit menjadi lebih baik. Silakan hubungi wali kelas untuk
-                                panduan dan informasi selanjutnya.
-                            </p>
+                    @elseif ($student->keterangan === 'TIDAK LULUS')
+                        <div class="decision decision--failed">
+                            <p class="decision-label">Keputusan kelulusan</p>
+                            <p class="decision-value">TIDAK LULUS</p>
                         </div>
-                    </template>
-                    <div class="seal-line">
-                        <div class="seal-icon">
-                            <svg style="width:20px;height:20px;color:#166534;" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
+                    @else
+                        <div class="decision decision--pending">
+                            <p class="decision-label">Keputusan kelulusan</p>
+                            <p class="decision-value">DITUNDA</p>
                         </div>
-                        <p class="seal-text">
-                            <strong>SD Negeri Tomang 03 | Jakarta</strong>
-                            <span class="verification-wrapper"
-                                style="font-size: 0.75rem; color: #64748b; display: block;">
-                                ID Verifikasi: <span style="font-family: monospace; font-weight: 800; color: #166534;"
-                                    x-text="studentData.securenumber"></span>
-                            </span>
-                        </p>
-                    </div>
-
-                    <!-- TOMBOL DOWNLOAD HANYA MUNCUL JIKA LULUS -->
-                    <footer>
-                    @if(session('studentData') && session('studentData')->keterangan === 'LULUS')
-                    <a href="{{ route('kelulusan.download', session('token')) }}"
-                        style="display:flex; align-items:center; justify-content:center; gap:0.5rem; width:100%; padding:1.125rem; background:#10b981; color:#fff; border-radius:12px; font-weight:600; text-decoration:none; margin-bottom:1rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
-                        <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                        Download Surat Kelulusan (PDF)
-                    </a>
                     @endif
 
-                    <nav aria-label="Navigasi hasil kelulusan">
-                    <a href="{{ route('pengumuman.index') }}" class="btn-close">Kembali ke Halaman Awal</a>
-                    </nav>
-                    </footer>
-                </div>
-            </div>
+                    <p class="field-label">Nama siswa</p>
+                    <h2 class="student-name" id="student-name">{{ $student->nama }}</h2>
 
-            <!-- 3. STATE DITUNDA (HANYA INFORMASI) -->
-            <div x-show="state === 'ditunda'" class="state-error" style="display: none;">
-                <div class="error-icon" style="background-color: #fee2e2; color: #ef4444; border: 2px solid #ef4444;">
-                    <svg style="width:36px;height:36px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <h3 class="error-title" style="color: #ef4444;">DATA TIDAK DITEMUKAN</h3>
-                <p class="error-msg">Mohon maaf, data yang Anda cari tidak ditemukan pada data kelulusan. Silakan
-                    hubungi Wali Kelas
-                    Anda untuk informasi
-                    lebih lanjut.</p>
+                    <dl class="student-details">
+                        <div>
+                            <dt>NISN</dt>
+                            <dd>{{ $student->nisn }}</dd>
+                        </div>
+                        <div>
+                            <dt>Tempat, tanggal lahir</dt>
+                            <dd>
+                                @if ($student->tempat_lahir)
+                                    {{ $student->tempat_lahir }},
+                                @endif
+                                <time datetime="{{ $birthDate->toDateString() }}">
+                                    {{ $birthDate->locale('id')->translatedFormat('d F Y') }}
+                                </time>
+                            </dd>
+                        </div>
+                    </dl>
 
-                <footer>
-                    <nav aria-label="Navigasi hasil kelulusan">
-                        <a href="{{ route('pengumuman.index') }}" class="btn-close" style="margin-top: 1.5rem;">Kembali ke
-                            Halaman Awal</a>
-                    </nav>
+                    @if ($student->keterangan === 'LULUS')
+                        <p class="result-message">
+                            Berdasarkan keputusan rapat pleno Dewan Guru SD Negeri Tomang 03, siswa tersebut dinyatakan lulus.
+                        </p>
+                    @elseif ($student->keterangan === 'TIDAK LULUS')
+                        <p class="result-message">
+                            Untuk mendapatkan penjelasan dan informasi tindak lanjut, silakan hubungi wali kelas.
+                        </p>
+                    @else
+                        <p class="result-message">
+                            Keputusan kelulusan masih ditunda. Silakan hubungi wali kelas untuk memperoleh informasi lebih lanjut.
+                        </p>
+                    @endif
+
+                    @if (session('secureNumber'))
+                        <p class="verification">
+                            <span class="verification-label">ID verifikasi</span>
+                            <code>{{ session('secureNumber') }}</code>
+                        </p>
+                    @endif
+                </div>
+
+                <footer class="result-actions">
+                    @if ($student->keterangan === 'LULUS')
+                        <a class="action-link" href="{{ route('kelulusan.download', session('token')) }}">
+                            Unduh Surat Keterangan Lulus (PDF)
+                        </a>
+                    @endif
+                    <a class="action-link action-link--secondary" href="{{ route('pengumuman.index') }}">
+                        Kembali ke portal kelulusan
+                    </a>
                 </footer>
-            </div>
+            </section>
 
-        </div>
-    </main>
-
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('hasilApp', () => ({
-                state: 'loading',
-
-                studentData: {
-                    nama: @json(session('studentData')->nama ?? ''),
-                    nisn: @json(session('studentData')->nisn ?? ''),
-                    ttl: @json(session('studentData') ? session('studentData')->tempat_lahir . ', ' . \Carbon\Carbon::parse(session('studentData')->tanggal_lahir)->locale('id')->translatedFormat('d F Y') : ''),
-                    keterangan: @json(session('studentData')->keterangan ?? ''),
-                    nomor_skl: @json(session('studentData')->nomor_skl ?? ''),
-                    securenumber: @json(session('secureNumber') ?? '')
-                },
-
-                init() {
-                    if(this.studentData.nisn === '') {
-                        window.location.href = "{{ route('pengumuman.index') }}";
-                        return;
-                    }
-
-                    setTimeout(() => {
-                        // LOGIKA PENGECEKAN STATUS
-                        if (this.studentData.keterangan === 'DITUNDA') {
-                            this.state = 'ditunda';
-                        } else {
-                            this.state = 'result';
-                            if (this.studentData.keterangan === 'LULUS') {
-                                this.launchPremiumConfetti();
-                            }
-                        }
-                    }, 2600);
-                },
-
-                launchPremiumConfetti() {
-                    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-                    const colors = ['#255B4B', '#FFFFFF', '#8A5E13', '#DCEBE3'];
-                    const duration = 5000;
-                    const end = Date.now() + duration;
-
-                    const frame = () => {
-                        confetti({
-                            particleCount: 5, angle: 60, spread: 70, origin: { x: 0, y: 0.6 },
-                            colors: colors, startVelocity: 50, gravity: 0.8, scalar: 1.1
-                        });
-                        confetti({
-                            particleCount: 5, angle: 120, spread: 70, origin: { x: 1, y: 0.6 },
-                            colors: colors, startVelocity: 50, gravity: 0.8, scalar: 1.1
-                        });
-                        if (Date.now() < end) requestAnimationFrame(frame);
-                    };
-                    frame();
-
-                    setTimeout(() => {
-                        confetti({
-                            particleCount: 80, spread: 90, origin: { x: 0.5, y: 0.5 },
-                            colors: colors, scalar: 1.3, gravity: 0.9
-                        });
-                    }, 250);
-
-                    setTimeout(() => {
-                        confetti({
-                            particleCount: 50, spread: 60, origin: { x: 0.5, y: 0.6 },
-                            colors: colors, scalar: 1.1, gravity: 1
-                        });
-                    }, 600);
-                }
-            }));
-        });
-    </script>
+            <footer class="page-footer">
+                Hasil ditampilkan berdasarkan data kelulusan SD Negeri Tomang 03 Pagi.
+            </footer>
+        </main>
+    </div>
 </body>
 
 </html>
