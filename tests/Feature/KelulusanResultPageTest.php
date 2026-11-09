@@ -35,9 +35,14 @@ test('the result page shows the decision and only offers the certificate to grad
 
     if ($status === 'LULUS') {
         $response->assertSee(route('kelulusan.download', 'token-uji'))
-            ->assertSee('graduation-fireworks');
+            ->assertSee('<section class="celebration-stage"', false)
+            ->assertSeeText('Selamat!')
+            ->assertSeeText('Anda dinyatakan')
+            ->assertSee('graduation-fireworks')
+            ->assertSee('prefers-reduced-motion: reduce');
     } else {
         $response->assertDontSee(route('kelulusan.download', 'token-uji'))
+            ->assertDontSee('<section class="celebration-stage"', false)
             ->assertDontSee('graduation-fireworks');
     }
 })->with('graduation results');

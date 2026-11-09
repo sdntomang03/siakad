@@ -27,8 +27,6 @@
             --brand: #255b4b;
             --brand-strong: #173c32;
             --accent: #8a5e13;
-            --success-bg: #e8f4ec;
-            --success-text: #1d4b3e;
             --warning-bg: #fff7df;
             --warning-text: #713f12;
             --danger-bg: #fdf0ef;
@@ -50,13 +48,60 @@
             line-height: 1.6;
         }
 
+        .celebration-stage {
+            position: relative;
+            isolation: isolate;
+            display: grid;
+            min-height: 13rem;
+            place-items: center;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            padding: clamp(1.5rem, 5vw, 2.5rem);
+            border: 1px solid var(--accent);
+            border-radius: 0.75rem;
+            background: #173c32;
+            color: #ffffff;
+            text-align: center;
+        }
+
         .fireworks-canvas {
-            position: fixed;
+            position: absolute;
             inset: 0;
             z-index: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
+        }
+
+        .celebration-content {
+            position: relative;
+            z-index: 1;
+            max-width: 34rem;
+        }
+
+        .celebration-label {
+            margin: 0;
+            color: #e6d39e;
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+
+        .celebration-title {
+            margin: 0.35rem 0 0;
+            font-size: clamp(1.75rem, 6vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: -0.035em;
+            line-height: 1.15;
+        }
+
+        .celebration-result {
+            margin: 0.55rem 0 0;
+            font-size: clamp(1.125rem, 4vw, 1.375rem);
+        }
+
+        .celebration-result strong {
+            color: #f0d48e;
+            font-weight: 700;
         }
 
         a {
@@ -149,12 +194,6 @@
             padding: 1rem 1.125rem;
             border: 1px solid transparent;
             border-radius: 0.5rem;
-        }
-
-        .decision--passed {
-            border-color: #b7d7c1;
-            background: var(--success-bg);
-            color: var(--success-text);
         }
 
         .decision--failed {
@@ -313,6 +352,15 @@
                 flex-direction: column;
             }
 
+            .celebration-stage {
+                min-height: 12rem;
+                margin-bottom: 1rem;
+            }
+
+            .celebration-result strong {
+                display: block;
+            }
+
             .action-link {
                 width: 100%;
             }
@@ -330,16 +378,10 @@
                 --brand: #34745d;
                 --brand-strong: #d5eadb;
                 --accent: #f1c777;
-                --success-bg: #1d3b2a;
-                --success-text: #c4e8ce;
                 --warning-bg: #3a3018;
                 --warning-text: #f5d98d;
                 --danger-bg: #402524;
                 --danger-text: #ffd1cc;
-            }
-
-            .decision--passed {
-                border-color: #3d7050;
             }
 
             .decision--failed {
@@ -385,19 +427,25 @@
                 <p class="page-intro">Informasi hasil berdasarkan data yang digunakan saat pencarian.</p>
             </div>
 
+            @if ($student->keterangan === 'LULUS')
+                <section class="celebration-stage" aria-labelledby="celebration-title">
+                    <canvas class="fireworks-canvas" id="graduation-fireworks" aria-hidden="true"></canvas>
+                    <div class="celebration-content">
+                        <p class="celebration-label">Keputusan akhir</p>
+                        <h2 class="celebration-title" id="celebration-title">Selamat!</h2>
+                        <p class="celebration-result">Anda dinyatakan <strong>LULUS</strong>.</p>
+                    </div>
+                </section>
+            @endif
+
             <section class="result-sheet" aria-labelledby="student-name">
                 <div class="result-content">
-                    @if ($student->keterangan === 'LULUS')
-                        <div class="decision decision--passed">
-                            <p class="decision-label">Keputusan kelulusan</p>
-                            <p class="decision-value">LULUS</p>
-                        </div>
-                    @elseif ($student->keterangan === 'TIDAK LULUS')
+                    @if ($student->keterangan === 'TIDAK LULUS')
                         <div class="decision decision--failed">
                             <p class="decision-label">Keputusan kelulusan</p>
                             <p class="decision-value">TIDAK LULUS</p>
                         </div>
-                    @else
+                    @elseif ($student->keterangan !== 'LULUS')
                         <div class="decision decision--pending">
                             <p class="decision-label">Keputusan kelulusan</p>
                             <p class="decision-value">DITUNDA</p>
@@ -465,46 +513,51 @@
         </main>
     </div>
     @if ($student->keterangan === 'LULUS')
-        <canvas class="fireworks-canvas" id="graduation-fireworks" aria-hidden="true"></canvas>
         <script>
             (() => {
                 const canvas = document.getElementById('graduation-fireworks');
+                const stage = canvas?.parentElement;
                 const context = canvas?.getContext('2d');
 
-                if (!canvas || !context || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                if (!canvas || !stage || !context || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                     canvas?.remove();
                     return;
                 }
 
-                const palette = ['#173C32', '#2F725D', '#8A5E13', '#FFFFFF'];
-                const bursts = [120, 1120, 2120, 3120];
+                const palette = ['#F0D48E', '#DCEBE3', '#FFFFFF', '#78B99A'];
+                const bursts = [120, 760, 1480, 2240, 2960];
                 const particles = [];
                 const launched = new Set();
                 const startedAt = performance.now();
                 let previousFrame = startedAt;
+                let stageWidth = 0;
+                let stageHeight = 0;
 
                 const resizeCanvas = () => {
                     const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-                    canvas.width = Math.round(window.innerWidth * pixelRatio);
-                    canvas.height = Math.round(window.innerHeight * pixelRatio);
+                    stageWidth = stage.clientWidth;
+                    stageHeight = stage.clientHeight;
+                    canvas.width = Math.round(stageWidth * pixelRatio);
+                    canvas.height = Math.round(stageHeight * pixelRatio);
                     context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
                 };
 
                 const launchBurst = (index) => {
                     const positions = [
-                        [0.22, 0.17],
-                        [0.78, 0.18],
-                        [0.5, 0.22],
-                        [0.3, 0.28],
+                        [0.2, 0.36],
+                        [0.8, 0.36],
+                        [0.31, 0.72],
+                        [0.69, 0.72],
+                        [0.5, 0.28],
                     ];
                     const [horizontal, vertical] = positions[index];
-                    const centerX = window.innerWidth * horizontal;
-                    const centerY = window.innerHeight * vertical;
-                    const particleCount = 34;
+                    const centerX = stageWidth * horizontal;
+                    const centerY = stageHeight * vertical;
+                    const particleCount = 40;
 
                     for (let particleIndex = 0; particleIndex < particleCount; particleIndex += 1) {
                         const angle = (Math.PI * 2 * particleIndex) / particleCount + Math.random() * 0.035;
-                        const speed = 1.1 + Math.random() * 2;
+                        const speed = 1 + Math.random() * 0.65;
 
                         particles.push({
                             x: centerX,
@@ -512,7 +565,7 @@
                             velocityX: Math.cos(angle) * speed,
                             velocityY: Math.sin(angle) * speed,
                             age: 0,
-                            lifetime: 1050 + Math.random() * 250,
+                            lifetime: 850 + Math.random() * 300,
                             color: palette[Math.floor(Math.random() * palette.length)],
                         });
                     }
@@ -522,7 +575,7 @@
                     const elapsed = now - startedAt;
                     const frameScale = Math.min((now - previousFrame) / 16.67, 2);
                     previousFrame = now;
-                    context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+                    context.clearRect(0, 0, stageWidth, stageHeight);
 
                     bursts.forEach((time, index) => {
                         if (elapsed >= time && !launched.has(index)) {
@@ -546,16 +599,16 @@
 
                         context.globalAlpha = 1 - particle.age / particle.lifetime;
                         context.strokeStyle = particle.color;
-                        context.lineWidth = 1.8;
+                        context.lineWidth = 2.2;
                         context.beginPath();
-                        context.arc(particle.x, particle.y, 1.5, 0, Math.PI * 2);
+                        context.arc(particle.x, particle.y, 2, 0, Math.PI * 2);
                         context.fillStyle = particle.color;
                         context.fill();
                         context.beginPath();
                         context.moveTo(particle.x, particle.y);
                         context.lineTo(
-                            particle.x - particle.velocityX * 3,
-                            particle.y - particle.velocityY * 3,
+                            particle.x - particle.velocityX * 4,
+                            particle.y - particle.velocityY * 4,
                         );
                         context.stroke();
                     }
