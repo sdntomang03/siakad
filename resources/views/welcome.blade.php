@@ -43,6 +43,28 @@
             display: none;
         }
 
+        .mobile-nav-close {
+            display: none;
+        }
+
+        .mobile-nav[open] .mobile-nav-open {
+            display: none;
+        }
+
+        .mobile-nav[open] .mobile-nav-close {
+            display: block;
+        }
+
+        @layer base {
+            :where(a[href], summary) {
+                cursor: pointer;
+            }
+
+            :where(a[href], summary):active {
+                transform: translateY(1px);
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             html {
                 scroll-behavior: auto;
@@ -104,14 +126,19 @@
                     @endif
                 </div>
 
-                <details class="group relative lg:hidden">
+                <details class="mobile-nav relative lg:hidden">
                     <summary
-                        class="flex min-h-11 cursor-pointer items-center gap-2 rounded-md px-3 text-sm font-semibold text-[var(--ink)] hover:bg-white active:bg-[#DCEBE3]">
-                        Menu
-                        <svg aria-hidden="true" class="h-4 w-4 transition-transform group-open:rotate-180"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        aria-label="Buka atau tutup navigasi"
+                        class="flex h-11 w-11 items-center justify-center rounded-md text-sm font-semibold text-[var(--ink)] hover:bg-white active:bg-[#DCEBE3]">
+                        <svg aria-hidden="true" class="mobile-nav-open h-6 w-6" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m6 9 6 6 6-6" />
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg aria-hidden="true" class="mobile-nav-close h-6 w-6" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 6l12 12M18 6L6 18" />
                         </svg>
                     </summary>
                     <div class="absolute right-0 top-full z-50 mt-2 w-[min(20rem,calc(100vw-2rem))] rounded-md border border-[var(--line)] bg-white p-2">
@@ -198,35 +225,32 @@
                     </div>
                 </div>
 
-                <aside aria-labelledby="menu-preview-title"
+                <aside id="layanan" aria-labelledby="menu-preview-title"
                     class="min-w-0 rounded-lg bg-[var(--ink)] px-6 py-7 text-white sm:px-8 sm:py-9">
-                    <div class="flex items-start justify-between gap-4 border-b border-white/20 pb-5">
-                        <div>
-                            <p class="text-sm font-medium text-[#DCEBE3]">Menu di dalam portal</p>
-                            <h2 id="menu-preview-title" class="mt-2 text-2xl font-semibold tracking-tight">
-                                Layanan sekolah
-                            </h2>
-                        </div>
-                        <span class="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white/10">
-                            <svg aria-hidden="true" class="h-6 w-6" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                    d="M4 5.5h16M4 12h16M4 18.5h10" />
-                            </svg>
-                        </span>
+                    <div class="border-b border-white/20 pb-5">
+                        <p class="text-sm font-medium text-[#DCEBE3]">Cakupan layanan</p>
+                        <h2 id="menu-preview-title" class="mt-2 text-2xl font-semibold tracking-tight">
+                            Layanan sekolah
+                        </h2>
                     </div>
 
                     <ul class="divide-y divide-white/15">
                         <li class="py-4">
-                            <h3 class="font-semibold">KBM &amp; Kesiswaan</h3>
+                            <h3 class="font-semibold">Data akademik</h3>
                             <p class="mt-1 text-sm leading-relaxed text-white/85">
-                                Absensi, daftar siswa, penilaian, tugas, dan jadwal.
+                                Tahun ajaran, kelas, mata pelajaran, dan data siswa.
                             </p>
                         </li>
                         <li class="py-4">
-                            <h3 class="font-semibold">Administrasi</h3>
+                            <h3 class="font-semibold">Kegiatan belajar</h3>
                             <p class="mt-1 text-sm leading-relaxed text-white/85">
-                                Buku, aset, peminjaman, pengembalian rapor, dan kelulusan.
+                                Absensi, penilaian, tugas, catatan siswa, dan jadwal pelajaran.
+                            </p>
+                        </li>
+                        <li class="py-4">
+                            <h3 class="font-semibold">Operasional</h3>
+                            <p class="mt-1 text-sm leading-relaxed text-white/85">
+                                Buku, peminjaman, aset sekolah, dan pengembalian rapor.
                             </p>
                         </li>
                         <li class="pt-4">
@@ -240,50 +264,6 @@
                         Setiap akun hanya menampilkan menu sesuai perannya.
                     </p>
                 </aside>
-            </div>
-        </section>
-
-        <section id="layanan" aria-labelledby="services-title"
-            class="scroll-mt-6 border-y border-[var(--line)] bg-white">
-            <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-8 sm:py-16 md:grid-cols-[minmax(14rem,0.78fr)_minmax(0,1.22fr)] md:gap-16">
-                <div>
-                    <p class="text-sm font-semibold text-[var(--pine)]">Cakupan layanan</p>
-                    <h2 id="services-title"
-                        class="mt-3 text-3xl font-semibold leading-tight tracking-tight text-[var(--ink)] sm:text-4xl">
-                        Dibuat untuk pekerjaan sekolah sehari-hari.
-                    </h2>
-                    <p class="mt-4 leading-relaxed text-[var(--moss)]">
-                        Dari data kelas sampai laporan, layanan berada di dalam aplikasi yang sama. Akses setiap bagian
-                        mengikuti peran pengguna.
-                    </p>
-                </div>
-
-                <div class="divide-y divide-[var(--line)] border-y border-[var(--line)]">
-                    <article class="grid gap-2 py-5 sm:grid-cols-[minmax(9rem,0.7fr)_minmax(0,1.3fr)] sm:gap-6">
-                        <h3 class="font-semibold text-[var(--ink)]">Data akademik</h3>
-                        <p class="text-sm leading-relaxed text-[var(--moss)]">
-                            Tahun ajaran, kelas, mata pelajaran, dan data siswa.
-                        </p>
-                    </article>
-                    <article class="grid gap-2 py-5 sm:grid-cols-[minmax(9rem,0.7fr)_minmax(0,1.3fr)] sm:gap-6">
-                        <h3 class="font-semibold text-[var(--ink)]">Kegiatan belajar</h3>
-                        <p class="text-sm leading-relaxed text-[var(--moss)]">
-                            Absensi, penilaian, tugas, catatan siswa, dan jadwal pelajaran.
-                        </p>
-                    </article>
-                    <article class="grid gap-2 py-5 sm:grid-cols-[minmax(9rem,0.7fr)_minmax(0,1.3fr)] sm:gap-6">
-                        <h3 class="font-semibold text-[var(--ink)]">Operasional</h3>
-                        <p class="text-sm leading-relaxed text-[var(--moss)]">
-                            Buku, peminjaman, aset sekolah, dan pengembalian rapor.
-                        </p>
-                    </article>
-                    <article class="grid gap-2 py-5 sm:grid-cols-[minmax(9rem,0.7fr)_minmax(0,1.3fr)] sm:gap-6">
-                        <h3 class="font-semibold text-[var(--ink)]">Layanan guru</h3>
-                        <p class="text-sm leading-relaxed text-[var(--moss)]">
-                            e-TPP dan generator modul ajar.
-                        </p>
-                    </article>
-                </div>
             </div>
         </section>
 
