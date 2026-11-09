@@ -23,7 +23,7 @@
             padding-bottom: 10px;
         }
 
-        .header h2 {
+        .header h1 {
             margin: 0 0 5px 0;
             font-size: 18px;
             text-transform: uppercase;
@@ -34,19 +34,22 @@
             width: 100%;
         }
 
+        .empty-state {
+            margin: 2cm 0;
+            color: #333;
+            font-size: 14px;
+        }
+
         .photo-item {
             display: inline-block;
             width: 4cm;
-            height: 8cm;
-            /* TAMBAHAN: Kunci tinggi keseluruhan kotak (6cm foto + 2cm area teks) */
+            min-height: 8cm;
             margin: 0.4cm 0.25cm;
             /* Sedikit mengatur jarak agar pas 4 kolom di kertas A4 */
             text-align: center;
             vertical-align: top;
             /* TAMBAHAN: Memaksa semua kotak rata dari atas */
             page-break-inside: avoid;
-            overflow: hidden;
-            /* TAMBAHAN: Mencegah nama yang terlalu panjang merusak layout kotak */
         }
 
         .photo-img {
@@ -79,22 +82,20 @@
             font-weight: bold;
             text-transform: uppercase;
             line-height: 1.2;
-
-            /* Membatasi teks maksimal 2 baris agar seragam */
-            height: 26px;
-            overflow: hidden;
+            min-height: 26px;
+            word-wrap: break-word;
         }
     </style>
 </head>
 
 <body>
-    <div class="header">
-        <h2>Galeri Foto Kelas {{ $classroom->nama_kelas }}</h2>
+    <header class="header">
+        <h1>Galeri Foto Kelas {{ $classroom->nama_kelas }}</h1>
         <p style="margin:0; font-size:12px;">Tahun Ajaran: {{ $classroom->academicYear->tahun_ajaran ?? '-' }}</p>
-    </div>
+    </header>
 
-    <div class="gallery">
-        @foreach($students as $student)
+    <main class="gallery">
+        @forelse($students as $student)
         <div class="photo-item">
 
             @php
@@ -142,7 +143,7 @@
             @endphp
 
             @if($imageBase64)
-            <img src="{{ $imageBase64 }}" class="photo-img">
+            <img src="{{ $imageBase64 }}" class="photo-img" alt="Foto {{ $student->nama_lengkap }}">
             @else
             <div class="placeholder">
                 <span>BELUM ADA FOTO</span>
@@ -151,8 +152,10 @@
 
             <div class="student-name">{{ $student->nama_lengkap }}</div>
         </div>
-        @endforeach
-    </div>
+        @empty
+        <p class="empty-state">Belum ada siswa yang terdaftar di kelas ini.</p>
+        @endforelse
+    </main>
 </body>
 
 </html>
