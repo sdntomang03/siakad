@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GoogleContactsExport;
 use App\Exports\StudentsExport;
 use App\Models\AcademicYear;
 use App\Models\Classroom;
@@ -12,6 +13,7 @@ use App\Models\Student;
 use App\Models\Subject;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ClassroomController extends Controller
@@ -287,6 +289,42 @@ class ClassroomController extends Controller
 
         // Panggil StudentsExport dengan mengirim (school_id, classroom_id)
         return Excel::download(new StudentsExport($classroom->school_id, $classroom->id), $namaFile);
+    }
+
+    public function exportGoogleContacts(Classroom $classroom)
+    {
+        $user = auth()->user();
+
+        abort_if(! $user->hasAnyRole(['superadmin', 'operator', 'guru', 'kepsek']), 403, 'Akses Ditolak');
+
+        if (! $user->hasRole('superadmin') && $classroom->school_id !== $user->school_id) {
+            abort(403, 'Akses ditolak: Kelas ini berada di sekolah lain.');
+        }
+
+        if ($user->hasRole('guru')) {
+            $employeeId = $user->employee->id ?? 0;
+            if ($classroom->homeroom_teacher_id !== $employeeId) {
+                abort(403, 'Akses ditolak: Anda bukan wali kelas untuk rombel ini.');
+            }
+        }
+
+        $students = $classroom->students()
+            ->whereNotNull('students.hp')
+            ->whereRaw("TRIM(students.hp) <> ''")
+            ->orderBy('students.nama_lengkap')
+            ->get(['students.id', 'students.nama_lengkap', 'students.hp']);
+
+        if ($students->isEmpty()) {
+            return back()->with('error', 'Tidak ada nomor HP/WhatsApp siswa di kelas ini untuk diekspor.');
+        }
+
+        $filename = 'Kontak_Google_'.Str::slug($classroom->tingkat.'_'.$classroom->nama_kelas).'.csv';
+
+        return Excel::download(
+            new GoogleContactsExport($students),
+            $filename,
+            \Maatwebsite\Excel\Excel::CSV
+        );
     }
 
     public function downloadPhotosPdf(Classroom $classroom)

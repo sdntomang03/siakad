@@ -23,6 +23,10 @@
                     <span>Download Excel</span>
                 </a>
 
+                <a href="{{ route('classrooms.export_google_contacts', $classroom->hashid) }}" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
+                    <span>Ekspor Kontak Google (CSV)</span>
+                </a>
+
                 <a href="{{ route('classrooms.download_photos', $classroom->hashid) }}" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                     <span>Download Foto</span>
                 </a>

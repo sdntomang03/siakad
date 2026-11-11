@@ -121,6 +121,7 @@ Route::middleware(['auth'])->group(function () {
         ->only(['index', 'store', 'update', 'destroy']);
     Route::resource('classrooms', ClassroomController::class);
     Route::get('/classrooms/{classroom}/export', [ClassroomController::class, 'exportExcel'])->name('classrooms.export_excel');
+    Route::get('/classrooms/{classroom}/google-contacts', [ClassroomController::class, 'exportGoogleContacts'])->name('classrooms.export_google_contacts');
     Route::post('classrooms/{classroom}/assign-subjects', [ClassroomController::class, 'assignSubjectTeacher'])
         ->name('classrooms.assign-subjects');
     Route::post('classrooms/{classroom}/assign', [ClassroomController::class, 'assignStudent'])->name('classrooms.assign');
