@@ -13,7 +13,11 @@ class BookLoan extends Model
         'school_id', 'student_id', 'book_id', 'book_title', 'notes', 'borrowed_at', 'due_at', 'returned_at',
     ];
 
-    protected $dates = ['borrowed_at', 'due_at', 'returned_at'];
+    protected $casts = [
+        'borrowed_at' => 'datetime',
+        'due_at' => 'datetime',
+        'returned_at' => 'datetime',
+    ];
 
     public function student()
     {

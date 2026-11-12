@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 @layer base {
+	:where(a[href], button:not(:disabled), input[type="button"]:not(:disabled), input[type="submit"]:not(:disabled), select:not(:disabled), summary, label[for], [role="button"]:not([aria-disabled="true"])) {
+		cursor: pointer;
+	}
+
+	:where(button:disabled, input[type="button"]:disabled, input[type="submit"]:disabled, select:disabled, [aria-disabled="true"]) {
+		cursor: not-allowed;
+	}
+
 	:where(a, button, input, select, textarea, [tabindex]):focus-visible {
 		outline: 2px solid #8a5e13;
 		outline-offset: 2px;

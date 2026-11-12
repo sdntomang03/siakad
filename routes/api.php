@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BookLoanController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\TeacherNoteController;
 use App\Http\Controllers\Api\UserController;
@@ -18,6 +19,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/book-loans/options', [BookLoanController::class, 'options'])->name('api.book-loans.options');
+    Route::get('/book-loans', [BookLoanController::class, 'index'])->name('api.book-loans.index');
+    Route::post('/book-loans', [BookLoanController::class, 'store'])->name('api.book-loans.store');
+    Route::patch('/book-loans/{bookLoan}/return', [BookLoanController::class, 'markReturned'])->name('api.book-loans.return');
 
     // Contoh endpoint untuk mengambil Profil Siswa di HP
     Route::get('/profil', function (Request $request) {

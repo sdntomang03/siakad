@@ -284,6 +284,8 @@ class BookLoanController extends Controller
                             $q2->where('is_active', true);
                         });
                 });
+            } else {
+                $query->whereRaw('1 = 0');
             }
         }
 
