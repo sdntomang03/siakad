@@ -12,6 +12,7 @@ use App\Http\Controllers\CapaianPembelajaranController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\ExtracurricularController;
 use App\Http\Controllers\EtppController;
 use App\Http\Controllers\ExamGradeController;
 use App\Http\Controllers\FinalGradeController;
@@ -67,6 +68,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/students/{student}', [StudentController::class, 'show'])->name('students.show');
+    Route::put('/students/{student}/extracurriculars', [StudentController::class, 'updateExtracurriculars'])->name('students.extracurriculars.update');
     Route::resource('students', StudentController::class)->only(['edit', 'update']);
     Route::resource('employees', EmployeeController::class)->only(['edit', 'update']);
     Route::put('/students/{id}/ajax-update', [StudentController::class, 'updateAjax'])->name('students.ajax-update');
@@ -157,6 +159,9 @@ Route::middleware(['auth', 'role:operator'])->prefix('operator')->name('operator
 });
 
 Route::middleware(['auth', 'role:superadmin|operator'])->group(function () {
+    Route::get('/extracurriculars', [ExtracurricularController::class, 'index'])->name('extracurriculars.index');
+    Route::post('/extracurriculars', [ExtracurricularController::class, 'store'])->name('extracurriculars.store');
+    Route::delete('/extracurriculars/{id}', [ExtracurricularController::class, 'destroy'])->name('extracurriculars.destroy');
     Route::delete('/subjects/bulk-delete', [SubjectController::class, 'bulkDestroy'])->name('subjects.bulkDestroy');
     Route::patch('/subjects/bulk-update-urutan', [SubjectController::class, 'bulkUpdateUrutan'])->name('subjects.bulk-update-urutan');
     Route::resource('subjects', SubjectController::class)->except(['create', 'show', 'edit']);

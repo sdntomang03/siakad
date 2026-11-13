@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Extracurricular;
 use App\Models\Student;
 use App\Models\User;
 use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class StudentController extends Controller
 {
@@ -258,28 +260,71 @@ class StudentController extends Controller
      */
     public function show($id)
     {
-        // 1. Ambil data siswa beserta relasinya
-        $student = Student::with([
+        $currentUser = auth()->user();
+        $query = Student::with([
             'address',
             'family',
             'health',
             'financial',
             'user',
-        ])->findOrFail($id);
+            'extracurriculars' => fn ($query) => $query->orderBy('nama_ekskul'),
+        ]);
 
-        $currentUser = auth()->user();
+        if (! $currentUser->hasRole('superadmin')) {
+            $query->where('school_id', $currentUser->school_id);
+        }
 
-        // 2. Cek apakah user saat ini memiliki role staff (Guru, Admin, Superadmin, Operator)
-        // Sesuaikan nama role di bawah ini dengan yang ada di database Anda
+        $student = $query->findOrFail($id);
         $isStaff = $currentUser->hasAnyRole(['guru', 'superadmin', 'operator']);
 
-        // 3. Logika Pembatasan:
-        // Jika user BUKAN staff, DAN user_id pada data siswa TIDAK SAMA dengan id user yang sedang login, maka tolak aksesnya!
         if (! $isStaff && $student->user_id !== $currentUser->id) {
             abort(403, 'Akses Ditolak! Anda hanya diizinkan untuk melihat profil Anda sendiri.');
         }
 
-        // 4. Jika lolos pengecekan, tampilkan halaman view
-        return view('students.show', compact('student'));
+        $canManageExtracurriculars = $student->user_id === $currentUser->id
+            || $currentUser->hasRole('superadmin')
+            || (
+                $currentUser->school_id === $student->school_id
+                && ($currentUser->hasRole('guru') || $currentUser->can('edit-users'))
+            );
+        $extracurricularOptions = Extracurricular::where('school_id', $student->school_id)
+            ->orderBy('nama_ekskul')
+            ->get();
+
+        return view('students.show', compact('student', 'canManageExtracurriculars', 'extracurricularOptions'));
+    }
+
+    public function updateExtracurriculars(Request $request, $id)
+    {
+        $currentUser = auth()->user();
+        $query = Student::query();
+
+        if (! $currentUser->hasRole('superadmin')) {
+            $query->where('school_id', $currentUser->school_id);
+        }
+
+        $student = $query->findOrFail($id);
+        $isAuthorizedEditor = $currentUser->hasRole('superadmin')
+            || (
+                $currentUser->school_id === $student->school_id
+                && ($currentUser->hasRole('guru') || $currentUser->can('edit-users'))
+            );
+
+        abort_unless($student->user_id === $currentUser->id || $isAuthorizedEditor, 403);
+
+        $validated = $request->validate([
+            'extracurricular_ids' => 'nullable|array',
+            'extracurricular_ids.*' => [
+                'integer',
+                'distinct',
+                Rule::exists('extracurriculars', 'id')->where('school_id', $student->school_id),
+            ],
+        ]);
+
+        $student->extracurriculars()->sync($validated['extracurricular_ids'] ?? []);
+
+        return redirect()
+            ->route('students.show', $student)
+            ->with('success', 'Ekskul siswa berhasil diperbarui.');
     }
 }

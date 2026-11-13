@@ -94,7 +94,7 @@
         </div>
 
         @hasanyrole('superadmin|operator')
-        <div x-data="{ open: {{ request()->routeIs('academic-years.*', 'operator.users.*', 'subjects.*', 'books.*', 'classrooms.*') ? 'true' : 'false' }} }"
+        <div x-data="{ open: {{ request()->routeIs('academic-years.*', 'operator.users.*', 'subjects.*', 'books.*', 'classrooms.*', 'extracurriculars.*') ? 'true' : 'false' }} }"
             class="space-y-1">
             <button @click="open = !open; if(!sidebarOpen) sidebarOpen = true"
                 type="button" aria-controls="nav-data-master" :aria-expanded="open.toString()"
@@ -127,6 +127,10 @@
                 <x-sidebar-link :href="route('subjects.index')" :active="request()->routeIs('subjects.*')"
                     icon="M9 5l7 7-7 7">
                     Mata Pelajaran
+                </x-sidebar-link>
+                <x-sidebar-link :href="route('extracurriculars.index')" :active="request()->routeIs('extracurriculars.*')"
+                    icon="M9 5l7 7-7 7">
+                    Ekstrakurikuler
                 </x-sidebar-link>
                 <x-sidebar-link :href="route('classrooms.index')" :active="request()->routeIs('classrooms.*')"
                     icon="M9 5l7 7-7 7">

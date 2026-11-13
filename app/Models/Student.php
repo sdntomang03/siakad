@@ -28,6 +28,11 @@ class Student extends Model
         return $this->belongsToMany(Classroom::class)->withTimestamps();
     }
 
+    public function extracurriculars()
+    {
+        return $this->belongsToMany(Extracurricular::class, 'extracurricular_student')->withTimestamps();
+    }
+
     /**
      * FUNGSI BANTUAN SUPER CANGGIH
      * Mendapatkan data kelas siswa pada Tahun Ajaran yang sedang Aktif
