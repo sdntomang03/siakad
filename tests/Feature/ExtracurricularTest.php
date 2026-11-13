@@ -110,6 +110,40 @@ test('a student can select multiple extracurriculars from their school on the pr
         ->assertDontSee('Futsal');
 
     $this->actingAs($studentUser)
+        ->get(route('students.edit', $studentUser))
+        ->assertOk()
+        ->assertSee('tab === \'ekstrakurikuler\'', false)
+        ->assertSee('edit-extracurricular-'.$pramuka->id, false)
+        ->assertSee('edit-extracurricular-'.$basket->id, false);
+
+    $this->actingAs($studentUser)
+        ->put(route('students.update', $studentUser), [
+            'nama_lengkap' => 'Siswa Uji',
+            'jenis_kelamin' => 'L',
+            'extracurricular_ids' => [$pramuka->id, $basket->id],
+        ])
+        ->assertRedirect();
+
+    $this->assertEqualsCanonicalizing(
+        [$pramuka->id, $basket->id],
+        $student->fresh()->extracurriculars()->pluck('extracurriculars.id')->all()
+    );
+
+    $this->actingAs($studentUser)
+        ->putJson(route('students.ajax-update', $studentUser), [
+            'active_tab' => 'ekstrakurikuler',
+            'extracurricular_ids_present' => '1',
+            'extracurricular_ids' => [$pramuka->id],
+        ])
+        ->assertOk()
+        ->assertJsonPath('status', 'success');
+
+    $this->assertEquals(
+        [$pramuka->id],
+        $student->fresh()->extracurriculars()->pluck('extracurriculars.id')->all()
+    );
+
+    $this->actingAs($studentUser)
         ->put(route('students.extracurriculars.update', $student), [
             'extracurricular_ids' => [$pramuka->id, $basket->id],
         ])
@@ -131,7 +165,8 @@ test('a teacher can update a student extracurricular selection only within their
     $school = School::create(['nama_sekolah' => 'Sekolah Guru']);
     $otherSchool = School::create(['nama_sekolah' => 'Sekolah Lain']);
     $teacher = createExtracurricularRoleUser('guru', $school->id);
-    $student = createExtracurricularStudent($school->id);
+    $studentUser = createExtracurricularRoleUser('siswa', $school->id);
+    $student = createExtracurricularStudent($school->id, $studentUser);
     $otherStudent = createExtracurricularStudent($otherSchool->id);
     $extracurricular = Extracurricular::create([
         'school_id' => $school->id,
@@ -142,6 +177,11 @@ test('a teacher can update a student extracurricular selection only within their
         ->get(route('students.show', $student))
         ->assertOk()
         ->assertSee('Paduan Suara');
+
+    $this->actingAs($teacher)
+        ->get(route('students.edit', $studentUser))
+        ->assertOk()
+        ->assertSee('edit-extracurricular-'.$extracurricular->id, false);
 
     $this->actingAs($teacher)
         ->put(route('students.extracurriculars.update', $student), [

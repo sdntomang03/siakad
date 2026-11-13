@@ -17,7 +17,13 @@ class StudentController extends Controller
         $currentUser = auth()->user();
 
         // 1. CARI DATA TARGET
-        $query = User::with(['student.family', 'student.address', 'student.financial', 'student.health']);
+        $query = User::with([
+            'student.family',
+            'student.address',
+            'student.financial',
+            'student.health',
+            'student.extracurriculars',
+        ]);
 
         if (! $currentUser->hasRole('superadmin')) {
             $query->where('school_id', $currentUser->school_id);
@@ -34,7 +40,7 @@ class StudentController extends Controller
 
         // 2. LOGIKA KEAMANAN: Siapa yang boleh edit siswa ini?
         $isSelf = $currentUser->id == $student->id; // Siswa edit dirinya sendiri
-        $isAuthorizedEditor = $currentUser->hasRole('guru') || $currentUser->hasPermissionTo('edit-users'); // Guru / Operator
+        $isAuthorizedEditor = $currentUser->hasRole('guru') || $currentUser->can('edit-users'); // Guru / Operator
 
         if (! $isSelf && ! $isAuthorizedEditor) {
             abort(403, 'Akses Ditolak: Anda tidak berhak mengedit data siswa ini.');
@@ -51,7 +57,11 @@ class StudentController extends Controller
             $student->load('student');
         }
 
-        return view('students.edit', compact('student'));
+        $extracurricularOptions = Extracurricular::where('school_id', $student->school_id)
+            ->orderBy('nama_ekskul')
+            ->get();
+
+        return view('students.edit', compact('student', 'extracurricularOptions'));
     }
 
     public function update(Request $request, $id, ImageUploadService $imageUploadService)
@@ -75,7 +85,7 @@ class StudentController extends Controller
 
         // 2. LOGIKA KEAMANAN (SAMA SEPERTI EDIT)[cite: 2]
         $isSelf = $currentUser->id == $user->id;
-        $isAuthorizedEditor = $currentUser->hasRole('guru') || $currentUser->hasPermissionTo('edit-users');
+        $isAuthorizedEditor = $currentUser->hasRole('guru') || $currentUser->can('edit-users');
 
         if (! $isSelf && ! $isAuthorizedEditor) {
             abort(403, 'Akses Ditolak: Anda tidak berhak mengubah data siswa ini.');
@@ -92,6 +102,12 @@ class StudentController extends Controller
             'email_ayah' => 'nullable|email|max:255',
             'email_ibu' => 'nullable|email|max:255',
             'email_wali' => 'nullable|email|max:255',
+            'extracurricular_ids' => 'nullable|array',
+            'extracurricular_ids.*' => [
+                'integer',
+                'distinct',
+                Rule::exists('extracurriculars', 'id')->where('school_id', $user->school_id),
+            ],
         ], [
             // Tambahkan pesan error kustom (opsional, agar lebih ramah dibaca)
             'email.email' => 'Format email pribadi siswa tidak valid (harus mengandung @).',
@@ -183,6 +199,8 @@ class StudentController extends Controller
                 ['student_id' => $user->student->id],
                 $request->only(['berat_badan', 'tinggi_badan', 'kebutuhan_khusus', 'penyakit'])
             );
+
+            $user->student->extracurriculars()->sync($request->input('extracurricular_ids', []));
         });
 
         return back()->with('success', 'Data Profil Siswa berhasil diperbarui.');
@@ -191,9 +209,34 @@ class StudentController extends Controller
     public function updateAjax(Request $request, $id, ImageUploadService $imageUploadService)
     {
         $currentUser = auth()->user();
-        $user = User::findOrFail($id);
+        $query = User::with('student');
 
-        // Validasi atau logika keamanan Anda di sini...
+        if (! $currentUser->hasRole('superadmin')) {
+            $query->where('school_id', $currentUser->school_id);
+        }
+
+        $user = $query->findOrFail($id);
+
+        abort_unless($user->hasRole('siswa') && $user->student, 404);
+
+        $isSelf = $currentUser->id === $user->id;
+        $isAuthorizedEditor = $currentUser->hasRole('guru') || $currentUser->can('edit-users');
+        abort_unless($isSelf || $isAuthorizedEditor, 403);
+
+        if ($request->input('active_tab') === 'ekstrakurikuler') {
+            $validated = $request->validate([
+                'extracurricular_ids' => 'nullable|array',
+                'extracurricular_ids.*' => [
+                    'integer',
+                    'distinct',
+                    Rule::exists('extracurriculars', 'id')->where('school_id', $user->student->school_id),
+                ],
+            ]);
+
+            $user->student->extracurriculars()->sync($validated['extracurricular_ids'] ?? []);
+
+            return response()->json(['status' => 'success', 'message' => 'Ekskul siswa berhasil diperbarui.']);
+        }
 
         DB::transaction(function () use ($request, $user, $imageUploadService) {
             $fotoPath = $user->student->foto ?? null;

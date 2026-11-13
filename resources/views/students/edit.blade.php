@@ -89,6 +89,7 @@
                             <span x-show="tab === 'keluarga'">Data Keluarga</span>
                             <span x-show="tab === 'finansial'">Bantuan</span>
                             <span x-show="tab === 'kesehatan'">Data Kesehatan</span>
+                            <span x-show="tab === 'ekstrakurikuler'">Ekstrakurikuler</span>
                         </span>
                         <span
                             class="flex-shrink-0 text-xs font-extrabold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-500/10 px-2 py-1 rounded-md"
@@ -150,6 +151,12 @@
                                     class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-md text-[11px] sm:text-sm transition-all duration-200">
                                     <i class="fas fa-heartbeat text-base lg:w-5"></i>
                                     <span class="leading-tight text-center lg:text-left">Kesehatan</span>
+                                </button>
+                                <button type="button" @click="tab = 'ekstrakurikuler'"
+                                    :class="tab === 'ekstrakurikuler' ? 'bg-brand-700 text-white font-semibold' : 'bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 font-medium'"
+                                    class="snap-start flex-shrink-0 lg:w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 min-w-[76px] lg:min-w-0 px-3 py-2.5 sm:px-4 sm:py-3 rounded-md text-[11px] sm:text-sm transition-all duration-200">
+                                    <i class="fas fa-futbol text-base lg:w-5" aria-hidden="true"></i>
+                                    <span class="leading-tight text-center lg:text-left">Ekskul</span>
                                 </button>
                             </nav>
 
@@ -1170,6 +1177,47 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                {{-- 6. FORM EKSTRAKURIKULER --}}
+                                <div x-show="tab === 'ekstrakurikuler'" x-transition:enter="transition ease-out duration-300"
+                                    x-transition:enter-start="opacity-0 translate-y-2"
+                                    x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+                                    <div class="mb-6 border-b border-slate-100 pb-4 dark:border-slate-700">
+                                        <h3 class="text-xl font-bold text-slate-800 dark:text-white">Ekstrakurikuler</h3>
+                                        <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
+                                            Pilih semua ekskul yang diikuti siswa. Perubahan tersimpan saat menekan Selanjutnya atau Simpan.
+                                        </p>
+                                    </div>
+
+                                    @if($extracurricularOptions->isEmpty())
+                                    <p class="rounded-md bg-slate-50 p-4 text-sm text-slate-700 dark:bg-slate-900/50 dark:text-slate-300">
+                                        Belum ada ekskul untuk sekolah ini. Hubungi admin sekolah untuk menambahkan daftar ekskul.
+                                    </p>
+                                    @else
+                                    @php
+                                    $selectedExtracurriculars = old(
+                                        'extracurricular_ids',
+                                        $student->student->extracurriculars->modelKeys()
+                                    );
+                                    @endphp
+                                    <input type="hidden" name="extracurricular_ids_present" value="1">
+                                    <fieldset>
+                                        <legend class="sr-only">Ekskul yang diikuti</legend>
+                                        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                            @foreach($extracurricularOptions as $extracurricular)
+                                            <label for="edit-extracurricular-{{ $extracurricular->id }}"
+                                                class="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-800 transition hover:bg-brand-50 active:bg-brand-100 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-700 dark:active:bg-slate-600">
+                                                <input id="edit-extracurricular-{{ $extracurricular->id }}" type="checkbox"
+                                                    name="extracurricular_ids[]" value="{{ $extracurricular->id }}"
+                                                    @checked(in_array($extracurricular->id, $selectedExtracurriculars))
+                                                    class="h-4 w-4 cursor-pointer rounded border-slate-400 text-brand-700 focus:ring-brand-600 dark:border-slate-500">
+                                                <span>{{ $extracurricular->nama_ekskul }}</span>
+                                            </label>
+                                            @endforeach
+                                        </div>
+                                    </fieldset>
+                                    @endif
+                                </div>
                             </div>
 
                             {{-- NAVIGASI FOOTER (desktop) --}}
@@ -1258,8 +1306,8 @@
         document.addEventListener('alpine:init', () => {
         Alpine.data('studentForm', () => ({
             // LOGIKA BARU: Buka tab secara otomatis berdasarkan letak input yang error
-            tab: '{!! $errors->hasAny(['nama_ayah', 'email_ayah', 'email_ibu', 'email_wali', 'hp_ayah', 'hp_ibu', 'hp_wali']) ? 'keluarga' : ($errors->hasAny(['alamat', 'rt', 'rw', 'kode_pos', 'provinsi', 'kota', 'kecamatan', 'kelurahan']) ? 'alamat' : ($errors->hasAny(['tinggi_badan', 'berat_badan', 'penyakit']) ? 'kesehatan' : 'identitas')) !!}',
-            tabsList: ['identitas', 'alamat', 'keluarga', 'finansial', 'kesehatan'],
+            tab: '{!! $errors->has('extracurricular_ids') || $errors->has('extracurricular_ids.0') ? 'ekstrakurikuler' : ($errors->hasAny(['nama_ayah', 'email_ayah', 'email_ibu', 'email_wali', 'hp_ayah', 'hp_ibu', 'hp_wali']) ? 'keluarga' : ($errors->hasAny(['alamat', 'rt', 'rw', 'kode_pos', 'provinsi', 'kota', 'kecamatan', 'kelurahan']) ? 'alamat' : ($errors->hasAny(['tinggi_badan', 'berat_badan', 'penyakit']) ? 'kesehatan' : 'identitas'))) !!}',
+            tabsList: ['identitas', 'alamat', 'keluarga', 'finansial', 'kesehatan', 'ekstrakurikuler'],
 
             get currentIndex() {
                 return this.tabsList.indexOf(this.tab);
@@ -1277,6 +1325,7 @@
             async next() {
                 const formElement = document.getElementById('studentForm');
                 const formData = new FormData(formElement);
+                formData.append('active_tab', this.tab);
 
                 try {
                     let response = await fetch("{{ route('students.ajax-update', $student->id ?? 0) }}", {
