@@ -1,9 +1,13 @@
 <?php
 
+use App\Exports\ExtracurricularsExport;
+use App\Models\AcademicYear;
+use App\Models\Classroom;
 use App\Models\Extracurricular;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
 
 function createExtracurricularRoleUser(string $roleName, int $schoolId): User
@@ -222,4 +226,118 @@ test('a student cannot select an extracurricular belonging to another school', f
         'student_id' => $student->id,
         'extracurricular_id' => $otherExtracurricular->id,
     ]);
+});
+
+test('teachers and operators can download the whole school extracurricular report from the dashboard', function () {
+    Excel::fake();
+
+    $school = School::create(['nama_sekolah' => 'Sekolah Rekap']);
+    $teacher = createExtracurricularRoleUser('guru', $school->id);
+    $operator = createExtracurricularRoleUser('operator', $school->id);
+
+    foreach ([$teacher, $operator] as $user) {
+        $user->markEmailAsVerified();
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee(route('extracurriculars.export'));
+
+        $this->actingAs($user)
+            ->get(route('extracurriculars.export'))
+            ->assertOk();
+    }
+
+    Excel::assertDownloaded('Rekap_Ekskul_'.now()->format('Ymd').'.xlsx', function (ExtracurricularsExport $export) {
+        return $export->collection()->isEmpty()
+            && $export->headings() === ['NISN', 'NIPD', 'Nama Siswa', 'Kelas', 'Ekstrakurikuler'];
+    });
+});
+
+test('the extracurricular report downloads as an xlsx file', function () {
+    $school = School::create(['nama_sekolah' => 'Sekolah Rekap']);
+    $operator = createExtracurricularRoleUser('operator', $school->id);
+    Student::create([
+        'school_id' => $school->id,
+        'nama_lengkap' => 'Siswa Rekap',
+        'jenis_kelamin' => 'L',
+    ]);
+
+    $this->actingAs($operator)
+        ->get(route('extracurriculars.export'))
+        ->assertOk()
+        ->assertHeader('content-disposition', 'attachment; filename=Rekap_Ekskul_'.now()->format('Ymd').'.xlsx');
+});
+
+test('the extracurricular report includes every student and only active-year classes and school extracurriculars', function () {
+    $school = School::create(['nama_sekolah' => 'Sekolah Rekap']);
+    $otherSchool = School::create(['nama_sekolah' => 'Sekolah Lain']);
+    $activeYear = AcademicYear::create([
+        'school_id' => $school->id,
+        'tahun_ajaran' => '2026/2027',
+        'semester' => 'Ganjil',
+        'is_active' => true,
+    ]);
+    $previousYear = AcademicYear::create([
+        'school_id' => $school->id,
+        'tahun_ajaran' => '2025/2026',
+        'semester' => 'Genap',
+        'is_active' => false,
+    ]);
+    $activeClass = Classroom::create([
+        'school_id' => $school->id,
+        'academic_year_id' => $activeYear->id,
+        'tingkat' => '5',
+        'nama_kelas' => 'A',
+        'kapasitas' => 30,
+    ]);
+    $oldClass = Classroom::create([
+        'school_id' => $school->id,
+        'academic_year_id' => $previousYear->id,
+        'tingkat' => '4',
+        'nama_kelas' => 'B',
+        'kapasitas' => 30,
+    ]);
+    $student = createExtracurricularStudent($school->id);
+    $student->update(['nisn' => '1234567890', 'nipd' => 'S-01']);
+    $student->classrooms()->attach([$activeClass->id, $oldClass->id]);
+    $secondStudent = Student::create([
+        'school_id' => $school->id,
+        'nama_lengkap' => 'Siswa Tanpa Ekskul',
+        'jenis_kelamin' => 'P',
+    ]);
+    $otherSchoolStudent = createExtracurricularStudent($otherSchool->id);
+    $pramuka = Extracurricular::create(['school_id' => $school->id, 'nama_ekskul' => 'Pramuka']);
+    $basket = Extracurricular::create(['school_id' => $school->id, 'nama_ekskul' => 'Basket']);
+    $foreignExtracurricular = Extracurricular::create(['school_id' => $otherSchool->id, 'nama_ekskul' => 'Futsal']);
+    $student->extracurriculars()->attach([$pramuka->id, $basket->id, $foreignExtracurricular->id]);
+    $otherSchoolStudent->extracurriculars()->attach($foreignExtracurricular->id);
+
+    $export = new ExtracurricularsExport($school->id, $activeYear->id);
+    $students = $export->collection();
+
+    expect($students)->toHaveCount(2);
+    expect($export->map($students->firstWhere('id', $student->id)))->toBe([
+        '1234567890',
+        'S-01',
+        'Siswa Uji',
+        '5 A',
+        'Basket, Pramuka',
+    ]);
+    expect($export->map($students->firstWhere('id', $secondStudent->id)))->toBe([
+        null,
+        null,
+        'Siswa Tanpa Ekskul',
+        '',
+        '',
+    ]);
+});
+
+test('students cannot download the school extracurricular report', function () {
+    $school = School::create(['nama_sekolah' => 'Sekolah Siswa']);
+    $student = createExtracurricularRoleUser('siswa', $school->id);
+
+    $this->actingAs($student)
+        ->get(route('extracurriculars.export'))
+        ->assertForbidden();
 });

@@ -172,6 +172,11 @@ Route::middleware(['auth', 'role:superadmin|operator'])->group(function () {
     Route::resource('books', BookController::class)->except(['show']);
 });
 
+Route::middleware(['auth', 'role:guru|operator'])->get(
+    '/extracurriculars/export',
+    [ExtracurricularController::class, 'export']
+)->name('extracurriculars.export');
+
 // Routes for book loans and report submissions
 Route::middleware(['auth'])->group(function () {
     Route::get('book-loans', [BookLoanController::class, 'index'])->name('book-loans.index');

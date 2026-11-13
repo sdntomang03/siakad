@@ -2,13 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ExtracurricularsExport;
+use App\Models\AcademicYear;
 use App\Models\Extracurricular;
 use App\Models\School;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Validation\Rule;
 
 class ExtracurricularController extends Controller
 {
+    public function export()
+    {
+        $user = auth()->user();
+        abort_unless($user->hasAnyRole(['guru', 'operator']) && $user->school_id, 403);
+
+        $activeYear = AcademicYear::where('school_id', $user->school_id)
+            ->where('is_active', true)
+            ->first()
+            ?? AcademicYear::where('school_id', $user->school_id)->latest()->first();
+
+        return Excel::download(
+            new ExtracurricularsExport($user->school_id, $activeYear?->id),
+            'Rekap_Ekskul_'.now()->format('Ymd').'.xlsx'
+        );
+    }
+
     public function index(Request $request)
     {
         $user = auth()->user();

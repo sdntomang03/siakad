@@ -28,6 +28,7 @@ class DashboardController extends Controller
             'user' => $user,
             'roleName' => $roleName,
             'activeYear' => $activeYear,
+            'canExportExtracurricularReport' => $user->hasAnyRole(['guru', 'operator']) && $user->school_id,
         ];
 
         // 2. Filter data berdasarkan Role pengguna
