@@ -67,14 +67,6 @@
                         </svg>
                         Input Absen Hari Ini
                     </a>
-                    <a href="{{ route('holidays.index') }}"
-                        class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
-                        Hari Libur
-                    </a>
-                    <a href="{{ route('attendances.monthly', ['classroom_id' => $classroom->id]) }}"
-                        class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-md bg-brand-700 px-4 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
-                        Rekap Absensi
-                    </a>
                     @endif
                     @endif
                 </div>
@@ -96,6 +88,17 @@
                 </form>
                 @endif
 
+            </div>
+
+            <div class="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                <a href="{{ route('holidays.index') }}"
+                    class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
+                    Hari Libur
+                </a>
+                <a href="{{ route('attendances.monthly', request()->only('classroom_id')) }}"
+                    class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-md bg-brand-700 px-4 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                    Rekap Absensi
+                </a>
             </div>
 
             @forelse($reportData as $namaKelas => $siswas)
