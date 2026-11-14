@@ -9,8 +9,7 @@
         <div class="mx-auto max-w-screen-2xl space-y-6">
 
             @role('superadmin')
-            <div
-                class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
+            <div class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
                 <form action="{{ route('attendances.index') }}" method="GET">
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Pilih Sekolah</label>
                     <select name="school_id" onchange="this.form.submit()"
@@ -67,6 +66,14 @@
                             </path>
                         </svg>
                         Input Absen Hari Ini
+                    </a>
+                    <a href="{{ route('holidays.index') }}"
+                        class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
+                        Hari Libur
+                    </a>
+                    <a href="{{ route('attendances.monthly', ['classroom_id' => $classroom->id]) }}"
+                        class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-md bg-brand-700 px-4 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                        Rekap Absensi
                     </a>
                     @endif
                     @endif

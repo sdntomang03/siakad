@@ -11,14 +11,7 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
-                <a href="{{ route('holidays.index') }}"
-                    class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
-                    Hari Libur
-                </a>
-                <a href="{{ route('attendances.monthly', ['classroom_id' => $classroom->id]) }}"
-                    class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-md bg-brand-700 px-4 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
-                    Rekap Absensi
-                </a>
+
                 <a href="{{ route('attendances.index') }}"
                     class="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-brand-700 hover:text-brand-900 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-300 dark:hover:text-brand-200">
                     &larr; Kembali
@@ -37,7 +30,8 @@
 
                     @if(isset($myClassrooms) && $myClassrooms->count() > 1)
                     <div class="w-full md:w-auto">
-                        <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Ganti Kelas</label>
+                        <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Ganti
+                            Kelas</label>
                         <select onchange="window.location.href=this.value"
                             class="w-full md:w-auto rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm font-bold text-slate-700 dark:text-slate-200 focus:ring-brand-500">
                             @foreach($myClassrooms as $myClass)
@@ -54,7 +48,8 @@
                     <form action="{{ route('attendances.show', $classroom->hashid) }}" method="GET"
                         class="flex w-full items-end gap-3 md:w-auto">
                         <div class="flex-1 md:flex-none">
-                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Tanggal</label>
+                            <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih
+                                Tanggal</label>
                             <input type="date" name="tanggal" value="{{ $tanggal }}"
                                 class="w-full md:w-auto rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-sm font-bold text-slate-700 dark:text-slate-200">
                         </div>
@@ -114,33 +109,37 @@
 
                                             <label class="relative cursor-pointer">
                                                 <input type="radio" name="attendance[{{ $siswa->id }}][status]"
-                                                    value="hadir" aria-label="Hadir" class="peer sr-only" {{ $status=='hadir' ? 'checked'
-                                                    : '' }}>
-                                                <span class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-300 text-xs font-semibold text-slate-600 transition hover:border-emerald-500 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-300"
+                                                    value="hadir" aria-label="Hadir" class="peer sr-only" {{
+                                                    $status=='hadir' ? 'checked' : '' }}>
+                                                <span
+                                                    class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-300 text-xs font-semibold text-slate-600 transition hover:border-emerald-500 peer-checked:border-emerald-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-300"
                                                     title="Hadir">H</span>
                                             </label>
 
                                             <label class="relative cursor-pointer">
                                                 <input type="radio" name="attendance[{{ $siswa->id }}][status]"
-                                                    value="sakit" aria-label="Sakit" class="peer sr-only" {{ $status=='sakit' ? 'checked'
-                                                    : '' }}>
-                                                <span class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-300 text-xs font-semibold text-slate-600 transition hover:border-amber-500 peer-checked:border-amber-600 peer-checked:bg-amber-600 peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-300"
+                                                    value="sakit" aria-label="Sakit" class="peer sr-only" {{
+                                                    $status=='sakit' ? 'checked' : '' }}>
+                                                <span
+                                                    class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-300 text-xs font-semibold text-slate-600 transition hover:border-amber-500 peer-checked:border-amber-600 peer-checked:bg-amber-600 peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-300"
                                                     title="Sakit">S</span>
                                             </label>
 
                                             <label class="relative cursor-pointer">
                                                 <input type="radio" name="attendance[{{ $siswa->id }}][status]"
-                                                    value="izin" aria-label="Izin" class="peer sr-only" {{ $status=='izin' ? 'checked' : ''
-                                                    }}>
-                                                <span class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-300 text-xs font-semibold text-slate-600 transition hover:border-blue-500 peer-checked:border-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-300"
+                                                    value="izin" aria-label="Izin" class="peer sr-only" {{
+                                                    $status=='izin' ? 'checked' : '' }}>
+                                                <span
+                                                    class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-300 text-xs font-semibold text-slate-600 transition hover:border-blue-500 peer-checked:border-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-300"
                                                     title="Izin">I</span>
                                             </label>
 
                                             <label class="relative cursor-pointer">
                                                 <input type="radio" name="attendance[{{ $siswa->id }}][status]"
-                                                    value="alfa" aria-label="Alfa" class="peer sr-only" {{ $status=='alfa' ? 'checked' : ''
-                                                    }}>
-                                                <span class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-300 text-xs font-semibold text-slate-600 transition hover:border-rose-500 peer-checked:border-rose-700 peer-checked:bg-rose-700 peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-300"
+                                                    value="alfa" aria-label="Alfa" class="peer sr-only" {{
+                                                    $status=='alfa' ? 'checked' : '' }}>
+                                                <span
+                                                    class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-300 text-xs font-semibold text-slate-600 transition hover:border-rose-500 peer-checked:border-rose-700 peer-checked:bg-rose-700 peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-300"
                                                     title="Alfa">A</span>
                                             </label>
 
