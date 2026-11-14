@@ -7,24 +7,38 @@ use App\Models\AcademicYear;
 use App\Models\Extracurricular;
 use App\Models\School;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Validation\Rule;
 
 class ExtracurricularController extends Controller
 {
-    public function export()
+    public function export(Request $request)
     {
         $user = auth()->user();
-        abort_unless($user->hasAnyRole(['guru', 'operator']) && $user->school_id, 403);
+        $isSuperadmin = $user->hasRole('superadmin');
+        abort_unless($isSuperadmin || $user->hasAnyRole(['guru', 'operator']), 403);
 
-        $activeYear = AcademicYear::where('school_id', $user->school_id)
+        if ($isSuperadmin) {
+            $validated = $request->validate([
+                'school_id' => 'required|integer|exists:schools,id',
+            ]);
+            $school = School::findOrFail($validated['school_id']);
+            $schoolId = $school->id;
+        } else {
+            abort_unless($user->school_id, 403);
+            $school = $user->school;
+            $schoolId = $user->school_id;
+        }
+
+        $activeYear = AcademicYear::where('school_id', $schoolId)
             ->where('is_active', true)
             ->first()
-            ?? AcademicYear::where('school_id', $user->school_id)->latest()->first();
+            ?? AcademicYear::where('school_id', $schoolId)->latest()->first();
 
         return Excel::download(
-            new ExtracurricularsExport($user->school_id, $activeYear?->id),
-            'Rekap_Ekskul_'.now()->format('Ymd').'.xlsx'
+            new ExtracurricularsExport($schoolId, $activeYear?->id),
+            'Rekap_Ekskul_'.Str::slug($school->nama_sekolah).'_'.now()->format('Ymd').'.xlsx'
         );
     }
 

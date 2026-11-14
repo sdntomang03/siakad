@@ -103,6 +103,35 @@
                 </div>
             </div>
 
+            <section class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
+                <div class="grid grid-cols-1 items-end gap-4 md:grid-cols-[minmax(0,1fr)_auto]">
+                    <div>
+                        <h3 class="font-semibold text-slate-900 dark:text-white">Rekap ekstrakurikuler siswa</h3>
+                        <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
+                            Pilih sekolah untuk mengunduh rekap semua siswanya dalam format Excel.
+                        </p>
+                    </div>
+                    <form action="{{ route('extracurriculars.export') }}" method="GET" class="flex flex-col gap-3 sm:flex-row sm:items-end">
+                        <div class="min-w-0 flex-1 sm:min-w-64">
+                            <label for="extracurricular_school_id" class="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-200">
+                                Sekolah
+                            </label>
+                            <select id="extracurricular_school_id" name="school_id" required
+                                class="min-h-11 w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                                <option value="">Pilih sekolah</option>
+                                @foreach($allSchools as $school)
+                                <option value="{{ $school->id }}">{{ $school->nama_sekolah }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="submit"
+                            class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 active:bg-brand-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700">
+                            Unduh rekap Excel
+                        </button>
+                    </form>
+                </div>
+            </section>
+
             <div
                 class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
                 <div

@@ -22,9 +22,10 @@ class SuperAdminController extends Controller
 
         // Mengambil daftar sekolah terbaru
         $schools = School::latest()->take(5)->get();
+        $allSchools = School::orderBy('nama_sekolah')->get();
 
         // Mengirim data $stats dan $schools ke tampilan Blade
-        return view('superadmin.dashboard', compact('stats', 'schools'));
+        return view('superadmin.dashboard', compact('stats', 'schools', 'allSchools'));
     }
 
     public function manageSchools()

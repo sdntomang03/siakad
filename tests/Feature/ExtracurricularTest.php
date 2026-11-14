@@ -248,10 +248,30 @@ test('teachers and operators can download the whole school extracurricular repor
             ->assertOk();
     }
 
-    Excel::assertDownloaded('Rekap_Ekskul_'.now()->format('Ymd').'.xlsx', function (ExtracurricularsExport $export) {
+    Excel::assertDownloaded('Rekap_Ekskul_sekolah-rekap_'.now()->format('Ymd').'.xlsx', function (ExtracurricularsExport $export) {
         return $export->collection()->isEmpty()
             && $export->headings() === ['NISN', 'NIPD', 'Nama Siswa', 'Kelas', 'Ekstrakurikuler'];
     });
+});
+
+test('superadmin dashboard offers an extracurricular export for a selected school', function () {
+    Excel::fake();
+
+    $school = School::create(['nama_sekolah' => 'Sekolah Pilihan']);
+    $superadmin = createExtracurricularRoleUser('superadmin', $school->id);
+
+    $this->actingAs($superadmin)
+        ->get(route('superadmin.dashboard'))
+        ->assertOk()
+        ->assertSee('Rekap ekstrakurikuler siswa')
+        ->assertSee('extracurricular_school_id')
+        ->assertSee('Sekolah Pilihan');
+
+    $this->actingAs($superadmin)
+        ->get(route('extracurriculars.export', ['school_id' => $school->id]))
+        ->assertOk();
+
+    Excel::assertDownloaded('Rekap_Ekskul_sekolah-pilihan_'.now()->format('Ymd').'.xlsx');
 });
 
 test('the extracurricular report downloads as an xlsx file', function () {
@@ -266,7 +286,7 @@ test('the extracurricular report downloads as an xlsx file', function () {
     $this->actingAs($operator)
         ->get(route('extracurriculars.export'))
         ->assertOk()
-        ->assertHeader('content-disposition', 'attachment; filename=Rekap_Ekskul_'.now()->format('Ymd').'.xlsx');
+        ->assertHeader('content-disposition', 'attachment; filename=Rekap_Ekskul_sekolah-rekap_'.now()->format('Ymd').'.xlsx');
 });
 
 test('the extracurricular report includes every student and only active-year classes and school extracurriculars', function () {

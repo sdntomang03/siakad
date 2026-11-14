@@ -172,7 +172,7 @@ Route::middleware(['auth', 'role:superadmin|operator'])->group(function () {
     Route::resource('books', BookController::class)->except(['show']);
 });
 
-Route::middleware(['auth', 'role:guru|operator'])->get(
+Route::middleware(['auth'])->get(
     '/extracurriculars/export',
     [ExtracurricularController::class, 'export']
 )->name('extracurriculars.export');

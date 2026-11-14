@@ -10,10 +10,20 @@
                     'Belum Diatur' }}</p>
             </div>
 
-            <a href="{{ route('attendances.index') }}"
-                class="inline-flex min-h-11 items-center text-sm font-semibold text-brand-700 hover:text-brand-900 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-300 dark:hover:text-brand-200">
-                &larr; Kembali
-            </a>
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{{ route('holidays.index') }}"
+                    class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">
+                    Hari Libur
+                </a>
+                <a href="{{ route('attendances.monthly', ['classroom_id' => $classroom->id]) }}"
+                    class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-md bg-brand-700 px-4 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                    Rekap Absensi
+                </a>
+                <a href="{{ route('attendances.index') }}"
+                    class="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-brand-700 hover:text-brand-900 focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-300 dark:hover:text-brand-200">
+                    &larr; Kembali
+                </a>
+            </div>
         </div>
     </x-slot>
 
