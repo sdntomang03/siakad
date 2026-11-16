@@ -67,7 +67,7 @@
                 x-init="$nextTick(() => updateSubjects())"
                 @submit="loading = true"
                 class="space-y-5 rounded-lg border border-slate-300 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <div>
                         <label for="classroom_id" class="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">Kelas</label>
                         <select id="classroom_id" name="classroom_id" required x-model="selectedClassId" @change="updateSubjects(true); selectionChanged = true; selectedAssessmentIds = []"
@@ -88,17 +88,16 @@
                             </template>
                         </select>
                     </div>
-                </div>
-
-                <div class="max-w-sm">
-                    <label for="kkm" class="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">KKM untuk program ini</label>
-                    <input id="kkm" name="kkm" type="number" min="0" max="100" step="1" required value="{{ $kkm }}"
-                        x-model="selectedKkm" :disabled="!selectedSubjectId"
-                        class="min-h-11 w-full rounded-md border-slate-400 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:disabled:bg-slate-800"
-                        aria-describedby="kkm-help">
-                    <p id="kkm-help" class="mt-1 text-sm text-slate-700 dark:text-slate-300">
-                        Pilih mata pelajaran untuk mengisi KKM otomatis. Nilai ini dapat diubah sebelum perhitungan.
-                    </p>
+                    <div class="min-w-0">
+                        <label for="kkm" class="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">KKM untuk program ini</label>
+                        <input id="kkm" name="kkm" type="number" min="0" max="100" step="1" required value="{{ $kkm }}"
+                            x-model="selectedKkm" :disabled="!selectedSubjectId"
+                            class="min-h-11 w-full rounded-md border-slate-400 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:disabled:bg-slate-800"
+                            aria-describedby="kkm-help">
+                        <p id="kkm-help" class="mt-1 text-sm text-slate-700 dark:text-slate-300">
+                            Pilih mata pelajaran untuk mengisi KKM otomatis. Nilai ini dapat diubah sebelum perhitungan.
+                        </p>
+                    </div>
                 </div>
 
                 @if ($classroom && $subject)
