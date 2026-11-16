@@ -84,6 +84,21 @@ class SubjectController extends Controller
         return back()->with('success', count($mapelsToCreate).' Mata Pelajaran berhasil ditambahkan ke tingkat yang dipilih.');
     }
 
+    public function updateKkm(Request $request, Subject $subject)
+    {
+        $user = auth()->user();
+
+        abort_unless($user->hasRole('superadmin') || $subject->school_id == $user->school_id, 403);
+
+        $validated = $request->validate([
+            'kkm' => 'required|integer|min:0|max:100',
+        ]);
+
+        $subject->update(['kkm' => $validated['kkm']]);
+
+        return back()->with('success', 'KKM '.$subject->nama_mapel.' berhasil diubah menjadi '.$subject->kkm.'.');
+    }
+
     // FUNGSI UNTUK MENGHAPUS SATUAN
     public function destroy(Subject $subject)
     {

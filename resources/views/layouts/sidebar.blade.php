@@ -144,7 +144,7 @@
         </div>
         @endhasanyrole
 
-        <div x-data="{ open: {{ request()->routeIs('attendances.*', 'assessments.*', 'teacher-notes.*', 'piket.*', 'jadwal.*') ? 'true' : 'false' }} }"
+        <div x-data="{ open: {{ request()->routeIs('attendances.*', 'assessments.*', 'remedials.*', 'teacher-notes.*', 'piket.*', 'jadwal.*') ? 'true' : 'false' }} }"
             class="space-y-1">
             <button @click="open = !open; if(!sidebarOpen) sidebarOpen = true"
                 type="button" aria-controls="nav-kbm" :aria-expanded="open.toString()"
@@ -179,6 +179,10 @@
                 <x-sidebar-link :href="route('assessments.index')" :active="request()->routeIs('assessments.*')"
                     icon="M9 5l7 7-7 7">
                     Penilaian
+                </x-sidebar-link>
+                <x-sidebar-link :href="route('remedials.index')" :active="request()->routeIs('remedials.*')"
+                    icon="M9 5l7 7-7 7">
+                    Program Remedial
                 </x-sidebar-link>
                 <x-sidebar-link :href="route('assignments.index')" :active="request()->routeIs('assignments.*')"
                     icon="M9 5l7 7-7 7">

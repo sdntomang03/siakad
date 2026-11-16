@@ -7,6 +7,23 @@
 
     <div class="mx-auto max-w-7xl space-y-5 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 
+        @if (session('success'))
+        <div role="status" class="rounded-md border border-brand-600 bg-brand-50 px-4 py-3 text-sm text-brand-900 dark:border-brand-500 dark:bg-brand-900/30 dark:text-brand-100">
+            {{ session('success') }}
+        </div>
+        @endif
+
+        @if ($errors->any())
+        <div role="alert" class="rounded-md border border-rose-700 bg-rose-50 px-4 py-3 text-sm text-rose-900 dark:border-rose-500 dark:bg-rose-950/40 dark:text-rose-100">
+            <p class="font-semibold">Perubahan mata pelajaran belum dapat disimpan.</p>
+            <ul class="mt-1 list-inside list-disc">
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
         @role('superadmin')
         <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
             <form action="{{ route('subjects.index') }}" method="GET">
@@ -209,10 +226,15 @@
                                                 class="input-urutan-{{ $tingkat }} w-16 text-center rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white text-sm focus:ring-brand-500 py-1 font-bold text-brand-700">
                                         </td>
                                         <td class="px-6 py-3 text-center">
-                                            <span
-                                                class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
+                                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
                                                 {{ $mapel->kkm }}
                                             </span>
+                                            <button type="button"
+                                                aria-label="Ubah KKM {{ $mapel->nama_mapel }} kelas {{ $tingkat }}"
+                                                onclick="document.getElementById('dialog-kkm-{{ $mapel->id }}').showModal()"
+                                                class="mt-1 inline-flex min-h-11 items-center justify-center rounded-md px-2 text-xs font-semibold text-brand-800 hover:bg-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-200 dark:hover:bg-brand-900/40">
+                                                Ubah KKM
+                                            </button>
                                         </td>
 
                                         <td class="px-6 py-3 text-center">
@@ -263,6 +285,39 @@
                     @csrf
                     @method('DELETE')
                 </form>
+                @endforeach
+
+                @foreach($mapels as $mapel)
+                <dialog id="dialog-kkm-{{ $mapel->id }}"
+                    aria-labelledby="dialog-kkm-title-{{ $mapel->id }}"
+                    class="w-[calc(100%-2rem)] max-w-md rounded-lg border border-slate-300 bg-white p-0 text-slate-900 backdrop:bg-slate-950/50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100">
+                    <form action="{{ route('subjects.update-kkm', $mapel) }}" method="POST" class="space-y-5 p-5 sm:p-6">
+                        @csrf
+                        @method('PATCH')
+                        <div>
+                            <h3 id="dialog-kkm-title-{{ $mapel->id }}" class="text-lg font-semibold">Ubah KKM</h3>
+                            <p class="mt-1 text-sm text-slate-700 dark:text-slate-300">
+                                {{ $mapel->nama_mapel }} - Kelas {{ $tingkat }}
+                            </p>
+                        </div>
+                        <div>
+                            <label for="kkm-{{ $mapel->id }}" class="mb-2 block text-sm font-medium">Nilai KKM (0 sampai 100)</label>
+                            <input id="kkm-{{ $mapel->id }}" type="number" name="kkm" value="{{ $mapel->kkm }}"
+                                min="0" max="100" step="1" required
+                                class="min-h-11 w-full rounded-md border-slate-400 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                        </div>
+                        <div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                            <button type="button" onclick="this.closest('dialog').close()"
+                                class="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-400 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-100 dark:hover:bg-slate-700">
+                                Batal
+                            </button>
+                            <button type="submit"
+                                class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                                Simpan KKM
+                            </button>
+                        </div>
+                    </form>
+                </dialog>
                 @endforeach
 
                 @empty

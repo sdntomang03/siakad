@@ -59,6 +59,7 @@
                             'piket' => 'Piket',
                             'profile' => 'Profil',
                             'report-submissions' => 'Pengembalian Rapor',
+                            'remedials' => 'Program Remedial',
                             'students' => 'Siswa',
                             'subjects' => 'Mata Pelajaran',
                             'superadmin' => 'Manajemen Pusat',

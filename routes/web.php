@@ -1,10 +1,10 @@
 <?php
 
 use App\Http\Controllers\AcademicYearController;
-use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookLoanController;
@@ -12,9 +12,9 @@ use App\Http\Controllers\CapaianPembelajaranController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\ExtracurricularController;
 use App\Http\Controllers\EtppController;
 use App\Http\Controllers\ExamGradeController;
+use App\Http\Controllers\ExtracurricularController;
 use App\Http\Controllers\FinalGradeController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\GradeCurveController;
@@ -27,6 +27,7 @@ use App\Http\Controllers\ObservationController;
 use App\Http\Controllers\Operator\UserController as OperatorUserController;
 use App\Http\Controllers\PiketController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RemedialController;
 use App\Http\Controllers\RenkinController;
 use App\Http\Controllers\ReportSubmissionController;
 use App\Http\Controllers\StudentController;
@@ -164,6 +165,7 @@ Route::middleware(['auth', 'role:superadmin|operator'])->group(function () {
     Route::delete('/extracurriculars/{id}', [ExtracurricularController::class, 'destroy'])->name('extracurriculars.destroy');
     Route::delete('/subjects/bulk-delete', [SubjectController::class, 'bulkDestroy'])->name('subjects.bulkDestroy');
     Route::patch('/subjects/bulk-update-urutan', [SubjectController::class, 'bulkUpdateUrutan'])->name('subjects.bulk-update-urutan');
+    Route::patch('/subjects/{subject}/kkm', [SubjectController::class, 'updateKkm'])->name('subjects.update-kkm');
     Route::resource('subjects', SubjectController::class)->except(['create', 'show', 'edit']);
     Route::get('kelulusan/import', [KelulusanController::class, 'showImportForm'])->name('kelulusan.import');
     Route::post('kelulusan/import', [KelulusanController::class, 'importExcel'])->name('kelulusan.import.process');
@@ -248,6 +250,11 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     // LETAKKAN INI DI ATAS route resources / rute yang memakai parameter {assessment}
     Route::get('assessments/recap', [AssessmentController::class, 'recap'])->name('assessments.recap');
     Route::get('/assessments/recap-by-type', [AssessmentController::class, 'recapByType'])->name('assessments.recapByType');
+    Route::get('remedials', [RemedialController::class, 'index'])->name('remedials.index');
+    Route::get('remedials/create', [RemedialController::class, 'create'])->name('remedials.create');
+    Route::post('remedials', [RemedialController::class, 'store'])->name('remedials.store');
+    Route::get('remedials/{remedialProgram}', [RemedialController::class, 'show'])->name('remedials.show');
+    Route::post('remedials/{remedialProgram}', [RemedialController::class, 'update'])->name('remedials.update');
     // Rute untuk Penilaian Observasi / Non-Tes
     Route::get('/observations/create', [ObservationController::class, 'create'])->name('observations.create');
     Route::post('/observations', [ObservationController::class, 'store'])->name('observations.store');
