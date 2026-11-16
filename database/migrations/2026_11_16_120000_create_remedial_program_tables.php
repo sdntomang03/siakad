@@ -23,7 +23,7 @@ return new class extends Migration
             $table->foreignId('remedial_program_id')->constrained()->cascadeOnDelete();
             $table->foreignId('assessment_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
-            $table->unique(['remedial_program_id', 'assessment_id']);
+            $table->unique(['remedial_program_id', 'assessment_id'], 'rem_prog_assessment_unique');
         });
 
         Schema::create('remedial_records', function (Blueprint $table) {
