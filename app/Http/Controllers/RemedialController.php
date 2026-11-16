@@ -83,7 +83,11 @@ class RemedialController extends Controller
                     abort(403, 'Penilaian yang dipilih tidak sesuai dengan kelas dan mata pelajaran.');
                 }
 
-                $rows = $this->calculateRows($classroom, $selectedAssessmentIds, $kkm);
+                $assessmentNames = $assessments
+                    ->whereIn('id', $selectedAssessmentIds)
+                    ->pluck('keterangan', 'id')
+                    ->all();
+                $rows = $this->calculateRows($classroom, $selectedAssessmentIds, $kkm, $assessmentNames);
             }
         }
 
@@ -130,7 +134,12 @@ class RemedialController extends Controller
             ]);
         }
 
-        $eligibleRows = $this->calculateRows($classroom, $assessmentIds, $kkm)
+        $eligibleRows = $this->calculateRows(
+            $classroom,
+            $assessmentIds,
+            $kkm,
+            $assessments->pluck('keterangan', 'id')->all()
+        )
             ->filter(fn ($row) => $row->eligible)
             ->keyBy('student_id');
         $submittedStudentIds = array_map('intval', array_keys($validated['records']));
@@ -311,7 +320,7 @@ class RemedialController extends Controller
             });
     }
 
-    private function calculateRows(Classroom $classroom, array $assessmentIds, int $kkm)
+    private function calculateRows(Classroom $classroom, array $assessmentIds, int $kkm, array $assessmentNames)
     {
         $students = $classroom->students()
             ->where('students.school_id', auth()->user()->school_id)
@@ -324,12 +333,15 @@ class RemedialController extends Controller
             $scoreMap[$score->student_id][$score->assessment_id] = $score->score;
         }
 
-        return $students->map(function (Student $student) use ($assessmentIds, $scoreMap, $kkm) {
+        return $students->map(function (Student $student) use ($assessmentIds, $assessmentNames, $scoreMap, $kkm) {
             $studentScores = [];
+            $missingAssessments = [];
 
             foreach ($assessmentIds as $assessmentId) {
                 if (isset($scoreMap[$student->id][$assessmentId])) {
                     $studentScores[] = $scoreMap[$student->id][$assessmentId];
+                } else {
+                    $missingAssessments[] = $assessmentNames[$assessmentId];
                 }
             }
 
@@ -343,6 +355,7 @@ class RemedialController extends Controller
                 'student_id' => $student->id,
                 'score_count' => count($studentScores),
                 'assessment_count' => count($assessmentIds),
+                'missing_assessments' => $missingAssessments,
                 'average' => $average,
                 'is_complete' => $isComplete,
                 'eligible' => $isComplete && $average < $kkm,

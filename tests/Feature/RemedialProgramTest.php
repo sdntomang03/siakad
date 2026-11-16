@@ -79,6 +79,7 @@ test('teachers average selected assessments, flag students below KKM, and save r
         ['name' => 'Budi', 'scores' => [80, 90]],
         ['name' => 'Citra', 'scores' => [60, null]],
         ['name' => 'Dini', 'scores' => [70, 70]],
+        ['name' => 'Eka', 'scores' => [null, null]],
     ])->map(function (array $data) use ($context, $firstAssessment, $secondAssessment) {
         $student = Student::create([
             'school_id' => $context['school']->id,
@@ -117,6 +118,12 @@ test('teachers average selected assessments, flag students below KKM, and save r
         ->assertSee('Di bawah KKM')
         ->assertSee('Tuntas')
         ->assertSee('Nilai belum lengkap')
+        ->assertSee('Lihat penilaian yang belum lengkap')
+        ->assertSee('id="missing-assessments-dialog"', false)
+        ->assertSee('data-student="Citra"', false)
+        ->assertSee('data-missing-assessments="[&quot;Bab 2&quot;]"', false)
+        ->assertSee('data-student="Eka"', false)
+        ->assertSee('data-missing-assessments="[&quot;Bab 1&quot;,&quot;Bab 2&quot;]"', false)
         ->assertSee('2 siswa di bawah KKM dari 3 siswa dengan nilai lengkap.');
 
     $response = $this->actingAs($context['user'])

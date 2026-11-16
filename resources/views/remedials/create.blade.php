@@ -172,7 +172,17 @@
                         </div>
                     @else
                         <form method="POST" action="{{ route('remedials.store') }}"
-                            x-data="{ loading: false }" @submit="loading = true"
+                            x-data="{
+                                loading: false,
+                                incompleteStudentName: '',
+                                missingAssessments: [],
+                                openMissingAssessments(button) {
+                                    this.incompleteStudentName = button.dataset.student;
+                                    this.missingAssessments = JSON.parse(button.dataset.missingAssessments);
+                                    this.$refs.missingAssessmentsDialog.showModal();
+                                }
+                            }"
+                            @submit="loading = true"
                             class="space-y-4">
                             @csrf
                             <input type="hidden" name="classroom_id" value="{{ $classroom->id }}">
@@ -207,7 +217,18 @@
                                                 <td class="px-4 py-3 text-center tabular-nums">{{ $row->is_complete ? number_format($row->average, 2) : '-' }}</td>
                                                 <td class="px-4 py-3">
                                                     @if (! $row->is_complete)
-                                                        <span>Nilai belum lengkap</span>
+                                                        <div class="space-y-2">
+                                                            <span class="block">Nilai belum lengkap</span>
+                                                            <button type="button"
+                                                                data-student="{{ $row->student->nama_lengkap }}"
+                                                                data-missing-assessments="{{ json_encode($row->missing_assessments) }}"
+                                                                aria-haspopup="dialog"
+                                                                aria-controls="missing-assessments-dialog"
+                                                                @click="openMissingAssessments($event.currentTarget)"
+                                                                class="inline-flex min-h-11 max-w-full items-center rounded-md px-3 py-2 text-left font-semibold text-brand-800 hover:bg-brand-50 active:bg-brand-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-200 dark:hover:bg-brand-900/40 dark:active:bg-brand-900/60">
+                                                                Lihat penilaian yang belum lengkap
+                                                            </button>
+                                                        </div>
                                                     @elseif ($row->eligible)
                                                         <span class="font-semibold text-amber-800 dark:text-amber-200">Di bawah KKM</span>
                                                     @else
@@ -265,6 +286,34 @@
                                     Nilai belum tersedia lengkap untuk penilaian yang dipilih. Lengkapi nilai terlebih dahulu agar rerata dapat dihitung.
                                 </p>
                             @endif
+
+                            <dialog id="missing-assessments-dialog" x-ref="missingAssessmentsDialog"
+                                aria-labelledby="missing-assessments-title"
+                                aria-describedby="missing-assessments-description"
+                                @click.self="$refs.missingAssessmentsDialog.close()"
+                                @close="incompleteStudentName = ''; missingAssessments = []"
+                                class="m-auto max-h-[85vh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-lg border border-slate-300 bg-white p-0 text-slate-900 shadow-xl backdrop:bg-slate-950/60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100">
+                                <div class="space-y-4 p-5 sm:p-6">
+                                    <div>
+                                        <h2 id="missing-assessments-title" class="text-lg font-semibold">Penilaian belum lengkap</h2>
+                                        <p id="missing-assessments-description" class="mt-1 text-sm text-slate-700 dark:text-slate-300">
+                                            Belum ada nilai tersimpan untuk penilaian berikut bagi
+                                            <span class="font-semibold text-slate-900 dark:text-white" x-text="incompleteStudentName"></span>.
+                                        </p>
+                                    </div>
+                                    <ul class="list-inside list-disc space-y-1 text-sm">
+                                        <template x-for="(assessment, index) in missingAssessments" :key="index">
+                                            <li x-text="assessment"></li>
+                                        </template>
+                                    </ul>
+                                    <div class="flex justify-end border-t border-slate-200 pt-4 dark:border-slate-700">
+                                        <button type="button" @click="$refs.missingAssessmentsDialog.close()"
+                                            class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800 active:bg-brand-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                                            Tutup
+                                        </button>
+                                    </div>
+                                </div>
+                            </dialog>
                         </form>
                     @endif
                 </section>
