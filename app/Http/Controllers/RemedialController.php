@@ -218,6 +218,15 @@ class RemedialController extends Controller
             ->with('success', 'Status remedial berhasil diperbarui.');
     }
 
+    public function destroy(RemedialProgram $remedialProgram)
+    {
+        $this->authorizeProgram($remedialProgram);
+        $remedialProgram->delete();
+
+        return redirect()->route('remedials.index')
+            ->with('success', 'Program remedial berhasil dihapus.');
+    }
+
     private function teacherClasses(int $schoolId, int $activeYearId, int $employeeId): array
     {
         $classesData = [];

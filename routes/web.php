@@ -253,6 +253,7 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::get('remedials', [RemedialController::class, 'index'])->name('remedials.index');
     Route::get('remedials/create', [RemedialController::class, 'create'])->name('remedials.create');
     Route::post('remedials', [RemedialController::class, 'store'])->name('remedials.store');
+    Route::delete('remedials/{remedialProgram}', [RemedialController::class, 'destroy'])->name('remedials.destroy');
     Route::get('remedials/{remedialProgram}', [RemedialController::class, 'show'])->name('remedials.show');
     Route::post('remedials/{remedialProgram}', [RemedialController::class, 'update'])->name('remedials.update');
     // Rute untuk Penilaian Observasi / Non-Tes

@@ -247,3 +247,67 @@ test('teachers can adjust the subject KKM for a remedial program', function () {
         ->assertOk()
         ->assertSee('KKM saat program dibuat: 65');
 });
+
+test('teachers can delete their own remedial program but not another teachers program', function () {
+    $context = createRemedialTeacherContext();
+    $assessment = createRemedialAssessment($context, 'Bab 1');
+    $student = Student::create([
+        'school_id' => $context['school']->id,
+        'nama_lengkap' => 'Ayu',
+        'jenis_kelamin' => 'P',
+    ]);
+    $program = RemedialProgram::create([
+        'school_id' => $context['school']->id,
+        'academic_year_id' => $context['year']->id,
+        'classroom_id' => $context['classroom']->id,
+        'subject_id' => $context['subject']->id,
+        'employee_id' => $context['employee']->id,
+    ]);
+    $program->assessments()->attach($assessment->id);
+    $record = RemedialRecord::create([
+        'remedial_program_id' => $program->id,
+        'student_id' => $student->id,
+        'average_score' => 60,
+        'kkm' => 75,
+    ]);
+    $score = AssessmentScore::create([
+        'assessment_id' => $assessment->id,
+        'student_id' => $student->id,
+        'score' => 60,
+    ]);
+
+    $otherUser = User::factory()->create(['school_id' => $context['school']->id]);
+    $otherUser->assignRole(Role::firstOrCreate(['name' => 'guru', 'guard_name' => 'web']));
+    Employee::create([
+        'school_id' => $context['school']->id,
+        'user_id' => $otherUser->id,
+        'kategori_pegawai' => 'guru',
+        'nama_lengkap' => 'Guru Lain',
+        'jenis_kelamin' => 'P',
+    ]);
+
+    $this->actingAs($context['user'])
+        ->get(route('remedials.index'))
+        ->assertOk()
+        ->assertSee('Hapus program remedial?', false)
+        ->assertSee('name="_method" value="DELETE"', false);
+
+    $this->actingAs($otherUser)
+        ->delete(route('remedials.destroy', $program))
+        ->assertForbidden();
+
+    $this->assertDatabaseHas('remedial_programs', ['id' => $program->id]);
+
+    $this->actingAs($context['user'])
+        ->delete(route('remedials.destroy', $program))
+        ->assertRedirect(route('remedials.index'))
+        ->assertSessionHas('success', 'Program remedial berhasil dihapus.');
+
+    $this->assertDatabaseMissing('remedial_programs', ['id' => $program->id]);
+    $this->assertDatabaseMissing('remedial_program_assessments', [
+        'remedial_program_id' => $program->id,
+    ]);
+    $this->assertDatabaseMissing('remedial_records', ['id' => $record->id]);
+    $this->assertDatabaseHas('assessments', ['id' => $assessment->id]);
+    $this->assertDatabaseHas('assessment_scores', ['id' => $score->id]);
+});

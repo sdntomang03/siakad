@@ -63,11 +63,22 @@
                                 <td class="px-4 py-3">{{ $program->subject->nama_mapel }}</td>
                                 <td class="px-4 py-3 text-center tabular-nums">{{ $program->records_count }}</td>
                                 <td class="px-4 py-3">{{ $program->created_at->format('d/m/Y') }}</td>
-                                <td class="px-4 py-3 text-right">
-                                    <a href="{{ route('remedials.show', $program) }}"
-                                        class="inline-flex min-h-11 items-center rounded-md px-3 font-semibold text-brand-800 hover:bg-brand-50 hover:text-brand-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-200 dark:hover:bg-brand-900/40">
-                                        Buka program
-                                    </a>
+                                <td class="px-4 py-3">
+                                    <div class="flex flex-wrap items-center justify-end gap-2">
+                                        <a href="{{ route('remedials.show', $program) }}"
+                                            class="inline-flex min-h-11 items-center rounded-md px-3 font-semibold text-brand-800 hover:bg-brand-50 hover:text-brand-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-200 dark:hover:bg-brand-900/40">
+                                            Buka program
+                                        </a>
+                                        <form id="form-delete-remedial-{{ $program->id }}" method="POST" action="{{ route('remedials.destroy', $program) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button"
+                                                onclick="confirmAction('form-delete-remedial-{{ $program->id }}', 'Hapus program remedial?', 'Program dan catatan siswa di dalamnya akan dihapus. Penilaian tetap tersimpan.')"
+                                                class="inline-flex min-h-11 items-center justify-center rounded-md px-3 text-sm font-semibold text-rose-800 hover:bg-rose-50 active:bg-rose-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-700 dark:text-rose-200 dark:hover:bg-rose-950/50">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
