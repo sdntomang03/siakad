@@ -107,6 +107,8 @@ test('teachers average selected assessments, flag students below KKM, and save r
             'assessment_ids' => [$firstAssessment->id, $secondAssessment->id],
         ]))
         ->assertOk()
+        ->assertSee('KKM untuk program ini')
+        ->assertSee('value="75"', false)
         ->assertSee('65.00')
         ->assertSee('Di bawah KKM')
         ->assertSee('Tuntas')
@@ -180,4 +182,64 @@ test('teachers cannot calculate a remedial program for an unassigned class', fun
             'subject_id' => $context['subject']->id,
         ]))
         ->assertForbidden();
+});
+
+test('teachers can adjust the subject KKM for a remedial program', function () {
+    $context = createRemedialTeacherContext();
+    $assessment = createRemedialAssessment($context, 'Bab 1');
+    $student = Student::create([
+        'school_id' => $context['school']->id,
+        'nama_lengkap' => 'Ayu',
+        'jenis_kelamin' => 'P',
+    ]);
+    $context['classroom']->students()->attach($student->id);
+    AssessmentScore::create([
+        'assessment_id' => $assessment->id,
+        'student_id' => $student->id,
+        'score' => 60,
+    ]);
+
+    $this->actingAs($context['user'])
+        ->get(route('remedials.create', [
+            'classroom_id' => $context['classroom']->id,
+            'subject_id' => $context['subject']->id,
+            'kkm' => 65,
+            'assessment_ids' => [$assessment->id],
+        ]))
+        ->assertOk()
+        ->assertSee('KKM mata pelajaran:')
+        ->assertSee('value="65"', false)
+        ->assertSee('1 siswa di bawah KKM dari 1 siswa dengan nilai lengkap.');
+
+    $this->actingAs($context['user'])
+        ->post(route('remedials.store'), [
+            'classroom_id' => $context['classroom']->id,
+            'subject_id' => $context['subject']->id,
+            'assessment_ids' => [$assessment->id],
+            'kkm' => 101,
+            'records' => [$student->id => ['completed' => '1']],
+        ])
+        ->assertSessionHasErrors('kkm');
+
+    $response = $this->actingAs($context['user'])
+        ->post(route('remedials.store'), [
+            'classroom_id' => $context['classroom']->id,
+            'subject_id' => $context['subject']->id,
+            'assessment_ids' => [$assessment->id],
+            'kkm' => 65,
+            'records' => [$student->id => ['completed' => '1']],
+        ]);
+    $program = RemedialProgram::firstOrFail();
+
+    $response->assertRedirect(route('remedials.show', $program));
+    $this->assertDatabaseHas('remedial_records', [
+        'remedial_program_id' => $program->id,
+        'student_id' => $student->id,
+        'kkm' => 65,
+    ]);
+
+    $this->actingAs($context['user'])
+        ->get(route('remedials.show', $program))
+        ->assertOk()
+        ->assertSee('KKM saat program dibuat: 65');
 });

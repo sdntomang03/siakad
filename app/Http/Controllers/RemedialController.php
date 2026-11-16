@@ -45,6 +45,7 @@ class RemedialController extends Controller
         $subjectId = $request->query('subject_id');
         $classroom = null;
         $subject = null;
+        $kkm = null;
         $assessments = collect();
         $rows = collect();
         $selectedAssessmentIds = [];
@@ -57,6 +58,13 @@ class RemedialController extends Controller
 
             $classroom = Classroom::findOrFail($classroomId);
             $subject = Subject::findOrFail($subjectId);
+            $kkm = (int) $subject->kkm;
+            if ($request->query->has('kkm')) {
+                $validatedKkm = $request->validate([
+                    'kkm' => 'required|integer|min:0|max:100',
+                ]);
+                $kkm = (int) $validatedKkm['kkm'];
+            }
             $assessments = $this->assessmentQuery($user->school_id, $activeYear->id, $classroomId, $subjectId)
                 ->with('assessmentType')
                 ->withCount('scores')
@@ -75,7 +83,7 @@ class RemedialController extends Controller
                     abort(403, 'Penilaian yang dipilih tidak sesuai dengan kelas dan mata pelajaran.');
                 }
 
-                $rows = $this->calculateRows($classroom, $subject, $selectedAssessmentIds);
+                $rows = $this->calculateRows($classroom, $selectedAssessmentIds, $kkm);
             }
         }
 
@@ -84,6 +92,7 @@ class RemedialController extends Controller
             'activeYear',
             'classroom',
             'subject',
+            'kkm',
             'assessments',
             'rows',
             'selectedAssessmentIds'
@@ -97,6 +106,7 @@ class RemedialController extends Controller
             'subject_id' => 'required|integer',
             'assessment_ids' => 'required|array|min:1',
             'assessment_ids.*' => 'required|integer|distinct',
+            'kkm' => 'sometimes|required|integer|min:0|max:100',
             'records' => 'required|array',
             'records.*.completed' => 'sometimes|boolean',
             'records.*.score' => 'nullable|numeric|min:0|max:100',
@@ -105,6 +115,7 @@ class RemedialController extends Controller
             (int) $validated['classroom_id'],
             (int) $validated['subject_id']
         );
+        $kkm = (int) ($validated['kkm'] ?? $subject->kkm);
         $assessmentIds = array_map('intval', $validated['assessment_ids']);
         $assessments = $this->assessmentQuery(
             auth()->user()->school_id,
@@ -119,7 +130,7 @@ class RemedialController extends Controller
             ]);
         }
 
-        $eligibleRows = $this->calculateRows($classroom, $subject, $assessmentIds)
+        $eligibleRows = $this->calculateRows($classroom, $assessmentIds, $kkm)
             ->filter(fn ($row) => $row->eligible)
             ->keyBy('student_id');
         $submittedStudentIds = array_map('intval', array_keys($validated['records']));
@@ -130,7 +141,7 @@ class RemedialController extends Controller
             ]);
         }
 
-        $program = DB::transaction(function () use ($validated, $classroom, $subject, $activeYear, $assessmentIds, $eligibleRows) {
+        $program = DB::transaction(function () use ($validated, $classroom, $subject, $activeYear, $assessmentIds, $eligibleRows, $kkm) {
             $program = RemedialProgram::create([
                 'school_id' => auth()->user()->school_id,
                 'academic_year_id' => $activeYear->id,
@@ -148,7 +159,7 @@ class RemedialController extends Controller
                     'remedial_program_id' => $program->id,
                     'student_id' => $studentId,
                     'average_score' => $result->average,
-                    'kkm' => $subject->kkm,
+                    'kkm' => $kkm,
                     'is_completed' => ! empty($input['completed']) || $remedialScore !== null,
                     'remedial_score' => $remedialScore,
                 ]);
@@ -291,7 +302,7 @@ class RemedialController extends Controller
             });
     }
 
-    private function calculateRows(Classroom $classroom, Subject $subject, array $assessmentIds)
+    private function calculateRows(Classroom $classroom, array $assessmentIds, int $kkm)
     {
         $students = $classroom->students()
             ->where('students.school_id', auth()->user()->school_id)
@@ -304,7 +315,7 @@ class RemedialController extends Controller
             $scoreMap[$score->student_id][$score->assessment_id] = $score->score;
         }
 
-        return $students->map(function (Student $student) use ($assessmentIds, $scoreMap, $subject) {
+        return $students->map(function (Student $student) use ($assessmentIds, $scoreMap, $kkm) {
             $studentScores = [];
 
             foreach ($assessmentIds as $assessmentId) {
@@ -325,7 +336,7 @@ class RemedialController extends Controller
                 'assessment_count' => count($assessmentIds),
                 'average' => $average,
                 'is_complete' => $isComplete,
-                'eligible' => $isComplete && $average < $subject->kkm,
+                'eligible' => $isComplete && $average < $kkm,
             ];
         });
     }

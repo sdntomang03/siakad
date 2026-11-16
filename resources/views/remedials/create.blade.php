@@ -17,9 +17,9 @@
 
         <div class="flex flex-wrap items-start justify-between gap-4 border-b border-slate-200 pb-5 dark:border-slate-700">
             <div>
-                <p class="text-sm font-medium text-brand-800 dark:text-brand-200">Perhitungan berdasarkan KKM mata pelajaran</p>
+                <p class="text-sm font-medium text-brand-800 dark:text-brand-200">KKM program mengikuti mata pelajaran</p>
                 <p class="mt-1 max-w-3xl text-sm text-slate-700 dark:text-slate-300">
-                    Pilih satu atau beberapa penilaian. Rerata dihitung setelah semua nilai yang dipilih tersedia untuk siswa.
+                    Pilih penilaian yang akan diremidi. KKM awal mengikuti mata pelajaran dan dapat disesuaikan untuk program ini. Rerata dihitung setelah semua nilai yang dipilih tersedia.
                 </p>
             </div>
             <a href="{{ route('remedials.index') }}"
@@ -45,14 +45,23 @@
                     classesData: @js($classesData),
                     selectedClassId: @js((string) $classroom?->id),
                     selectedSubjectId: @js((string) $subject?->id),
+                    selectedKkm: @js($kkm === null ? '' : (string) $kkm),
                     subjects: [],
-                    updateSubjects() {
+                    updateSubjects(resetKkm = false) {
                         this.subjects = this.classesData[this.selectedClassId]
                             ? Object.values(this.classesData[this.selectedClassId].subjects)
                             : [];
-                        if (!this.subjects.some(subject => subject.id == this.selectedSubjectId)) {
+                        const selectedSubject = this.subjects.find(subject => subject.id == this.selectedSubjectId);
+                        if (!selectedSubject) {
                             this.selectedSubjectId = '';
                         }
+                        if (resetKkm) {
+                            this.selectedKkm = selectedSubject ? selectedSubject.kkm : '';
+                        }
+                    },
+                    updateKkm() {
+                        const selectedSubject = this.subjects.find(subject => subject.id == this.selectedSubjectId);
+                        this.selectedKkm = selectedSubject ? selectedSubject.kkm : '';
                     }
                 }"
                 x-init="$nextTick(() => updateSubjects())"
@@ -61,7 +70,7 @@
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <label for="classroom_id" class="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">Kelas</label>
-                        <select id="classroom_id" name="classroom_id" required x-model="selectedClassId" @change="updateSubjects(); selectionChanged = true; selectedAssessmentIds = []"
+                        <select id="classroom_id" name="classroom_id" required x-model="selectedClassId" @change="updateSubjects(true); selectionChanged = true; selectedAssessmentIds = []"
                             class="min-h-11 w-full rounded-md border-slate-400 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                             <option value="">Pilih kelas</option>
                             @foreach ($classesData as $id => $classData)
@@ -71,7 +80,7 @@
                     </div>
                     <div>
                         <label for="subject_id" class="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">Mata pelajaran</label>
-                        <select id="subject_id" name="subject_id" required x-model="selectedSubjectId" @change="selectionChanged = true; selectedAssessmentIds = []"
+                        <select id="subject_id" name="subject_id" required x-model="selectedSubjectId" @change="updateKkm(); selectionChanged = true; selectedAssessmentIds = []"
                             class="min-h-11 w-full rounded-md border-slate-400 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                             <option value="">Pilih mata pelajaran</option>
                             <template x-for="subject in subjects" :key="subject.id">
@@ -81,10 +90,21 @@
                     </div>
                 </div>
 
+                <div class="max-w-sm">
+                    <label for="kkm" class="mb-2 block text-sm font-medium text-slate-800 dark:text-slate-100">KKM untuk program ini</label>
+                    <input id="kkm" name="kkm" type="number" min="0" max="100" step="1" required value="{{ $kkm }}"
+                        x-model="selectedKkm" :disabled="!selectedSubjectId"
+                        class="min-h-11 w-full rounded-md border-slate-400 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:disabled:bg-slate-800"
+                        aria-describedby="kkm-help">
+                    <p id="kkm-help" class="mt-1 text-sm text-slate-700 dark:text-slate-300">
+                        Pilih mata pelajaran untuk mengisi KKM otomatis. Nilai ini dapat diubah sebelum perhitungan.
+                    </p>
+                </div>
+
                 @if ($classroom && $subject)
                     <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 border-t border-slate-200 pt-4 text-sm dark:border-slate-700">
                         <p class="font-semibold text-slate-900 dark:text-white">{{ $classroom->tingkat }} - {{ $classroom->nama_kelas }} / {{ $subject->nama_mapel }}</p>
-                        <p class="text-slate-700 dark:text-slate-300">KKM: <span class="font-semibold tabular-nums">{{ $subject->kkm }}</span></p>
+                        <p class="text-slate-700 dark:text-slate-300">KKM mata pelajaran: <span class="font-semibold tabular-nums">{{ $subject->kkm }}</span></p>
                     </div>
 
                     @if ($assessments->isEmpty())
@@ -161,6 +181,7 @@
                             @foreach ($selectedAssessmentIds as $assessmentId)
                                 <input type="hidden" name="assessment_ids[]" value="{{ $assessmentId }}">
                             @endforeach
+                            <input type="hidden" name="kkm" value="{{ $kkm }}">
 
                             @if ($errors->has('records'))
                                 <p class="text-sm font-medium text-rose-800 dark:text-rose-200">{{ $errors->first('records') }}</p>
