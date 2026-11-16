@@ -108,6 +108,7 @@ test('teachers average selected assessments, flag students below KKM, and save r
         ]))
         ->assertOk()
         ->assertSee('KKM untuk program ini')
+        ->assertSee('id="kkm" name="kkm" type="number"', false)
         ->assertSee('value="75"', false)
         ->assertSee('65.00')
         ->assertSee('Di bawah KKM')
