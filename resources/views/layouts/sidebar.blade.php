@@ -6,7 +6,7 @@
 <aside id="main-sidebar" :class="sidebarOpen ? 'translate-x-0 md:w-64' : '-translate-x-full md:translate-x-0 md:w-20'"
     @keydown.escape.window="sidebarOpen = false"
     aria-label="Navigasi utama"
-    class="sidebar-shell fixed inset-y-0 left-0 z-50 flex h-screen h-[100dvh] w-72 min-h-0 flex-col border-r border-brand-800 bg-brand-900 text-slate-100 transition-[transform,width] duration-200 ease-out md:relative md:translate-x-0 md:shadow-none">
+    class="sidebar-shell fixed inset-y-0 left-0 z-50 flex h-screen h-[100dvh] w-72 min-h-0 flex-col border-r border-brand-800 bg-brand-900 text-slate-100 transition-[transform,width] duration-200 ease-out md:relative md:translate-x-0 md:shadow-none {{ request()->routeIs('remedials.create') ? 'md:h-auto md:min-h-screen' : '' }}">
 
     <div class="flex h-16 shrink-0 items-center border-b border-white/10 px-4 text-white transition-colors duration-150"
         :class="sidebarOpen ? 'justify-between' : 'justify-center'">
@@ -38,7 +38,7 @@
         </button>
     </div>
 
-    <nav class="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pb-6 pt-3">
+    <nav class="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 pb-6 pt-3 {{ request()->routeIs('remedials.create') ? 'md:min-h-max md:flex-none md:overflow-visible' : '' }}">
 
         <x-sidebar-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
             icon="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">

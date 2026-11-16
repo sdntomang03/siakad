@@ -24,11 +24,14 @@
         class="sr-only z-[60] rounded-md bg-white px-4 py-2 text-sm font-semibold text-brand-900 shadow focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
         Lewati ke konten utama
     </a>
-    <div class="flex h-screen h-[100dvh] min-w-0 overflow-hidden">
+    @php
+        $singleScrollPage = request()->routeIs('remedials.create');
+    @endphp
+    <div class="flex min-w-0 {{ $singleScrollPage ? 'min-h-screen' : 'h-screen h-[100dvh] overflow-hidden' }}">
 
         @include('layouts.sidebar')
 
-        <div class="flex min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden">
+        <div class="flex min-w-0 flex-1 flex-col {{ $singleScrollPage ? '' : 'overflow-y-auto overflow-x-hidden' }}">
 
             @include('layouts.navigation')
 
@@ -108,7 +111,7 @@
             </header>
             @endisset
 
-            <main id="main-content" class="min-w-0 flex-1" tabindex="-1">
+            <main id="main-content" class="min-w-0 {{ $singleScrollPage ? '' : 'flex-1' }}" tabindex="-1">
                 {{ $slot }}
             </main>
         </div>

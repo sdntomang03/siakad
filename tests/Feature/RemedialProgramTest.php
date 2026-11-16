@@ -107,6 +107,9 @@ test('teachers average selected assessments, flag students below KKM, and save r
             'assessment_ids' => [$firstAssessment->id, $secondAssessment->id],
         ]))
         ->assertOk()
+        ->assertSee('class="flex min-w-0 min-h-screen"', false)
+        ->assertSee('md:min-h-max md:flex-none md:overflow-visible', false)
+        ->assertDontSee('overflow-y-auto overflow-x-hidden', false)
         ->assertSee('KKM untuk program ini')
         ->assertSee('id="kkm" name="kkm" type="number"', false)
         ->assertSee('value="75"', false)
