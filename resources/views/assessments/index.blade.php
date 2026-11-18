@@ -41,6 +41,52 @@
 
         <div
             class="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+            <form method="GET" action="{{ route('assessments.index') }}"
+                class="grid grid-cols-1 gap-4 border-b border-slate-200 p-4 dark:border-slate-700 md:grid-cols-4 md:items-end">
+                <div>
+                    <label for="subject_id" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">
+                        Mata Pelajaran
+                    </label>
+                    <select id="subject_id" name="subject_id"
+                        class="min-h-11 w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                        <option value="">Semua mata pelajaran</option>
+                        @foreach($subjects as $subject)
+                        <option value="{{ $subject->id }}" @selected(request('subject_id') == $subject->id)>
+                            {{ $subject->nama_mapel }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="assessment_type_id" class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">
+                        Jenis Penilaian
+                    </label>
+                    <select id="assessment_type_id" name="assessment_type_id"
+                        class="min-h-11 w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                        <option value="">Semua jenis penilaian</option>
+                        @foreach($assessmentTypes as $type)
+                        <option value="{{ $type->id }}" @selected(request('assessment_type_id') == $type->id)>
+                            {{ $type->nama }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="flex flex-col gap-2 sm:flex-row md:col-span-2 md:justify-end">
+                    <button type="submit"
+                        class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800 active:bg-brand-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                        Terapkan Filter
+                    </button>
+                    @if(request()->filled('subject_id') || request()->filled('assessment_type_id'))
+                    <a href="{{ route('assessments.index') }}"
+                        class="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700 dark:active:bg-slate-600">
+                        Hapus Filter
+                    </a>
+                    @endif
+                </div>
+            </form>
+
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
                     <thead
@@ -167,10 +213,16 @@
                                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                                         </path>
                                     </svg>
+                                    @if(request()->filled('subject_id') || request()->filled('assessment_type_id'))
+                                    <p class="text-slate-500 font-bold">Tidak ada penilaian yang sesuai dengan filter.</p>
+                                    <a href="{{ route('assessments.index') }}"
+                                        class="mt-3 inline-flex min-h-11 items-center justify-center rounded-md bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-900 transition-colors hover:bg-brand-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:bg-brand-900 dark:text-brand-100 dark:hover:bg-brand-800">
+                                        Hapus Filter
+                                    </a>
+                                    @else
                                     <p class="text-slate-500 font-bold">Belum ada riwayat penilaian.</p>
-                                    <p class="text-sm text-slate-400">Klik "Buat Tes" atau "Observasi" untuk mulai
-                                        menginput
-                                        nilai siswa.</p>
+                                    <p class="text-sm text-slate-400">Klik "Buat Tes" atau "Observasi" untuk mulai menginput nilai siswa.</p>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

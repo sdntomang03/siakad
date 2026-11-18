@@ -253,7 +253,7 @@ class AssessmentController extends Controller
     }
 
     // MENAMPILKAN RIWAYAT PENILAIAN
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
 
@@ -266,10 +266,23 @@ class AssessmentController extends Controller
             $query->where('employee_id', $user->employee->id ?? 0);
         }
 
-        // Tampilkan 10 data terbaru per halaman
-        $assessments = $query->orderBy('created_at', 'desc')->paginate(10);
+        $subjectIds = (clone $query)->distinct()->pluck('subject_id');
+        $assessmentTypeIds = (clone $query)->distinct()->pluck('assessment_type_id');
+        $subjects = Subject::whereIn('id', $subjectIds)->orderBy('nama_mapel')->get();
+        $assessmentTypes = AssessmentType::whereIn('id', $assessmentTypeIds)->orderBy('nama')->get();
 
-        return view('assessments.index', compact('assessments'));
+        if ($request->filled('subject_id')) {
+            $query->where('subject_id', $request->input('subject_id'));
+        }
+
+        if ($request->filled('assessment_type_id')) {
+            $query->where('assessment_type_id', $request->input('assessment_type_id'));
+        }
+
+        // Tampilkan 10 data terbaru per halaman
+        $assessments = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+
+        return view('assessments.index', compact('assessments', 'subjects', 'assessmentTypes'));
     }
 
     // MENGHAPUS WADAH PENILAIAN

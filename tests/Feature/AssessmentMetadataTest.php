@@ -139,6 +139,54 @@ test('teachers can update assessment details and existing scores follow the new 
         ->assertSee('82.5');
 });
 
+test('teachers can filter assessment history by subject and assessment type together', function () {
+    $context = createAssessmentMetadataContext();
+    $matchingAssessment = Assessment::create([
+        'school_id' => $context['school']->id,
+        'academic_year_id' => $context['year']->id,
+        'classroom_id' => $context['classroom']->id,
+        'subject_id' => $context['subjects'][0]->id,
+        'employee_id' => $context['employee']->id,
+        'assessment_type_id' => $context['types'][1]->id,
+        'keterangan' => 'Nilai Matematika akhir',
+        'tanggal' => '2026-10-11',
+    ]);
+    Assessment::create([
+        'school_id' => $context['school']->id,
+        'academic_year_id' => $context['year']->id,
+        'classroom_id' => $context['classroom']->id,
+        'subject_id' => $context['subjects'][1]->id,
+        'employee_id' => $context['employee']->id,
+        'assessment_type_id' => $context['types'][1]->id,
+        'keterangan' => 'Nilai Bahasa akhir',
+        'tanggal' => '2026-10-12',
+    ]);
+
+    $this->actingAs($context['user'])
+        ->get(route('assessments.index', [
+            'subject_id' => $context['subjects'][0]->id,
+            'assessment_type_id' => $context['types'][1]->id,
+        ]))
+        ->assertOk()
+        ->assertSee('Nilai Matematika akhir')
+        ->assertDontSee('Bab 1')
+        ->assertDontSee('Nilai Bahasa akhir')
+        ->assertSee('name="subject_id"', false)
+        ->assertSee('name="assessment_type_id"', false)
+        ->assertSee('Hapus Filter');
+
+    $this->actingAs($context['user'])
+        ->get(route('assessments.index', [
+            'subject_id' => $context['subjects'][1]->id,
+            'assessment_type_id' => $context['types'][0]->id,
+        ]))
+        ->assertOk()
+        ->assertSee('Tidak ada penilaian yang sesuai dengan filter.')
+        ->assertSee(route('assessments.index'));
+
+    $this->assertDatabaseHas('assessments', ['id' => $matchingAssessment->id]);
+});
+
 test('teachers cannot update another teacher assessment or use unassigned subjects and other school types', function () {
     $context = createAssessmentMetadataContext();
     $otherUser = User::factory()->create(['school_id' => $context['school']->id]);
