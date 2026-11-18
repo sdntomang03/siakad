@@ -104,6 +104,11 @@
                             <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap">
 
                                 <!-- Logika Aksi Edit Dinamis berdasarkan Format -->
+                                <a href="{{ route('assessments.edit', $item->id) }}"
+                                    class="inline-flex min-h-11 items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:active:bg-slate-600">
+                                    Edit Detail
+                                </a>
+
                                 @if($item->format === 'non-tes')
                                 <a href="{{ route('observations.input', $item->id) }}"
                                     class="inline-flex min-h-11 items-center rounded-md bg-brand-50 px-4 py-2 text-sm font-medium text-brand-900 transition-colors hover:bg-brand-700 hover:text-white dark:bg-brand-900 dark:text-brand-100 dark:hover:bg-brand-700">

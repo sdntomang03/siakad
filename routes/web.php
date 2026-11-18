@@ -246,6 +246,8 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::post('assessments/{assessment}/input', [AssessmentController::class, 'updateScores'])->name('assessments.update-scores');
 
     // 4. Fitur Tambahan: Hapus atau Edit metadata penilaian
+    Route::get('assessments/{assessment}/edit', [AssessmentController::class, 'edit'])->name('assessments.edit');
+    Route::put('assessments/{assessment}', [AssessmentController::class, 'update'])->name('assessments.update');
     Route::delete('assessments/{assessment}', [AssessmentController::class, 'destroy'])->name('assessments.destroy');
     // LETAKKAN INI DI ATAS route resources / rute yang memakai parameter {assessment}
     Route::get('assessments/recap', [AssessmentController::class, 'recap'])->name('assessments.recap');

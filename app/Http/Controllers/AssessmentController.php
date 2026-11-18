@@ -11,6 +11,7 @@ use App\Models\ClassroomSubject;
 use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AssessmentController extends Controller
 {
@@ -118,6 +119,76 @@ class AssessmentController extends Controller
         return redirect()->route('assessments.input', $assessment->id);
     }
 
+    public function edit(Assessment $assessment)
+    {
+        $user = auth()->user();
+        if (! $user->hasRole('superadmin') && $assessment->employee_id !== ($user->employee->id ?? 0)) {
+            abort(403, 'Akses ditolak: Anda tidak memiliki akses ke penilaian ini.');
+        }
+
+        $assessment->load(['classroom', 'subject', 'assessmentType'])->loadCount('scores');
+        $subjects = $this->availableSubjectsFor($assessment);
+        $assessmentTypes = AssessmentType::where('school_id', $assessment->school_id)->orderBy('nama')->get();
+
+        return view('assessments.edit', compact('assessment', 'subjects', 'assessmentTypes'));
+    }
+
+    public function update(Request $request, Assessment $assessment)
+    {
+        $user = auth()->user();
+        if (! $user->hasRole('superadmin') && $assessment->employee_id !== ($user->employee->id ?? 0)) {
+            abort(403, 'Akses ditolak.');
+        }
+
+        $allowedSubjectIds = $this->availableSubjectsFor($assessment)->pluck('id')->all();
+
+        $validated = $request->validate([
+            'subject_id' => ['required', Rule::in($allowedSubjectIds)],
+            'assessment_type_id' => [
+                'required',
+                Rule::exists('assessment_types', 'id')->where('school_id', $assessment->school_id),
+            ],
+            'keterangan' => 'required|string|max:255',
+        ]);
+
+        $assessment->update($validated);
+
+        return redirect()->route('assessments.index')
+            ->with('success', 'Detail penilaian diperbarui. Nilai siswa tetap tersimpan dan rekap mengikuti data terbaru.');
+    }
+
+    private function availableSubjectsFor(Assessment $assessment)
+    {
+        $employeeId = auth()->user()->employee->id ?? 0;
+        $classroom = $assessment->classroom;
+        $subjects = collect();
+
+        if ((int) $classroom->homeroom_teacher_id === (int) $employeeId) {
+            $subjects = Subject::where('school_id', $assessment->school_id)
+                ->where('tingkat', $classroom->tingkat)
+                ->where('pengampu', 'guru_kelas')
+                ->get();
+        }
+
+        $assignedSubjects = ClassroomSubject::where('employee_id', $employeeId)
+            ->where('classroom_id', $classroom->id)
+            ->whereHas('subject', fn ($query) => $query->where('school_id', $assessment->school_id))
+            ->with('subject')
+            ->get()
+            ->pluck('subject')
+            ->filter();
+
+        $currentSubject = Subject::where('school_id', $assessment->school_id)
+            ->whereKey($assessment->subject_id)
+            ->first();
+
+        return $subjects->merge($assignedSubjects)
+            ->when($currentSubject, fn ($available) => $available->push($currentSubject))
+            ->unique('id')
+            ->sortBy('nama_mapel')
+            ->values();
+    }
+
     // TAHAP 2: MENAMPILKAN HALAMAN INPUT NILAI MARATON
     public function input(Assessment $assessment)
     {
@@ -187,7 +258,7 @@ class AssessmentController extends Controller
         $user = auth()->user();
 
         // Mulai kueri ambil data penilaian beserta relasi tabelnya
-        $query = Assessment::with(['classroom', 'subject'])
+        $query = Assessment::with(['classroom', 'subject', 'assessmentType'])
             ->withCount('scores'); // Ini akan otomatis menghitung berapa siswa yang sudah dinilai
 
         // Jika yang login bukan superadmin, tampilkan HANYA penilaian miliknya sendiri
