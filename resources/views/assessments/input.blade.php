@@ -59,7 +59,7 @@
                                     $siswa->nama_lengkap }}</td>
                                 <td class="px-6 py-4">
                                     <input type="number" name="scores[{{ $siswa->id }}]" data-nisn="{{ $siswa->nisn }}"
-                                        value="{{ $existingScores[$siswa->id] ?? '' }}" min="0" max="100" step="0.01"
+                                        value="{{ $existingScores[$siswa->id] ?? '' }}" min="0" max="100" step="1"
                                         class="score-input w-full rounded-md border-slate-300 text-center font-semibold text-brand-700 focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-brand-300"
                                         placeholder="-">
                                 </td>
@@ -88,7 +88,7 @@
                     <a href="{{ route('assessments.create') }}"
                         class="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700">Batal</a>
 
-                    <button type="submit"
+                    <button type="submit" formnovalidate
                         class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
                         Simpan Nilai
                     </button>

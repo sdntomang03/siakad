@@ -93,6 +93,13 @@ test('teachers can update assessment details and existing scores follow the new 
         ->assertDontSee('Hapus</button>', false);
 
     $this->actingAs($context['user'])
+        ->get(route('assessments.input', $context['assessment']))
+        ->assertOk()
+        ->assertSee('step="1"', false)
+        ->assertSee('value="82.5"', false)
+        ->assertSee('formnovalidate', false);
+
+    $this->actingAs($context['user'])
         ->get(route('assessments.edit', $context['assessment']))
         ->assertOk()
         ->assertSee('Edit Detail Penilaian')
