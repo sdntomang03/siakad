@@ -85,7 +85,9 @@ test('teachers can update assessment details and existing scores follow the new 
         ->assertOk()
         ->assertSee(route('assessments.edit', $context['assessment']))
         ->assertSee('Edit Detail')
-        ->assertSee('Edit Nilai');
+        ->assertSee('Edit Nilai')
+        ->assertSee('Hapus')
+        ->assertSee('aria-hidden="true"', false);
 
     $this->actingAs($context['user'])
         ->get(route('assessments.edit', $context['assessment']))
