@@ -105,14 +105,14 @@
 
                                 <!-- Logika Aksi Edit Dinamis berdasarkan Format -->
                                 <a href="{{ route('assessments.edit', $item->id) }}"
-                                    class="inline-flex min-h-11 items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:active:bg-slate-600">
+                                    aria-label="Edit detail penilaian" title="Edit detail penilaian"
+                                    class="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 active:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:active:bg-slate-600">
                                     <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                         aria-hidden="true" focusable="false">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                                             d="M8 4.75h6.5L19 9.25v4.5M14 4.75v4.5h4.5M8 4.75A2.25 2.25 0 0 0 5.75 7v10A2.25 2.25 0 0 0 8 19.25h4.5M9 13h5M9 9.75h1.5m-1.5 6.5h2.5m6.2-2.3 2.1 2.1-4.9 4.9-2.8.7.7-2.8 4.9-4.9Z">
                                         </path>
                                     </svg>
-                                    Edit Detail
                                 </a>
 
                                 @if($item->format === 'non-tes')
@@ -128,14 +128,14 @@
                                 </a>
                                 @else
                                 <a href="{{ route('assessments.input', $item->id) }}"
-                                    class="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand-50 px-4 py-2 text-sm font-medium text-brand-900 transition-colors hover:bg-brand-700 hover:text-white dark:bg-brand-900 dark:text-brand-100 dark:hover:bg-brand-700">
+                                    aria-label="Edit nilai" title="Edit nilai"
+                                    class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-50 px-3 py-2 text-sm font-medium text-brand-900 transition-colors hover:bg-brand-700 hover:text-white dark:bg-brand-900 dark:text-brand-100 dark:hover:bg-brand-700">
                                     <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                         aria-hidden="true" focusable="false">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                                             d="M4.75 5.75h14.5v12.5H4.75zM9.5 5.75v12.5m5-12.5v12.5m-9.75-8.25h14.5m-14.5 4h14.5">
                                         </path>
                                     </svg>
-                                    Edit Nilai
                                 </a>
                                 @endif
 
@@ -145,14 +145,14 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
-                                        class="inline-flex min-h-11 items-center gap-2 rounded-md bg-red-50 px-4 py-2 text-sm font-medium text-red-800 transition-colors hover:bg-red-700 hover:text-white dark:bg-red-950 dark:text-red-200">
+                                        aria-label="Hapus" title="Hapus"
+                                        class="inline-flex min-h-11 items-center justify-center rounded-md bg-red-50 px-3 py-2 text-sm font-medium text-red-800 transition-colors hover:bg-red-700 hover:text-white dark:bg-red-950 dark:text-red-200">
                                         <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                             aria-hidden="true" focusable="false">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                                                 d="M4.75 7.25h14.5m-9.5 0V5.5h4.5v1.75m-7.5 0 .7 11.1a1.5 1.5 0 0 0 1.5 1.4h5.6a1.5 1.5 0 0 0 1.5-1.4l.7-11.1M9.5 10.5v6m5-6v6">
                                             </path>
                                         </svg>
-                                        Hapus
                                     </button>
                                 </form>
                             </td>

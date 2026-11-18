@@ -84,10 +84,13 @@ test('teachers can update assessment details and existing scores follow the new 
         ->get(route('assessments.index'))
         ->assertOk()
         ->assertSee(route('assessments.edit', $context['assessment']))
-        ->assertSee('Edit Detail')
-        ->assertSee('Edit Nilai')
-        ->assertSee('Hapus')
-        ->assertSee('aria-hidden="true"', false);
+        ->assertSee('aria-label="Edit detail penilaian"', false)
+        ->assertSee('aria-label="Edit nilai"', false)
+        ->assertSee('aria-label="Hapus"', false)
+        ->assertSee('aria-hidden="true"', false)
+        ->assertDontSee('Edit Detail')
+        ->assertDontSee('Edit Nilai')
+        ->assertDontSee('Hapus</button>', false);
 
     $this->actingAs($context['user'])
         ->get(route('assessments.edit', $context['assessment']))
