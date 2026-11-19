@@ -328,6 +328,19 @@ test('the compatibility migration makes announcement body nullable for class-spe
     expect($bodyColumn['nullable'])->toBeTrue();
 });
 
+test('the compatibility migration adds per-student body to the announcement pivot', function () {
+    Schema::table('announcement_student', function (Blueprint $table) {
+        $table->dropColumn('body');
+    });
+
+    $migration = require database_path('migrations/2026_11_19_070239_add_body_to_announcement_student_table.php');
+    $migration->up();
+    $bodyColumn = collect(Schema::getColumns('announcement_student'))->firstWhere('name', 'body');
+
+    expect($bodyColumn)->not->toBeNull()
+        ->and($bodyColumn['nullable'])->toBeTrue();
+});
+
 test('a class with a missing NISN cannot download a template or receive an Excel announcement', function () {
     $school = School::create(['nama_sekolah' => 'Sekolah Tanpa NISN']);
     $teacher = createAnnouncementUser('guru', $school, 'Guru Kelas');
