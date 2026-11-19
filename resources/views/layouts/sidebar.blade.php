@@ -173,6 +173,10 @@
                     icon="M9 5l7 7-7 7">
                     Absensi
                 </x-sidebar-link>
+                <x-sidebar-link :href="route('announcements.index')" :active="request()->routeIs('announcements.*')"
+                    icon="M9 5l7 7-7 7">
+                    Pengumuman
+                </x-sidebar-link>
                 @endhasanyrole
 
                 @role('guru')

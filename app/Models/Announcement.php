@@ -21,6 +21,11 @@ class Announcement extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function school()
+    {
+        return $this->belongsTo(School::class);
+    }
+
     public function recipient()
     {
         return $this->belongsTo(Student::class, 'recipient_student_id');

@@ -20,6 +20,19 @@ class AnnouncementController extends Controller
     public function index()
     {
         $user = auth()->user();
+
+        if ($user->hasRole('superadmin') || $user->hasRole('operator')) {
+            abort_unless($user->hasRole('superadmin') || $user->school_id, 403);
+
+            $announcements = Announcement::with(['author.employee', 'recipient', 'classroom', 'school'])
+                ->withCount('students')
+                ->when(! $user->hasRole('superadmin'), fn ($query) => $query->where('school_id', $user->school_id))
+                ->latest()
+                ->paginate(15);
+
+            return view('announcements.admin-index', compact('announcements'));
+        }
+
         abort_unless($user->school_id, 403);
 
         if ($user->hasRole('guru')) {
@@ -183,6 +196,24 @@ class AnnouncementController extends Controller
         });
 
         return redirect()->route('announcements.index')->with('success', 'Pengumuman berhasil dikirim.');
+    }
+
+    public function destroy(Announcement $announcement)
+    {
+        $user = auth()->user();
+        abort_unless($user->hasAnyRole(['guru', 'operator', 'superadmin']), 403);
+
+        if (! $user->hasRole('superadmin')) {
+            abort_unless((int) $announcement->school_id === (int) $user->school_id, 403);
+        }
+
+        if ($user->hasRole('guru')) {
+            abort_unless((int) $announcement->user_id === (int) $user->id, 403);
+        }
+
+        $announcement->delete();
+
+        return redirect()->route('announcements.index')->with('success', 'Pengumuman berhasil dihapus.');
     }
 
     public function downloadTemplate(Classroom $classroom)

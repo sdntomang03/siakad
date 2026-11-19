@@ -58,6 +58,17 @@ function announcementExcelUpload(array $rows): UploadedFile
     );
 }
 
+function createAnnouncementRecord(School $school, User $author, string $title): Announcement
+{
+    return Announcement::create([
+        'school_id' => $school->id,
+        'user_id' => $author->id,
+        'audience' => 'all',
+        'title' => $title,
+        'body' => 'Isi pengumuman.',
+    ]);
+}
+
 test('a teacher sends one school announcement to all active students and students can read it', function () {
     $school = School::create(['nama_sekolah' => 'Sekolah Pengumuman']);
     $teacher = createAnnouncementUser('guru', $school, 'Guru Uji');
@@ -99,6 +110,7 @@ test('a teacher sends one school announcement to all active students and student
         ->get(route('announcements.index'))
         ->assertOk()
         ->assertSee('Perubahan jadwal')
+        ->assertSee('Pengumuman sekolah')
         ->assertSee('Kegiatan dimulai setelah apel.');
 });
 
@@ -236,6 +248,7 @@ test('a teacher sends separate private message bodies to every student in an ass
         ->get(route('announcements.index'))
         ->assertOk()
         ->assertSee('Catatan untuk hari ini')
+        ->assertSee('Pesan pribadi')
         ->assertSee('Ayu, bawa buku bacaan besok.')
         ->assertDontSee('Bima, kumpulkan tugas setelah istirahat.');
 
@@ -490,6 +503,67 @@ test('an Excel import rejects unknown, duplicate, or missing student messages wi
         ->assertSessionHasErrors('excel_file');
 
     expect(Announcement::count())->toBe(0);
+});
+
+test('teachers and admins can delete announcements within their allowed scope', function () {
+    $school = School::create(['nama_sekolah' => 'Sekolah Penghapusan']);
+    $otherSchool = School::create(['nama_sekolah' => 'Sekolah Lain']);
+    $teacher = createAnnouncementUser('guru', $school, 'Guru Pengumuman');
+    $otherTeacher = createAnnouncementUser('guru', $school, 'Guru Lain');
+    $operator = createAnnouncementUser('operator', $school, 'Operator Sekolah');
+    $superadmin = createAnnouncementUser('superadmin', $school, 'Superadmin');
+    $superadmin->update(['school_id' => null]);
+
+    $ownAnnouncement = createAnnouncementRecord($school, $teacher, 'Pengumuman Guru');
+    $otherAnnouncement = createAnnouncementRecord($school, $otherTeacher, 'Pengumuman Guru Lain');
+    $otherSchoolAnnouncement = createAnnouncementRecord(
+        $otherSchool,
+        createAnnouncementUser('guru', $otherSchool, 'Guru Sekolah Lain'),
+        'Pengumuman Sekolah Lain'
+    );
+
+    $this->actingAs($teacher)
+        ->get(route('announcements.index'))
+        ->assertOk()
+        ->assertSee('Hapus pengumuman');
+
+    $this->actingAs($teacher)
+        ->delete(route('announcements.destroy', $ownAnnouncement))
+        ->assertRedirect(route('announcements.index'))
+        ->assertSessionHas('success');
+
+    $this->actingAs($teacher)
+        ->delete(route('announcements.destroy', $otherAnnouncement))
+        ->assertForbidden();
+
+    expect(Announcement::find($ownAnnouncement->id))->toBeNull();
+
+    $this->actingAs($operator)
+        ->get(route('announcements.index'))
+        ->assertOk()
+        ->assertSee('Pengumuman Guru Lain')
+        ->assertDontSee('Pengumuman Sekolah Lain')
+        ->assertSee('Hapus pengumuman');
+
+    $this->actingAs($operator)
+        ->delete(route('announcements.destroy', $otherAnnouncement))
+        ->assertRedirect(route('announcements.index'));
+
+    $this->actingAs($operator)
+        ->delete(route('announcements.destroy', $otherSchoolAnnouncement))
+        ->assertForbidden();
+
+    $this->actingAs($superadmin)
+        ->get(route('announcements.index'))
+        ->assertOk()
+        ->assertSee('Pengumuman Sekolah Lain');
+
+    $this->actingAs($superadmin)
+        ->delete(route('announcements.destroy', $otherSchoolAnnouncement))
+        ->assertRedirect(route('announcements.index'));
+
+    expect(Announcement::find($otherAnnouncement->id))->toBeNull()
+        ->and(Announcement::find($otherSchoolAnnouncement->id))->toBeNull();
 });
 
 test('teachers cannot target students outside their school and students cannot send announcements', function () {
