@@ -7,7 +7,9 @@ use App\Models\Employee;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Excel as ExcelFormat;
@@ -301,6 +303,17 @@ test('a teacher downloads an Excel template with the active class roster', funct
     $this->actingAs($otherTeacher)
         ->get(route('announcements.template', $classroom))
         ->assertForbidden();
+});
+
+test('the compatibility migration adds classroom_id when the announcement table predates class announcements', function () {
+    Schema::table('announcements', function (Blueprint $table) {
+        $table->dropConstrainedForeignId('classroom_id');
+    });
+
+    $migration = require database_path('migrations/2026_11_19_065326_add_classroom_id_to_announcements_table.php');
+    $migration->up();
+
+    expect(Schema::hasColumn('announcements', 'classroom_id'))->toBeTrue();
 });
 
 test('a class with a missing NISN cannot download a template or receive an Excel announcement', function () {
