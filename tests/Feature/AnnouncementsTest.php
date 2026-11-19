@@ -1,12 +1,17 @@
 <?php
 
-use App\Models\Announcement;
 use App\Models\AcademicYear;
+use App\Models\Announcement;
 use App\Models\Classroom;
 use App\Models\Employee;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Excel as ExcelFormat;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
 
 function createAnnouncementUser(string $roleName, School $school, string $name): User
@@ -26,6 +31,29 @@ function createAnnouncementStudent(School $school, string $name, ?User $user = n
         'jenis_kelamin' => 'P',
         'status' => $status,
     ]);
+}
+
+function announcementExcelUpload(array $rows): UploadedFile
+{
+    $export = new class($rows) implements FromArray, WithHeadings
+    {
+        public function __construct(private array $rows) {}
+
+        public function array(): array
+        {
+            return $this->rows;
+        }
+
+        public function headings(): array
+        {
+            return ['NISN', 'Nama Siswa', 'Pesan'];
+        }
+    };
+
+    return UploadedFile::fake()->createWithContent(
+        'pesan.xlsx',
+        Excel::raw($export, ExcelFormat::XLSX)
+    );
 }
 
 test('a teacher sends one school announcement to all active students and students can read it', function () {
@@ -153,6 +181,7 @@ test('a teacher sends separate private message bodies to every student in an ass
     $this->actingAs($teacher)
         ->post(route('announcements.store'), [
             'audience' => 'class_personalized',
+            'class_input_method' => 'manual',
             'classroom_id' => $unassignedClassroom->id,
             'title' => 'Tidak boleh dikirim',
             'student_bodies' => [$otherStudent->id => 'Pesan di luar kelas.'],
@@ -165,6 +194,7 @@ test('a teacher sends separate private message bodies to every student in an ass
         ->from(route('announcements.index'))
         ->post(route('announcements.store'), [
             'audience' => 'class_personalized',
+            'class_input_method' => 'manual',
             'classroom_id' => $classroom->id,
             'title' => 'Catatan untuk hari ini',
             'student_bodies' => [
@@ -179,6 +209,7 @@ test('a teacher sends separate private message bodies to every student in an ass
     $this->actingAs($teacher)
         ->post(route('announcements.store'), [
             'audience' => 'class_personalized',
+            'class_input_method' => 'manual',
             'classroom_id' => $classroom->id,
             'title' => 'Catatan untuk hari ini',
             'student_bodies' => [
@@ -216,6 +247,211 @@ test('a teacher sends separate private message bodies to every student in an ass
         ->get(route('announcements.index'))
         ->assertOk()
         ->assertDontSee('Catatan untuk hari ini');
+});
+
+test('a teacher downloads an Excel template with the active class roster', function () {
+    Excel::fake();
+
+    $school = School::create(['nama_sekolah' => 'Sekolah Format']);
+    $teacher = createAnnouncementUser('guru', $school, 'Guru Kelas');
+    $employee = Employee::create([
+        'school_id' => $school->id,
+        'user_id' => $teacher->id,
+        'kategori_pegawai' => 'guru',
+        'nama_lengkap' => 'Guru Kelas',
+        'jenis_kelamin' => 'P',
+    ]);
+    $year = AcademicYear::create([
+        'school_id' => $school->id,
+        'tahun_ajaran' => '2026/2027',
+        'semester' => 'Ganjil',
+        'is_active' => true,
+    ]);
+    $classroom = Classroom::create([
+        'school_id' => $school->id,
+        'academic_year_id' => $year->id,
+        'homeroom_teacher_id' => $employee->id,
+        'tingkat' => '5',
+        'nama_kelas' => 'A',
+        'kapasitas' => 30,
+    ]);
+    $student = createAnnouncementStudent($school, 'Ayu');
+    $student->update(['nisn' => '0012345678']);
+    $classroom->students()->attach($student->id);
+
+    $this->actingAs($teacher)
+        ->get(route('announcements.template', $classroom))
+        ->assertOk();
+
+    Excel::assertDownloaded('format-pengumuman-5-a.xlsx', function ($export) use ($student) {
+        return $export->headings() === ['NISN', 'Nama Siswa', 'Pesan']
+            && $export->collection()->modelKeys() === [$student->id]
+            && $export->map($student) === ['0012345678', 'Ayu', ''];
+    });
+
+    $otherTeacher = createAnnouncementUser('guru', $school, 'Guru Lain');
+    Employee::create([
+        'school_id' => $school->id,
+        'user_id' => $otherTeacher->id,
+        'kategori_pegawai' => 'guru',
+        'nama_lengkap' => 'Guru Lain',
+        'jenis_kelamin' => 'P',
+    ]);
+
+    $this->actingAs($otherTeacher)
+        ->get(route('announcements.template', $classroom))
+        ->assertForbidden();
+});
+
+test('a class with a missing NISN cannot download a template or receive an Excel announcement', function () {
+    $school = School::create(['nama_sekolah' => 'Sekolah Tanpa NISN']);
+    $teacher = createAnnouncementUser('guru', $school, 'Guru Kelas');
+    $employee = Employee::create([
+        'school_id' => $school->id,
+        'user_id' => $teacher->id,
+        'kategori_pegawai' => 'guru',
+        'nama_lengkap' => 'Guru Kelas',
+        'jenis_kelamin' => 'P',
+    ]);
+    $year = AcademicYear::create([
+        'school_id' => $school->id,
+        'tahun_ajaran' => '2026/2027',
+        'semester' => 'Ganjil',
+        'is_active' => true,
+    ]);
+    $classroom = Classroom::create([
+        'school_id' => $school->id,
+        'academic_year_id' => $year->id,
+        'homeroom_teacher_id' => $employee->id,
+        'tingkat' => '5',
+        'nama_kelas' => 'A',
+        'kapasitas' => 30,
+    ]);
+    $student = createAnnouncementStudent($school, 'Ayu');
+    $classroom->students()->attach($student->id);
+
+    $this->actingAs($teacher)
+        ->from(route('announcements.index'))
+        ->get(route('announcements.template', $classroom))
+        ->assertRedirect(route('announcements.index'))
+        ->assertSessionHasErrors('excel_file');
+
+    $this->actingAs($teacher)
+        ->from(route('announcements.index'))
+        ->post(route('announcements.store'), [
+            'audience' => 'class_personalized',
+            'class_input_method' => 'excel',
+            'classroom_id' => $classroom->id,
+            'title' => 'Catatan untuk hari ini',
+            'excel_file' => announcementExcelUpload([
+                ['0012345678', 'Ayu', 'Pesan khusus.'],
+            ]),
+        ])
+        ->assertRedirect(route('announcements.index'))
+        ->assertSessionHasErrors('excel_file');
+
+    expect(Announcement::count())->toBe(0);
+});
+
+test('a teacher imports personalized messages by NISN and keeps leading zeroes', function () {
+    $school = School::create(['nama_sekolah' => 'Sekolah Impor']);
+    $teacher = createAnnouncementUser('guru', $school, 'Guru Kelas');
+    $employee = Employee::create([
+        'school_id' => $school->id,
+        'user_id' => $teacher->id,
+        'kategori_pegawai' => 'guru',
+        'nama_lengkap' => 'Guru Kelas',
+        'jenis_kelamin' => 'P',
+    ]);
+    $year = AcademicYear::create([
+        'school_id' => $school->id,
+        'tahun_ajaran' => '2026/2027',
+        'semester' => 'Ganjil',
+        'is_active' => true,
+    ]);
+    $classroom = Classroom::create([
+        'school_id' => $school->id,
+        'academic_year_id' => $year->id,
+        'homeroom_teacher_id' => $employee->id,
+        'tingkat' => '5',
+        'nama_kelas' => 'A',
+        'kapasitas' => 30,
+    ]);
+    $firstStudent = createAnnouncementStudent($school, 'Ayu');
+    $firstStudent->update(['nisn' => '0012345678']);
+    $secondStudent = createAnnouncementStudent($school, 'Bima');
+    $secondStudent->update(['nisn' => '0000000123']);
+    $classroom->students()->attach([$firstStudent->id, $secondStudent->id]);
+    $file = announcementExcelUpload([
+        ['0012345678', 'Ayu', 'Ayu, bawa buku bacaan besok.'],
+        ['0000000123', 'Bima', 'Bima, kumpulkan tugas setelah istirahat.'],
+    ]);
+
+    $this->actingAs($teacher)
+        ->post(route('announcements.store'), [
+            'audience' => 'class_personalized',
+            'class_input_method' => 'excel',
+            'classroom_id' => $classroom->id,
+            'title' => 'Catatan untuk hari ini',
+            'excel_file' => $file,
+        ])
+        ->assertRedirect(route('announcements.index'))
+        ->assertSessionHas('success');
+
+    $announcement = Announcement::firstOrFail();
+    expect($announcement->students()->count())->toBe(2)
+        ->and($announcement->students()->whereKey($firstStudent->id)->first()->pivot->body)->toBe('Ayu, bawa buku bacaan besok.')
+        ->and($announcement->students()->whereKey($secondStudent->id)->first()->pivot->body)->toBe('Bima, kumpulkan tugas setelah istirahat.');
+});
+
+test('an Excel import rejects unknown, duplicate, or missing student messages without creating an announcement', function () {
+    $school = School::create(['nama_sekolah' => 'Sekolah Validasi Excel']);
+    $teacher = createAnnouncementUser('guru', $school, 'Guru Kelas');
+    $employee = Employee::create([
+        'school_id' => $school->id,
+        'user_id' => $teacher->id,
+        'kategori_pegawai' => 'guru',
+        'nama_lengkap' => 'Guru Kelas',
+        'jenis_kelamin' => 'P',
+    ]);
+    $year = AcademicYear::create([
+        'school_id' => $school->id,
+        'tahun_ajaran' => '2026/2027',
+        'semester' => 'Ganjil',
+        'is_active' => true,
+    ]);
+    $classroom = Classroom::create([
+        'school_id' => $school->id,
+        'academic_year_id' => $year->id,
+        'homeroom_teacher_id' => $employee->id,
+        'tingkat' => '5',
+        'nama_kelas' => 'A',
+        'kapasitas' => 30,
+    ]);
+    $firstStudent = createAnnouncementStudent($school, 'Ayu');
+    $firstStudent->update(['nisn' => '0012345678']);
+    $secondStudent = createAnnouncementStudent($school, 'Bima');
+    $secondStudent->update(['nisn' => '0000000123']);
+    $classroom->students()->attach([$firstStudent->id, $secondStudent->id]);
+    $file = announcementExcelUpload([
+        ['0012345678', 'Ayu', 'Pesan pertama.'],
+        ['0012345678', 'Ayu', 'Pesan duplikat.'],
+        ['9999999999', 'Siswa Lain', 'Bukan siswa di kelas.'],
+    ]);
+
+    $this->actingAs($teacher)
+        ->from(route('announcements.index'))
+        ->post(route('announcements.store'), [
+            'audience' => 'class_personalized',
+            'class_input_method' => 'excel',
+            'classroom_id' => $classroom->id,
+            'title' => 'Tidak boleh terkirim',
+            'excel_file' => $file,
+        ])
+        ->assertRedirect(route('announcements.index'))
+        ->assertSessionHasErrors('excel_file');
+
+    expect(Announcement::count())->toBe(0);
 });
 
 test('teachers cannot target students outside their school and students cannot send announcements', function () {

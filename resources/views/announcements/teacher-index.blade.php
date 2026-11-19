@@ -27,7 +27,7 @@
                         </div>
                     @endif
 
-                    <form x-data="announcementComposer({{ Js::from($classrooms) }}, {{ Js::from(old('student_bodies', [])) }}, @js(old('audience', 'all')), @js((string) old('classroom_id', '')))" @submit="submitting = true" action="{{ route('announcements.store') }}" method="POST" class="mt-6 space-y-5">
+                    <form x-data="announcementComposer({{ Js::from($classrooms) }}, {{ Js::from(old('student_bodies', [])) }}, @js(old('audience', 'all')), @js((string) old('classroom_id', '')), @js(old('class_input_method', 'excel')))" @submit="submitting = true" action="{{ route('announcements.store') }}" method="POST" enctype="multipart/form-data" class="mt-6 space-y-5">
                         @csrf
                         <div>
                             <label for="audience" class="mb-1.5 block text-sm font-semibold text-slate-800 dark:text-slate-100">Penerima</label>
@@ -62,7 +62,7 @@
                         <div x-cloak x-show="audience === 'class_personalized'" class="space-y-4">
                             <div>
                                 <label for="classroom_id" class="mb-1.5 block text-sm font-semibold text-slate-800 dark:text-slate-100">Kelas yang diampu</label>
-                                <select id="classroom_id" name="classroom_id" x-model="classroomId" @change="studentBodies = {}" :required="audience === 'class_personalized'" :disabled="audience !== 'class_personalized'" class="min-h-11 w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                                <select id="classroom_id" name="classroom_id" x-model="classroomId" @change="studentBodies = {}; if ($refs.excelFile) $refs.excelFile.value = ''" :required="audience === 'class_personalized'" :disabled="audience !== 'class_personalized'" class="min-h-11 w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                                     <option value="">Pilih kelas</option>
                                     @foreach ($classrooms as $classroom)
                                         <option value="{{ $classroom->id }}">{{ $classroom->tingkat }} {{ $classroom->nama_kelas }}</option>
@@ -76,18 +76,44 @@
                                 @enderror
                             </div>
 
-                            <div class="space-y-4">
+                            <div>
+                                <label for="class_input_method" class="mb-1.5 block text-sm font-semibold text-slate-800 dark:text-slate-100">Cara mengisi pesan</label>
+                                <select id="class_input_method" name="class_input_method" x-model="classInputMethod" :required="audience === 'class_personalized'" :disabled="audience !== 'class_personalized'" class="min-h-11 w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                                    <option value="excel">Unggah Excel</option>
+                                    <option value="manual">Isi manual di halaman ini</option>
+                                </select>
+                            </div>
+
+                            <div x-cloak x-show="classInputMethod === 'excel'" class="space-y-3 rounded-md border border-slate-200 p-4 dark:border-slate-700">
+                                <div>
+                                    <a x-cloak x-show="selectedClassroom && selectedStudents.length > 0 && !selectedStudents.some(student => !student.nisn)" :href="selectedClassroom ? selectedClassroom.template_url : '#'" class="inline-flex min-h-10 items-center rounded-md border border-brand-700 px-4 py-2 text-sm font-semibold text-brand-800 transition-colors hover:bg-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-200 dark:hover:bg-brand-900/40">
+                                        Unduh format Excel kelas ini
+                                    </a>
+                                    <p x-cloak x-show="selectedStudents.some(student => !student.nisn)" class="text-sm text-red-700 dark:text-red-300">Lengkapi NISN seluruh siswa kelas sebelum mengunduh format Excel.</p>
+                                    <p x-cloak x-show="classroomId && selectedStudents.length === 0" class="text-sm text-slate-600 dark:text-slate-300">Kelas ini belum memiliki siswa aktif.</p>
+                                    <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Isi kolom Pesan untuk setiap siswa. Jangan mengubah kolom NISN, lalu unggah kembali file Excel.</p>
+                                </div>
+                                <div>
+                                    <label for="excel_file" class="mb-1.5 block text-sm font-semibold text-slate-800 dark:text-slate-100">File Excel berisi pesan siswa</label>
+                                    <input x-ref="excelFile" id="excel_file" name="excel_file" type="file" accept=".xlsx,.xls,.csv" :required="audience === 'class_personalized' && classInputMethod === 'excel'" :disabled="audience !== 'class_personalized' || classInputMethod !== 'excel'" class="block min-h-11 w-full rounded-md border border-slate-300 bg-white text-sm text-slate-900 file:mr-3 file:min-h-10 file:border-0 file:bg-slate-100 file:px-3 file:font-semibold file:text-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:file:bg-slate-700 dark:file:text-slate-100">
+                                    @error('excel_file')
+                                        <p class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div x-cloak x-show="classInputMethod === 'manual'" class="space-y-4">
                                 <template x-for="student in selectedStudents" :key="student.id">
                                     <div class="rounded-md border border-slate-200 p-4 dark:border-slate-700">
                                         <label :for="`student-body-${student.id}`" class="mb-1.5 block text-sm font-semibold text-slate-800 dark:text-slate-100" x-text="student.nama_lengkap"></label>
-                                        <textarea :id="`student-body-${student.id}`" :name="`student_bodies[${student.id}]`" x-model="studentBodies[student.id]" :required="audience === 'class_personalized'" :disabled="audience !== 'class_personalized'" rows="3" maxlength="5000" class="w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-500 focus:border-brand-700 focus:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-400" placeholder="Tulis pesan khusus untuk siswa ini."></textarea>
+                                        <textarea :id="`student-body-${student.id}`" :name="`student_bodies[${student.id}]`" x-model="studentBodies[student.id]" :required="audience === 'class_personalized' && classInputMethod === 'manual'" :disabled="audience !== 'class_personalized' || classInputMethod !== 'manual'" rows="3" maxlength="5000" class="w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-500 focus:border-brand-700 focus:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-400" placeholder="Tulis pesan khusus untuk siswa ini."></textarea>
                                     </div>
                                 </template>
                                 <p x-cloak x-show="audience === 'class_personalized' && classroomId && selectedStudents.length === 0" class="text-sm text-slate-600 dark:text-slate-300">Belum ada siswa aktif di kelas ini.</p>
+                                @error('student_bodies')
+                                    <p class="text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                                @enderror
                             </div>
-                            @error('student_bodies')
-                                <p class="text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
-                            @enderror
                         </div>
 
                         <div>
@@ -156,15 +182,19 @@
         </div>
     </div>
     <script>
-        function announcementComposer(classrooms, studentBodies, audience, classroomId) {
+        function announcementComposer(classrooms, studentBodies, audience, classroomId, classInputMethod) {
             return {
                 classrooms,
                 studentBodies,
                 audience,
                 classroomId,
+                classInputMethod,
                 submitting: false,
+                get selectedClassroom() {
+                    return this.classrooms.find(item => String(item.id) === String(this.classroomId));
+                },
                 get selectedStudents() {
-                    const classroom = this.classrooms.find(item => String(item.id) === String(this.classroomId));
+                    const classroom = this.selectedClassroom;
 
                     return classroom ? classroom.students : [];
                 },

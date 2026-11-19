@@ -101,6 +101,8 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('admin')->name('superadmi
 Route::middleware(['auth'])->group(function () {
     Route::get('announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
     Route::post('announcements', [AnnouncementController::class, 'store'])->name('announcements.store');
+    Route::get('announcements/classes/{classroom}/template', [AnnouncementController::class, 'downloadTemplate'])
+        ->name('announcements.template');
 
     Route::get('assignments', [AssignmentController::class, 'index'])->name('assignments.index');
     Route::get('assignments/create', [AssignmentController::class, 'create'])->name('assignments.create');
