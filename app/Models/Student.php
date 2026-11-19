@@ -30,7 +30,7 @@ class Student extends Model
 
     public function announcements()
     {
-        return $this->belongsToMany(Announcement::class, 'announcement_student');
+        return $this->belongsToMany(Announcement::class, 'announcement_student')->withPivot('body');
     }
 
     public function extracurriculars()

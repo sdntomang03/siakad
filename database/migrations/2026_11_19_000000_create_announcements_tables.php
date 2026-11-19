@@ -12,10 +12,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('school_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('classroom_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('recipient_student_id')->nullable()->constrained('students')->nullOnDelete();
-            $table->enum('audience', ['all', 'individual']);
+            $table->enum('audience', ['all', 'individual', 'class_personalized']);
             $table->string('title', 180);
-            $table->text('body');
+            $table->text('body')->nullable();
             $table->timestamps();
 
             $table->index(['school_id', 'audience']);
@@ -24,6 +25,7 @@ return new class extends Migration
         Schema::create('announcement_student', function (Blueprint $table) {
             $table->foreignId('announcement_id')->constrained()->cascadeOnDelete();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
+            $table->text('body')->nullable();
             $table->primary(['announcement_id', 'student_id']);
             $table->index('student_id');
         });

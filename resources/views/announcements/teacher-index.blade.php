@@ -14,7 +14,7 @@
             <div class="grid items-start gap-8 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
                 <section aria-labelledby="create-announcement-title" class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-7">
                     <h3 id="create-announcement-title" class="text-lg font-semibold text-slate-900 dark:text-white">Buat pengumuman</h3>
-                    <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Kirim satu pesan ke semua siswa aktif di sekolah atau pilih satu siswa.</p>
+                    <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Kirim pesan sekolah, pilih satu siswa, atau tulis isi berbeda untuk setiap siswa di kelas yang Anda ampu.</p>
 
                     @if ($errors->any())
                         <div role="alert" class="mt-5 rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
@@ -27,22 +27,23 @@
                         </div>
                     @endif
 
-                    <form x-data="{ submitting: false }" @submit="submitting = true" action="{{ route('announcements.store') }}" method="POST" class="mt-6 space-y-5">
+                    <form x-data="announcementComposer({{ Js::from($classrooms) }}, {{ Js::from(old('student_bodies', [])) }}, @js(old('audience', 'all')), @js((string) old('classroom_id', '')))" @submit="submitting = true" action="{{ route('announcements.store') }}" method="POST" class="mt-6 space-y-5">
                         @csrf
                         <div>
                             <label for="audience" class="mb-1.5 block text-sm font-semibold text-slate-800 dark:text-slate-100">Penerima</label>
-                            <select id="audience" name="audience" required class="min-h-11 w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                            <select id="audience" name="audience" x-model="audience" required class="min-h-11 w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                                 <option value="all" @selected(old('audience', 'all') === 'all')>Semua siswa aktif di sekolah</option>
                                 <option value="individual" @selected(old('audience') === 'individual')>Satu siswa</option>
+                                <option value="class_personalized" @selected(old('audience') === 'class_personalized')>Isi berbeda untuk setiap siswa di kelas saya</option>
                             </select>
                             @error('audience')
                                 <p class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div>
+                        <div x-cloak x-show="audience === 'individual'">
                             <label for="student_id" class="mb-1.5 block text-sm font-semibold text-slate-800 dark:text-slate-100">Siswa tujuan, untuk pengumuman individu</label>
-                            <select id="student_id" name="student_id" class="min-h-11 w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                            <select id="student_id" name="student_id" :required="audience === 'individual'" :disabled="audience !== 'individual'" class="min-h-11 w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
                                 <option value="">Pilih siswa</option>
                                 @foreach ($students as $student)
                                     <option value="{{ $student->id }}" @selected((string) old('student_id') === (string) $student->id)>
@@ -58,6 +59,37 @@
                             @enderror
                         </div>
 
+                        <div x-cloak x-show="audience === 'class_personalized'" class="space-y-4">
+                            <div>
+                                <label for="classroom_id" class="mb-1.5 block text-sm font-semibold text-slate-800 dark:text-slate-100">Kelas yang diampu</label>
+                                <select id="classroom_id" name="classroom_id" x-model="classroomId" @change="studentBodies = {}" :required="audience === 'class_personalized'" :disabled="audience !== 'class_personalized'" class="min-h-11 w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 focus:border-brand-700 focus:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                                    <option value="">Pilih kelas</option>
+                                    @foreach ($classrooms as $classroom)
+                                        <option value="{{ $classroom->id }}">{{ $classroom->tingkat }} {{ $classroom->nama_kelas }}</option>
+                                    @endforeach
+                                </select>
+                                @if ($classrooms->isEmpty())
+                                    <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Belum ada kelas yang Anda ampu.</p>
+                                @endif
+                                @error('classroom_id')
+                                    <p class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="space-y-4">
+                                <template x-for="student in selectedStudents" :key="student.id">
+                                    <div class="rounded-md border border-slate-200 p-4 dark:border-slate-700">
+                                        <label :for="`student-body-${student.id}`" class="mb-1.5 block text-sm font-semibold text-slate-800 dark:text-slate-100" x-text="student.nama_lengkap"></label>
+                                        <textarea :id="`student-body-${student.id}`" :name="`student_bodies[${student.id}]`" x-model="studentBodies[student.id]" :required="audience === 'class_personalized'" :disabled="audience !== 'class_personalized'" rows="3" maxlength="5000" class="w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-500 focus:border-brand-700 focus:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-400" placeholder="Tulis pesan khusus untuk siswa ini."></textarea>
+                                    </div>
+                                </template>
+                                <p x-cloak x-show="audience === 'class_personalized' && classroomId && selectedStudents.length === 0" class="text-sm text-slate-600 dark:text-slate-300">Belum ada siswa aktif di kelas ini.</p>
+                            </div>
+                            @error('student_bodies')
+                                <p class="text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <div>
                             <label for="title" class="mb-1.5 block text-sm font-semibold text-slate-800 dark:text-slate-100">Judul</label>
                             <input id="title" name="title" type="text" maxlength="180" value="{{ old('title') }}" required class="min-h-11 w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-500 focus:border-brand-700 focus:ring-brand-700 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-400" placeholder="Contoh: Perubahan jadwal kegiatan">
@@ -66,9 +98,9 @@
                             @enderror
                         </div>
 
-                        <div>
+                        <div x-cloak x-show="audience !== 'class_personalized'">
                             <label for="body" class="mb-1.5 block text-sm font-semibold text-slate-800 dark:text-slate-100">Isi pengumuman</label>
-                            <textarea id="body" name="body" rows="6" maxlength="5000" required class="w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-500 focus:border-brand-700 focus:ring-brand-700 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-400" placeholder="Tulis informasi yang perlu diketahui siswa.">{{ old('body') }}</textarea>
+                            <textarea id="body" name="body" rows="6" maxlength="5000" :required="audience !== 'class_personalized'" :disabled="audience === 'class_personalized'" class="w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-500 focus:border-brand-700 focus:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-400" placeholder="Tulis informasi yang perlu diketahui siswa.">{{ old('body') }}</textarea>
                             @error('body')
                                 <p class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
                             @enderror
@@ -101,11 +133,15 @@
                                 <p class="mt-2 text-sm font-medium text-brand-800 dark:text-brand-200">
                                     @if ($announcement->audience === 'all')
                                         Semua siswa aktif ({{ $announcement->students_count }} penerima)
+                                    @elseif ($announcement->audience === 'class_personalized')
+                                        Pesan pribadi untuk kelas {{ $announcement->classroom?->tingkat }} {{ $announcement->classroom?->nama_kelas }} ({{ $announcement->students_count }} siswa)
                                     @else
                                         Untuk {{ $announcement->recipient?->nama_lengkap ?? 'siswa yang dipilih' }}
                                     @endif
                                 </p>
-                                <p class="mt-2 break-words whitespace-pre-line text-sm leading-6 text-slate-700 dark:text-slate-200">{{ $announcement->body }}</p>
+                                @if ($announcement->audience !== 'class_personalized')
+                                    <p class="mt-2 break-words whitespace-pre-line text-sm leading-6 text-slate-700 dark:text-slate-200">{{ $announcement->body }}</p>
+                                @endif
                             </article>
                         @empty
                             <p class="py-6 text-sm text-slate-600 dark:text-slate-300">Belum ada pengumuman. Gunakan formulir untuk mengirim pesan pertama.</p>
@@ -119,4 +155,20 @@
             </div>
         </div>
     </div>
+    <script>
+        function announcementComposer(classrooms, studentBodies, audience, classroomId) {
+            return {
+                classrooms,
+                studentBodies,
+                audience,
+                classroomId,
+                submitting: false,
+                get selectedStudents() {
+                    const classroom = this.classrooms.find(item => String(item.id) === String(this.classroomId));
+
+                    return classroom ? classroom.students : [];
+                },
+            };
+        }
+    </script>
 </x-app-layout>

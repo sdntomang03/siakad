@@ -20,7 +20,7 @@
                         <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
                             Dari {{ $announcement->author?->employee?->nama_lengkap ?? $announcement->author?->name ?? 'Guru' }}
                         </p>
-                        <p class="mt-3 break-words whitespace-pre-line text-sm leading-6 text-slate-800 dark:text-slate-200">{{ $announcement->body }}</p>
+                        <p class="mt-3 break-words whitespace-pre-line text-sm leading-6 text-slate-800 dark:text-slate-200">{{ $announcement->pivot->body ?? $announcement->body }}</p>
                     </article>
                 @empty
                     <p class="py-8 text-sm text-slate-600 dark:text-slate-300">Belum ada pengumuman untuk Anda.</p>
