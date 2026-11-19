@@ -316,6 +316,18 @@ test('the compatibility migration adds classroom_id when the announcement table 
     expect(Schema::hasColumn('announcements', 'classroom_id'))->toBeTrue();
 });
 
+test('the compatibility migration makes announcement body nullable for class-specific messages', function () {
+    Schema::table('announcements', function (Blueprint $table) {
+        $table->text('body')->nullable(false)->change();
+    });
+
+    $migration = require database_path('migrations/2026_11_19_065949_make_announcement_body_nullable.php');
+    $migration->up();
+    $bodyColumn = collect(Schema::getColumns('announcements'))->firstWhere('name', 'body');
+
+    expect($bodyColumn['nullable'])->toBeTrue();
+});
+
 test('a class with a missing NISN cannot download a template or receive an Excel announcement', function () {
     $school = School::create(['nama_sekolah' => 'Sekolah Tanpa NISN']);
     $teacher = createAnnouncementUser('guru', $school, 'Guru Kelas');
