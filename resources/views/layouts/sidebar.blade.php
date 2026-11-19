@@ -46,6 +46,10 @@
         </x-sidebar-link>
 
         @role('siswa')
+        <x-sidebar-link :href="route('announcements.index')" :active="request()->routeIs('announcements.*')"
+            icon="M9 5l7 7-7 7">
+            Pengumuman
+        </x-sidebar-link>
         <x-sidebar-link :href="route('assignments.index')" :active="request()->routeIs('assignments.*')"
             icon="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a2 2 0 01.293.707V19a2 2 0 01-2 2z">
             Tugas Saya
@@ -191,6 +195,10 @@
                 <x-sidebar-link :href="route('teacher-notes.index')" :active="request()->routeIs('teacher-notes.*')"
                     icon="M9 5l7 7-7 7">
                     Catatan Siswa
+                </x-sidebar-link>
+                <x-sidebar-link :href="route('announcements.index')" :active="request()->routeIs('announcements.*')"
+                    icon="M9 5l7 7-7 7">
+                    Pengumuman
                 </x-sidebar-link>
 
                 <!-- Menu Baru: Jadwal Pelajaran -->

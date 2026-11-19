@@ -44,6 +44,7 @@
                         $breadcrumbRoots = [
                             'academic-years' => 'Tahun Ajaran',
                             'admin' => 'Administrasi',
+                            'announcements' => 'Pengumuman',
                             'assignments' => 'Tugas',
                             'assessments' => 'Penilaian',
                             'attendances' => 'Absensi',

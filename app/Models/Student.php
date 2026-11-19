@@ -28,6 +28,11 @@ class Student extends Model
         return $this->belongsToMany(Classroom::class)->withTimestamps();
     }
 
+    public function announcements()
+    {
+        return $this->belongsToMany(Announcement::class, 'announcement_student');
+    }
+
     public function extracurriculars()
     {
         return $this->belongsToMany(Extracurricular::class, 'extracurricular_student')->withTimestamps();
