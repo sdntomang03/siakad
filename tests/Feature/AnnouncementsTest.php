@@ -428,13 +428,15 @@ test('a teacher imports personalized messages by NISN and keeps leading zeroes',
         'nama_kelas' => 'A',
         'kapasitas' => 30,
     ]);
-    $firstStudent = createAnnouncementStudent($school, 'Ayu');
+    $firstStudentUser = createAnnouncementUser('siswa', $school, 'Ayu');
+    $firstStudent = createAnnouncementStudent($school, 'Ayu', $firstStudentUser);
     $firstStudent->update(['nisn' => '0012345678']);
     $secondStudent = createAnnouncementStudent($school, 'Bima');
     $secondStudent->update(['nisn' => '0000000123']);
     $classroom->students()->attach([$firstStudent->id, $secondStudent->id]);
+    $htmlMessage = '<div class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-900 shadow-sm"><div><p>Pengumuman Hasil</p><h3>Halo, Ayu!</h3></div><div><p>Belum Ada Hasil Tercatat</p><p>Data hasil penilaianmu belum tersedia saat ini.</p></div></div>';
     $file = announcementExcelUpload([
-        ['0012345678', 'Ayu', 'Ayu, bawa buku bacaan besok.'],
+        ['0012345678', 'Ayu', $htmlMessage],
         ['0000000123', 'Bima', 'Bima, kumpulkan tugas setelah istirahat.'],
     ]);
 
@@ -451,8 +453,16 @@ test('a teacher imports personalized messages by NISN and keeps leading zeroes',
 
     $announcement = Announcement::firstOrFail();
     expect($announcement->students()->count())->toBe(2)
-        ->and($announcement->students()->whereKey($firstStudent->id)->first()->pivot->body)->toBe('Ayu, bawa buku bacaan besok.')
+        ->and($announcement->students()->whereKey($firstStudent->id)->first()->pivot->body)->toBe($htmlMessage)
         ->and($announcement->students()->whereKey($secondStudent->id)->first()->pivot->body)->toBe('Bima, kumpulkan tugas setelah istirahat.');
+
+    $this->actingAs($firstStudentUser)
+        ->get(route('announcements.index'))
+        ->assertOk()
+        ->assertSee('Pengumuman Hasil')
+        ->assertSee('Halo, Ayu!')
+        ->assertSee('Belum Ada Hasil Tercatat')
+        ->assertDontSee('Bima, kumpulkan tugas setelah istirahat.');
 });
 
 test('an Excel import rejects unknown, duplicate, or missing student messages without creating an announcement', function () {

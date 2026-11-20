@@ -24,6 +24,8 @@ class AnnouncementHtmlSanitizer
             ->allowElement('ol')
             ->allowElement('li')
             ->allowElement('blockquote')
+            ->allowElement('div')
+            ->allowElement('span')
             ->allowElement('h2')
             ->allowElement('h3')
             ->allowElement('h4')
