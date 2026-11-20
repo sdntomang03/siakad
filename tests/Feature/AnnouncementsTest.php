@@ -434,7 +434,7 @@ test('a teacher imports personalized messages by NISN and keeps leading zeroes',
     $secondStudent = createAnnouncementStudent($school, 'Bima');
     $secondStudent->update(['nisn' => '0000000123']);
     $classroom->students()->attach([$firstStudent->id, $secondStudent->id]);
-    $htmlMessage = '<div class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-900 shadow-sm"><div><p>Pengumuman Hasil</p><h3>Halo, Ayu!</h3></div><div><p>Belum Ada Hasil Tercatat</p><p>Data hasil penilaianmu belum tersedia saat ini.</p></div></div>';
+    $htmlMessage = '<div class="rounded-2xl hidden fixed border border-amber-200 bg-amber-50 p-5 text-amber-900 shadow-sm"><div class="flex items-center justify-between border-b border-amber-200/70 pb-3"><div><p class="text-xs font-semibold uppercase tracking-wider text-amber-700">Pengumuman Hasil</p><h3 class="text-lg font-bold text-slate-900">Halo, Ayu!</h3></div><span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">NISN: 0012345678</span></div><div class="mt-4 flex items-start gap-3"><span class="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-200/80 text-sm font-bold text-amber-800">!</span><div><p class="text-sm font-semibold">Belum Ada Hasil Tercatat</p><p class="mt-1 text-xs leading-relaxed text-amber-800">Data hasil penilaianmu belum tersedia saat ini.</p></div></div></div>';
     $file = announcementExcelUpload([
         ['0012345678', 'Ayu', $htmlMessage],
         ['0000000123', 'Bima', 'Bima, kumpulkan tugas setelah istirahat.'],
@@ -462,6 +462,9 @@ test('a teacher imports personalized messages by NISN and keeps leading zeroes',
         ->assertSee('Pengumuman Hasil')
         ->assertSee('Halo, Ayu!')
         ->assertSee('Belum Ada Hasil Tercatat')
+        ->assertSee('class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-900 shadow-sm"', false)
+        ->assertSee('class="text-xs font-semibold uppercase tracking-wider text-amber-700"', false)
+        ->assertDontSee('rounded-2xl hidden fixed', false)
         ->assertDontSee('Bima, kumpulkan tugas setelah istirahat.');
 });
 
