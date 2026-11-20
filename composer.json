@@ -15,6 +15,7 @@
         "maatwebsite/excel": "^3.1",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-permission": "^7.4",
+        "symfony/html-sanitizer": "7.2",
         "vinkla/hashids": "^13.0"
     },
     "require-dev": {

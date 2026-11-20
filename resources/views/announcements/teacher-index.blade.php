@@ -103,6 +103,7 @@
                             </div>
 
                             <div x-cloak x-show="classInputMethod === 'manual'" class="space-y-4">
+                                <p class="text-sm text-slate-600 dark:text-slate-300">Pesan mendukung HTML sederhana seperti tebal, daftar, tabel, dan tautan.</p>
                                 <template x-for="student in selectedStudents" :key="student.id">
                                     <div class="rounded-md border border-slate-200 p-4 dark:border-slate-700">
                                         <label :for="`student-body-${student.id}`" class="mb-1.5 block text-sm font-semibold text-slate-800 dark:text-slate-100" x-text="student.nama_lengkap"></label>
@@ -127,6 +128,7 @@
                         <div x-cloak x-show="audience !== 'class_personalized'">
                             <label for="body" class="mb-1.5 block text-sm font-semibold text-slate-800 dark:text-slate-100">Isi pengumuman</label>
                             <textarea id="body" name="body" rows="6" maxlength="5000" :required="audience !== 'class_personalized'" :disabled="audience === 'class_personalized'" class="w-full rounded-md border-slate-300 bg-white text-sm text-slate-900 placeholder:text-slate-500 focus:border-brand-700 focus:ring-brand-700 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-400" placeholder="Tulis informasi yang perlu diketahui siswa.">{{ old('body') }}</textarea>
+                            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Pesan mendukung HTML sederhana seperti tebal, daftar, tabel, dan tautan.</p>
                             @error('body')
                                 <p class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
                             @enderror

@@ -566,6 +566,32 @@ test('teachers and admins can delete announcements within their allowed scope', 
         ->and(Announcement::find($otherSchoolAnnouncement->id))->toBeNull();
 });
 
+test('students see formatted announcement HTML without unsafe elements or links', function () {
+    $school = School::create(['nama_sekolah' => 'Sekolah HTML']);
+    $teacher = createAnnouncementUser('guru', $school, 'Guru HTML');
+    $studentUser = createAnnouncementUser('siswa', $school, 'Siswa HTML');
+    $student = createAnnouncementStudent($school, 'Siswa HTML', $studentUser);
+    $announcement = Announcement::create([
+        'school_id' => $school->id,
+        'user_id' => $teacher->id,
+        'audience' => 'individual',
+        'title' => 'Pesan berformat',
+        'body' => null,
+    ]);
+    $announcement->students()->attach($student->id, [
+        'body' => '<p>Nilai <strong>bagus</strong>.</p><script>alert(1)</script><a href="javascript:alert(1)">tautan</a>',
+    ]);
+
+    $this->actingAs($studentUser)
+        ->get(route('announcements.index'))
+        ->assertOk()
+        ->assertSee('<p>Nilai <strong>bagus</strong>.</p>', false)
+        ->assertSee('tautan')
+        ->assertDontSee('<script>alert(1)</script>', false)
+        ->assertDontSee('href="javascript:alert(1)"', false)
+        ->assertDontSee('alert(1)', false);
+});
+
 test('teachers cannot target students outside their school and students cannot send announcements', function () {
     $school = School::create(['nama_sekolah' => 'Sekolah Pengirim']);
     $teacher = createAnnouncementUser('guru', $school, 'Guru Uji');

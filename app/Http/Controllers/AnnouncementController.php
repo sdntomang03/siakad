@@ -8,6 +8,7 @@ use App\Models\Announcement;
 use App\Models\Classroom;
 use App\Models\Student;
 use App\Models\User;
+use App\Support\AnnouncementHtmlSanitizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -84,6 +85,12 @@ class AnnouncementController extends Controller
             ->with('author.employee')
             ->latest('announcements.created_at')
             ->paginate(15);
+
+        $sanitizer = app(AnnouncementHtmlSanitizer::class);
+        $announcements->getCollection()->each(function ($announcement) use ($sanitizer) {
+            $body = $announcement->pivot->body ?? $announcement->body;
+            $announcement->setAttribute('sanitized_body', $sanitizer->sanitize($body));
+        });
 
         return view('announcements.student-index', compact('announcements'));
     }

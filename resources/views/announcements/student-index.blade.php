@@ -22,8 +22,8 @@
                             </div>
                             <time datetime="{{ $announcement->created_at->toIso8601String() }}" class="shrink-0 text-sm text-slate-600 dark:text-slate-300">{{ $announcement->created_at->format('d M Y, H:i') }}</time>
                         </div>
-                        <div class="mt-4 border-t border-slate-200 pt-4 dark:border-slate-700">
-                            <p class="break-words whitespace-pre-line text-sm leading-6 text-slate-800 dark:text-slate-200">{{ $announcement->pivot->body ?? $announcement->body }}</p>
+                        <div class="mt-4 break-words whitespace-pre-line border-t border-slate-200 pt-4 text-sm leading-6 text-slate-800 dark:border-slate-700 dark:text-slate-200 [&_a]:font-medium [&_a]:text-brand-800 [&_a]:underline [&_a]:underline-offset-2 [&_a]:dark:text-brand-200 [&_blockquote]:my-3 [&_blockquote]:border-l-2 [&_blockquote]:border-brand-600 [&_blockquote]:pl-4 [&_h2]:my-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h3]:my-3 [&_h3]:text-base [&_h3]:font-semibold [&_h4]:my-2 [&_h4]:font-semibold [&_hr]:my-4 [&_li]:my-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_table]:my-3 [&_table]:w-full [&_td]:border [&_td]:border-slate-300 [&_td]:p-2 [&_th]:border [&_th]:border-slate-300 [&_th]:bg-slate-100 [&_th]:p-2 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-5 dark:[&_td]:border-slate-600 dark:[&_th]:border-slate-600 dark:[&_th]:bg-slate-700">
+                            {!! $announcement->sanitized_body !!}
                         </div>
                         <footer class="mt-5 border-t border-slate-200 pt-4 dark:border-slate-700">
                             <p class="text-sm text-slate-600 dark:text-slate-300">
