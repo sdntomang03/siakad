@@ -112,6 +112,26 @@ test('a teacher sends one school announcement to all active students and student
         ->assertSee('Perubahan jadwal')
         ->assertSee('Pengumuman sekolah')
         ->assertSee('Kegiatan dimulai setelah apel.');
+
+    $this->actingAs($teacher)
+        ->get(route('announcements.edit', $announcement))
+        ->assertOk()
+        ->assertSee('Kegiatan dimulai setelah apel.');
+
+    $this->actingAs($teacher)
+        ->put(route('announcements.update', $announcement), [
+            'title' => 'Jadwal terbaru',
+            'body' => 'Kegiatan dimulai pukul 08.00.',
+        ])
+        ->assertRedirect(route('announcements.index'))
+        ->assertSessionHas('success');
+
+    $this->actingAs($firstStudentUser)
+        ->get(route('announcements.index'))
+        ->assertOk()
+        ->assertSee('Jadwal terbaru')
+        ->assertSee('Kegiatan dimulai pukul 08.00.')
+        ->assertDontSee('Perubahan jadwal');
 });
 
 test('an individual announcement is only visible to its selected student', function () {
@@ -460,12 +480,62 @@ test('a teacher imports personalized messages by NISN and keeps leading zeroes',
         ->get(route('announcements.index'))
         ->assertOk()
         ->assertSee('Pengumuman Hasil')
-        ->assertSee('Halo, Ayu!')
-        ->assertSee('Belum Ada Hasil Tercatat')
         ->assertSee('class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-900 shadow-sm"', false)
         ->assertSee('class="text-xs font-semibold uppercase tracking-wider text-amber-700"', false)
         ->assertDontSee('rounded-2xl hidden fixed', false)
         ->assertDontSee('Bima, kumpulkan tugas setelah istirahat.');
+
+    $this->actingAs($teacher)
+        ->get(route('announcements.edit', $announcement))
+        ->assertOk()
+        ->assertSee('Halo, Ayu!')
+        ->assertSee('Bima, kumpulkan tugas setelah istirahat.');
+
+    $otherTeacher = createAnnouncementUser('guru', $school, 'Guru Lain');
+    $this->actingAs($otherTeacher)
+        ->get(route('announcements.edit', $announcement))
+        ->assertForbidden();
+
+    $this->actingAs($otherTeacher)
+        ->put(route('announcements.update', $announcement), [
+            'title' => 'Tidak boleh diubah',
+            'student_bodies' => [
+                $firstStudent->id => 'Pesan tidak sah.',
+                $secondStudent->id => 'Pesan tidak sah.',
+            ],
+        ])
+        ->assertForbidden();
+
+    $this->actingAs($teacher)
+        ->put(route('announcements.update', $announcement), [
+            'title' => 'Hasil penilaian terbaru',
+            'student_bodies' => [
+                $firstStudent->id => 'Ayu, hasilmu sudah tersedia.',
+                $secondStudent->id => 'Bima, hasilmu sedang diperiksa.',
+            ],
+        ])
+        ->assertRedirect(route('announcements.index'))
+        ->assertSessionHas('success');
+
+    $announcement->refresh();
+    expect($announcement->title)->toBe('Hasil penilaian terbaru')
+        ->and($announcement->students()->whereKey($firstStudent->id)->first()->pivot->body)->toBe('Ayu, hasilmu sudah tersedia.')
+        ->and($announcement->students()->whereKey($secondStudent->id)->first()->pivot->body)->toBe('Bima, hasilmu sedang diperiksa.');
+
+    $this->actingAs($firstStudentUser)
+        ->get(route('announcements.index'))
+        ->assertOk()
+        ->assertSee('Hasil penilaian terbaru')
+        ->assertSee('Ayu, hasilmu sudah tersedia.')
+        ->assertDontSee('Bima, hasilmu sedang diperiksa.');
+
+    $secondStudentUser = createAnnouncementUser('siswa', $school, 'Bima');
+    $secondStudent->update(['user_id' => $secondStudentUser->id]);
+    $this->actingAs($secondStudentUser)
+        ->get(route('announcements.index'))
+        ->assertOk()
+        ->assertSee('Bima, hasilmu sedang diperiksa.')
+        ->assertDontSee('Ayu, hasilmu sudah tersedia.');
 });
 
 test('an Excel import rejects unknown, duplicate, or missing student messages without creating an announcement', function () {

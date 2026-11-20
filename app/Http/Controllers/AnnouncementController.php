@@ -205,6 +205,79 @@ class AnnouncementController extends Controller
         return redirect()->route('announcements.index')->with('success', 'Pengumuman berhasil dikirim.');
     }
 
+    public function edit(Announcement $announcement)
+    {
+        $user = auth()->user();
+        $this->authorizeTeacherAnnouncement($user, $announcement);
+
+        $announcement->load(['recipient', 'classroom']);
+        $students = $announcement->audience === 'class_personalized'
+            ? $announcement->students()->orderBy('students.nama_lengkap')->get()
+            : collect();
+
+        return view('announcements.edit', compact('announcement', 'students'));
+    }
+
+    public function update(Request $request, Announcement $announcement)
+    {
+        $user = auth()->user();
+        $this->authorizeTeacherAnnouncement($user, $announcement);
+
+        $rules = [
+            'title' => ['required', 'string', 'max:180'],
+        ];
+        $messages = [];
+
+        if ($announcement->audience === 'class_personalized') {
+            $rules['student_bodies'] = ['required', 'array', 'min:1'];
+            $rules['student_bodies.*'] = ['required', 'string', 'max:5000'];
+            $messages['student_bodies.*.required'] = 'Isi pesan untuk setiap siswa.';
+        } else {
+            $rules['body'] = ['required', 'string', 'max:5000'];
+        }
+
+        $validated = $request->validate($rules, $messages);
+
+        DB::transaction(function () use ($announcement, $validated) {
+            if ($announcement->audience === 'class_personalized') {
+                $recipientIds = $announcement->students()
+                    ->pluck('students.id')
+                    ->map(fn ($id) => (int) $id)
+                    ->sort()
+                    ->values();
+                $submittedIds = collect(array_keys($validated['student_bodies']))
+                    ->map(fn ($id) => (int) $id)
+                    ->sort()
+                    ->values();
+
+                if ($recipientIds->isEmpty() || $recipientIds->all() !== $submittedIds->all()) {
+                    throw ValidationException::withMessages([
+                        'student_bodies' => 'Daftar siswa tidak sesuai dengan penerima pengumuman ini.',
+                    ]);
+                }
+
+                $announcement->students()->sync(
+                    collect($validated['student_bodies'])
+                        ->map(fn ($body) => ['body' => $body])
+                        ->all()
+                );
+                $announcement->update([
+                    'title' => $validated['title'],
+                    'body' => null,
+                ]);
+
+                return;
+            }
+
+            $announcement->update([
+                'title' => $validated['title'],
+                'body' => $validated['body'],
+            ]);
+        });
+
+        return redirect()->route('announcements.index')->with('success', 'Pengumuman berhasil diperbarui.');
+    }
+
     public function destroy(Announcement $announcement)
     {
         $user = auth()->user();
@@ -264,6 +337,13 @@ class AnnouncementController extends Controller
                 || $classroom->subjectTeachers()->where('employee_id', $employeeId)->exists(),
             403
         );
+    }
+
+    private function authorizeTeacherAnnouncement(User $user, Announcement $announcement): void
+    {
+        abort_unless($user->hasRole('guru') && $user->school_id, 403);
+        abort_unless((int) $announcement->school_id === (int) $user->school_id, 403);
+        abort_unless((int) $announcement->user_id === (int) $user->id, 403);
     }
 
     private function personalizedRecipientsFromExcel(Request $request, Classroom $classroom)

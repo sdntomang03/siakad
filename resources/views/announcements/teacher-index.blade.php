@@ -170,7 +170,10 @@
                                 @if ($announcement->audience !== 'class_personalized')
                                     <p class="mt-2 break-words whitespace-pre-line text-sm leading-6 text-slate-700 dark:text-slate-200">{{ $announcement->body }}</p>
                                 @endif
-                                <div class="mt-4 flex justify-end">
+                                <div class="mt-4 flex flex-wrap justify-end gap-3">
+                                    <a href="{{ route('announcements.edit', $announcement) }}" class="inline-flex min-h-11 items-center justify-center rounded-md border border-brand-700 px-4 py-2 text-sm font-semibold text-brand-800 transition-colors hover:bg-brand-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-brand-200 dark:hover:bg-brand-900/40">
+                                        Edit pengumuman
+                                    </a>
                                     <form action="{{ route('announcements.destroy', $announcement) }}" method="POST" onsubmit="return confirm('Hapus pengumuman ini? Tindakan ini tidak dapat dibatalkan.')">
                                         @csrf
                                         @method('DELETE')
