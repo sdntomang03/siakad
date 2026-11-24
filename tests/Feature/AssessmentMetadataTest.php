@@ -168,12 +168,19 @@ test('teachers can filter and export assessment recap by assessment type', funct
     ];
 
     $this->actingAs($context['user'])
+        ->get(route('assessments.recapByType'))
+        ->assertOk()
+        ->assertSee('Jenis Penilaian')
+        ->assertSee('Semua Jenis Penilaian');
+
+    $this->actingAs($context['user'])
         ->get(route('assessments.recapByType', $filters))
         ->assertOk()
         ->assertSee('SA')
         ->assertSee('94')
         ->assertSee('Semua Jenis Penilaian')
-        ->assertSee('Unduh Excel')
+        ->assertSee('Unduh Rekap Excel')
+        ->assertSee('Unduh Gradebook Excel')
         ->assertDontSee('SH');
 
     Excel::fake();
