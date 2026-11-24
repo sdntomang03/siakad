@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AssessmentDetailExport;
+use App\Exports\AssessmentTypeRecapExport;
 use App\Models\AcademicYear;
 use App\Models\Assessment;
 use App\Models\AssessmentScore;
@@ -12,6 +14,7 @@ use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AssessmentController extends Controller
 {
@@ -306,6 +309,15 @@ class AssessmentController extends Controller
     {
         $employeeId = auth()->user()->employee->id ?? 0;
         $schoolId = auth()->user()->school_id;
+        $request->validate([
+            'classroom_id' => ['nullable', 'integer', Rule::exists('classrooms', 'id')->where('school_id', $schoolId)],
+            'subject_id' => $request->input('subject_id') === 'all'
+                ? ['nullable', Rule::in(['all'])]
+                : ['nullable', 'integer', Rule::exists('subjects', 'id')->where('school_id', $schoolId)],
+            'assessment_type_id' => ['nullable', 'integer', Rule::exists('assessment_types', 'id')->where('school_id', $schoolId)],
+            'filter_nilai' => ['nullable', Rule::in(['belum', 'nol', 'belum_nol'])],
+            'export' => ['nullable', Rule::in(['excel'])],
+        ]);
 
         // Ambil ID Tahun Ajaran secara dinamis
         $activeYear = AcademicYear::where('school_id', $schoolId)
@@ -346,14 +358,14 @@ class AssessmentController extends Controller
         $students = collect();
         $assessments = collect();
         $matrixScores = [];
-        $assessmentTypes = AssessmentType::where('school_id', $schoolId)->get();
+        $assessmentTypes = AssessmentType::where('school_id', $schoolId)->orderBy('nama')->get();
 
         if ($request->filled('classroom_id')) {
             $classroomId = $request->classroom_id;
 
             // Kueri dasar untuk mengambil penilaian
             $queryUjian = Assessment::where('classroom_id', $classroomId)
-                ->with('subject') // Load nama mapel
+                ->with(['subject', 'assessmentType'])
                 ->where(function ($query) {
                     // Kecualikan format non-tes (Izinkan 'tes' atau data lama yang formatnya null)
                     $query->where('format', '!=', 'non-tes')
@@ -404,6 +416,13 @@ class AssessmentController extends Controller
             }
         }
 
+        if ($request->input('export') === 'excel' && $request->filled(['classroom_id', 'subject_id'])) {
+            return Excel::download(
+                new AssessmentDetailExport($students, $assessments, $matrixScores, $request->input('subject_id') === 'all'),
+                'gradebook_kelas_'.$request->input('classroom_id').'.xlsx'
+            );
+        }
+
         return view('assessments.recap', compact('classesData', 'students', 'assessments', 'matrixScores', 'assessmentTypes'));
     }
 
@@ -412,6 +431,14 @@ class AssessmentController extends Controller
     {
         $employeeId = auth()->user()->employee->id ?? 0;
         $schoolId = auth()->user()->school_id;
+        $request->validate([
+            'classroom_id' => ['nullable', 'integer', Rule::exists('classrooms', 'id')->where('school_id', $schoolId)],
+            'subject_id' => $request->input('subject_id') === 'all'
+                ? ['nullable', Rule::in(['all'])]
+                : ['nullable', 'integer', Rule::exists('subjects', 'id')->where('school_id', $schoolId)],
+            'assessment_type_id' => ['nullable', 'integer', Rule::exists('assessment_types', 'id')->where('school_id', $schoolId)],
+            'export' => ['nullable', Rule::in(['excel'])],
+        ]);
 
         $activeYear = AcademicYear::where('school_id', $schoolId)
             ->where('is_active', true)
@@ -450,6 +477,7 @@ class AssessmentController extends Controller
         // 2. AMBIL DATA DAN HITUNG RATA-RATA & RANKING
         $students = collect();
         $subjects = collect();
+        $assessmentTypes = AssessmentType::where('school_id', $schoolId)->orderBy('nama')->get();
         $averageScores = [];
         $usedTypesPerSubject = [];
         $studentAverages = []; // Array Rata-Rata Keseluruhan Siswa
@@ -473,6 +501,10 @@ class AssessmentController extends Controller
             // Membatasi kueri jika dropdown Mapel tidak diset "Semua Mata Pelajaran"
             if ($request->filled('subject_id') && $request->subject_id !== 'all') {
                 $queryAss->where('subject_id', $request->subject_id);
+            }
+
+            if ($request->filled('assessment_type_id')) {
+                $queryAss->where('assessment_type_id', $request->assessment_type_id);
             }
 
             $assessments = $queryAss->get();
@@ -559,6 +591,13 @@ class AssessmentController extends Controller
             }
         }
 
-        return view('assessments.recap_types', compact('classesData', 'students', 'subjects', 'usedTypesPerSubject', 'averageScores', 'studentAverages', 'studentRanks'));
+        if ($request->input('export') === 'excel' && $request->filled(['classroom_id', 'subject_id'])) {
+            return Excel::download(
+                new AssessmentTypeRecapExport($students, $subjects, $usedTypesPerSubject, $averageScores, $studentAverages, $studentRanks),
+                'rekap_jenis_kelas_'.$request->input('classroom_id').'.xlsx'
+            );
+        }
+
+        return view('assessments.recap_types', compact('classesData', 'students', 'subjects', 'assessmentTypes', 'usedTypesPerSubject', 'averageScores', 'studentAverages', 'studentRanks'));
     }
 }

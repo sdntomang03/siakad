@@ -10,6 +10,10 @@ use App\Models\School;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\User;
+use App\Exports\AssessmentDetailExport;
+use App\Exports\AssessmentTypeRecapExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Excel as ExcelWriter;
 use Spatie\Permission\Models\Role;
 
 function createAssessmentMetadataContext(): array
@@ -137,6 +141,109 @@ test('teachers can update assessment details and existing scores follow the new 
         ->assertSee('Bahasa Indonesia')
         ->assertSee('SA')
         ->assertSee('82.5');
+});
+
+test('teachers can filter and export assessment recap by assessment type', function () {
+    $context = createAssessmentMetadataContext();
+    $assessment = Assessment::create([
+        'school_id' => $context['school']->id,
+        'academic_year_id' => $context['year']->id,
+        'classroom_id' => $context['classroom']->id,
+        'subject_id' => $context['subjects'][0]->id,
+        'employee_id' => $context['employee']->id,
+        'assessment_type_id' => $context['types'][1]->id,
+        'keterangan' => 'Sumatif akhir bab 1',
+        'tanggal' => '2026-10-11',
+    ]);
+    AssessmentScore::create([
+        'assessment_id' => $assessment->id,
+        'student_id' => $context['student']->id,
+        'score' => 94,
+    ]);
+
+    $filters = [
+        'classroom_id' => $context['classroom']->id,
+        'subject_id' => 'all',
+        'assessment_type_id' => $context['types'][1]->id,
+    ];
+
+    $this->actingAs($context['user'])
+        ->get(route('assessments.recapByType', $filters))
+        ->assertOk()
+        ->assertSee('SA')
+        ->assertSee('94')
+        ->assertSee('Semua Jenis Penilaian')
+        ->assertSee('Unduh Excel')
+        ->assertDontSee('SH');
+
+    Excel::fake();
+
+    $this->actingAs($context['user'])
+        ->get(route('assessments.recapByType', $filters + ['export' => 'excel']))
+        ->assertOk();
+
+    Excel::assertDownloaded('rekap_jenis_kelas_'.$context['classroom']->id.'.xlsx', function ($export) {
+        $rows = $export->array();
+
+        return in_array('Matematika - Sumatif Akhir', $rows[0], true)
+            && in_array(94, $rows[1])
+            && ! in_array('Matematika - Sumatif Harian', $rows[0], true);
+    });
+});
+
+test('teachers can export gradebook detail with the selected subject and assessment type filters', function () {
+    $context = createAssessmentMetadataContext();
+    $assessment = Assessment::create([
+        'school_id' => $context['school']->id,
+        'academic_year_id' => $context['year']->id,
+        'classroom_id' => $context['classroom']->id,
+        'subject_id' => $context['subjects'][0]->id,
+        'employee_id' => $context['employee']->id,
+        'assessment_type_id' => $context['types'][1]->id,
+        'keterangan' => 'Sumatif akhir bab 1',
+        'tanggal' => '2026-10-11',
+    ]);
+    AssessmentScore::create([
+        'assessment_id' => $assessment->id,
+        'student_id' => $context['student']->id,
+        'score' => 94,
+    ]);
+
+    $this->actingAs($context['user'])
+        ->get(route('assessments.recap', [
+            'classroom_id' => $context['classroom']->id,
+            'subject_id' => 'all',
+            'assessment_type_id' => $context['types'][1]->id,
+        ]))
+        ->assertOk()
+        ->assertSee('Unduh Excel');
+
+    Excel::fake();
+
+    $this->actingAs($context['user'])
+        ->get(route('assessments.recap', [
+            'classroom_id' => $context['classroom']->id,
+            'subject_id' => 'all',
+            'assessment_type_id' => $context['types'][1]->id,
+            'export' => 'excel',
+        ]))
+        ->assertOk();
+
+    Excel::assertDownloaded('gradebook_kelas_'.$context['classroom']->id.'.xlsx', function ($export) {
+        $rows = $export->array();
+
+        return in_array('Matematika - SA (11/10/2026)', $rows[0], true)
+            && in_array(94, $rows[1])
+            && ! in_array('SH (10/10/2026)', $rows[0], true);
+    });
+});
+
+test('assessment recap exports produce valid xlsx workbooks', function () {
+    $detailExport = new AssessmentDetailExport(collect(), collect(), [], true);
+    $recapExport = new AssessmentTypeRecapExport(collect(), collect(), [], [], [], []);
+
+    expect(substr(Excel::raw($detailExport, ExcelWriter::XLSX), 0, 2))->toBe('PK')
+        ->and(substr(Excel::raw($recapExport, ExcelWriter::XLSX), 0, 2))->toBe('PK');
 });
 
 test('teachers can filter assessment history by subject and assessment type together', function () {

@@ -32,7 +32,7 @@
             }"
             class="rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800 sm:p-6">
 
-            <form method="GET" class="grid grid-cols-1 items-end gap-4 md:grid-cols-4">
+            <form method="GET" class="grid grid-cols-1 items-end gap-4 md:grid-cols-5">
                 <div>
                     <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Pilih Kelas</label>
                     <select name="classroom_id" required x-model="selectedClassId" @change="updateSubjects()"
@@ -56,7 +56,20 @@
                     </select>
                 </div>
 
-                <div x-show="selectedSubjectId" style="display: none;"                 class="md:col-span-2 flex flex-col gap-3 sm:flex-row">
+                <div x-show="selectedSubjectId" style="display: none;">
+                    <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Jenis Penilaian</label>
+                    <select name="assessment_type_id"
+                        class="w-full rounded-md border-slate-300 text-sm focus:border-brand-600 focus:ring-brand-600 dark:border-slate-600 dark:bg-slate-900 dark:text-white">
+                        <option value="">Semua Jenis Penilaian</option>
+                        @foreach($assessmentTypes as $type)
+                        <option value="{{ $type->id }}" {{ request('assessment_type_id') == $type->id ? 'selected' : '' }}>
+                            {{ $type->nama }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div x-show="selectedSubjectId" style="display: none;" class="md:col-span-2 flex flex-col gap-3 sm:flex-row">
                     <button type="submit" formaction="{{ route('assessments.recap') }}"
                         class="inline-flex min-h-11 flex-1 items-center justify-center rounded-md border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700">
                         Gradebook Detail
@@ -74,12 +87,16 @@
         <div
             class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col">
             <div
-                class="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex justify-between items-center">
+                class="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
                 <div>
                     <h3 class="text-base font-black text-slate-800 dark:text-white">Rata-Rata Berdasarkan Jenis
                         Penilaian</h3>
                     <p class="text-xs font-bold text-slate-500 mt-1">Total: {{ $students->count() }} Siswa</p>
                 </div>
+                <a href="{{ route('assessments.recapByType', array_merge(request()->query(), ['export' => 'excel'])) }}"
+                    class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                    Unduh Excel
+                </a>
             </div>
 
             @if($subjects->count() > 0)
