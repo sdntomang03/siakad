@@ -186,14 +186,14 @@
             @if (count($selectedAssessmentIds) > 0)
                 @php
                     $eligibleCount = $rows->where('eligible', true)->count();
-                    $completeCount = $rows->where('is_complete', true)->count();
+                    $scoredCount = $rows->where('score_count', '>', 0)->count();
                 @endphp
                 <section aria-labelledby="hasil-perhitungan" class="space-y-4">
                     <div class="flex flex-wrap items-end justify-between gap-3">
                         <div>
                             <h2 id="hasil-perhitungan" class="text-lg font-semibold text-slate-900 dark:text-white">Hasil perhitungan</h2>
                             <p class="mt-1 text-sm text-slate-700 dark:text-slate-300">
-                                {{ $eligibleCount }} siswa di bawah KKM dari {{ $completeCount }} siswa dengan nilai lengkap.
+                                {{ $eligibleCount }} siswa di bawah KKM dari {{ $scoredCount }} siswa yang sudah memiliki nilai.
                             </p>
                         </div>
                     </div>
@@ -246,7 +246,7 @@
                                             <tr class="text-slate-800 dark:text-slate-100">
                                                 <th scope="row" class="px-4 py-3 font-medium">{{ $row->student->nama_lengkap }}</th>
                                                 <td class="px-4 py-3 text-center tabular-nums">{{ $row->score_count }}/{{ $row->assessment_count }}</td>
-                                                <td class="px-4 py-3 text-center tabular-nums">{{ $row->is_complete ? number_format($row->average, 2) : '-' }}</td>
+                                                <td class="px-4 py-3 text-center tabular-nums">{{ $row->average !== null ? number_format($row->average, 2) : '-' }}</td>
                                                 <td class="px-4 py-3">
                                                     @if (! $row->is_complete)
                                                         <div class="space-y-2">
@@ -261,9 +261,10 @@
                                                                 Lihat penilaian yang belum lengkap
                                                             </button>
                                                         </div>
-                                                    @elseif ($row->eligible)
+                                                    @endif
+                                                    @if ($row->eligible)
                                                         <span class="font-semibold text-amber-800 dark:text-amber-200">Di bawah KKM</span>
-                                                    @else
+                                                    @elseif ($row->is_complete)
                                                         <span class="font-semibold text-brand-800 dark:text-brand-200">Tuntas</span>
                                                     @endif
                                                 </td>
@@ -309,13 +310,13 @@
                                     </button>
                                 </div>
                                 <p x-show="loading" x-cloak role="status" class="text-sm font-medium text-brand-800 dark:text-brand-200">Menyimpan program remedial...</p>
-                            @elseif ($completeCount > 0)
+                            @elseif ($scoredCount > 0)
                                 <p class="rounded-md border border-brand-600 bg-brand-50 px-4 py-3 text-sm text-brand-900 dark:border-brand-500 dark:bg-brand-900/30 dark:text-brand-100">
-                                    Semua siswa dengan nilai lengkap sudah mencapai KKM. Tidak ada catatan remedial yang perlu disimpan.
+                                    Semua siswa yang sudah memiliki nilai mencapai KKM. Siswa tanpa nilai belum dapat dihitung.
                                 </p>
                             @else
                                 <p class="rounded-md border border-amber-700 bg-amber-50 px-4 py-3 text-sm text-amber-950 dark:border-amber-500 dark:bg-amber-950/40 dark:text-amber-100">
-                                    Nilai belum tersedia lengkap untuk penilaian yang dipilih. Lengkapi nilai terlebih dahulu agar rerata dapat dihitung.
+                                    Belum ada nilai untuk penilaian yang dipilih. Isi nilai terlebih dahulu agar rerata dapat dihitung.
                                 </p>
                             @endif
 

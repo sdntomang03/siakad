@@ -97,13 +97,15 @@ test('teachers do not see the NISN JSON before selecting assessments', function 
 
 test('teachers see only students below KKM in the NISN JSON', function () {
     $context = createRemedialTeacherContext();
-    $assessment = createRemedialAssessment($context, 'Bab 1');
+    $firstAssessment = createRemedialAssessment($context, 'Bab 1');
+    $secondAssessment = createRemedialAssessment($context, 'Bab 2');
     collect([
-        ['name' => 'Ayu', 'nisn' => '0000000001', 'score' => 60],
-        ['name' => 'Budi', 'nisn' => '0000000002', 'score' => 80],
-        ['name' => 'Citra', 'nisn' => '0000000003', 'score' => null],
-        ['name' => 'Dini', 'nisn' => '', 'score' => 60],
-    ])->map(function (array $data) use ($context, $assessment) {
+        ['name' => 'Ayu', 'nisn' => '0000000001', 'scores' => [60, 70]],
+        ['name' => 'Budi', 'nisn' => '0000000002', 'scores' => [80, 90]],
+        ['name' => 'Citra', 'nisn' => '0000000003', 'scores' => [60, null]],
+        ['name' => 'Dini', 'nisn' => '', 'scores' => [60, 60]],
+        ['name' => 'Eka', 'nisn' => '0000000005', 'scores' => [null, null]],
+    ])->each(function (array $data) use ($context, $firstAssessment, $secondAssessment) {
         $student = Student::create([
             'school_id' => $context['school']->id,
             'nama_lengkap' => $data['name'],
@@ -112,28 +114,31 @@ test('teachers see only students below KKM in the NISN JSON', function () {
         ]);
         $context['classroom']->students()->attach($student->id);
 
-        if ($data['score'] !== null) {
+        foreach ([$firstAssessment, $secondAssessment] as $index => $assessment) {
+            if ($data['scores'][$index] === null) {
+                continue;
+            }
+
             AssessmentScore::create([
                 'assessment_id' => $assessment->id,
                 'student_id' => $student->id,
-                'score' => $data['score'],
+                'score' => $data['scores'][$index],
             ]);
         }
-
-        return $student;
     });
 
     $this->actingAs($context['user'])
         ->get(route('remedials.create', [
             'classroom_id' => $context['classroom']->id,
             'subject_id' => $context['subject']->id,
-            'assessment_ids' => [$assessment->id],
+            'assessment_ids' => [$firstAssessment->id, $secondAssessment->id],
         ]))
         ->assertOk()
         ->assertSee('NISN siswa untuk CBT')
         ->assertSee('&quot;0000000001&quot;', false)
+        ->assertSee('&quot;0000000003&quot;', false)
         ->assertDontSee('&quot;0000000002&quot;', false)
-        ->assertDontSee('&quot;0000000003&quot;', false);
+        ->assertDontSee('&quot;0000000005&quot;', false);
 });
 
 test('teachers average selected assessments, flag students below KKM, and save remedial status and score', function () {
@@ -181,6 +186,7 @@ test('teachers average selected assessments, flag students below KKM, and save r
         ->assertSee('id="kkm" name="kkm" type="number"', false)
         ->assertSee('value="75"', false)
         ->assertSee('65.00')
+        ->assertSee('60.00')
         ->assertSee('Di bawah KKM')
         ->assertSee('Tuntas')
         ->assertSee('Nilai belum lengkap')
@@ -190,7 +196,7 @@ test('teachers average selected assessments, flag students below KKM, and save r
         ->assertSee('data-missing-assessments="[&quot;Bab 2&quot;]"', false)
         ->assertSee('data-student="Eka"', false)
         ->assertSee('data-missing-assessments="[&quot;Bab 1&quot;,&quot;Bab 2&quot;]"', false)
-        ->assertSee('2 siswa di bawah KKM dari 3 siswa dengan nilai lengkap.');
+        ->assertSee('3 siswa di bawah KKM dari 4 siswa yang sudah memiliki nilai.');
 
     $response = $this->actingAs($context['user'])
         ->post(route('remedials.store'), [
@@ -215,6 +221,11 @@ test('teachers average selected assessments, flag students below KKM, and save r
         ->and($record->kkm)->toBe(75)
         ->and($record->is_completed)->toBeTrue()
         ->and($record->remedial_score)->toBeNull();
+    $partialScoreRecord = RemedialRecord::where('remedial_program_id', $program->id)
+        ->where('student_id', $students[2]->id)
+        ->firstOrFail();
+    expect($partialScoreRecord->average_score)->toBe(60.0)
+        ->and($partialScoreRecord->is_completed)->toBeFalse();
     $scoreRecord = RemedialRecord::where('remedial_program_id', $program->id)
         ->where('student_id', $students[3]->id)
         ->firstOrFail();
@@ -286,7 +297,7 @@ test('teachers can adjust the subject KKM for a remedial program', function () {
         ->assertOk()
         ->assertSee('KKM mata pelajaran:')
         ->assertSee('value="65"', false)
-        ->assertSee('1 siswa di bawah KKM dari 1 siswa dengan nilai lengkap.');
+        ->assertSee('1 siswa di bawah KKM dari 1 siswa yang sudah memiliki nilai.');
 
     $this->actingAs($context['user'])
         ->post(route('remedials.store'), [

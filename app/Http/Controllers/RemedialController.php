@@ -366,8 +366,8 @@ class RemedialController extends Controller
             }
 
             $isComplete = count($studentScores) === count($assessmentIds);
-            $average = $isComplete
-                ? round(array_sum($studentScores) / count($assessmentIds), 2)
+            $average = $studentScores !== []
+                ? round(array_sum($studentScores) / count($studentScores), 2)
                 : null;
 
             return (object) [
@@ -378,7 +378,7 @@ class RemedialController extends Controller
                 'missing_assessments' => $missingAssessments,
                 'average' => $average,
                 'is_complete' => $isComplete,
-                'eligible' => $isComplete && $average < $kkm,
+                'eligible' => $average !== null && $average < $kkm,
             ];
         });
     }
