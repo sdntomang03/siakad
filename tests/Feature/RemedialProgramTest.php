@@ -92,6 +92,8 @@ test('teachers can view class NISNs as JSON without selecting a subject', functi
         ->get(route('remedials.create', ['classroom_id' => $context['classroom']->id]))
         ->assertOk()
         ->assertSee('NISN siswa untuk CBT')
+        ->assertSee('aria-controls="nisn-cbt-dialog"', false)
+        ->assertSee('<dialog id="nisn-cbt-dialog"', false)
         ->assertSee("[\n    &quot;0000000001&quot;,\n    &quot;0000000002&quot;\n]", false);
 });
 

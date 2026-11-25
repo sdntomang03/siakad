@@ -154,8 +154,32 @@
             @if ($classroom && $nisnJson !== null)
                 <section aria-labelledby="nisn-cbt-title" class="space-y-2">
                     <h2 id="nisn-cbt-title" class="text-lg font-semibold text-slate-900 dark:text-white">NISN siswa untuk CBT</h2>
-                    <p class="text-sm text-slate-700 dark:text-slate-300">Daftar ini berisi NISN siswa di kelas terpilih dalam format JSON.</p>
-                    <pre class="max-h-72 overflow-auto rounded-md border border-slate-300 bg-slate-950 p-4 text-sm text-slate-100 dark:border-slate-700"><code>{{ $nisnJson }}</code></pre>
+                    <p class="text-sm text-slate-700 dark:text-slate-300">Buka daftar NISN kelas terpilih dalam format JSON untuk CBT.</p>
+                    <button type="button" onclick="document.getElementById('nisn-cbt-dialog').showModal()"
+                        aria-haspopup="dialog" aria-controls="nisn-cbt-dialog"
+                        class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800 active:bg-brand-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                        Tampilkan JSON NISN
+                    </button>
+
+                    <dialog id="nisn-cbt-dialog" aria-labelledby="nisn-cbt-dialog-title"
+                        aria-describedby="nisn-cbt-dialog-description"
+                        class="m-auto max-h-[85vh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-lg border border-slate-300 bg-white p-0 text-slate-900 shadow-xl backdrop:bg-slate-950/60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100">
+                        <div class="space-y-4 p-5 sm:p-6">
+                            <div>
+                                <h3 id="nisn-cbt-dialog-title" class="text-lg font-semibold">JSON NISN untuk CBT</h3>
+                                <p id="nisn-cbt-dialog-description" class="mt-1 text-sm text-slate-700 dark:text-slate-300">
+                                    Salin daftar berikut ke CBT.
+                                </p>
+                            </div>
+                            <pre class="max-h-72 overflow-auto rounded-md border border-slate-300 bg-slate-950 p-4 text-sm text-slate-100 dark:border-slate-700"><code>{{ $nisnJson }}</code></pre>
+                            <div class="flex justify-end border-t border-slate-200 pt-4 dark:border-slate-700">
+                                <button type="button" onclick="this.closest('dialog').close()"
+                                    class="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800 active:bg-brand-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700">
+                                    Tutup
+                                </button>
+                            </div>
+                        </div>
+                    </dialog>
                 </section>
             @endif
 
