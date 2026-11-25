@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\Classroom;
 use App\Models\Student;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -27,7 +28,7 @@ class StudentsExport implements FromCollection, ShouldAutoSize, WithHeadings, Wi
         $this->classroomId = $classroomId;
     }
 
-    public function collection()
+    public function collection(): Collection
     {
         // 1. Jika ada ID Kelas yang dikirim, tarik siswa HANYA dari kelas tersebut
         if ($this->classroomId) {
