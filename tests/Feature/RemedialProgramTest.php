@@ -70,7 +70,7 @@ function createRemedialAssessment(array $context, string $title): Assessment
     ]);
 }
 
-test('teachers can view class NISNs as JSON without selecting a subject', function () {
+test('teachers do not see the NISN JSON before selecting assessments', function () {
     $context = createRemedialTeacherContext();
 
     foreach ([
@@ -91,10 +91,49 @@ test('teachers can view class NISNs as JSON without selecting a subject', functi
     $this->actingAs($context['user'])
         ->get(route('remedials.create', ['classroom_id' => $context['classroom']->id]))
         ->assertOk()
+        ->assertDontSee('NISN siswa untuk CBT')
+        ->assertDontSee('nisn-cbt-dialog');
+});
+
+test('teachers see only students below KKM in the NISN JSON', function () {
+    $context = createRemedialTeacherContext();
+    $assessment = createRemedialAssessment($context, 'Bab 1');
+    collect([
+        ['name' => 'Ayu', 'nisn' => '0000000001', 'score' => 60],
+        ['name' => 'Budi', 'nisn' => '0000000002', 'score' => 80],
+        ['name' => 'Citra', 'nisn' => '0000000003', 'score' => null],
+        ['name' => 'Dini', 'nisn' => '', 'score' => 60],
+    ])->map(function (array $data) use ($context, $assessment) {
+        $student = Student::create([
+            'school_id' => $context['school']->id,
+            'nama_lengkap' => $data['name'],
+            'jenis_kelamin' => 'P',
+            'nisn' => $data['nisn'],
+        ]);
+        $context['classroom']->students()->attach($student->id);
+
+        if ($data['score'] !== null) {
+            AssessmentScore::create([
+                'assessment_id' => $assessment->id,
+                'student_id' => $student->id,
+                'score' => $data['score'],
+            ]);
+        }
+
+        return $student;
+    });
+
+    $this->actingAs($context['user'])
+        ->get(route('remedials.create', [
+            'classroom_id' => $context['classroom']->id,
+            'subject_id' => $context['subject']->id,
+            'assessment_ids' => [$assessment->id],
+        ]))
+        ->assertOk()
         ->assertSee('NISN siswa untuk CBT')
-        ->assertSee('aria-controls="nisn-cbt-dialog"', false)
-        ->assertSee('<dialog id="nisn-cbt-dialog"', false)
-        ->assertSee("[\n    &quot;0000000001&quot;,\n    &quot;0000000002&quot;\n]", false);
+        ->assertSee('&quot;0000000001&quot;', false)
+        ->assertDontSee('&quot;0000000002&quot;', false)
+        ->assertDontSee('&quot;0000000003&quot;', false);
 });
 
 test('teachers average selected assessments, flag students below KKM, and save remedial status and score', function () {

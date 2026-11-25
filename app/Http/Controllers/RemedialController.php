@@ -57,17 +57,6 @@ class RemedialController extends Controller
             }
 
             $classroom = Classroom::findOrFail($classroomId);
-            $nisns = $classroom->students()
-                ->where('students.school_id', $user->school_id)
-                ->whereNotNull('students.nisn')
-                ->where('students.nisn', '<>', '')
-                ->orderBy('students.nama_lengkap')
-                ->pluck('students.nisn')
-                ->all();
-            $nisnJson = json_encode(
-                $nisns,
-                JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR
-            );
 
             if ($subjectId !== null) {
                 if (! isset($classesData[$classroomId]['subjects'][$subjectId])) {
@@ -107,6 +96,18 @@ class RemedialController extends Controller
                     $rows = $this->calculateRows($classroom, $selectedAssessmentIds, $kkm, $assessmentNames);
                 }
             }
+        }
+
+        if ($selectedAssessmentIds !== []) {
+            $nisns = $rows
+                ->filter(fn ($row) => $row->eligible && filled($row->student->nisn))
+                ->map(fn ($row) => (string) $row->student->nisn)
+                ->values()
+                ->all();
+            $nisnJson = json_encode(
+                $nisns,
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR
+            );
         }
 
         return view('remedials.create', compact(
