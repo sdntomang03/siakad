@@ -151,6 +151,14 @@
                 </div>
             </form>
 
+            @if ($classroom && $nisnJson !== null)
+                <section aria-labelledby="nisn-cbt-title" class="space-y-2">
+                    <h2 id="nisn-cbt-title" class="text-lg font-semibold text-slate-900 dark:text-white">NISN siswa untuk CBT</h2>
+                    <p class="text-sm text-slate-700 dark:text-slate-300">Daftar ini berisi NISN siswa di kelas terpilih dalam format JSON.</p>
+                    <pre class="max-h-72 overflow-auto rounded-md border border-slate-300 bg-slate-950 p-4 text-sm text-slate-100 dark:border-slate-700"><code>{{ $nisnJson }}</code></pre>
+                </section>
+            @endif
+
             @if (count($selectedAssessmentIds) > 0)
                 @php
                     $eligibleCount = $rows->where('eligible', true)->count();

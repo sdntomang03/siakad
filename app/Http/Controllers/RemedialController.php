@@ -44,6 +44,7 @@ class RemedialController extends Controller
         $classroomId = $request->query('classroom_id');
         $subjectId = $request->query('subject_id');
         $classroom = null;
+        $nisnJson = null;
         $subject = null;
         $kkm = null;
         $assessments = collect();
@@ -51,43 +52,60 @@ class RemedialController extends Controller
         $selectedAssessmentIds = [];
 
         if ($classroomId !== null || $subjectId !== null) {
-            if (! $activeYear || ! $classroomId || ! $subjectId
-                || ! isset($classesData[$classroomId]['subjects'][$subjectId])) {
+            if (! $activeYear || ! $classroomId || ! isset($classesData[$classroomId])) {
                 abort(403, 'Kelas atau mata pelajaran tidak termasuk tugas mengajar Anda.');
             }
 
             $classroom = Classroom::findOrFail($classroomId);
-            $subject = Subject::findOrFail($subjectId);
-            $kkm = (int) $subject->kkm;
-            if ($request->query->has('kkm')) {
-                $validatedKkm = $request->validate([
-                    'kkm' => 'required|integer|min:0|max:100',
-                ]);
-                $kkm = (int) $validatedKkm['kkm'];
-            }
-            $assessments = $this->assessmentQuery($user->school_id, $activeYear->id, $classroomId, $subjectId)
-                ->with('assessmentType')
-                ->withCount('scores')
-                ->orderBy('tanggal')
-                ->get();
+            $nisns = $classroom->students()
+                ->where('students.school_id', $user->school_id)
+                ->whereNotNull('students.nisn')
+                ->where('students.nisn', '<>', '')
+                ->orderBy('students.nama_lengkap')
+                ->pluck('students.nisn')
+                ->all();
+            $nisnJson = json_encode(
+                $nisns,
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR
+            );
 
-            if ($request->query->has('assessment_ids')) {
-                $validated = $request->validate([
-                    'assessment_ids' => 'required|array|min:1',
-                    'assessment_ids.*' => 'required|integer|distinct',
-                ]);
-                $selectedAssessmentIds = array_map('intval', $validated['assessment_ids']);
-                $availableIds = $assessments->modelKeys();
-
-                if (array_diff($selectedAssessmentIds, $availableIds)) {
-                    abort(403, 'Penilaian yang dipilih tidak sesuai dengan kelas dan mata pelajaran.');
+            if ($subjectId !== null) {
+                if (! isset($classesData[$classroomId]['subjects'][$subjectId])) {
+                    abort(403, 'Kelas atau mata pelajaran tidak termasuk tugas mengajar Anda.');
                 }
 
-                $assessmentNames = $assessments
-                    ->whereIn('id', $selectedAssessmentIds)
-                    ->pluck('keterangan', 'id')
-                    ->all();
-                $rows = $this->calculateRows($classroom, $selectedAssessmentIds, $kkm, $assessmentNames);
+                $subject = Subject::findOrFail($subjectId);
+                $kkm = (int) $subject->kkm;
+                if ($request->query->has('kkm')) {
+                    $validatedKkm = $request->validate([
+                        'kkm' => 'required|integer|min:0|max:100',
+                    ]);
+                    $kkm = (int) $validatedKkm['kkm'];
+                }
+                $assessments = $this->assessmentQuery($user->school_id, $activeYear->id, $classroomId, $subjectId)
+                    ->with('assessmentType')
+                    ->withCount('scores')
+                    ->orderBy('tanggal')
+                    ->get();
+
+                if ($request->query->has('assessment_ids')) {
+                    $validated = $request->validate([
+                        'assessment_ids' => 'required|array|min:1',
+                        'assessment_ids.*' => 'required|integer|distinct',
+                    ]);
+                    $selectedAssessmentIds = array_map('intval', $validated['assessment_ids']);
+                    $availableIds = $assessments->modelKeys();
+
+                    if (array_diff($selectedAssessmentIds, $availableIds)) {
+                        abort(403, 'Penilaian yang dipilih tidak sesuai dengan kelas dan mata pelajaran.');
+                    }
+
+                    $assessmentNames = $assessments
+                        ->whereIn('id', $selectedAssessmentIds)
+                        ->pluck('keterangan', 'id')
+                        ->all();
+                    $rows = $this->calculateRows($classroom, $selectedAssessmentIds, $kkm, $assessmentNames);
+                }
             }
         }
 
@@ -95,6 +113,7 @@ class RemedialController extends Controller
             'classesData',
             'activeYear',
             'classroom',
+            'nisnJson',
             'subject',
             'kkm',
             'assessments',
